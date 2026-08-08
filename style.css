@@ -207,34 +207,33 @@ h2{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:
   background: rgba(22, 210, 178, 0.12) !important;
   color: #16d2b2 !important;
 }
-/* Select My Venue - Premium Contact Pills */
+/* Select My Venue - Premium Contact Layout */
 
-footer .footer-contact {
+.footer-links .contact-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.footer-links .contact-column .footer-contact {
   display: inline-flex !important;
   align-items: center;
-  justify-content: center;
-  width: auto !important;
+  width: fit-content !important;
   max-width: 100%;
   box-sizing: border-box;
-
-  padding: 8px 13px !important;
-  margin: 5px 5px 5px 0 !important;
-
+  padding: 8px 12px !important;
+  margin: 4px 0 !important;
   border: 1px solid rgba(22, 210, 178, 0.28) !important;
   border-radius: 999px !important;
-
   background: rgba(22, 210, 178, 0.05) !important;
   color: #dffaf5 !important;
-
   font-size: 12px !important;
   line-height: 1.2 !important;
   text-decoration: none !important;
   white-space: nowrap !important;
-
-  transition: all 0.2s ease;
 }
 
-footer .footer-contact:hover {
+.footer-links .contact-column .footer-contact:hover {
   border-color: #16d2b2 !important;
   background: rgba(22, 210, 178, 0.12) !important;
   color: #16d2b2 !important;
