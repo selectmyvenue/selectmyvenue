@@ -207,35 +207,47 @@ h2{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:
   background: rgba(22, 210, 178, 0.12) !important;
   color: #16d2b2 !important;
 }
-/* Select My Venue - Premium Contact Layout */
+/* PREMIUM CONTACT GRID */
 
 .footer-links .contact-column {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  display: grid !important;
+  grid-template-columns: repeat(2, max-content);
+  gap: 8px;
+  align-items: center;
+}
+
+.footer-links .contact-column h4 {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
 }
 
 .footer-links .contact-column .footer-contact {
   display: inline-flex !important;
   align-items: center;
+  justify-content: center;
   width: fit-content !important;
-  max-width: 100%;
-  box-sizing: border-box;
   padding: 8px 12px !important;
-  margin: 4px 0 !important;
-  border: 1px solid rgba(22, 210, 178, 0.28) !important;
+  margin: 0 !important;
+  border: 1px solid rgba(22,210,178,.28) !important;
   border-radius: 999px !important;
-  background: rgba(22, 210, 178, 0.05) !important;
+  background: rgba(22,210,178,.05) !important;
   color: #dffaf5 !important;
   font-size: 12px !important;
   line-height: 1.2 !important;
-  text-decoration: none !important;
   white-space: nowrap !important;
+  text-decoration: none !important;
+  transition: .2s ease;
 }
 
 .footer-links .contact-column .footer-contact:hover {
   border-color: #16d2b2 !important;
-  background: rgba(22, 210, 178, 0.12) !important;
+  background: rgba(22,210,178,.12) !important;
   color: #16d2b2 !important;
   transform: translateY(-1px);
+}
+
+@media(max-width:760px) {
+  .footer-links .contact-column {
+    grid-template-columns: 1fr 1fr;
+  }
 }
