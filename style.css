@@ -284,3 +284,46 @@ h2{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:
   color: #16d2b2 !important;
   transform: translateX(2px);
 }
+/* Fix footer horizontal overflow */
+
+.footer {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.footer-links {
+  min-width: 0 !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.footer-links > div {
+  min-width: 0 !important;
+  max-width: 100%;
+}
+
+.footer-links .contact-column {
+  min-width: 0 !important;
+  max-width: 100%;
+}
+
+.footer-links .contact-column .footer-contact {
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+}
+
+.footer-links > div:not(.contact-column) a {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 760px) {
+  .footer-links {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .footer-links .contact-column {
+    grid-column: 1 / -1;
+  }
+}
