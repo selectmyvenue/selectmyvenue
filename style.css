@@ -139,3 +139,29 @@ h2{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:
   .footer{grid-template-columns:1fr;padding:45px 20px 25px}
   .footer-links{grid-template-columns:1fr 1fr}
 }
+.contact-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.contact-details a {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid rgba(22, 210, 178, 0.25);
+  border-radius: 999px;
+  background: rgba(22, 210, 178, 0.06);
+  color: #dffaf5;
+  font-size: 13px;
+  font-weight: 650;
+  transition: all 0.2s ease;
+}
+
+.contact-details a:hover {
+  border-color: #16d2b2;
+  background: rgba(22, 210, 178, 0.12);
+  color: #16d2b2;
+  transform: translateY(-1px);
+}
