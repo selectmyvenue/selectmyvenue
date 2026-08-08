@@ -207,3 +207,39 @@ h2{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:
   background: rgba(22, 210, 178, 0.12) !important;
   color: #16d2b2 !important;
 }
+/* Select My Venue - Contact Pills */
+.footer-links .footer-contact {
+  display: block !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  padding: 7px 12px !important;
+  margin: 6px 0 !important;
+  border: 1px solid rgba(22, 210, 178, 0.30) !important;
+  border-radius: 999px !important;
+  background: rgba(22, 210, 178, 0.06) !important;
+  color: #dffaf5 !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+}
+
+.footer-links .footer-contact:hover {
+  border-color: #16d2b2 !important;
+  background: rgba(22, 210, 178, 0.14) !important;
+  color: #16d2b2 !important;
+}
+footer .footer-contact {
+  display: block !important;
+  width: fit-content !important;
+  padding: 7px 12px !important;
+  margin: 6px 0 !important;
+  border: 1px solid rgba(22, 210, 178, 0.30) !important;
+  border-radius: 999px !important;
+  background: rgba(22, 210, 178, 0.06) !important;
+  color: #dffaf5 !important;
+  font-size: 12px !important;
+  line-height: 1.25 !important;
+  text-decoration: none !important;
+}
