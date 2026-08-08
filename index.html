@@ -1,797 +1,2057 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+/* =========================================================
+   SELECT MY VENUE
+   PREMIUM AI VENUE DISCOVERY UI
+   ========================================================= */
+
+:root{
+  --bg:#020d0c;
+  --bg-soft:#041816;
+  --surface:#071f1b;
+  --surface-2:#092923;
+  --surface-3:#0c332c;
+
+  --teal:#19e6c2;
+  --teal-bright:#61ffe5;
+  --teal-dark:#079b86;
+
+  --gold:#ffd447;
+  --white:#f4fffc;
+  --text:#d7eee9;
+  --muted:#91b5ad;
+  --muted-2:#638a82;
+
+  --line:rgba(94,255,226,.14);
+  --line-strong:rgba(94,255,226,.28);
+
+  --glow:0 0 45px rgba(25,230,194,.12);
+  --shadow:0 30px 90px rgba(0,0,0,.38);
+
+  --radius:24px;
+  --radius-sm:15px;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  background:
+    radial-gradient(circle at 15% 10%,rgba(25,230,194,.045),transparent 25%),
+    radial-gradient(circle at 90% 40%,rgba(25,230,194,.035),transparent 30%),
+    var(--bg);
+  color:var(--white);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+img{
+  max-width:100%;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:100;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  min-height:76px;
+  padding:12px 5vw;
+
+  background:rgba(2,13,12,.82);
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+
+  border-bottom:1px solid var(--line);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+}
+
+.brand img{
+  width:185px;
+  height:auto;
+  display:block;
+  filter:drop-shadow(0 0 15px rgba(25,230,194,.08));
+}
+
+nav{
+  display:flex;
+  align-items:center;
+  gap:30px;
+  font-size:14px;
+  color:#cce5df;
+}
+
+nav a{
+  position:relative;
+  transition:.25s ease;
+}
+
+nav a:not(.nav-cta)::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-7px;
+  width:0;
+  height:1px;
+  background:var(--teal);
+  transition:.25s ease;
+}
+
+nav a:hover{
+  color:var(--teal-bright);
+}
+
+nav a:hover::after{
+  width:100%;
+}
+
+.nav-cta{
+  padding:10px 18px;
+  border:1px solid rgba(25,230,194,.42);
+  border-radius:999px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(25,230,194,.12),
+      rgba(25,230,194,.035)
+    );
+
+  color:var(--white)!important;
+  box-shadow:0 0 25px rgba(25,230,194,.06);
+}
+
+.nav-cta:hover{
+  border-color:var(--teal);
+  background:rgba(25,230,194,.12);
+}
+
+.menu-toggle{
+  display:none;
+  border:1px solid var(--line);
+  background:rgba(8,40,34,.8);
+  color:var(--white);
+  width:43px;
+  height:43px;
+  border-radius:13px;
+  font-size:23px;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.hero{
+  position:relative;
+  overflow:hidden;
+
+  min-height:760px;
+
+  display:flex;
+  align-items:center;
+
+  padding:100px 6vw;
+
+  background:
+    radial-gradient(
+      circle at 78% 22%,
+      rgba(25,230,194,.17),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 15% 72%,
+      rgba(255,212,71,.06),
+      transparent 20%
+    ),
+    linear-gradient(
+      135deg,
+      #020c0b 0%,
+      #05221d 48%,
+      #031613 100%
+    );
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  width:500px;
+  height:500px;
+  right:-180px;
+  top:-180px;
+
+  border:1px solid rgba(25,230,194,.08);
+  border-radius:50%;
+
+  box-shadow:
+    0 0 0 70px rgba(25,230,194,.025),
+    0 0 0 140px rgba(25,230,194,.015);
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:180px;
+
+  background:
+    linear-gradient(
+      transparent,
+      var(--bg)
+    );
+
+  pointer-events:none;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+
+  width:min(1180px,100%);
+  margin:auto;
+}
+
+
+/* =========================================================
+   AI BADGE
+   ========================================================= */
+
+.ai-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+
+  margin-bottom:22px;
+  padding:8px 13px;
+
+  border:1px solid rgba(25,230,194,.25);
+  border-radius:999px;
+
+  background:rgba(25,230,194,.055);
+
+  color:#a8fff0;
+
+  font-size:10px;
+  font-weight:850;
+  letter-spacing:1.6px;
+
+  box-shadow:
+    inset 0 0 20px rgba(25,230,194,.025),
+    0 0 25px rgba(25,230,194,.04);
+}
+
+.ai-pulse{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--teal);
+
+  box-shadow:
+    0 0 0 4px rgba(25,230,194,.08),
+    0 0 14px var(--teal);
+
+  animation:aiPulse 2s infinite;
+}
+
+@keyframes aiPulse{
+  0%,100%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  50%{
+    opacity:.55;
+    transform:scale(.8);
+  }
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+.eyebrow{
+  margin:0 0 12px;
+
+  color:var(--teal);
+
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+}
+
+h1{
+  max-width:940px;
+
+  margin:0 0 25px;
+
+  font-size:clamp(45px,6.3vw,82px);
+  line-height:1.01;
+
+  letter-spacing:-4px;
+  font-weight:850;
+}
+
+h1 span,
+.smart-copy h2 span,
+.owner-content h2 span,
+.contact-heading h2 span{
+  background:
+    linear-gradient(
+      90deg,
+      var(--teal),
+      var(--teal-bright)
+    );
+
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.hero-text{
+  max-width:690px;
+
+  margin-bottom:34px;
+
+  color:var(--muted);
+  font-size:18px;
+  line-height:1.75;
+}
+
+h2{
+  font-size:clamp(32px,4vw,54px);
+  line-height:1.07;
+  letter-spacing:-2px;
+  font-weight:800;
+}
+
+h3{
+  font-weight:750;
+}
+
+
+/* =========================================================
+   SEARCH CARD
+   ========================================================= */
+
+.search-card{
+  position:relative;
+
+  display:grid;
+  grid-template-columns:
+    1fr
+    1fr
+    .7fr
+    1fr
+    auto;
+
+  gap:10px;
+
+  max-width:1160px;
+
+  padding:12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10,48,42,.92),
+      rgba(4,28,24,.92)
+    );
+
+  border:1px solid var(--line-strong);
+  border-radius:22px;
+
+  box-shadow:
+    var(--shadow),
+    inset 0 1px rgba(255,255,255,.025);
+
+  backdrop-filter:blur(20px);
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.field label{
+  padding-left:3px;
+
+  color:#91b8b0;
+
+  font-size:11px;
+  font-weight:750;
+  letter-spacing:.3px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+
+  border:1px solid rgba(160,255,236,.12);
+
+  background:
+    linear-gradient(
+      145deg,
+      #06241f,
+      #051d19
+    );
+
+  color:white;
+
+  border-radius:12px;
+
+  padding:12px 13px;
+
+  outline:none;
+
+  transition:.25s ease;
+}
+
+.field input::placeholder,
+.field textarea::placeholder{
+  color:#52746d;
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover{
+  border-color:rgba(25,230,194,.25);
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:var(--teal);
+
+  box-shadow:
+    0 0 0 3px rgba(25,230,194,.07),
+    0 0 20px rgba(25,230,194,.06);
+}
+
+.field select option{
+  background:#06241f;
+  color:white;
+}
+
+.primary-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:11px;
+
+  border:1px solid rgba(25,230,194,.2);
+  border-radius:13px;
+
+  padding:13px 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #19e6c2,
+      #079f88
+    );
+
+  color:#00241e;
+
+  font-weight:850;
+
+  box-shadow:
+    0 12px 30px rgba(25,230,194,.16);
+
+  transition:.25s ease;
+}
+
+.primary-btn span{
+  font-size:19px;
+}
+
+.primary-btn:hover{
+  transform:translateY(-2px);
+
+  filter:brightness(1.07);
+
+  box-shadow:
+    0 16px 38px rgba(25,230,194,.23);
+}
+
+.search-btn{
+  align-self:end;
+
+  height:48px;
 
-  <title>Select My Venue — Smart Venue Discovery</title>
-  <meta name="description" content="Find verified venues for weddings, parties, corporate events and celebrations with Select My Venue.">
+  white-space:nowrap;
+}
+
+.micro-note{
+  margin:13px 0 0;
+
+  color:#719a91;
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  font-size:12px;
+}
 
-  <link rel="stylesheet" href="style.css">
-</head>
 
-<body>
+/* =========================================================
+   TRUST STRIP
+   ========================================================= */
 
-<header class="site-header">
+.trust-strip{
+  position:relative;
+  z-index:5;
 
-  <a href="#home" class="brand">
-    <img src="logo.png" alt="Select My Venue">
-  </a>
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+
+  background:#041b17;
+}
+
+.trust-strip div{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+
+  padding:23px 10px;
+
+  color:#c9e4de;
+
+  font-size:13px;
+}
+
+.trust-strip strong{
+  color:var(--teal);
+  font-size:17px;
+}
+
+
+/* =========================================================
+   GENERAL SECTIONS
+   ========================================================= */
+
+.section{
+  width:min(1320px,100%);
+  margin:auto;
+
+  padding:110px 6vw;
+}
+
+.section-heading{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+
+  gap:45px;
+
+  margin-bottom:45px;
+}
 
-  <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
-    ☰
-  </button>
+.section-heading > div{
+  max-width:780px;
+}
+
+.section-heading > p{
+  max-width:470px;
 
-  <nav id="mainNav">
-    <a href="#venues">Find a Venue</a>
-    <a href="#how-it-works">How It Works</a>
-    <a href="#for-venues">For Venue Owners</a>
-    <a href="#contact">Contact</a>
-    <a class="nav-cta" href="#venue-form">List Your Venue <span>→</span></a>
-  </nav>
+  color:var(--muted);
+}
 
-</header>
+.centered{
+  display:block;
+  text-align:center;
+}
 
+.centered > p{
+  margin-left:auto;
+  margin-right:auto;
+}
 
-<main>
 
-<!-- HERO -->
+/* =========================================================
+   VENUE PLACEHOLDER
+   ========================================================= */
 
-<section class="hero" id="home">
+.venue-placeholder{
+  position:relative;
 
-  <div class="hero-grid"></div>
+  min-height:390px;
 
-  <div class="hero-glow glow-one"></div>
-  <div class="hero-glow glow-two"></div>
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 
-  <div class="hero-content">
+  text-align:center;
 
-    <div class="ai-badge">
-      <span class="ai-pulse"></span>
-      AI-POWERED VENUE DISCOVERY
-    </div>
+  padding:50px;
 
-    <p class="eyebrow">SELECT MY VENUE</p>
+  overflow:hidden;
 
-    <h1>
-      Find the Right Venue.
-      <span>Smarter.</span>
-    </h1>
+  border:1px dashed rgba(25,230,194,.25);
+  border-radius:28px;
 
-    <p class="hero-text">
-      Tell us what you're planning and discover venue options matched
-      to your location, event, guest count and budget.
-    </p>
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(25,230,194,.07),
+      transparent 45%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(10,51,44,.78),
+      rgba(4,27,23,.88)
+    );
 
-    <form class="search-card" id="venueSearch">
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.025);
+}
 
-      <div class="field">
-        <label for="location">Location</label>
-        <input id="location" name="location" type="text" placeholder="e.g. Gurgaon" required>
-      </div>
+.venue-placeholder::before,
+.venue-placeholder::after{
+  content:"";
+  position:absolute;
 
-      <div class="field">
-        <label for="eventType">Event Type</label>
+  border-radius:50%;
+  border:1px solid rgba(25,230,194,.06);
 
-        <select id="eventType" name="eventType" required>
-          <option value="">Select event</option>
-          <option>Wedding</option>
-          <option>Engagement</option>
-          <option>Birthday</option>
-          <option>Corporate Event</option>
-          <option>Party</option>
-          <option>Reception</option>
-          <option>Other</option>
-        </select>
-      </div>
+  pointer-events:none;
+}
 
-      <div class="field">
-        <label for="guests">Guests</label>
-        <input id="guests" name="guests" type="number" min="1" placeholder="e.g. 300" required>
-      </div>
+.venue-placeholder::before{
+  width:300px;
+  height:300px;
+}
 
-      <div class="field">
-        <label for="budget">Budget</label>
+.venue-placeholder::after{
+  width:450px;
+  height:450px;
+}
 
-        <select id="budget" name="budget" required>
-          <option value="">Select budget</option>
-          <option>Under ₹1 Lakh</option>
-          <option>₹1–3 Lakh</option>
-          <option>₹3–5 Lakh</option>
-          <option>₹5–10 Lakh</option>
-          <option>₹10 Lakh+</option>
-          <option>Flexible</option>
-        </select>
-      </div>
+.placeholder-orbit{
+  position:relative;
+  z-index:2;
 
-      <button class="primary-btn search-btn" type="submit">
-        Find My Venue <span>→</span>
-      </button>
+  margin-bottom:20px;
+}
 
-    </form>
+.placeholder-icon{
+  width:72px;
+  height:72px;
 
-    <p class="micro-note">
-      ✦ Smart matching • Verified information • Relevant enquiries
-    </p>
+  display:grid;
+  place-items:center;
 
-  </div>
+  border-radius:20px;
 
-</section>
+  background:
+    linear-gradient(
+      145deg,
+      rgba(25,230,194,.16),
+      rgba(25,230,194,.035)
+    );
 
+  border:1px solid rgba(25,230,194,.3);
 
-<!-- TRUST -->
+  color:var(--teal-bright);
 
-<section class="trust-strip">
+  font-weight:900;
+  letter-spacing:1px;
 
-  <div>
-    <strong>✓</strong>
-    <span>Verified Venues</span>
-  </div>
+  box-shadow:
+    0 0 35px rgba(25,230,194,.1);
+}
 
-  <div>
-    <strong>✦</strong>
-    <span>Smart Discovery</span>
-  </div>
+.status-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
 
-  <div>
-    <strong>◎</strong>
-    <span>Relevant Enquiries</span>
-  </div>
+  margin-bottom:12px;
 
-  <div>
-    <strong>↗</strong>
-    <span>Better Opportunities</span>
-  </div>
+  padding:6px 11px;
 
-</section>
+  border:1px solid rgba(25,230,194,.18);
+  border-radius:999px;
 
+  background:rgba(25,230,194,.05);
 
-<!-- VENUES -->
+  color:#8deede;
 
-<section class="section" id="venues">
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
 
-  <div class="section-heading">
+.status-chip i{
+  width:6px;
+  height:6px;
 
-    <div>
-      <p class="eyebrow">EXPLORE</p>
-      <h2>Find a Venue That Fits Your Occasion</h2>
-    </div>
+  border-radius:50%;
 
-    <p>
-      From intimate celebrations to grand weddings and corporate events,
-      discover spaces that match what you're looking for.
-    </p>
+  background:var(--teal);
 
-  </div>
+  box-shadow:0 0 10px var(--teal);
+}
 
+.venue-placeholder h3{
+  position:relative;
+  z-index:2;
 
-  <div class="venue-placeholder">
+  margin:0 0 8px;
 
-    <div class="placeholder-orbit">
-      <div class="placeholder-icon">SMV</div>
-    </div>
+  font-size:25px;
+}
 
-    <span class="status-chip">
-      <i></i> Launch Network
-    </span>
+.venue-placeholder p{
+  position:relative;
+  z-index:2;
 
-    <h3>Your First Verified Venues Are Coming</h3>
+  max-width:600px;
 
-    <p>
-      We're building a trusted network of venues. New verified listings
-      will appear here as venues join Select My Venue.
-    </p>
+  margin:0 0 25px;
 
-    <a class="secondary-btn" href="#venue-form">
-      Own a Venue? Join the Launch <span>→</span>
-    </a>
+  color:var(--muted);
+}
 
-  </div>
+.secondary-btn{
+  position:relative;
+  z-index:2;
 
-</section>
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
 
+  border:1px solid rgba(25,230,194,.32);
+  border-radius:13px;
 
-<!-- HOW IT WORKS -->
+  padding:12px 18px;
 
-<section class="section dark-section" id="how-it-works">
+  color:#ddfff8;
 
-  <div class="section-heading centered">
+  font-weight:750;
 
-    <p class="eyebrow">HOW IT WORKS</p>
+  background:rgba(25,230,194,.035);
 
-    <h2>Your Perfect Venue in 3 Simple Steps</h2>
+  transition:.25s ease;
+}
 
-    <p>
-      A simpler way to move from idea to venue.
-    </p>
+.secondary-btn:hover{
+  border-color:var(--teal);
 
-  </div>
+  background:rgba(25,230,194,.09);
 
+  transform:translateY(-1px);
+}
 
-  <div class="steps">
 
-    <article class="step-card">
+/* =========================================================
+   HOW IT WORKS
+   ========================================================= */
 
-      <span class="step-number">01</span>
+.dark-section{
+  width:100%;
+  max-width:none;
 
-      <div class="step-icon">⌕</div>
+  background:
+    radial-gradient(
+      circle at 50% 0,
+      rgba(25,230,194,.055),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #031613,
+      #051f1a
+    );
+}
 
-      <h3>Tell Us What You Need</h3>
+.steps{
+  width:min(1200px,100%);
+  margin:auto;
 
-      <p>
-        Share your location, event type, guest count and budget.
-      </p>
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
 
-    </article>
+  gap:18px;
+}
 
+.step-card{
+  position:relative;
 
-    <article class="step-card featured-step">
+  padding:35px;
 
-      <span class="step-number">02</span>
+  border:1px solid var(--line);
+  border-radius:22px;
 
-      <div class="step-icon">✦</div>
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10,51,44,.78),
+      rgba(5,29,25,.82)
+    );
 
-      <h3>Get Smart Matches</h3>
+  transition:.3s ease;
+}
 
-      <p>
-        Discover venue options aligned with your requirements.
-      </p>
+.step-card:hover{
+  transform:translateY(-5px);
 
-      <div class="mini-ai">
-        <span></span> SMART MATCH
-      </div>
+  border-color:rgba(25,230,194,.3);
 
-    </article>
+  box-shadow:
+    0 20px 50px rgba(0,0,0,.22),
+    0 0 35px rgba(25,230,194,.05);
+}
 
+.featured-step{
+  border-color:rgba(25,230,194,.28);
 
-    <article class="step-card">
+  background:
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(25,230,194,.09),
+      transparent 35%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(10,57,49,.9),
+      rgba(5,29,25,.9)
+    );
+}
 
-      <span class="step-number">03</span>
+.step-number{
+  position:absolute;
 
-      <div class="step-icon">↗</div>
+  right:25px;
+  top:19px;
 
-      <h3>Connect & Enquire</h3>
+  color:rgba(25,230,194,.27);
 
-      <p>
-        Shortlist your favourites and connect with the venue.
-      </p>
+  font-size:31px;
+  font-weight:900;
+}
 
-    </article>
+.step-icon{
+  margin-bottom:24px;
 
-  </div>
+  color:var(--teal);
 
-</section>
+  font-size:30px;
+}
 
+.step-card h3{
+  margin-bottom:8px;
 
-<!-- SMART AI -->
+  font-size:21px;
+}
 
-<section class="smart-section">
+.step-card p{
+  color:var(--muted);
+}
 
-  <div class="smart-copy">
+.mini-ai{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
 
-    <p class="eyebrow">SMART VENUE DISCOVERY</p>
+  margin-top:22px;
 
-    <h2>
-      Venue Search,
-      <span>Made Smarter.</span>
-    </h2>
+  padding:6px 9px;
 
-    <p>
-      Instead of endlessly browsing hundreds of listings, tell us
-      what matters to you. Select My Venue is designed to make
-      venue discovery faster, simpler and more relevant.
-    </p>
+  border:1px solid rgba(25,230,194,.2);
+  border-radius:999px;
 
-    <ul class="check-list">
+  background:rgba(25,230,194,.05);
 
-      <li>
-        <span>✓</span>
-        Location-focused discovery
-      </li>
+  color:#8ef4e2;
 
-      <li>
-        <span>✓</span>
-        Event & capacity matching
-      </li>
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:1.2px;
+}
 
-      <li>
-        <span>✓</span>
-        Budget-aware options
-      </li>
+.mini-ai span{
+  width:5px;
+  height:5px;
 
-      <li>
-        <span>✓</span>
-        Verified venue information
-      </li>
+  border-radius:50%;
 
-    </ul>
+  background:var(--teal);
 
-  </div>
+  box-shadow:0 0 8px var(--teal);
+}
 
 
-  <div class="smart-demo">
+/* =========================================================
+   SMART DISCOVERY
+   ========================================================= */
 
-    <div class="ai-window-top">
+.smart-section{
+  width:min(1200px,100%);
+  margin:auto;
 
-      <div class="window-dots">
-        <i></i>
-        <i></i>
-        <i></i>
-      </div>
+  padding:115px 6vw;
 
-      <span>SMV AI MATCH</span>
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
 
-      <b>● LIVE</b>
+  gap:80px;
 
-    </div>
+  align-items:center;
+}
 
+.smart-copy > p:not(.eyebrow){
+  max-width:620px;
 
-    <div class="requirement-label">
-      YOUR REQUIREMENT
-    </div>
+  color:var(--muted);
 
-    <p class="requirement">
-      “Wedding venue in Gurgaon for 500 guests”
-    </p>
+  font-size:17px;
+}
 
+.check-list{
+  list-style:none;
 
-    <div class="match">
+  padding:0;
+  margin:29px 0 0;
 
-      <span class="match-icon">✓</span>
+  display:grid;
+  gap:13px;
+}
 
-      <div>
-        <small>VENUE MATCH</small>
-        <b>Relevant</b>
-      </div>
+.check-list li{
+  display:flex;
+  align-items:center;
+  gap:12px;
 
-      <strong>98%</strong>
+  color:#d9f1ec;
 
-    </div>
+  font-size:14px;
+}
 
+.check-list li span{
+  display:grid;
+  place-items:center;
 
-    <div class="match">
+  width:23px;
+  height:23px;
 
-      <span class="match-icon">✓</span>
+  flex:none;
 
-      <div>
-        <small>CAPACITY</small>
-        <b>500+ Guests</b>
-      </div>
+  border-radius:50%;
 
-      <strong>✓</strong>
+  background:rgba(25,230,194,.08);
 
-    </div>
+  color:var(--teal);
 
+  font-size:12px;
+  font-weight:900;
+}
 
-    <div class="match">
 
-      <span class="match-icon">✓</span>
+/* =========================================================
+   AI WINDOW
+   ========================================================= */
 
-      <div>
-        <small>LOCATION</small>
-        <b>Gurgaon</b>
-      </div>
+.smart-demo{
+  position:relative;
 
-      <strong>✓</strong>
+  padding:0;
 
-    </div>
+  overflow:hidden;
 
+  border:1px solid rgba(25,230,194,.22);
+  border-radius:25px;
 
-    <div class="match">
+  background:
+    linear-gradient(
+      145deg,
+      #0a342d,
+      #041e19
+    );
 
-      <span class="match-icon">✓</span>
+  box-shadow:
+    var(--shadow),
+    0 0 50px rgba(25,230,194,.05);
+}
 
-      <div>
-        <small>VERIFICATION</small>
-        <b>Verified Venue</b>
-      </div>
+.ai-window-top{
+  display:flex;
+  align-items:center;
 
-      <strong>✓</strong>
+  padding:15px 18px;
 
-    </div>
+  border-bottom:1px solid var(--line);
 
-  </div>
+  background:rgba(0,0,0,.12);
 
-</section>
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  color:#8eafa8;
+}
 
+.window-dots{
+  display:flex;
+  gap:5px;
 
-<!-- VENUE OWNERS -->
+  margin-right:auto;
+}
 
-<section class="owner-section" id="for-venues">
+.window-dots i{
+  width:6px;
+  height:6px;
 
-  <div class="owner-card">
+  border-radius:50%;
 
-    <div class="owner-content">
+  background:#376c61;
+}
 
-      <p class="eyebrow">FOR VENUE OWNERS</p>
+.ai-window-top b{
+  margin-left:auto;
 
-      <h2>
-        Own a Venue?
-        <span>Get Discovered.</span>
-      </h2>
+  color:var(--teal);
 
-      <p>
-        Showcase your venue to people actively looking for event
-        spaces and receive relevant enquiries.
-      </p>
+  font-size:9px;
+}
 
+.requirement-label{
+  padding:25px 28px 0;
 
-      <div class="owner-points">
+  color:#668e85;
 
-        <span>✓ Create your venue profile</span>
-        <span>✓ Showcase photos & facilities</span>
-        <span>✓ Receive relevant enquiries</span>
-        <span>✓ Grow your visibility</span>
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:1.8px;
+}
 
-      </div>
+.requirement{
+  padding:13px 28px 23px;
 
-    </div>
+  border-bottom:1px solid var(--line);
 
+  font-size:17px;
+  font-weight:700;
+  color:#eafff9;
+}
 
-    <a class="primary-btn owner-btn" href="#venue-form">
-      List Your Venue — FREE Trial
-      <span>→</span>
-    </a>
+.match{
+  display:grid;
+  grid-template-columns:32px 1fr auto;
+  align-items:center;
 
-  </div>
+  gap:8px;
 
-</section>
+  padding:16px 28px;
 
+  border-bottom:1px solid var(--line);
+}
 
-<!-- FORM -->
+.match:last-child{
+  border-bottom:0;
+}
 
-<section class="section form-section" id="venue-form">
+.match-icon{
+  display:grid;
+  place-items:center;
 
-  <div class="section-heading centered">
+  width:23px;
+  height:23px;
 
-    <p class="eyebrow">JOIN THE LAUNCH</p>
+  border-radius:50%;
 
-    <h2>List Your Venue</h2>
+  background:rgba(25,230,194,.09);
 
-    <p>
-      Register your venue for the Select My Venue launch network.
-      We'll contact you for verification and listing details.
-    </p>
+  color:var(--teal);
 
-  </div>
+  font-size:11px;
+  font-weight:900;
+}
 
+.match div{
+  display:flex;
+  flex-direction:column;
+}
 
-  <form class="form-card" id="venueOwnerForm">
+.match small{
+  color:#648b82;
 
-    <div class="form-grid">
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1px;
+}
 
-      <div class="field">
-        <label for="ownerName">Owner / Manager Name *</label>
-        <input id="ownerName" name="ownerName" required>
-      </div>
+.match b{
+  color:#dffaf5;
 
-      <div class="field">
-        <label for="venueName">Venue Name *</label>
-        <input id="venueName" name="venueName" required>
-      </div>
+  font-size:13px;
+}
 
-      <div class="field">
-        <label for="ownerPhone">WhatsApp Number *</label>
-        <input id="ownerPhone" name="ownerPhone" type="tel" required>
-      </div>
+.match > strong{
+  color:var(--teal-bright);
 
-      <div class="field">
-        <label for="venueCity">City / Location *</label>
-        <input id="venueCity" name="venueCity" placeholder="e.g. Gurgaon" required>
-      </div>
+  font-size:13px;
+}
 
-      <div class="field">
 
-        <label for="venueType">Venue Type *</label>
+/* =========================================================
+   VENUE OWNER
+   ========================================================= */
 
-        <select id="venueType" name="venueType" required>
+.owner-section{
+  padding:80px 6vw;
+}
 
-          <option value="">Select type</option>
-          <option>Banquet Hall</option>
-          <option>Farmhouse</option>
-          <option>Hotel</option>
-          <option>Party Hall</option>
-          <option>Wedding Venue</option>
-          <option>Conference / Corporate</option>
-          <option>Other</option>
+.owner-card{
+  width:min(1200px,100%);
+  margin:auto;
 
-        </select>
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 
-      </div>
+  gap:45px;
 
-      <div class="field">
+  padding:55px;
 
-        <label for="capacity">Guest Capacity *</label>
+  border:1px solid rgba(25,230,194,.23);
+  border-radius:29px;
 
-        <input
-          id="capacity"
-          name="capacity"
-          type="number"
-          min="1"
-          required
-        >
+  background:
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(25,230,194,.09),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #0b4038,
+      #06241f
+    );
 
-      </div>
+  box-shadow:var(--shadow);
+}
 
-      <div class="field">
+.owner-content{
+  max-width:780px;
+}
 
-        <label for="venuePrice">Starting Price</label>
+.owner-content > p:not(.eyebrow){
+  max-width:700px;
 
-        <input
-          id="venuePrice"
-          name="venuePrice"
-          placeholder="e.g. ₹2,50,000"
-        >
+  margin-top:12px;
 
-      </div>
+  color:var(--muted);
+}
 
-      <div class="field">
+.owner-points{
+  display:grid;
+  grid-template-columns:1fr 1fr;
 
-        <label for="venueMap">Google Maps Link</label>
+  gap:10px;
 
-        <input
-          id="venueMap"
-          name="venueMap"
-          type="url"
-          placeholder="https://maps.google.com/..."
-        >
+  margin-top:25px;
 
-      </div>
+  color:#d9f1ec;
 
-      <div class="field full">
+  font-size:14px;
+}
 
-        <label for="venueFacilities">
-          Facilities / Key Features
-        </label>
+.owner-points span{
+  position:relative;
+}
 
-        <textarea
-          id="venueFacilities"
-          name="venueFacilities"
-          rows="4"
-          placeholder="Parking, rooms, catering, decoration, outdoor lawn, etc."
-        ></textarea>
+.owner-btn{
+  flex:none;
+}
 
-      </div>
 
-    </div>
+/* =========================================================
+   FORM
+   ========================================================= */
 
+.form-section{
+  padding-top:80px;
+}
 
-    <button class="primary-btn form-submit" type="submit">
+.form-section .section-heading{
+  display:block;
 
-      Submit Venue Details
-      <span>→</span>
+  text-align:center;
+}
 
-    </button>
+.form-section .section-heading > p{
+  margin:15px auto 0;
 
+  max-width:650px;
+}
 
-    <p class="form-note">
-      By submitting, you agree that Select My Venue may contact you
-      about your venue listing.
-    </p>
+.form-card{
+  width:min(1000px,100%);
+  margin:auto;
 
-  </form>
+  padding:36px;
 
-</section>
+  border:1px solid var(--line);
+  border-radius:25px;
 
+  background:
+    linear-gradient(
+      145deg,
+      #072a24,
+      #041c18
+    );
 
-<!-- CONTACT -->
+  box-shadow:
+    0 25px 75px rgba(0,0,0,.25);
+}
 
-<section class="contact-section" id="contact">
+.form-grid{
+  display:grid;
 
-  <div class="contact-glow"></div>
+  grid-template-columns:1fr 1fr;
 
-  <div class="contact-inner">
+  gap:18px;
 
-    <div class="contact-heading">
+  margin-bottom:25px;
+}
 
-      <p class="eyebrow">LET'S CONNECT</p>
+.form-grid .full{
+  grid-column:1/-1;
+}
 
-      <h2>
-        Big Moments
-        <span>Deserve the Right Venue.</span>
-      </h2>
+.form-submit{
+  min-width:210px;
+}
 
-      <p>
-        Whether you're looking for a venue or want to list one,
-        we're here to help.
-      </p>
+.form-note{
+  margin-top:12px;
 
-    </div>
+  color:#668e85;
 
+  font-size:11px;
+}
 
-    <div class="contact-pills">
 
-  <a class="contact-pill" href="https://selectmyvenue.com">
+/* =========================================================
+   CONTACT
+   ========================================================= */
 
-    <span class="pill-icon">⌁</span>
+.cta-section{
+  width:min(1200px,calc(100% - 40px));
 
-    <div>
-      <small>WEBSITE</small>
-      <strong>selectmyvenue.com</strong>
-    </div>
+  margin:30px auto 90px;
 
-    <span class="pill-arrow">↗</span>
+  padding:58px;
 
-  </a>
+  display:grid;
+  grid-template-columns:1fr .9fr;
 
+  align-items:center;
 
-  <a class="contact-pill" href="mailto:support@selectmyvenue.com">
+  gap:60px;
 
-    <span class="pill-icon">@</span>
+  border:1px solid rgba(25,230,194,.2);
+  border-radius:30px;
 
-    <div>
-      <small>EMAIL SUPPORT</small>
-      <strong>support@selectmyvenue.com</strong>
-    </div>
+  background:
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(25,230,194,.1),
+      transparent 35%
+    ),
+    linear-gradient(
+      110deg,
+      #0b4038,
+      #041f1a
+    );
 
-    <span class="pill-arrow">↗</span>
+  box-shadow:var(--shadow);
+}
 
-  </a>
+.contact-heading h2{
+  max-width:650px;
+}
 
+.contact-heading > p:not(.eyebrow){
+  max-width:600px;
 
-  <a
-    class="contact-pill"
-    href="https://wa.me/919958716688"
-    target="_blank"
-    rel="noopener"
-  >
+  margin-top:15px;
 
-    <span class="pill-icon">◉</span>
+  color:var(--muted);
+}
 
-    <div>
-      <small>WHATSAPP / CONTACT</small>
-      <strong>+91 99587 16688</strong>
-    </div>
+.contact-pills{
+  display:grid;
 
-    <span class="pill-arrow">↗</span>
+  gap:11px;
+}
 
-  </a>
 
+/* =========================================================
+   PREMIUM CONTACT PILLS
+   ========================================================= */
 
-  <a class="contact-pill" href="#venue-form">
+.contact-pill{
+  position:relative;
 
-    <span class="pill-icon">✦</span>
+  display:grid;
 
-    <div>
-      <small>VENUE OWNERS</small>
-      <strong>List Your Venue — Free Trial</strong>
-    </div>
+  grid-template-columns:44px 1fr 30px;
 
-    <span class="pill-arrow">→</span>
+  align-items:center;
 
-  </a>
+  gap:13px;
 
-</div>
+  min-height:70px;
 
-      <a class="contact-pill" href="https://selectmyvenue.com">
+  padding:10px 13px;
 
-        <span class="pill-icon">⌁</span>
+  border:1px solid rgba(25,230,194,.13);
+  border-radius:17px;
 
-        <div>
-          <small>WEBSITE</small>
-          <strong>selectmyvenue.com</strong>
-        </div>
+  background:
+    linear-gradient(
+      135deg,
+      rgba(12,55,48,.78),
+      rgba(4,26,22,.82)
+    );
 
-        <span class="pill-arrow">↗</span>
+  box-shadow:
+    inset 0 1px rgba(255,255,255,.025);
 
-      </a>
+  transition:.28s ease;
+}
 
+.contact-pill:hover{
+  transform:translateX(5px);
 
-      <a class="contact-pill" href="mailto:support@selectmyvenue.com">
+  border-color:rgba(25,230,194,.35);
 
-        <span class="pill-icon">@</span>
+  background:
+    linear-gradient(
+      135deg,
+      rgba(13,65,55,.9),
+      rgba(5,31,26,.95)
+    );
 
-        <div>
-          <small>EMAIL</small>
-          <strong>support@selectmyvenue.com</strong>
-        </div>
+  box-shadow:
+    0 12px 35px rgba(0,0,0,.22),
+    0 0 30px rgba(25,230,194,.05);
+}
 
-        <span class="pill-arrow">↗</span>
+.pill-icon{
+  width:42px;
+  height:42px;
 
-      </a>
+  display:grid;
+  place-items:center;
 
+  border:1px solid rgba(25,230,194,.18);
+  border-radius:13px;
 
-      <a class="contact-pill" href="#venue-form">
+  background:rgba(25,230,194,.055);
 
-        <span class="pill-icon">✦</span>
+  color:var(--teal);
 
-        <div>
-          <small>VENUE OWNERS</small>
-          <strong>List Your Venue — Free Trial</strong>
-        </div>
+  font-size:17px;
+  font-weight:800;
+}
 
-        <span class="pill-arrow">→</span>
+.contact-pill div{
+  min-width:0;
 
-      </a>
+  display:flex;
+  flex-direction:column;
+}
 
-    </div>
+.contact-pill small{
+  color:#608b82;
 
-  </div>
+  font-size:8px;
+  font-weight:850;
 
-</section>
+  letter-spacing:1.3px;
+}
 
-</main>
+.contact-pill strong{
+  overflow:hidden;
 
+  color:#e5faf6;
 
-<!-- FOOTER -->
+  font-size:13px;
+  font-weight:700;
 
-<footer class="footer">
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 
-  <div class="footer-main">
+.pill-arrow{
+  color:var(--teal);
 
-    <div class="footer-brand">
+  font-size:18px;
 
-      <a href="#home">
-        <img src="logo.png" alt="Select My Venue">
-      </a>
+  text-align:center;
+}
 
-      <p>
-        Smarter venue discovery for weddings, celebrations,
-        corporate events and everything in between.
-      </p>
 
-    </div>
+/* =========================================================
+   FOOTER
+   ========================================================= */
 
+.footer{
+  display:grid;
 
-    <div class="footer-links">
+  grid-template-columns:1.1fr 1fr;
 
-      <div>
+  gap:50px;
 
-        <h4>Explore</h4>
+  padding:58px 6vw 25px;
 
-        <a href="#venues">Find a Venue</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="#for-venues">For Venue Owners</a>
+  border-top:1px solid var(--line);
 
-      </div>
+  background:#010a09;
+}
 
+.footer-brand img{
+  width:220px;
 
-      <div>
+  margin-bottom:12px;
 
-        <h4>Connect</h4>
+  filter:drop-shadow(0 0 18px rgba(25,230,194,.06));
+}
 
-        <a href="#contact">Contact</a>
-        <a href="mailto:support@selectmyvenue.com">
-          Email Support
-        </a>
+.footer-brand p{
+  max-width:430px;
 
-      </div>
+  color:var(--muted);
 
+  font-size:13px;
+}
 
-      <div>
+.footer-links{
+  display:grid;
 
-        <h4>Start</h4>
+  grid-template-columns:repeat(3,1fr);
 
-        <a href="#venue-form">List Your Venue</a>
-        <a href="#home">Find My Venue</a>
+  gap:25px;
+}
 
-      </div>
+.footer-links h4{
+  margin-bottom:12px;
 
-    </div>
+  color:white;
 
-  </div>
+  font-size:13px;
+}
 
+.footer-links a{
+  display:block;
 
-  <div class="footer-bottom">
+  margin:8px 0;
 
-    <span>
-      © 2026 Select My Venue. All rights reserved.
-    </span>
+  color:#789e96;
 
-    <span class="footer-tag">
-      BUILT FOR SMARTER DISCOVERY ✦
-    </span>
+  font-size:12px;
 
-  </div>
+  transition:.2s ease;
+}
 
-</footer>
+.footer-links a:hover{
+  color:var(--teal);
+}
 
+.copyright{
+  grid-column:1/-1;
 
-<script src="script.js"></script>
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
 
-</body>
-</html>
+  padding-top:20px;
+
+  border-top:1px solid var(--line);
+
+  color:#567c73;
+
+  font-size:11px;
+}
+
+.footer-tag{
+  color:#6b978d;
+  letter-spacing:1px;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal{
+  position:fixed;
+  inset:0;
+
+  z-index:200;
+
+  display:none;
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(0,0,0,.78);
+
+  backdrop-filter:blur(10px);
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal-box{
+  position:relative;
+
+  width:min(560px,100%);
+
+  padding:32px;
+
+  border:1px solid rgba(25,230,194,.25);
+  border-radius:25px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #092e27,
+      #041b17
+    );
+
+  box-shadow:var(--shadow);
+}
+
+.modal-close{
+  position:absolute;
+
+  right:18px;
+  top:12px;
+
+  border:0;
+  background:none;
+
+  color:#a9c9c2;
+
+  font-size:29px;
+
+  cursor:pointer;
+}
+
+.modal-box form{
+  display:grid;
+  gap:16px;
+
+  margin-top:22px;
+}
+
+
+/* =========================================================
+   SUBTLE ANIMATION
+   ========================================================= */
+
+@keyframes softFloat{
+  0%,100%{
+    transform:translateY(0);
+  }
+
+  50%{
+    transform:translateY(-4px);
+  }
+}
+
+.smart-demo{
+  animation:softFloat 6s ease-in-out infinite;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media(max-width:1100px){
+
+  nav{
+    gap:18px;
+  }
+
+  .search-card{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .search-btn{
+    width:100%;
+  }
+
+  .smart-section{
+    grid-template-columns:1fr;
+    gap:50px;
+  }
+
+  .smart-demo{
+    max-width:650px;
+  }
+
+  .owner-card{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .owner-btn{
+    width:100%;
+  }
+
+  .cta-section{
+    grid-template-columns:1fr;
+    gap:30px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:760px){
+
+  .site-header{
+    min-height:68px;
+
+    padding:11px 20px;
+  }
+
+  .brand img{
+    width:150px;
+  }
+
+  .menu-toggle{
+    display:grid;
+    place-items:center;
+  }
+
+  nav{
+    display:none;
+
+    position:absolute;
+
+    top:68px;
+    left:0;
+    right:0;
+
+    padding:18px 20px 22px;
+
+    flex-direction:column;
+    align-items:stretch;
+
+    gap:5px;
+
+    background:
+      rgba(2,13,12,.97);
+
+    border-bottom:1px solid var(--line);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+  }
+
+  nav.open{
+    display:flex;
+  }
+
+  nav a{
+    padding:13px 10px;
+  }
+
+  .nav-cta{
+    text-align:center;
+    margin-top:7px;
+  }
+
+
+  /* HERO */
+
+  .hero{
+    min-height:auto;
+
+    padding:75px 20px 90px;
+  }
+
+  .hero::before{
+    width:300px;
+    height:300px;
+
+    right:-150px;
+    top:-100px;
+  }
+
+  .ai-badge{
+    font-size:8px;
+    letter-spacing:1.1px;
+  }
+
+  h1{
+    font-size:44px;
+    line-height:1.04;
+
+    letter-spacing:-2.5px;
+  }
+
+  .hero-text{
+    font-size:15px;
+    line-height:1.65;
+  }
+
+
+  /* SEARCH */
+
+  .search-card{
+    grid-template-columns:1fr;
+
+    padding:14px;
+
+    border-radius:19px;
+  }
+
+  .search-btn{
+    height:50px;
+  }
+
+
+  /* TRUST */
+
+  .trust-strip{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .trust-strip div{
+    min-height:70px;
+
+    padding:15px 7px;
+
+    font-size:10px;
+
+    text-align:center;
+  }
+
+
+  /* SECTIONS */
+
+  .section{
+    padding:75px 20px;
+  }
+
+  .section-heading{
+    display:block;
+
+    margin-bottom:32px;
+  }
+
+  .section-heading > p{
+    margin-top:17px;
+  }
+
+  h2{
+    font-size:34px;
+    letter-spacing:-1.3px;
+  }
+
+
+  /* VENUE */
+
+  .venue-placeholder{
+    min-height:360px;
+
+    padding:35px 20px;
+  }
+
+  .venue-placeholder h3{
+    font-size:21px;
+  }
+
+  .venue-placeholder p{
+    font-size:13px;
+  }
+
+
+  /* STEPS */
+
+  .steps{
+    grid-template-columns:1fr;
+  }
+
+  .step-card{
+    padding:30px 25px;
+  }
+
+
+  /* SMART */
+
+  .smart-section{
+    padding:75px 20px;
+
+    gap:40px;
+  }
+
+  .smart-copy > p:not(.eyebrow){
+    font-size:15px;
+  }
+
+  .smart-demo{
+    width:100%;
+  }
+
+  .requirement{
+    font-size:14px;
+  }
+
+  .match{
+    padding:14px 18px;
+  }
+
+  .requirement-label{
+    padding-left:18px;
+    padding-right:18px;
+  }
+
+  .requirement{
+    padding-left:18px;
+    padding-right:18px;
+  }
+
+
+  /* OWNER */
+
+  .owner-section{
+    padding:40px 20px;
+  }
+
+  .owner-card{
+    padding:32px 24px;
+
+    border-radius:24px;
+  }
+
+  .owner-points{
+    grid-template-columns:1fr;
+
+    font-size:13px;
+  }
+
+
+  /* FORM */
+
+  .form-section{
+    padding-top:60px;
+  }
+
+  .form-card{
+    padding:23px 18px;
+
+    border-radius:20px;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+
+    gap:15px;
+  }
+
+  .form-grid .full{
+    grid-column:auto;
+  }
+
+  .form-submit{
+    width:100%;
+  }
+
+
+  /* CONTACT */
+
+  .cta-section{
+    width:calc(100% - 40px);
+
+    margin:25px auto 65px;
+
+    padding:35px 22px;
+
+    border-radius:24px;
+  }
+
+  .contact-pills{
+    gap:9px;
+  }
+
+  .contact-pill{
+    min-height:64px;
+
+    grid-template-columns:39px 1fr 24px;
+
+    gap:10px;
+
+    padding:9px 10px;
+  }
+
+  .pill-icon{
+    width:37px;
+    height:37px;
+
+    border-radius:11px;
+  }
+
+  .contact-pill strong{
+    font-size:11px;
+  }
+
+  .contact-pill small{
+    font-size:7px;
+  }
+
+
+  /* FOOTER */
+
+  .footer{
+    grid-template-columns:1fr;
+
+    padding:45px 20px 25px;
+
+    gap:35px;
+  }
+
+  .footer-links{
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+  }
+
+  .copyright{
+    flex-direction:column;
+
+    gap:8px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL PHONES
+   ========================================================= */
+
+@media(max-width:420px){
+
+  h1{
+    font-size:39px;
+  }
+
+  h2{
+    font-size:30px;
+  }
+
+  .trust-strip div{
+    font-size:9px;
+  }
+
+  .owner-card{
+    padding:27px 20px;
+  }
+
+  .footer-links{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .contact-pill{
+    grid-template-columns:36px 1fr 20px;
+  }
+
+  .pill-arrow{
+    font-size:15px;
+  }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible{
+  outline:2px solid var(--teal);
+
+  outline-offset:3px;
+}
+
+
+/* =========================================================
+   REDUCE MOTION
+   ========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    scroll-behavior:auto!important;
+    animation:none!important;
+    transition:none!important;
+  }
+
+}
