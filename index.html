@@ -1,39 +1,33 @@
-/* =========================================================
-   SELECT MY VENUE
-   PREMIUM AI VENUE DISCOVERY UI
-   ========================================================= */
+<!DOCTYPE html>
 
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Select My Venue | Smart Venue Discovery</title>
+
+<meta name="description" content="Select My Venue — Smart AI-powered venue discovery for weddings, parties, corporate events and celebrations across India.">
+<meta name="theme-color" content="#020d0c">
+
+<style>
 :root{
   --bg:#020d0c;
-  --bg-soft:#041816;
-  --surface:#071f1b;
-  --surface-2:#092923;
-  --surface-3:#0c332c;
-
+  --bg2:#041916;
+  --card:#071f1c;
+  --card2:#0a2924;
   --teal:#19e6c2;
-  --teal-bright:#61ffe5;
-  --teal-dark:#079b86;
-
+  --mint:#61ffe5;
   --gold:#ffd447;
   --white:#f4fffc;
   --text:#d7eee9;
   --muted:#91b5ad;
-  --muted-2:#638a82;
-
-  --line:rgba(94,255,226,.14);
-  --line-strong:rgba(94,255,226,.28);
-
-  --glow:0 0 45px rgba(25,230,194,.12);
-  --shadow:0 30px 90px rgba(0,0,0,.38);
-
+  --muted2:#638a82;
+  --line:rgba(97,255,229,.13);
+  --line-strong:rgba(97,255,229,.28);
+  --shadow:0 30px 90px rgba(0,0,0,.42);
   --radius:24px;
-  --radius-sm:15px;
 }
-
-
-/* =========================================================
-   RESET
-   ========================================================= */
 
 *{
   box-sizing:border-box;
@@ -48,19 +42,25 @@ html{
 body{
   background:
     radial-gradient(circle at 15% 10%,rgba(25,230,194,.045),transparent 25%),
-    radial-gradient(circle at 90% 40%,rgba(25,230,194,.035),transparent 30%),
+    radial-gradient(circle at 85% 70%,rgba(97,255,229,.035),transparent 28%),
     var(--bg);
   color:var(--white);
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   line-height:1.6;
   overflow-x:hidden;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.45;
+  background-image:
+    linear-gradient(rgba(97,255,229,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(97,255,229,.018) 1px,transparent 1px);
+  background-size:70px 70px;
 }
 
 a{
@@ -79,52 +79,63 @@ button{
   cursor:pointer;
 }
 
-img{
-  max-width:100%;
+::selection{
+  background:rgba(25,230,194,.25);
+  color:#fff;
 }
 
-
-/* =========================================================
-   HEADER
-   ========================================================= */
+/* =========================
+HEADER
+========================= */
 
 .site-header{
   position:sticky;
   top:0;
-  z-index:100;
-
+  z-index:1000;
+  min-height:72px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-
-  min-height:76px;
-  padding:12px 5vw;
-
-  background:rgba(2,13,12,.82);
+  padding:11px 5vw;
+  background:rgba(2,13,12,.84);
   backdrop-filter:blur(22px);
   -webkit-backdrop-filter:blur(22px);
-
   border-bottom:1px solid var(--line);
 }
 
 .brand{
   display:flex;
   align-items:center;
+  gap:10px;
 }
 
-.brand img{
-  width:185px;
-  height:auto;
-  display:block;
-  filter:drop-shadow(0 0 15px rgba(25,230,194,.08));
+.brand-name{
+  font-size:20px;
+  font-weight:850;
+  letter-spacing:-.7px;
+}
+
+.brand-name span{
+  color:var(--teal);
+}
+
+.brand-tag{
+  color:#638a82;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:1.3px;
+  text-transform:uppercase;
+  border-left:1px solid rgba(97,255,229,.15);
+  padding-left:10px;
 }
 
 nav{
   display:flex;
   align-items:center;
-  gap:30px;
-  font-size:14px;
-  color:#cce5df;
+  gap:27px;
+  font-size:13px;
+  font-weight:650;
+  color:#c7dfda;
 }
 
 nav a{
@@ -144,7 +155,7 @@ nav a:not(.nav-cta)::after{
 }
 
 nav a:hover{
-  color:var(--teal-bright);
+  color:var(--mint);
 }
 
 nav a:hover::after{
@@ -152,86 +163,57 @@ nav a:hover::after{
 }
 
 .nav-cta{
-  padding:10px 18px;
-  border:1px solid rgba(25,230,194,.42);
+  padding:9px 16px;
+  border:1px solid rgba(25,230,194,.38);
   border-radius:999px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(25,230,194,.12),
-      rgba(25,230,194,.035)
-    );
-
-  color:var(--white)!important;
-  box-shadow:0 0 25px rgba(25,230,194,.06);
+  background:rgba(25,230,194,.055);
 }
 
 .nav-cta:hover{
-  border-color:var(--teal);
   background:rgba(25,230,194,.12);
+  border-color:var(--teal);
 }
 
 .menu-toggle{
   display:none;
+  width:42px;
+  height:42px;
   border:1px solid var(--line);
+  border-radius:12px;
   background:rgba(8,40,34,.8);
-  color:var(--white);
-  width:43px;
-  height:43px;
-  border-radius:13px;
-  font-size:23px;
+  color:#fff;
+  font-size:22px;
 }
 
-
-/* =========================================================
-   HERO
-   ========================================================= */
+/* =========================
+HERO
+========================= */
 
 .hero{
   position:relative;
-  overflow:hidden;
-
-  min-height:760px;
-
+  min-height:750px;
   display:flex;
   align-items:center;
-
-  padding:100px 6vw;
-
+  overflow:hidden;
+  padding:95px 6vw 115px;
   background:
-    radial-gradient(
-      circle at 78% 22%,
-      rgba(25,230,194,.17),
-      transparent 25%
-    ),
-    radial-gradient(
-      circle at 15% 72%,
-      rgba(255,212,71,.06),
-      transparent 20%
-    ),
-    linear-gradient(
-      135deg,
-      #020c0b 0%,
-      #05221d 48%,
-      #031613 100%
-    );
+    radial-gradient(circle at 78% 22%,rgba(25,230,194,.16),transparent 25%),
+    radial-gradient(circle at 12% 75%,rgba(255,212,71,.045),transparent 20%),
+    linear-gradient(135deg,#020c0b,#05221d 48%,#031613);
 }
 
 .hero::before{
   content:"";
   position:absolute;
-  width:500px;
-  height:500px;
-  right:-180px;
-  top:-180px;
-
-  border:1px solid rgba(25,230,194,.08);
+  width:520px;
+  height:520px;
+  right:-210px;
+  top:-210px;
+  border:1px solid rgba(25,230,194,.07);
   border-radius:50%;
-
   box-shadow:
-    0 0 0 70px rgba(25,230,194,.025),
-    0 0 0 140px rgba(25,230,194,.015);
+    0 0 0 75px rgba(25,230,194,.018),
+    0 0 0 150px rgba(25,230,194,.012);
 }
 
 .hero::after{
@@ -240,52 +222,31 @@ nav a:hover::after{
   left:0;
   right:0;
   bottom:0;
-  height:180px;
-
-  background:
-    linear-gradient(
-      transparent,
-      var(--bg)
-    );
-
+  height:170px;
+  background:linear-gradient(transparent,var(--bg));
   pointer-events:none;
 }
 
 .hero-content{
   position:relative;
   z-index:2;
-
   width:min(1180px,100%);
   margin:auto;
 }
-
-
-/* =========================================================
-   AI BADGE
-   ========================================================= */
 
 .ai-badge{
   display:inline-flex;
   align-items:center;
   gap:9px;
-
   margin-bottom:22px;
-  padding:8px 13px;
-
-  border:1px solid rgba(25,230,194,.25);
+  padding:7px 12px;
+  border:1px solid rgba(25,230,194,.23);
   border-radius:999px;
-
-  background:rgba(25,230,194,.055);
-
+  background:rgba(25,230,194,.05);
   color:#a8fff0;
-
-  font-size:10px;
+  font-size:9px;
   font-weight:850;
-  letter-spacing:1.6px;
-
-  box-shadow:
-    inset 0 0 20px rgba(25,230,194,.025),
-    0 0 25px rgba(25,230,194,.04);
+  letter-spacing:1.5px;
 }
 
 .ai-pulse{
@@ -293,65 +254,34 @@ nav a:hover::after{
   height:7px;
   border-radius:50%;
   background:var(--teal);
-
-  box-shadow:
-    0 0 0 4px rgba(25,230,194,.08),
-    0 0 14px var(--teal);
-
-  animation:aiPulse 2s infinite;
+  box-shadow:0 0 13px var(--teal);
+  animation:pulse 2s infinite;
 }
 
-@keyframes aiPulse{
-  0%,100%{
-    opacity:1;
-    transform:scale(1);
-  }
-
-  50%{
-    opacity:.55;
-    transform:scale(.8);
-  }
+@keyframes pulse{
+  50%{opacity:.45;transform:scale(.8);}
 }
-
-
-/* =========================================================
-   TYPOGRAPHY
-   ========================================================= */
 
 .eyebrow{
-  margin:0 0 12px;
-
+  margin-bottom:11px;
   color:var(--teal);
-
-  font-size:11px;
+  font-size:10px;
   font-weight:850;
   letter-spacing:2.5px;
   text-transform:uppercase;
 }
 
 h1{
-  max-width:940px;
-
-  margin:0 0 25px;
-
-  font-size:clamp(45px,6.3vw,82px);
+  max-width:950px;
+  margin-bottom:24px;
+  font-size:clamp(45px,6.4vw,82px);
   line-height:1.01;
-
   letter-spacing:-4px;
   font-weight:850;
 }
 
-h1 span,
-.smart-copy h2 span,
-.owner-content h2 span,
-.contact-heading h2 span{
-  background:
-    linear-gradient(
-      90deg,
-      var(--teal),
-      var(--teal-bright)
-    );
-
+.gradient-text{
+  background:linear-gradient(90deg,var(--teal),var(--mint));
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
@@ -359,103 +289,59 @@ h1 span,
 
 .hero-text{
   max-width:690px;
-
   margin-bottom:34px;
-
   color:var(--muted);
   font-size:18px;
   line-height:1.75;
 }
 
-h2{
-  font-size:clamp(32px,4vw,54px);
-  line-height:1.07;
-  letter-spacing:-2px;
-  font-weight:800;
-}
-
-h3{
-  font-weight:750;
-}
-
-
-/* =========================================================
-   SEARCH CARD
-   ========================================================= */
+/* =========================
+SEARCH
+========================= */
 
 .search-card{
-  position:relative;
-
   display:grid;
-  grid-template-columns:
-    1fr
-    1fr
-    .7fr
-    1fr
-    auto;
-
-  gap:10px;
-
+  grid-template-columns:1fr 1fr .75fr 1fr auto;
+  gap:9px;
   max-width:1160px;
-
   padding:12px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(10,48,42,.92),
-      rgba(4,28,24,.92)
-    );
-
+  background:rgba(6,31,27,.84);
   border:1px solid var(--line-strong);
   border-radius:22px;
-
-  box-shadow:
-    var(--shadow),
-    inset 0 1px rgba(255,255,255,.025);
-
+  box-shadow:var(--shadow);
   backdrop-filter:blur(20px);
 }
 
 .field{
+  min-width:0;
   display:flex;
   flex-direction:column;
   gap:6px;
 }
 
 .field label{
-  padding-left:3px;
-
-  color:#91b8b0;
-
-  font-size:11px;
+  padding-left:2px;
+  color:#91b4ac;
+  font-size:10px;
   font-weight:750;
-  letter-spacing:.3px;
 }
 
 .field input,
 .field select,
 .field textarea{
   width:100%;
-
-  border:1px solid rgba(160,255,236,.12);
-
-  background:
-    linear-gradient(
-      145deg,
-      #06241f,
-      #051d19
-    );
-
-  color:white;
-
-  border-radius:12px;
-
-  padding:12px 13px;
-
+  min-width:0;
+  border:1px solid rgba(160,255,236,.11);
+  background:#041a16;
+  color:#fff;
+  border-radius:11px;
+  padding:11px 12px;
   outline:none;
+}
 
-  transition:.25s ease;
+.field textarea{
+  min-height:110px;
+  resize:vertical;
 }
 
 .field input::placeholder,
@@ -463,149 +349,102 @@ h3{
   color:#52746d;
 }
 
-.field input:hover,
-.field select:hover,
-.field textarea:hover{
-  border-color:rgba(25,230,194,.25);
-}
-
 .field input:focus,
 .field select:focus,
 .field textarea:focus{
   border-color:var(--teal);
-
-  box-shadow:
-    0 0 0 3px rgba(25,230,194,.07),
-    0 0 20px rgba(25,230,194,.06);
+  box-shadow:0 0 0 3px rgba(25,230,194,.07);
 }
 
 .field select option{
   background:#06241f;
-  color:white;
 }
 
 .primary-btn{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:11px;
-
-  border:1px solid rgba(25,230,194,.2);
+  gap:9px;
+  border:1px solid rgba(127,255,232,.15);
   border-radius:13px;
-
-  padding:13px 20px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #19e6c2,
-      #079f88
-    );
-
+  padding:12px 19px;
+  background:linear-gradient(135deg,var(--teal),#079f88);
   color:#00241e;
-
   font-weight:850;
-
-  box-shadow:
-    0 12px 30px rgba(25,230,194,.16);
-
+  box-shadow:0 12px 30px rgba(25,230,194,.15);
   transition:.25s ease;
-}
-
-.primary-btn span{
-  font-size:19px;
 }
 
 .primary-btn:hover{
   transform:translateY(-2px);
-
-  filter:brightness(1.07);
-
-  box-shadow:
-    0 16px 38px rgba(25,230,194,.23);
+  filter:brightness(1.06);
 }
 
 .search-btn{
   align-self:end;
-
-  height:48px;
-
-  white-space:nowrap;
+  min-width:155px;
+  height:46px;
 }
 
 .micro-note{
-  margin:13px 0 0;
-
-  color:#719a91;
-
-  font-size:12px;
+  margin-top:11px;
+  color:#648c83;
+  font-size:11px;
 }
 
-
-/* =========================================================
-   TRUST STRIP
-   ========================================================= */
+/* =========================
+TRUST
+========================= */
 
 .trust-strip{
-  position:relative;
-  z-index:5;
-
   display:grid;
   grid-template-columns:repeat(4,1fr);
-
   border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);
-
-  background:#041b17;
+  background:#031512;
 }
 
 .trust-strip div{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:9px;
-
-  padding:23px 10px;
-
-  color:#c9e4de;
-
-  font-size:13px;
+  gap:8px;
+  padding:20px 8px;
+  color:#bad6d0;
+  font-size:12px;
+  font-weight:650;
+  text-align:center;
 }
 
 .trust-strip strong{
   color:var(--teal);
-  font-size:17px;
+  font-size:16px;
 }
 
-
-/* =========================================================
-   GENERAL SECTIONS
-   ========================================================= */
+/* =========================
+GENERAL
+========================= */
 
 .section{
   width:min(1320px,100%);
   margin:auto;
-
-  padding:110px 6vw;
+  padding:105px 6vw;
 }
 
 .section-heading{
   display:flex;
   align-items:flex-end;
   justify-content:space-between;
-
-  gap:45px;
-
-  margin-bottom:45px;
+  gap:40px;
+  margin-bottom:42px;
 }
 
 .section-heading > div{
-  max-width:780px;
+  max-width:760px;
 }
 
 .section-heading > p{
   max-width:470px;
-
   color:var(--muted);
 }
 
@@ -615,64 +454,50 @@ h3{
 }
 
 .centered > p{
-  margin-left:auto;
-  margin-right:auto;
+  margin:14px auto 0;
+  max-width:650px;
 }
 
+h2{
+  font-size:clamp(33px,4vw,53px);
+  line-height:1.06;
+  letter-spacing:-2px;
+  font-weight:820;
+}
 
-/* =========================================================
-   VENUE PLACEHOLDER
-   ========================================================= */
+/* =========================
+VENUE DISCOVERY
+========================= */
 
 .venue-placeholder{
   position:relative;
-
-  min-height:390px;
-
+  min-height:370px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-
   text-align:center;
-
-  padding:50px;
-
   overflow:hidden;
-
-  border:1px dashed rgba(25,230,194,.25);
+  padding:45px;
+  border:1px dashed rgba(25,230,194,.23);
   border-radius:28px;
-
   background:
-    radial-gradient(
-      circle at center,
-      rgba(25,230,194,.07),
-      transparent 45%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(10,51,44,.78),
-      rgba(4,27,23,.88)
-    );
-
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.025);
+    radial-gradient(circle at center,rgba(25,230,194,.065),transparent 45%),
+    linear-gradient(145deg,rgba(9,42,36,.78),rgba(3,20,17,.88));
 }
 
 .venue-placeholder::before,
 .venue-placeholder::after{
   content:"";
   position:absolute;
-
+  border:1px solid rgba(25,230,194,.055);
   border-radius:50%;
-  border:1px solid rgba(25,230,194,.06);
-
   pointer-events:none;
 }
 
 .venue-placeholder::before{
-  width:300px;
-  height:300px;
+  width:290px;
+  height:290px;
 }
 
 .venue-placeholder::after{
@@ -680,424 +505,283 @@ h3{
   height:450px;
 }
 
-.placeholder-orbit{
+.placeholder-icon{
   position:relative;
   z-index:2;
-
-  margin-bottom:20px;
-}
-
-.placeholder-icon{
-  width:72px;
-  height:72px;
-
+  width:70px;
+  height:70px;
   display:grid;
   place-items:center;
-
-  border-radius:20px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(25,230,194,.16),
-      rgba(25,230,194,.035)
-    );
-
-  border:1px solid rgba(25,230,194,.3);
-
-  color:var(--teal-bright);
-
+  margin-bottom:18px;
+  border:1px solid rgba(25,230,194,.28);
+  border-radius:19px;
+  background:rgba(25,230,194,.08);
+  color:var(--mint);
+  font-size:25px;
   font-weight:900;
-  letter-spacing:1px;
-
-  box-shadow:
-    0 0 35px rgba(25,230,194,.1);
+  box-shadow:0 0 35px rgba(25,230,194,.08);
 }
 
 .status-chip{
+  position:relative;
+  z-index:2;
   display:inline-flex;
   align-items:center;
   gap:7px;
-
-  margin-bottom:12px;
-
-  padding:6px 11px;
-
-  border:1px solid rgba(25,230,194,.18);
+  margin-bottom:10px;
+  padding:5px 10px;
+  border:1px solid rgba(25,230,194,.16);
   border-radius:999px;
-
-  background:rgba(25,230,194,.05);
-
-  color:#8deede;
-
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:1px;
-  text-transform:uppercase;
+  background:rgba(25,230,194,.035);
+  color:#82cabc;
+  font-size:8px;
+  font-weight:850;
+  letter-spacing:1.2px;
 }
 
 .status-chip i{
-  width:6px;
-  height:6px;
-
+  width:5px;
+  height:5px;
   border-radius:50%;
-
   background:var(--teal);
+  box-shadow:0 0 8px var(--teal);
+}
 
-  box-shadow:0 0 10px var(--teal);
+.venue-placeholder h3,
+.venue-placeholder p,
+.venue-placeholder a{
+  position:relative;
+  z-index:2;
 }
 
 .venue-placeholder h3{
-  position:relative;
-  z-index:2;
-
-  margin:0 0 8px;
-
-  font-size:25px;
+  margin-bottom:7px;
+  font-size:24px;
 }
 
 .venue-placeholder p{
-  position:relative;
-  z-index:2;
-
-  max-width:600px;
-
-  margin:0 0 25px;
-
+  max-width:580px;
+  margin-bottom:23px;
   color:var(--muted);
 }
 
 .secondary-btn{
-  position:relative;
-  z-index:2;
-
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
-
-  border:1px solid rgba(25,230,194,.32);
-  border-radius:13px;
-
-  padding:12px 18px;
-
-  color:#ddfff8;
-
-  font-weight:750;
-
+  gap:8px;
+  padding:11px 17px;
+  border:1px solid rgba(25,230,194,.3);
+  border-radius:12px;
   background:rgba(25,230,194,.035);
-
-  transition:.25s ease;
+  color:#ddfff8;
+  font-size:13px;
+  font-weight:750;
 }
 
-.secondary-btn:hover{
-  border-color:var(--teal);
-
-  background:rgba(25,230,194,.09);
-
-  transform:translateY(-1px);
-}
-
-
-/* =========================================================
-   HOW IT WORKS
-   ========================================================= */
+/* =========================
+HOW IT WORKS
+========================= */
 
 .dark-section{
   width:100%;
   max-width:none;
-
   background:
-    radial-gradient(
-      circle at 50% 0,
-      rgba(25,230,194,.055),
-      transparent 30%
-    ),
-    linear-gradient(
-      180deg,
-      #031613,
-      #051f1a
-    );
+    radial-gradient(circle at 50% 0,rgba(25,230,194,.055),transparent 32%),
+    linear-gradient(180deg,#031411,#041d19);
+  border-top:1px solid rgba(97,255,229,.035);
+  border-bottom:1px solid rgba(97,255,229,.035);
 }
 
 .steps{
   width:min(1200px,100%);
   margin:auto;
-
   display:grid;
   grid-template-columns:repeat(3,1fr);
-
   gap:18px;
 }
 
 .step-card{
   position:relative;
-
-  padding:35px;
-
+  min-height:245px;
+  padding:32px;
   border:1px solid var(--line);
   border-radius:22px;
-
-  background:
-    linear-gradient(
-      145deg,
-      rgba(10,51,44,.78),
-      rgba(5,29,25,.82)
-    );
-
+  background:rgba(7,31,27,.75);
   transition:.3s ease;
 }
 
 .step-card:hover{
   transform:translateY(-5px);
-
   border-color:rgba(25,230,194,.3);
-
-  box-shadow:
-    0 20px 50px rgba(0,0,0,.22),
-    0 0 35px rgba(25,230,194,.05);
+  box-shadow:0 22px 55px rgba(0,0,0,.23);
 }
 
 .featured-step{
-  border-color:rgba(25,230,194,.28);
-
-  background:
-    radial-gradient(
-      circle at 80% 10%,
-      rgba(25,230,194,.09),
-      transparent 35%
-    ),
-    linear-gradient(
-      145deg,
-      rgba(10,57,49,.9),
-      rgba(5,29,25,.9)
-    );
+  border-color:rgba(25,230,194,.27);
 }
 
 .step-number{
   position:absolute;
-
-  right:25px;
-  top:19px;
-
-  color:rgba(25,230,194,.27);
-
-  font-size:31px;
+  top:17px;
+  right:23px;
+  color:rgba(25,230,194,.22);
+  font-size:28px;
   font-weight:900;
 }
 
 .step-icon{
-  margin-bottom:24px;
-
+  width:45px;
+  height:45px;
+  display:grid;
+  place-items:center;
+  margin-bottom:23px;
+  border:1px solid rgba(25,230,194,.16);
+  border-radius:13px;
+  background:rgba(25,230,194,.06);
   color:var(--teal);
-
-  font-size:30px;
+  font-size:21px;
 }
 
 .step-card h3{
   margin-bottom:8px;
-
-  font-size:21px;
+  font-size:20px;
 }
 
 .step-card p{
   color:var(--muted);
+  font-size:14px;
 }
 
 .mini-ai{
   display:inline-flex;
   align-items:center;
-  gap:7px;
-
-  margin-top:22px;
-
-  padding:6px 9px;
-
-  border:1px solid rgba(25,230,194,.2);
+  gap:6px;
+  margin-top:18px;
+  padding:5px 8px;
+  border:1px solid rgba(25,230,194,.16);
   border-radius:999px;
-
-  background:rgba(25,230,194,.05);
-
-  color:#8ef4e2;
-
-  font-size:9px;
-  font-weight:850;
-  letter-spacing:1.2px;
+  color:#78cfc0;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:1px;
 }
 
 .mini-ai span{
   width:5px;
   height:5px;
-
   border-radius:50%;
-
   background:var(--teal);
-
-  box-shadow:0 0 8px var(--teal);
 }
 
-
-/* =========================================================
-   SMART DISCOVERY
-   ========================================================= */
+/* =========================
+SMART AI
+========================= */
 
 .smart-section{
   width:min(1200px,100%);
   margin:auto;
-
-  padding:115px 6vw;
-
+  padding:110px 6vw;
   display:grid;
   grid-template-columns:1.05fr .95fr;
-
-  gap:80px;
-
+  gap:75px;
   align-items:center;
 }
 
 .smart-copy > p:not(.eyebrow){
   max-width:620px;
-
   color:var(--muted);
-
-  font-size:17px;
+  font-size:16px;
 }
 
 .check-list{
   list-style:none;
-
-  padding:0;
-  margin:29px 0 0;
-
   display:grid;
-  gap:13px;
+  gap:12px;
+  margin-top:27px;
 }
 
 .check-list li{
   display:flex;
   align-items:center;
-  gap:12px;
-
-  color:#d9f1ec;
-
+  gap:10px;
+  color:#cbe6e0;
   font-size:14px;
 }
 
 .check-list li span{
+  width:22px;
+  height:22px;
+  flex:none;
   display:grid;
   place-items:center;
-
-  width:23px;
-  height:23px;
-
-  flex:none;
-
   border-radius:50%;
-
   background:rgba(25,230,194,.08);
-
+  border:1px solid rgba(25,230,194,.15);
   color:var(--teal);
-
-  font-size:12px;
-  font-weight:900;
+  font-size:10px;
 }
 
-
-/* =========================================================
-   AI WINDOW
-   ========================================================= */
+/* AI DEMO */
 
 .smart-demo{
-  position:relative;
-
-  padding:0;
-
   overflow:hidden;
-
-  border:1px solid rgba(25,230,194,.22);
-  border-radius:25px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #0a342d,
-      #041e19
-    );
-
-  box-shadow:
-    var(--shadow),
-    0 0 50px rgba(25,230,194,.05);
+  border:1px solid rgba(25,230,194,.2);
+  border-radius:26px;
+  background:linear-gradient(145deg,#092f28,#031b17);
+  box-shadow:var(--shadow);
 }
 
 .ai-window-top{
   display:flex;
   align-items:center;
-
-  padding:15px 18px;
-
+  padding:14px 18px;
   border-bottom:1px solid var(--line);
-
-  background:rgba(0,0,0,.12);
-
-  font-size:10px;
+  color:#789f97;
+  font-size:9px;
   font-weight:800;
-  letter-spacing:1.5px;
-  color:#8eafa8;
+  letter-spacing:1.3px;
 }
 
 .window-dots{
   display:flex;
   gap:5px;
-
   margin-right:auto;
 }
 
 .window-dots i{
-  width:6px;
-  height:6px;
-
+  width:5px;
+  height:5px;
   border-radius:50%;
-
-  background:#376c61;
+  background:#39766b;
 }
 
 .ai-window-top b{
-  margin-left:auto;
-
   color:var(--teal);
-
-  font-size:9px;
 }
 
 .requirement-label{
-  padding:25px 28px 0;
-
-  color:#668e85;
-
-  font-size:9px;
+  padding:22px 25px 0;
+  color:#608c83;
+  font-size:8px;
   font-weight:850;
-  letter-spacing:1.8px;
+  letter-spacing:1.5px;
 }
 
 .requirement{
-  padding:13px 28px 23px;
-
+  padding:10px 25px 20px;
   border-bottom:1px solid var(--line);
-
-  font-size:17px;
-  font-weight:700;
   color:#eafff9;
+  font-size:16px;
+  font-weight:700;
 }
 
 .match{
   display:grid;
-  grid-template-columns:32px 1fr auto;
+  grid-template-columns:31px 1fr auto;
   align-items:center;
-
-  gap:8px;
-
-  padding:16px 28px;
-
+  gap:9px;
+  padding:14px 25px;
   border-bottom:1px solid var(--line);
 }
 
@@ -1106,83 +790,61 @@ h3{
 }
 
 .match-icon{
+  width:25px;
+  height:25px;
   display:grid;
   place-items:center;
-
-  width:23px;
-  height:23px;
-
-  border-radius:50%;
-
-  background:rgba(25,230,194,.09);
-
+  border-radius:8px;
+  background:rgba(25,230,194,.07);
+  border:1px solid rgba(25,230,194,.14);
   color:var(--teal);
-
-  font-size:11px;
-  font-weight:900;
+  font-size:10px;
 }
 
 .match div{
+  min-width:0;
   display:flex;
   flex-direction:column;
 }
 
 .match small{
-  color:#648b82;
-
-  font-size:9px;
+  color:#638e85;
+  font-size:8px;
   font-weight:800;
   letter-spacing:1px;
 }
 
 .match b{
   color:#dffaf5;
-
-  font-size:13px;
+  font-size:12px;
 }
 
-.match > strong{
-  color:var(--teal-bright);
-
-  font-size:13px;
+.match strong{
+  color:var(--mint);
+  font-size:11px;
 }
 
-
-/* =========================================================
-   VENUE OWNER
-   ========================================================= */
+/* =========================
+VENUE OWNER
+========================= */
 
 .owner-section{
-  padding:80px 6vw;
+  padding:75px 6vw;
 }
 
 .owner-card{
   width:min(1200px,100%);
   margin:auto;
-
   display:flex;
   align-items:center;
   justify-content:space-between;
-
-  gap:45px;
-
-  padding:55px;
-
-  border:1px solid rgba(25,230,194,.23);
+  gap:40px;
+  padding:50px;
+  border:1px solid rgba(25,230,194,.22);
   border-radius:29px;
-
   background:
-    radial-gradient(
-      circle at 90% 20%,
-      rgba(25,230,194,.09),
-      transparent 35%
-    ),
-    linear-gradient(
-      135deg,
-      #0b4038,
-      #06241f
-    );
-
+    radial-gradient(circle at 90% 10%,rgba(25,230,194,.09),transparent 32%),
+    linear-gradient(135deg,#0a3b34,#041e19);
   box-shadow:var(--shadow);
 }
 
@@ -1191,83 +853,45 @@ h3{
 }
 
 .owner-content > p:not(.eyebrow){
-  max-width:700px;
-
   margin-top:12px;
-
   color:var(--muted);
 }
 
 .owner-points{
   display:grid;
   grid-template-columns:1fr 1fr;
-
-  gap:10px;
-
-  margin-top:25px;
-
-  color:#d9f1ec;
-
-  font-size:14px;
-}
-
-.owner-points span{
-  position:relative;
+  gap:9px 25px;
+  margin-top:23px;
+  color:#d3ece7;
+  font-size:13px;
 }
 
 .owner-btn{
   flex:none;
 }
 
-
-/* =========================================================
-   FORM
-   ========================================================= */
+/* =========================
+FORMS
+========================= */
 
 .form-section{
-  padding-top:80px;
-}
-
-.form-section .section-heading{
-  display:block;
-
-  text-align:center;
-}
-
-.form-section .section-heading > p{
-  margin:15px auto 0;
-
-  max-width:650px;
+  padding-top:65px;
 }
 
 .form-card{
   width:min(1000px,100%);
   margin:auto;
-
-  padding:36px;
-
+  padding:35px;
   border:1px solid var(--line);
-  border-radius:25px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #072a24,
-      #041c18
-    );
-
-  box-shadow:
-    0 25px 75px rgba(0,0,0,.25);
+  border-radius:26px;
+  background:linear-gradient(145deg,#072a24,#041c18);
+  box-shadow:0 25px 75px rgba(0,0,0,.25);
 }
 
 .form-grid{
   display:grid;
-
   grid-template-columns:1fr 1fr;
-
   gap:18px;
-
-  margin-bottom:25px;
 }
 
 .form-grid .full{
@@ -1275,51 +899,33 @@ h3{
 }
 
 .form-submit{
-  min-width:210px;
+  margin-top:23px;
+  min-width:205px;
 }
 
 .form-note{
-  margin-top:12px;
-
-  color:#668e85;
-
-  font-size:11px;
+  margin-top:10px;
+  color:#60877f;
+  font-size:10px;
 }
 
-
-/* =========================================================
-   CONTACT
-   ========================================================= */
+/* =========================
+CONTACT CTA
+========================= */
 
 .cta-section{
   width:min(1200px,calc(100% - 40px));
-
   margin:30px auto 90px;
-
-  padding:58px;
-
+  padding:55px;
   display:grid;
   grid-template-columns:1fr .9fr;
-
+  gap:55px;
   align-items:center;
-
-  gap:60px;
-
   border:1px solid rgba(25,230,194,.2);
   border-radius:30px;
-
   background:
-    radial-gradient(
-      circle at 90% 20%,
-      rgba(25,230,194,.1),
-      transparent 35%
-    ),
-    linear-gradient(
-      110deg,
-      #0b4038,
-      #041f1a
-    );
-
+    radial-gradient(circle at 90% 20%,rgba(25,230,194,.1),transparent 35%),
+    linear-gradient(110deg,#0b4038,#041f1a);
   box-shadow:var(--shadow);
 }
 
@@ -1329,311 +935,154 @@ h3{
 
 .contact-heading > p:not(.eyebrow){
   max-width:600px;
-
   margin-top:15px;
-
   color:var(--muted);
 }
 
 .contact-pills{
   display:grid;
-
+  grid-template-columns:1fr;
   gap:11px;
 }
 
-
-/* =========================================================
-   PREMIUM CONTACT PILLS
-   ========================================================= */
+/* PREMIUM CONTACT PILLS */
 
 .contact-pill{
-  position:relative;
-
+  min-width:0;
   display:grid;
-
-  grid-template-columns:44px 1fr 30px;
-
+  grid-template-columns:44px minmax(0,1fr) 25px;
   align-items:center;
-
-  gap:13px;
-
+  gap:12px;
   min-height:70px;
-
   padding:10px 13px;
-
   border:1px solid rgba(25,230,194,.13);
   border-radius:17px;
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(12,55,48,.78),
-      rgba(4,26,22,.82)
-    );
-
-  box-shadow:
-    inset 0 1px rgba(255,255,255,.025);
-
+  background:linear-gradient(135deg,rgba(12,55,48,.78),rgba(4,26,22,.82));
   transition:.28s ease;
 }
 
 .contact-pill:hover{
-  transform:translateX(5px);
-
+  transform:translateX(4px);
   border-color:rgba(25,230,194,.35);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(13,65,55,.9),
-      rgba(5,31,26,.95)
-    );
-
-  box-shadow:
-    0 12px 35px rgba(0,0,0,.22),
-    0 0 30px rgba(25,230,194,.05);
 }
 
 .pill-icon{
   width:42px;
   height:42px;
-
   display:grid;
   place-items:center;
-
   border:1px solid rgba(25,230,194,.18);
   border-radius:13px;
-
   background:rgba(25,230,194,.055);
-
   color:var(--teal);
-
-  font-size:17px;
-  font-weight:800;
+  font-size:16px;
 }
 
-.contact-pill div{
+.contact-pill .pill-content{
   min-width:0;
-
   display:flex;
   flex-direction:column;
 }
 
 .contact-pill small{
   color:#608b82;
-
   font-size:8px;
   font-weight:850;
-
   letter-spacing:1.3px;
+  text-transform:uppercase;
 }
 
 .contact-pill strong{
+  min-width:0;
   overflow:hidden;
-
   color:#e5faf6;
-
   font-size:13px;
   font-weight:700;
-
   text-overflow:ellipsis;
   white-space:nowrap;
 }
 
 .pill-arrow{
   color:var(--teal);
-
-  font-size:18px;
-
+  font-size:16px;
   text-align:center;
 }
 
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
+/* =========================
+FOOTER
+========================= */
 
 .footer{
-  display:grid;
-
-  grid-template-columns:1.1fr 1fr;
-
-  gap:50px;
-
-  padding:58px 6vw 25px;
-
+  padding:50px 6vw 24px;
   border-top:1px solid var(--line);
-
-  background:#010a09;
+  background:#010908;
 }
 
-.footer-brand img{
-  width:220px;
+.footer-main{
+  width:min(1200px,100%);
+  margin:auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:50px;
+}
 
-  margin-bottom:12px;
+.footer-brand-name{
+  display:inline-block;
+  margin-bottom:10px;
+  font-size:20px;
+  font-weight:850;
+}
 
-  filter:drop-shadow(0 0 18px rgba(25,230,194,.06));
+.footer-brand-name span{
+  color:var(--teal);
 }
 
 .footer-brand p{
   max-width:430px;
-
-  color:var(--muted);
-
-  font-size:13px;
+  color:#718f89;
+  font-size:12px;
 }
 
 .footer-links{
   display:grid;
-
   grid-template-columns:repeat(3,1fr);
-
-  gap:25px;
+  gap:20px;
 }
 
 .footer-links h4{
-  margin-bottom:12px;
-
-  color:white;
-
-  font-size:13px;
+  margin-bottom:11px;
+  color:#e5f8f4;
+  font-size:12px;
 }
 
 .footer-links a{
   display:block;
-
-  margin:8px 0;
-
-  color:#789e96;
-
-  font-size:12px;
-
-  transition:.2s ease;
+  margin:7px 0;
+  color:#678a83;
+  font-size:11px;
 }
 
 .footer-links a:hover{
   color:var(--teal);
 }
 
-.copyright{
-  grid-column:1/-1;
-
+.footer-bottom{
+  width:min(1200px,100%);
+  margin:32px auto 0;
+  padding-top:18px;
   display:flex;
   justify-content:space-between;
   gap:20px;
-
-  padding-top:20px;
-
   border-top:1px solid var(--line);
-
-  color:#567c73;
-
-  font-size:11px;
+  color:#4f716a;
+  font-size:10px;
 }
 
-.footer-tag{
-  color:#6b978d;
-  letter-spacing:1px;
-}
+/* =========================
+MOBILE
+========================= */
 
-
-/* =========================================================
-   MODAL
-   ========================================================= */
-
-.modal{
-  position:fixed;
-  inset:0;
-
-  z-index:200;
-
-  display:none;
-  align-items:center;
-  justify-content:center;
-
-  padding:20px;
-
-  background:rgba(0,0,0,.78);
-
-  backdrop-filter:blur(10px);
-}
-
-.modal.open{
-  display:flex;
-}
-
-.modal-box{
-  position:relative;
-
-  width:min(560px,100%);
-
-  padding:32px;
-
-  border:1px solid rgba(25,230,194,.25);
-  border-radius:25px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #092e27,
-      #041b17
-    );
-
-  box-shadow:var(--shadow);
-}
-
-.modal-close{
-  position:absolute;
-
-  right:18px;
-  top:12px;
-
-  border:0;
-  background:none;
-
-  color:#a9c9c2;
-
-  font-size:29px;
-
-  cursor:pointer;
-}
-
-.modal-box form{
-  display:grid;
-  gap:16px;
-
-  margin-top:22px;
-}
-
-
-/* =========================================================
-   SUBTLE ANIMATION
-   ========================================================= */
-
-@keyframes softFloat{
-  0%,100%{
-    transform:translateY(0);
-  }
-
-  50%{
-    transform:translateY(-4px);
-  }
-}
-
-.smart-demo{
-  animation:softFloat 6s ease-in-out infinite;
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media(max-width:1100px){
-
-  nav{
-    gap:18px;
-  }
+@media(max-width:1050px){
 
   .search-card{
     grid-template-columns:1fr 1fr;
@@ -1645,11 +1094,6 @@ h3{
 
   .smart-section{
     grid-template-columns:1fr;
-    gap:50px;
-  }
-
-  .smart-demo{
-    max-width:650px;
   }
 
   .owner-card{
@@ -1663,26 +1107,22 @@ h3{
 
   .cta-section{
     grid-template-columns:1fr;
-    gap:30px;
   }
-
 }
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
 
 @media(max-width:760px){
 
   .site-header{
-    min-height:68px;
-
-    padding:11px 20px;
+    min-height:67px;
+    padding:10px 20px;
   }
 
-  .brand img{
-    width:150px;
+  .brand-name{
+    font-size:18px;
+  }
+
+  .brand-tag{
+    display:none;
   }
 
   .menu-toggle{
@@ -1692,26 +1132,17 @@ h3{
 
   nav{
     display:none;
-
     position:absolute;
-
-    top:68px;
+    top:67px;
     left:0;
     right:0;
-
-    padding:18px 20px 22px;
-
+    padding:17px 20px 22px;
     flex-direction:column;
     align-items:stretch;
-
-    gap:5px;
-
-    background:
-      rgba(2,13,12,.97);
-
+    gap:4px;
+    background:rgba(2,13,12,.97);
+    backdrop-filter:blur(20px);
     border-bottom:1px solid var(--line);
-
-    box-shadow:0 20px 40px rgba(0,0,0,.3);
   }
 
   nav.open{
@@ -1719,82 +1150,48 @@ h3{
   }
 
   nav a{
-    padding:13px 10px;
+    padding:11px 5px;
   }
 
   .nav-cta{
     text-align:center;
-    margin-top:7px;
+    margin-top:5px;
   }
-
-
-  /* HERO */
 
   .hero{
     min-height:auto;
-
-    padding:75px 20px 90px;
-  }
-
-  .hero::before{
-    width:300px;
-    height:300px;
-
-    right:-150px;
-    top:-100px;
-  }
-
-  .ai-badge{
-    font-size:8px;
-    letter-spacing:1.1px;
+    padding:72px 20px 88px;
   }
 
   h1{
-    font-size:44px;
-    line-height:1.04;
-
+    font-size:43px;
     letter-spacing:-2.5px;
   }
 
   .hero-text{
     font-size:15px;
-    line-height:1.65;
+    line-height:1.7;
   }
-
-
-  /* SEARCH */
 
   .search-card{
     grid-template-columns:1fr;
-
     padding:14px;
-
     border-radius:19px;
   }
 
   .search-btn{
-    height:50px;
+    height:49px;
   }
-
-
-  /* TRUST */
 
   .trust-strip{
     grid-template-columns:1fr 1fr;
   }
 
   .trust-strip div{
-    min-height:70px;
-
-    padding:15px 7px;
-
-    font-size:10px;
-
-    text-align:center;
+    min-height:68px;
+    padding:14px 6px;
+    font-size:9px;
   }
-
-
-  /* SECTIONS */
 
   .section{
     padding:75px 20px;
@@ -1802,12 +1199,12 @@ h3{
 
   .section-heading{
     display:block;
-
-    margin-bottom:32px;
+    margin-bottom:30px;
   }
 
   .section-heading > p{
-    margin-top:17px;
+    margin-top:16px;
+    font-size:14px;
   }
 
   h2{
@@ -1815,57 +1212,27 @@ h3{
     letter-spacing:-1.3px;
   }
 
-
-  /* VENUE */
-
   .venue-placeholder{
-    min-height:360px;
-
-    padding:35px 20px;
+    min-height:350px;
+    padding:32px 20px;
   }
-
-  .venue-placeholder h3{
-    font-size:21px;
-  }
-
-  .venue-placeholder p{
-    font-size:13px;
-  }
-
-
-  /* STEPS */
 
   .steps{
     grid-template-columns:1fr;
   }
 
   .step-card{
-    padding:30px 25px;
+    min-height:auto;
+    padding:29px 24px;
   }
-
-
-  /* SMART */
 
   .smart-section{
     padding:75px 20px;
-
     gap:40px;
-  }
-
-  .smart-copy > p:not(.eyebrow){
-    font-size:15px;
   }
 
   .smart-demo{
     width:100%;
-  }
-
-  .requirement{
-    font-size:14px;
-  }
-
-  .match{
-    padding:14px 18px;
   }
 
   .requirement-label{
@@ -1876,43 +1243,37 @@ h3{
   .requirement{
     padding-left:18px;
     padding-right:18px;
+    font-size:14px;
   }
 
-
-  /* OWNER */
+  .match{
+    padding:14px 18px;
+  }
 
   .owner-section{
     padding:40px 20px;
   }
 
   .owner-card{
-    padding:32px 24px;
-
+    padding:32px 23px;
     border-radius:24px;
   }
 
   .owner-points{
     grid-template-columns:1fr;
-
-    font-size:13px;
   }
 
-
-  /* FORM */
-
   .form-section{
-    padding-top:60px;
+    padding-top:55px;
   }
 
   .form-card{
     padding:23px 18px;
-
     border-radius:20px;
   }
 
   .form-grid{
     grid-template-columns:1fr;
-
     gap:15px;
   }
 
@@ -1924,37 +1285,23 @@ h3{
     width:100%;
   }
 
-
-  /* CONTACT */
-
   .cta-section{
     width:calc(100% - 40px);
-
     margin:25px auto 65px;
-
-    padding:35px 22px;
-
+    padding:34px 21px;
     border-radius:24px;
   }
 
-  .contact-pills{
-    gap:9px;
-  }
-
   .contact-pill{
-    min-height:64px;
-
-    grid-template-columns:39px 1fr 24px;
-
-    gap:10px;
-
+    grid-template-columns:39px minmax(0,1fr) 22px;
+    min-height:65px;
+    gap:9px;
     padding:9px 10px;
   }
 
   .pill-icon{
     width:37px;
     height:37px;
-
     border-radius:11px;
   }
 
@@ -1966,35 +1313,25 @@ h3{
     font-size:7px;
   }
 
-
-  /* FOOTER */
-
   .footer{
+    padding:43px 20px 23px;
+  }
+
+  .footer-main{
     grid-template-columns:1fr;
-
-    padding:45px 20px 25px;
-
-    gap:35px;
+    gap:32px;
   }
 
   .footer-links{
-    grid-template-columns:1fr 1fr;
-
-    gap:25px;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:15px;
   }
 
-  .copyright{
+  .footer-bottom{
     flex-direction:column;
-
     gap:8px;
   }
-
 }
-
-
-/* =========================================================
-   SMALL PHONES
-   ========================================================= */
 
 @media(max-width:420px){
 
@@ -2006,8 +1343,13 @@ h3{
     font-size:30px;
   }
 
+  .trust-strip{
+    grid-template-columns:1fr;
+  }
+
   .trust-strip div{
-    font-size:9px;
+    justify-content:flex-start;
+    padding-left:22px;
   }
 
   .owner-card{
@@ -2017,32 +1359,7 @@ h3{
   .footer-links{
     grid-template-columns:1fr 1fr;
   }
-
-  .contact-pill{
-    grid-template-columns:36px 1fr 20px;
-  }
-
-  .pill-arrow{
-    font-size:15px;
-  }
-
 }
-
-
-/* =========================================================
-   ACCESSIBILITY
-   ========================================================= */
-
-:focus-visible{
-  outline:2px solid var(--teal);
-
-  outline-offset:3px;
-}
-
-
-/* =========================================================
-   REDUCE MOTION
-   ========================================================= */
 
 @media(prefers-reduced-motion:reduce){
 
@@ -2053,5 +1370,813 @@ h3{
     animation:none!important;
     transition:none!important;
   }
-
 }
+</style>
+
+</head>
+
+<body>
+
+<!-- =========================
+HEADER
+========================= -->
+
+<header class="site-header">
+
+  <a href="#home" class="brand" aria-label="Select My Venue Home">
+    <div class="brand-name">Select<span>My</span>Venue</div>
+    <div class="brand-tag">Smart Venue Discovery</div>
+  </a>
+
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+    ☰
+  </button>
+
+  <nav id="mainNav">
+    <a href="#home">Home</a>
+    <a href="#how">How It Works</a>
+    <a href="#smart">Smart Discovery</a>
+    <a href="#owners">Venue Owners</a>
+    <a href="#contact" class="nav-cta">Contact</a>
+  </nav>
+
+</header>
+
+<!-- =========================
+HERO
+========================= -->
+
+<main>
+
+<section class="hero" id="home">
+
+  <div class="hero-content">
+
+```
+<div class="ai-badge">
+  <span class="ai-pulse"></span>
+  AI-INSPIRED VENUE DISCOVERY
+</div>
+
+<p class="eyebrow">Find the right place for your moment</p>
+
+<h1>
+  Discover venues
+  <span>that fit your event.</span>
+</h1>
+
+<p class="hero-text">
+  Tell us what you need. Select My Venue helps you discover
+  suitable venues for weddings, parties, corporate events and
+  celebrations — smarter, faster and with less searching.
+</p>
+
+
+<!-- SEARCH -->
+
+<form class="search-card" id="searchForm">
+
+  <div class="field">
+    <label for="eventType">Event Type</label>
+    <select id="eventType" required>
+      <option value="">Select event</option>
+      <option>Wedding</option>
+      <option>Engagement</option>
+      <option>Birthday Party</option>
+      <option>Corporate Event</option>
+      <option>Reception</option>
+      <option>Anniversary</option>
+      <option>Other Celebration</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="location">Location</label>
+    <input
+      id="location"
+      type="text"
+      placeholder="City / Area"
+      required
+    >
+  </div>
+
+  <div class="field">
+    <label for="guests">Guests</label>
+    <select id="guests">
+      <option value="">Guests</option>
+      <option>Up to 50</option>
+      <option>50–100</option>
+      <option>100–250</option>
+      <option>250–500</option>
+      <option>500+</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="date">Event Date</label>
+    <input id="date" type="date">
+  </div>
+
+  <button class="primary-btn search-btn" type="submit">
+    Find Venues →
+  </button>
+
+</form>
+
+<p class="micro-note">
+  ✦ Smart matching concept • Verified venue discovery • Built for India
+</p>
+```
+
+  </div>
+
+</section>
+
+<!-- =========================
+TRUST STRIP
+========================= -->
+
+<section class="trust-strip">
+
+  <div>
+    <strong>01</strong>
+    Smart Discovery
+  </div>
+
+  <div>
+    <strong>02</strong>
+    Venue Focused
+  </div>
+
+  <div>
+    <strong>03</strong>
+    Faster Shortlisting
+  </div>
+
+  <div>
+    <strong>04</strong>
+    Built for India
+  </div>
+
+</section>
+
+<!-- =========================
+VENUE DISCOVERY
+========================= -->
+
+<section class="section" id="discover">
+
+  <div class="section-heading">
+
+```
+<div>
+  <p class="eyebrow">Venue Discovery</p>
+
+  <h2>
+    Your event.
+    <span class="gradient-text">Your perfect venue.</span>
+  </h2>
+</div>
+
+<p>
+  Stop browsing endless venue listings. Start with your
+  requirements and discover options designed around your event.
+</p>
+```
+
+  </div>
+
+  <div class="venue-placeholder">
+
+```
+<div class="placeholder-icon">⌁</div>
+
+<div class="status-chip">
+  <i></i>
+  Smart Discovery Engine
+</div>
+
+<h3>Tell us what you're planning</h3>
+
+<p>
+  Wedding, birthday, engagement, corporate event or any special
+  celebration — your venue search starts here.
+</p>
+
+<a href="#contact" class="secondary-btn">
+  Start Your Search →
+</a>
+```
+
+  </div>
+
+</section>
+
+<!-- =========================
+HOW IT WORKS
+========================= -->
+
+<section class="section dark-section" id="how">
+
+  <div class="section-heading centered">
+
+```
+<div>
+  <p class="eyebrow">How It Works</p>
+
+  <h2>
+    Venue discovery,
+    <span class="gradient-text">made smarter.</span>
+  </h2>
+</div>
+
+<p>
+  A simple process designed to reduce the time between
+  your event requirement and the right venue.
+</p>
+```
+
+  </div>
+
+  <div class="steps">
+
+```
+<article class="step-card">
+
+  <span class="step-number">01</span>
+
+  <div class="step-icon">⌕</div>
+
+  <h3>Share Your Requirement</h3>
+
+  <p>
+    Tell us your event type, location, guest count,
+    date and important preferences.
+  </p>
+
+</article>
+
+
+<article class="step-card featured-step">
+
+  <span class="step-number">02</span>
+
+  <div class="step-icon">✦</div>
+
+  <h3>Smart Matching</h3>
+
+  <p>
+    Our AI-inspired discovery approach helps identify
+    venues that better match your requirements.
+  </p>
+
+  <div class="mini-ai">
+    <span></span>
+    SMART MATCHING
+  </div>
+
+</article>
+
+
+<article class="step-card">
+
+  <span class="step-number">03</span>
+
+  <div class="step-icon">✓</div>
+
+  <h3>Shortlist & Connect</h3>
+
+  <p>
+    Compare suitable options and connect with venues
+    that fit your event needs.
+  </p>
+
+</article>
+```
+
+  </div>
+
+</section>
+
+<!-- =========================
+SMART AI
+========================= -->
+
+<section class="smart-section" id="smart">
+
+  <div class="smart-copy">
+
+```
+<p class="eyebrow">Smart Venue Discovery</p>
+
+<h2>
+  Search less.
+  <span class="gradient-text">Match better.</span>
+</h2>
+
+<p>
+  Select My Venue is designed around the idea that finding a venue
+  should start with your requirements — not endless scrolling.
+</p>
+
+<ul class="check-list">
+
+  <li>
+    <span>✓</span>
+    Event-specific venue discovery
+  </li>
+
+  <li>
+    <span>✓</span>
+    Location and guest-size focused search
+  </li>
+
+  <li>
+    <span>✓</span>
+    Smart requirement-based matching
+  </li>
+
+  <li>
+    <span>✓</span>
+    Faster venue shortlisting
+  </li>
+
+</ul>
+```
+
+  </div>
+
+  <div class="smart-demo">
+
+```
+<div class="ai-window-top">
+
+  <div class="window-dots">
+    <i></i>
+    <i></i>
+    <i></i>
+  </div>
+
+  SMART VENUE ENGINE
+
+  <b>● ACTIVE</b>
+
+</div>
+
+
+<div class="requirement-label">
+  USER REQUIREMENT
+</div>
+
+<div class="requirement">
+  Wedding • Delhi • 300 Guests • Premium
+</div>
+
+
+<div class="match">
+
+  <div class="match-icon">✓</div>
+
+  <div>
+    <small>MATCH</small>
+    <b>Premium Banquet Venue</b>
+  </div>
+
+  <strong>96%</strong>
+
+</div>
+
+
+<div class="match">
+
+  <div class="match-icon">✓</div>
+
+  <div>
+    <small>MATCH</small>
+    <b>Wedding & Celebration Space</b>
+  </div>
+
+  <strong>92%</strong>
+
+</div>
+
+
+<div class="match">
+
+  <div class="match-icon">✓</div>
+
+  <div>
+    <small>MATCH</small>
+    <b>Large Guest Capacity</b>
+  </div>
+
+  <strong>89%</strong>
+
+</div>
+```
+
+  </div>
+
+</section>
+
+<!-- =========================
+VENUE OWNERS
+========================= -->
+
+<section class="owner-section" id="owners">
+
+  <div class="owner-card">
+
+```
+<div class="owner-content">
+
+  <p class="eyebrow">For Venue Owners</p>
+
+  <h2>
+    Put your venue in front of
+    <span class="gradient-text">the right customers.</span>
+  </h2>
+
+  <p>
+    Select My Venue helps venue owners receive relevant enquiries
+    from customers actively looking for spaces for their events.
+  </p>
+
+  <div class="owner-points">
+
+    <span>✓ Get relevant enquiries</span>
+    <span>✓ Showcase your venue</span>
+    <span>✓ Reach event customers</span>
+    <span>✓ Build your digital presence</span>
+
+  </div>
+
+</div>
+
+<a href="#venue-form" class="primary-btn owner-btn">
+  List Your Venue →
+</a>
+```
+
+  </div>
+
+</section>
+
+<!-- =========================
+VENUE OWNER FORM
+========================= -->
+
+<section class="section form-section" id="venue-form">
+
+  <div class="section-heading centered">
+
+```
+<div>
+  <p class="eyebrow">Venue Registration</p>
+
+  <h2>
+    Get your venue
+    <span class="gradient-text">discovered.</span>
+  </h2>
+</div>
+
+<p>
+  Share your basic venue details and our team can help you
+  understand the onboarding process.
+</p>
+```
+
+  </div>
+
+  <form class="form-card" id="venueForm">
+
+```
+<div class="form-grid">
+
+  <div class="field">
+    <label for="ownerName">Owner / Contact Name</label>
+    <input
+      id="ownerName"
+      type="text"
+      placeholder="Enter name"
+      required
+    >
+  </div>
+
+
+  <div class="field">
+    <label for="venueName">Venue Name</label>
+    <input
+      id="venueName"
+      type="text"
+      placeholder="Enter venue name"
+      required
+    >
+  </div>
+
+
+  <div class="field">
+    <label for="ownerPhone">Contact Number</label>
+    <input
+      id="ownerPhone"
+      type="tel"
+      placeholder="Enter contact number"
+      required
+    >
+  </div>
+
+
+  <div class="field">
+    <label for="venueCity">City / Location</label>
+    <input
+      id="venueCity"
+      type="text"
+      placeholder="Enter city or area"
+      required
+    >
+  </div>
+
+
+  <div class="field full">
+    <label for="venueDetails">Venue Details</label>
+    <textarea
+      id="venueDetails"
+      placeholder="Tell us about capacity, type of venue, facilities, etc."
+    ></textarea>
+  </div>
+
+</div>
+
+
+<button class="primary-btn form-submit" type="submit">
+  Submit Venue Details →
+</button>
+
+<p class="form-note">
+  Your details are used only for venue onboarding communication.
+</p>
+```
+
+  </form>
+
+</section>
+
+<!-- =========================
+CONTACT
+========================= -->
+
+<section class="cta-section" id="contact">
+
+  <div class="contact-heading">
+
+```
+<p class="eyebrow">Connect With Us</p>
+
+<h2>
+  Have a question?
+  <span class="gradient-text">Let's connect.</span>
+</h2>
+
+<p>
+  Whether you're searching for a venue or want to list your venue,
+  we're here to help you get started.
+</p>
+```
+
+  </div>
+
+  <div class="contact-pills">
+
+```
+<!-- EMAIL -->
+
+<a
+  class="contact-pill"
+  href="mailto:support@selectmyvenue.com"
+>
+
+  <span class="pill-icon">✉</span>
+
+  <span class="pill-content">
+    <small>Email</small>
+    <strong>support@selectmyvenue.com</strong>
+  </span>
+
+  <span class="pill-arrow">↗</span>
+
+</a>
+
+
+<!-- WEBSITE -->
+
+<a
+  class="contact-pill"
+  href="https://selectmyvenue.com"
+  target="_blank"
+  rel="noopener"
+>
+
+  <span class="pill-icon">◎</span>
+
+  <span class="pill-content">
+    <small>Website</small>
+    <strong>selectmyvenue.com</strong>
+  </span>
+
+  <span class="pill-arrow">↗</span>
+
+</a>
+
+
+<!-- PHONE -->
+
+<a
+  class="contact-pill"
+  href="tel:+919958716688"
+>
+
+  <span class="pill-icon">☎</span>
+
+  <span class="pill-content">
+    <small>Call Us</small>
+    <strong>+91 99587 16688</strong>
+  </span>
+
+  <span class="pill-arrow">↗</span>
+
+</a>
+
+
+<!-- WHATSAPP -->
+
+<a
+  class="contact-pill"
+  href="https://wa.me/919958716688"
+  target="_blank"
+  rel="noopener"
+>
+
+  <span class="pill-icon">◉</span>
+
+  <span class="pill-content">
+    <small>WhatsApp</small>
+    <strong>+91 99587 16688</strong>
+  </span>
+
+  <span class="pill-arrow">↗</span>
+
+</a>
+```
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- =========================
+FOOTER
+========================= -->
+
+<footer class="footer">
+
+  <div class="footer-main">
+
+```
+<div class="footer-brand">
+
+  <div class="footer-brand-name">
+    Select<span>My</span>Venue
+  </div>
+
+  <p>
+    Smart venue discovery for weddings, celebrations,
+    corporate events and special occasions across India.
+  </p>
+
+</div>
+
+
+<div class="footer-links">
+
+  <div>
+    <h4>Explore</h4>
+    <a href="#home">Home</a>
+    <a href="#how">How It Works</a>
+    <a href="#smart">Smart Discovery</a>
+  </div>
+
+  <div>
+    <h4>For Business</h4>
+    <a href="#owners">Venue Owners</a>
+    <a href="#venue-form">List Your Venue</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <div>
+    <h4>Connect</h4>
+    <a href="mailto:support@selectmyvenue.com">Email</a>
+    <a href="tel:+919958716688">Call</a>
+    <a href="https://wa.me/919958716688" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
+
+</div>
+```
+
+  </div>
+
+  <div class="footer-bottom">
+
+```
+<span>
+  © 2026 Select My Venue. All rights reserved.
+</span>
+
+<span>
+  Smart Venue Discovery • India
+</span>
+```
+
+  </div>
+
+</footer>
+
+<!-- =========================
+JAVASCRIPT
+========================= -->
+
+<script>
+
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
+
+menuToggle.addEventListener("click", () => {
+
+  const isOpen = mainNav.classList.toggle("open");
+
+  menuToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+
+  menuToggle.textContent = isOpen ? "×" : "☰";
+
+});
+
+
+document.querySelectorAll("#mainNav a").forEach(link => {
+
+  link.addEventListener("click", () => {
+
+    mainNav.classList.remove("open");
+
+    menuToggle.setAttribute("aria-expanded","false");
+
+    menuToggle.textContent = "☰";
+
+  });
+
+});
+
+
+/* SEARCH FORM */
+
+document.getElementById("searchForm").addEventListener("submit", function(event){
+
+  event.preventDefault();
+
+  const eventType = document.getElementById("eventType").value;
+  const location = document.getElementById("location").value;
+
+  if(!eventType || !location){
+    alert("Please select your event type and location.");
+    return;
+  }
+
+  alert(
+    "Thanks! Your venue search request has been captured.\n\n" +
+    "Event: " + eventType + "\n" +
+    "Location: " + location
+  );
+
+});
+
+
+/* VENUE OWNER FORM */
+
+document.getElementById("venueForm").addEventListener("submit", function(event){
+
+  event.preventDefault();
+
+  const ownerName = document.getElementById("ownerName").value;
+  const venueName = document.getElementById("venueName").value;
+
+  alert(
+    "Thank you, " + ownerName + "!\n\n" +
+    "Your venue \"" + venueName +
+    "\" details have been submitted."
+  );
+
+});
+
+</script>
+
+</body>
+</html>
