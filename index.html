@@ -1149,6 +1149,107 @@
 
   </script>
 
+  <script>
+/* =========================================
+   SELECT MY VENUE — WHATSAPP LEAD SYSTEM
+   ========================================= */
+
+const WHATSAPP_NUMBER = "919958716688";
+
+/* -----------------------------------------
+   1. CUSTOMER VENUE SEARCH
+   ----------------------------------------- */
+
+const searchForm = document.getElementById("searchForm");
+
+if (searchForm) {
+  searchForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const eventType = document.getElementById("eventType")?.value || "";
+    const location = document.getElementById("location")?.value || "";
+    const guests = document.getElementById("guests")?.value || "Not specified";
+    const date = document.getElementById("date")?.value || "Not specified";
+
+    const message =
+`🔎 NEW VENUE SEARCH REQUEST
+
+Event Type: ${eventType}
+Location: ${location}
+Guests: ${guests}
+Event Date: ${date}
+
+Please help me find suitable venues.
+
+— Select My Venue
+Smart Venue Discovery`;
+
+    const whatsappURL =
+      "https://wa.me/" + WHATSAPP_NUMBER +
+      "?text=" + encodeURIComponent(message);
+
+    window.open(whatsappURL, "_blank");
+  });
+}
+
+
+/* -----------------------------------------
+   2. VENUE OWNER REGISTRATION
+   ----------------------------------------- */
+
+/*
+   Finds the venue registration form automatically.
+   If your form has id="venueForm", it will use that.
+*/
+
+const venueForm =
+  document.getElementById("venueForm") ||
+  document.querySelector("#venue-form form");
+
+if (venueForm) {
+  venueForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const ownerName =
+      document.getElementById("ownerName")?.value || "";
+
+    const venueName =
+      document.getElementById("venueName")?.value || "";
+
+    const ownerPhone =
+      document.getElementById("ownerPhone")?.value || "";
+
+    const venueCity =
+      document.getElementById("venueCity")?.value || "";
+
+    const venueDetails =
+      document.getElementById("venueDetails")?.value ||
+      "Not provided";
+
+    const message =
+`🏢 NEW VENUE OWNER REGISTRATION
+
+Owner / Contact Name: ${ownerName}
+Venue Name: ${venueName}
+Contact Number: ${ownerPhone}
+City / Location: ${venueCity}
+
+Venue Details:
+${venueDetails}
+
+Please contact this venue owner regarding onboarding.
+
+— Select My Venue
+Smart Venue Discovery`;
+
+    const whatsappURL =
+      "https://wa.me/" + WHATSAPP_NUMBER +
+      "?text=" + encodeURIComponent(message);
+
+    window.open(whatsappURL, "_blank");
+  });
+}
+</script>
 </body>
 </html>
 ```
