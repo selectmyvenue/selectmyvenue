@@ -186,3 +186,24 @@ h2{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:
   color: #16d2b2;
   transform: translateY(-1px);
 }
+.footer-links .footer-contact {
+  display: table !important;
+  width: auto !important;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 7px 12px !important;
+  margin: 6px 0 !important;
+  border: 1px solid rgba(22, 210, 178, 0.28) !important;
+  border-radius: 999px !important;
+  background: rgba(22, 210, 178, 0.05) !important;
+  color: #dffaf5 !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+}
+
+.footer-links .footer-contact:hover {
+  border-color: #16d2b2 !important;
+  background: rgba(22, 210, 178, 0.12) !important;
+  color: #16d2b2 !important;
+}
