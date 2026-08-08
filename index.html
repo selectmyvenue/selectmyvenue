@@ -3,248 +3,733 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Select My Venue — discover verified venues, send relevant enquiries, and find the right venue for your occasion.">
-  <title>Select My Venue | Find the Right Venue</title>
-  <link rel="icon" type="image/png" href="logo.png">
+
+  <title>Select My Venue — Smart Venue Discovery</title>
+  <meta name="description" content="Find verified venues for weddings, parties, corporate events and celebrations with Select My Venue.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <header class="site-header">
-    <a class="brand" href="#home" aria-label="Select My Venue home">
-      <img src="logo.png" alt="Select My Venue logo">
-    </a>
 
-    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+<header class="site-header">
 
-    <nav id="mainNav">
-      <a href="#venues">Find a Venue</a>
-      <a href="#how-it-works">How It Works</a>
-      <a href="#for-venues">For Venue Owners</a>
-      <a href="#contact">Contact</a>
-      <a class="nav-cta" href="#venue-form">List Your Venue</a>
-    </nav>
-  </header>
+  <a href="#home" class="brand">
+    <img src="logo.png" alt="Select My Venue">
+  </a>
 
-  <main>
-    <section class="hero" id="home">
-      <div class="hero-glow"></div>
-      <div class="hero-content">
-        <p class="eyebrow">SMARTER VENUE DISCOVERY</p>
-        <h1>Find the Right Venue.<br><span>Make Every Occasion Memorable.</span></h1>
-        <p class="hero-text">
-          Discover verified venues, compare your options and connect with the right venue
-          for your event — all in one place.
-        </p>
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+    ☰
+  </button>
 
-        <form class="search-card" id="venueSearch">
-          <div class="field">
-            <label for="location">Location</label>
-            <input id="location" name="location" type="text" placeholder="e.g. Gurgaon" required>
-          </div>
-          <div class="field">
-            <label for="eventType">Event Type</label>
-            <select id="eventType" name="eventType" required>
-              <option value="">Select event</option>
-              <option>Wedding</option>
-              <option>Engagement</option>
-              <option>Birthday</option>
-              <option>Corporate Event</option>
-              <option>Party</option>
-              <option>Reception</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="guests">Guests</label>
-            <input id="guests" name="guests" type="number" min="1" placeholder="e.g. 300" required>
-          </div>
-          <div class="field">
-            <label for="budget">Budget</label>
-            <select id="budget" name="budget" required>
-              <option value="">Select budget</option>
-              <option>Under ₹1 Lakh</option>
-              <option>₹1–3 Lakh</option>
-              <option>₹3–5 Lakh</option>
-              <option>₹5–10 Lakh</option>
-              <option>₹10 Lakh+</option>
-              <option>Flexible</option>
-            </select>
-          </div>
-          <button class="primary-btn search-btn" type="submit">Find My Venue <span>→</span></button>
-        </form>
-        <p class="micro-note">Tell us what you need. We'll help you find relevant venue options.</p>
-      </div>
-    </section>
+  <nav id="mainNav">
+    <a href="#venues">Find a Venue</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#for-venues">For Venue Owners</a>
+    <a href="#contact">Contact</a>
+    <a class="nav-cta" href="#venue-form">List Your Venue <span>→</span></a>
+  </nav>
 
-    <section class="trust-strip">
-      <div><strong>✓</strong><span>Verified Venues</span></div>
-      <div><strong>✓</strong><span>Relevant Enquiries</span></div>
-      <div><strong>✓</strong><span>Smarter Discovery</span></div>
-      <div><strong>✓</strong><span>Better Booking Opportunities</span></div>
-    </section>
+</header>
 
-    <section class="section" id="venues">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">EXPLORE</p>
-          <h2>Find a Venue That Fits Your Occasion</h2>
-        </div>
-        <p>From intimate celebrations to large weddings and corporate events, discover spaces that match your needs.</p>
-      </div>
 
-      <div class="venue-placeholder">
-        <div class="placeholder-icon">SMV</div>
-        <h3>Your First Verified Venues Will Appear Here</h3>
-        <p>We're building our launch network. Venue listings will be added as venues are onboarded.</p>
-        <a class="secondary-btn" href="#venue-form">Own a Venue? Join the Launch →</a>
-      </div>
-    </section>
+<main>
 
-    <section class="section dark-section" id="how-it-works">
-      <div class="section-heading centered">
-        <p class="eyebrow">HOW IT WORKS</p>
-        <h2>Your Perfect Venue in 3 Simple Steps</h2>
-      </div>
+<!-- HERO -->
 
-      <div class="steps">
-        <article class="step-card">
-          <span>01</span>
-          <div class="step-icon">⌕</div>
-          <h3>Tell Us What You Need</h3>
-          <p>Share your location, event type, guest count, budget and preferences.</p>
-        </article>
-        <article class="step-card">
-          <span>02</span>
-          <div class="step-icon">✦</div>
-          <h3>Discover Matching Venues</h3>
-          <p>Explore venue options that fit your occasion and requirements.</p>
-        </article>
-        <article class="step-card">
-          <span>03</span>
-          <div class="step-icon">↗</div>
-          <h3>Connect &amp; Enquire</h3>
-          <p>Shortlist your favourites and connect with the venue for the next step.</p>
-        </article>
-      </div>
-    </section>
+<section class="hero" id="home">
 
-    <section class="smart-section">
-      <div class="smart-copy">
-        <p class="eyebrow">SMART VENUE DISCOVERY</p>
-        <h2>Venue Search, Made Smarter.</h2>
-        <p>
-          Instead of searching endlessly, tell us what matters to you. Select My Venue is
-          designed to make venue discovery simpler, faster and more relevant.
-        </p>
-        <ul class="check-list">
-          <li>Location-focused discovery</li>
-          <li>Event and capacity matching</li>
-          <li>Budget-aware options</li>
-          <li>Verified venue information</li>
-        </ul>
-      </div>
-      <div class="smart-demo">
-        <div class="demo-top"><span>YOUR REQUIREMENT</span><span class="live-dot">● LIVE</span></div>
-        <p>“Wedding venue in Gurgaon for 500 guests”</p>
-        <div class="match"><span>✓</span><b>Venue Match</b><strong>Relevant</strong></div>
-        <div class="match"><span>✓</span><b>Capacity</b><strong>500+</strong></div>
-        <div class="match"><span>✓</span><b>Location</b><strong>Gurgaon</strong></div>
-        <div class="match"><span>✓</span><b>Verification</b><strong>Verified</strong></div>
-      </div>
-    </section>
+  <div class="hero-grid"></div>
 
-    <section class="owner-section" id="for-venues">
-      <div class="owner-card">
-        <div>
-          <p class="eyebrow">FOR VENUE OWNERS</p>
-          <h2>Own a Venue? Get Discovered by the Right Customers.</h2>
-          <p>Showcase your venue to people actively looking for event spaces and receive relevant enquiries.</p>
-          <div class="owner-points">
-            <span>✓ Create your venue profile</span>
-            <span>✓ Showcase photos &amp; facilities</span>
-            <span>✓ Receive relevant enquiries</span>
-            <span>✓ Grow your visibility</span>
-          </div>
-        </div>
-        <a class="primary-btn" href="#venue-form">List Your Venue — FREE Trial <span>→</span></a>
-      </div>
-    </section>
+  <div class="hero-glow glow-one"></div>
+  <div class="hero-glow glow-two"></div>
 
-    <section class="section form-section" id="venue-form">
-      <div class="section-heading centered">
-        <p class="eyebrow">JOIN THE LAUNCH</p>
-        <h2>List Your Venue</h2>
-        <p>Register your venue for the Select My Venue launch network. We'll contact you for verification and listing details.</p>
-      </div>
+  <div class="hero-content">
 
-      <form class="form-card" id="venueOwnerForm">
-        <div class="form-grid">
-          <div class="field"><label for="ownerName">Owner / Manager Name *</label><input id="ownerName" name="ownerName" required></div>
-          <div class="field"><label for="venueName">Venue Name *</label><input id="venueName" name="venueName" required></div>
-          <div class="field"><label for="ownerPhone">WhatsApp Number *</label><input id="ownerPhone" name="ownerPhone" type="tel" required></div>
-          <div class="field"><label for="venueCity">City / Location *</label><input id="venueCity" name="venueCity" placeholder="e.g. Gurgaon" required></div>
-          <div class="field"><label for="venueType">Venue Type *</label>
-            <select id="venueType" name="venueType" required>
-              <option value="">Select type</option><option>Banquet Hall</option><option>Farmhouse</option><option>Hotel</option><option>Party Hall</option><option>Wedding Venue</option><option>Conference / Corporate</option><option>Other</option>
-            </select>
-          </div>
-          <div class="field"><label for="capacity">Guest Capacity *</label><input id="capacity" name="capacity" type="number" min="1" required></div>
-          <div class="field"><label for="venuePrice">Starting Price</label><input id="venuePrice" name="venuePrice" placeholder="e.g. ₹2,50,000"></div>
-          <div class="field"><label for="venueMap">Google Maps Link</label><input id="venueMap" name="venueMap" type="url" placeholder="https://maps.google.com/..."></div>
-          <div class="field full"><label for="venueFacilities">Facilities / Key Features</label><textarea id="venueFacilities" name="venueFacilities" rows="4" placeholder="Parking, rooms, catering, decoration, outdoor lawn, etc."></textarea></div>
-        </div>
-        <button class="primary-btn" type="submit">Submit Venue Details <span>→</span></button>
-        <p class="form-note">By submitting, you agree that Select My Venue may contact you about your venue listing.</p>
-      </form>
-    </section>
-
-    <section class="cta-section" id="contact">
-      <div>
-        <p class="eyebrow">SELECT MY VENUE</p>
-        <h2>Big Moments Deserve the Right Venue.</h2>
-        <p>Ready to discover or list a venue?</p>
-      </div>
-      <div class="cta-buttons">
-        <a class="primary-btn" href="#home">Find My Venue <span>→</span></a>
-        <a class="secondary-btn" href="#venue-form">List Your Venue</a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-brand">
-      <img src="logo.png" alt="Select My Venue">
-      <p>Verified Venues. Relevant Enquiries. Better Bookings.</p>
+    <div class="ai-badge">
+      <span class="ai-pulse"></span>
+      AI-POWERED VENUE DISCOVERY
     </div>
-    <div class="footer-links">
-      <div><h4>Customers</h4><a href="#venues">Find a Venue</a><a href="#how-it-works">How It Works</a></div>
-      <div><h4>Venue Owners</h4><a href="#venue-form">List Your Venue</a><a href="#for-venues">Benefits</a></div>
-      <div class="contact-column"><h4>Contact</h4>
-        <a class="footer-contact" href="tel:+919958716688">📞 +91 99587 16688</a>
-<a class="footer-contact" href="https://wa.me/919958716688" target="_blank">💬 WhatsApp Us</a>
-<a class="footer-contact" href="mailto:support@selectmyvenue.com">✉️ support@selectmyvenue.com</a>
-<a class="footer-contact" href="#home">🌐 selectmyvenue.com</a>
-    </div>
-    <div class="copyright">© 2026 Select My Venue. All rights reserved.</div>
-  </footer>
 
-  <div class="modal" id="enquiryModal" aria-hidden="true">
-    <div class="modal-box">
-      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
-      <p class="eyebrow">VENUE ENQUIRY</p>
-      <h2>Tell us a little more.</h2>
-      <p>Your search details are ready. Add your contact information and we'll prepare your enquiry.</p>
-      <form id="customerForm">
-        <input type="hidden" id="searchSummary" name="searchSummary">
-        <div class="field"><label for="customerName">Your Name *</label><input id="customerName" name="customerName" required></div>
-        <div class="field"><label for="customerPhone">WhatsApp / Mobile *</label><input id="customerPhone" name="customerPhone" type="tel" required></div>
-        <div class="field"><label for="customerDate">Event Date</label><input id="customerDate" name="customerDate" type="date"></div>
-        <div class="field"><label for="customerRequirements">Additional Requirements</label><textarea id="customerRequirements" name="customerRequirements" rows="3" placeholder="Tell us anything important..."></textarea></div>
-        <button class="primary-btn" type="submit">Send Enquiry <span>→</span></button>
-      </form>
-    </div>
+    <p class="eyebrow">SELECT MY VENUE</p>
+
+    <h1>
+      Find the Right Venue.
+      <span>Smarter.</span>
+    </h1>
+
+    <p class="hero-text">
+      Tell us what you're planning and discover venue options matched
+      to your location, event, guest count and budget.
+    </p>
+
+    <form class="search-card" id="venueSearch">
+
+      <div class="field">
+        <label for="location">Location</label>
+        <input id="location" name="location" type="text" placeholder="e.g. Gurgaon" required>
+      </div>
+
+      <div class="field">
+        <label for="eventType">Event Type</label>
+
+        <select id="eventType" name="eventType" required>
+          <option value="">Select event</option>
+          <option>Wedding</option>
+          <option>Engagement</option>
+          <option>Birthday</option>
+          <option>Corporate Event</option>
+          <option>Party</option>
+          <option>Reception</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="guests">Guests</label>
+        <input id="guests" name="guests" type="number" min="1" placeholder="e.g. 300" required>
+      </div>
+
+      <div class="field">
+        <label for="budget">Budget</label>
+
+        <select id="budget" name="budget" required>
+          <option value="">Select budget</option>
+          <option>Under ₹1 Lakh</option>
+          <option>₹1–3 Lakh</option>
+          <option>₹3–5 Lakh</option>
+          <option>₹5–10 Lakh</option>
+          <option>₹10 Lakh+</option>
+          <option>Flexible</option>
+        </select>
+      </div>
+
+      <button class="primary-btn search-btn" type="submit">
+        Find My Venue <span>→</span>
+      </button>
+
+    </form>
+
+    <p class="micro-note">
+      ✦ Smart matching • Verified information • Relevant enquiries
+    </p>
+
   </div>
 
-  <script src="script.js"></script>
+</section>
+
+
+<!-- TRUST -->
+
+<section class="trust-strip">
+
+  <div>
+    <strong>✓</strong>
+    <span>Verified Venues</span>
+  </div>
+
+  <div>
+    <strong>✦</strong>
+    <span>Smart Discovery</span>
+  </div>
+
+  <div>
+    <strong>◎</strong>
+    <span>Relevant Enquiries</span>
+  </div>
+
+  <div>
+    <strong>↗</strong>
+    <span>Better Opportunities</span>
+  </div>
+
+</section>
+
+
+<!-- VENUES -->
+
+<section class="section" id="venues">
+
+  <div class="section-heading">
+
+    <div>
+      <p class="eyebrow">EXPLORE</p>
+      <h2>Find a Venue That Fits Your Occasion</h2>
+    </div>
+
+    <p>
+      From intimate celebrations to grand weddings and corporate events,
+      discover spaces that match what you're looking for.
+    </p>
+
+  </div>
+
+
+  <div class="venue-placeholder">
+
+    <div class="placeholder-orbit">
+      <div class="placeholder-icon">SMV</div>
+    </div>
+
+    <span class="status-chip">
+      <i></i> Launch Network
+    </span>
+
+    <h3>Your First Verified Venues Are Coming</h3>
+
+    <p>
+      We're building a trusted network of venues. New verified listings
+      will appear here as venues join Select My Venue.
+    </p>
+
+    <a class="secondary-btn" href="#venue-form">
+      Own a Venue? Join the Launch <span>→</span>
+    </a>
+
+  </div>
+
+</section>
+
+
+<!-- HOW IT WORKS -->
+
+<section class="section dark-section" id="how-it-works">
+
+  <div class="section-heading centered">
+
+    <p class="eyebrow">HOW IT WORKS</p>
+
+    <h2>Your Perfect Venue in 3 Simple Steps</h2>
+
+    <p>
+      A simpler way to move from idea to venue.
+    </p>
+
+  </div>
+
+
+  <div class="steps">
+
+    <article class="step-card">
+
+      <span class="step-number">01</span>
+
+      <div class="step-icon">⌕</div>
+
+      <h3>Tell Us What You Need</h3>
+
+      <p>
+        Share your location, event type, guest count and budget.
+      </p>
+
+    </article>
+
+
+    <article class="step-card featured-step">
+
+      <span class="step-number">02</span>
+
+      <div class="step-icon">✦</div>
+
+      <h3>Get Smart Matches</h3>
+
+      <p>
+        Discover venue options aligned with your requirements.
+      </p>
+
+      <div class="mini-ai">
+        <span></span> SMART MATCH
+      </div>
+
+    </article>
+
+
+    <article class="step-card">
+
+      <span class="step-number">03</span>
+
+      <div class="step-icon">↗</div>
+
+      <h3>Connect & Enquire</h3>
+
+      <p>
+        Shortlist your favourites and connect with the venue.
+      </p>
+
+    </article>
+
+  </div>
+
+</section>
+
+
+<!-- SMART AI -->
+
+<section class="smart-section">
+
+  <div class="smart-copy">
+
+    <p class="eyebrow">SMART VENUE DISCOVERY</p>
+
+    <h2>
+      Venue Search,
+      <span>Made Smarter.</span>
+    </h2>
+
+    <p>
+      Instead of endlessly browsing hundreds of listings, tell us
+      what matters to you. Select My Venue is designed to make
+      venue discovery faster, simpler and more relevant.
+    </p>
+
+    <ul class="check-list">
+
+      <li>
+        <span>✓</span>
+        Location-focused discovery
+      </li>
+
+      <li>
+        <span>✓</span>
+        Event & capacity matching
+      </li>
+
+      <li>
+        <span>✓</span>
+        Budget-aware options
+      </li>
+
+      <li>
+        <span>✓</span>
+        Verified venue information
+      </li>
+
+    </ul>
+
+  </div>
+
+
+  <div class="smart-demo">
+
+    <div class="ai-window-top">
+
+      <div class="window-dots">
+        <i></i>
+        <i></i>
+        <i></i>
+      </div>
+
+      <span>SMV AI MATCH</span>
+
+      <b>● LIVE</b>
+
+    </div>
+
+
+    <div class="requirement-label">
+      YOUR REQUIREMENT
+    </div>
+
+    <p class="requirement">
+      “Wedding venue in Gurgaon for 500 guests”
+    </p>
+
+
+    <div class="match">
+
+      <span class="match-icon">✓</span>
+
+      <div>
+        <small>VENUE MATCH</small>
+        <b>Relevant</b>
+      </div>
+
+      <strong>98%</strong>
+
+    </div>
+
+
+    <div class="match">
+
+      <span class="match-icon">✓</span>
+
+      <div>
+        <small>CAPACITY</small>
+        <b>500+ Guests</b>
+      </div>
+
+      <strong>✓</strong>
+
+    </div>
+
+
+    <div class="match">
+
+      <span class="match-icon">✓</span>
+
+      <div>
+        <small>LOCATION</small>
+        <b>Gurgaon</b>
+      </div>
+
+      <strong>✓</strong>
+
+    </div>
+
+
+    <div class="match">
+
+      <span class="match-icon">✓</span>
+
+      <div>
+        <small>VERIFICATION</small>
+        <b>Verified Venue</b>
+      </div>
+
+      <strong>✓</strong>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- VENUE OWNERS -->
+
+<section class="owner-section" id="for-venues">
+
+  <div class="owner-card">
+
+    <div class="owner-content">
+
+      <p class="eyebrow">FOR VENUE OWNERS</p>
+
+      <h2>
+        Own a Venue?
+        <span>Get Discovered.</span>
+      </h2>
+
+      <p>
+        Showcase your venue to people actively looking for event
+        spaces and receive relevant enquiries.
+      </p>
+
+
+      <div class="owner-points">
+
+        <span>✓ Create your venue profile</span>
+        <span>✓ Showcase photos & facilities</span>
+        <span>✓ Receive relevant enquiries</span>
+        <span>✓ Grow your visibility</span>
+
+      </div>
+
+    </div>
+
+
+    <a class="primary-btn owner-btn" href="#venue-form">
+      List Your Venue — FREE Trial
+      <span>→</span>
+    </a>
+
+  </div>
+
+</section>
+
+
+<!-- FORM -->
+
+<section class="section form-section" id="venue-form">
+
+  <div class="section-heading centered">
+
+    <p class="eyebrow">JOIN THE LAUNCH</p>
+
+    <h2>List Your Venue</h2>
+
+    <p>
+      Register your venue for the Select My Venue launch network.
+      We'll contact you for verification and listing details.
+    </p>
+
+  </div>
+
+
+  <form class="form-card" id="venueOwnerForm">
+
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="ownerName">Owner / Manager Name *</label>
+        <input id="ownerName" name="ownerName" required>
+      </div>
+
+      <div class="field">
+        <label for="venueName">Venue Name *</label>
+        <input id="venueName" name="venueName" required>
+      </div>
+
+      <div class="field">
+        <label for="ownerPhone">WhatsApp Number *</label>
+        <input id="ownerPhone" name="ownerPhone" type="tel" required>
+      </div>
+
+      <div class="field">
+        <label for="venueCity">City / Location *</label>
+        <input id="venueCity" name="venueCity" placeholder="e.g. Gurgaon" required>
+      </div>
+
+      <div class="field">
+
+        <label for="venueType">Venue Type *</label>
+
+        <select id="venueType" name="venueType" required>
+
+          <option value="">Select type</option>
+          <option>Banquet Hall</option>
+          <option>Farmhouse</option>
+          <option>Hotel</option>
+          <option>Party Hall</option>
+          <option>Wedding Venue</option>
+          <option>Conference / Corporate</option>
+          <option>Other</option>
+
+        </select>
+
+      </div>
+
+      <div class="field">
+
+        <label for="capacity">Guest Capacity *</label>
+
+        <input
+          id="capacity"
+          name="capacity"
+          type="number"
+          min="1"
+          required
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label for="venuePrice">Starting Price</label>
+
+        <input
+          id="venuePrice"
+          name="venuePrice"
+          placeholder="e.g. ₹2,50,000"
+        >
+
+      </div>
+
+      <div class="field">
+
+        <label for="venueMap">Google Maps Link</label>
+
+        <input
+          id="venueMap"
+          name="venueMap"
+          type="url"
+          placeholder="https://maps.google.com/..."
+        >
+
+      </div>
+
+      <div class="field full">
+
+        <label for="venueFacilities">
+          Facilities / Key Features
+        </label>
+
+        <textarea
+          id="venueFacilities"
+          name="venueFacilities"
+          rows="4"
+          placeholder="Parking, rooms, catering, decoration, outdoor lawn, etc."
+        ></textarea>
+
+      </div>
+
+    </div>
+
+
+    <button class="primary-btn form-submit" type="submit">
+
+      Submit Venue Details
+      <span>→</span>
+
+    </button>
+
+
+    <p class="form-note">
+      By submitting, you agree that Select My Venue may contact you
+      about your venue listing.
+    </p>
+
+  </form>
+
+</section>
+
+
+<!-- CONTACT -->
+
+<section class="contact-section" id="contact">
+
+  <div class="contact-glow"></div>
+
+  <div class="contact-inner">
+
+    <div class="contact-heading">
+
+      <p class="eyebrow">LET'S CONNECT</p>
+
+      <h2>
+        Big Moments
+        <span>Deserve the Right Venue.</span>
+      </h2>
+
+      <p>
+        Whether you're looking for a venue or want to list one,
+        we're here to help.
+      </p>
+
+    </div>
+
+
+    <div class="contact-pills">
+
+      <a class="contact-pill" href="https://selectmyvenue.com">
+
+        <span class="pill-icon">⌁</span>
+
+        <div>
+          <small>WEBSITE</small>
+          <strong>selectmyvenue.com</strong>
+        </div>
+
+        <span class="pill-arrow">↗</span>
+
+      </a>
+
+
+      <a class="contact-pill" href="mailto:support@selectmyvenue.com">
+
+        <span class="pill-icon">@</span>
+
+        <div>
+          <small>EMAIL</small>
+          <strong>support@selectmyvenue.com</strong>
+        </div>
+
+        <span class="pill-arrow">↗</span>
+
+      </a>
+
+
+      <a class="contact-pill" href="#venue-form">
+
+        <span class="pill-icon">✦</span>
+
+        <div>
+          <small>VENUE OWNERS</small>
+          <strong>List Your Venue — Free Trial</strong>
+        </div>
+
+        <span class="pill-arrow">→</span>
+
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+  <div class="footer-main">
+
+    <div class="footer-brand">
+
+      <a href="#home">
+        <img src="logo.png" alt="Select My Venue">
+      </a>
+
+      <p>
+        Smarter venue discovery for weddings, celebrations,
+        corporate events and everything in between.
+      </p>
+
+    </div>
+
+
+    <div class="footer-links">
+
+      <div>
+
+        <h4>Explore</h4>
+
+        <a href="#venues">Find a Venue</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#for-venues">For Venue Owners</a>
+
+      </div>
+
+
+      <div>
+
+        <h4>Connect</h4>
+
+        <a href="#contact">Contact</a>
+        <a href="mailto:support@selectmyvenue.com">
+          Email Support
+        </a>
+
+      </div>
+
+
+      <div>
+
+        <h4>Start</h4>
+
+        <a href="#venue-form">List Your Venue</a>
+        <a href="#home">Find My Venue</a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="footer-bottom">
+
+    <span>
+      © 2026 Select My Venue. All rights reserved.
+    </span>
+
+    <span class="footer-tag">
+      BUILT FOR SMARTER DISCOVERY ✦
+    </span>
+
+  </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
 </body>
 </html>
