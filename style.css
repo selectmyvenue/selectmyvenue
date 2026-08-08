@@ -327,3 +327,33 @@ h2{font-size:clamp(32px,4vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:
     grid-column: 1 / -1;
   }
 }
+/* Final Contact Visibility Fix */
+
+.footer-links .contact-column {
+  grid-template-columns: 1fr 1fr !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.footer-links .contact-column .footer-contact {
+  display: flex !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  justify-content: flex-start !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  padding: 8px 10px !important;
+  font-size: 11px !important;
+}
+
+.footer-links .contact-column .footer-contact {
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 760px) {
+  .footer-links .contact-column {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
