@@ -1148,8 +1148,7 @@
     });
 
   </script>
-
-  <script>
+<script>
 /* =========================================
    SELECT MY VENUE — WHATSAPP LEAD SYSTEM
    ========================================= */
@@ -1166,10 +1165,17 @@ if (searchForm) {
   searchForm.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const eventType = document.getElementById("eventType")?.value || "";
-    const location = document.getElementById("location")?.value || "";
-    const guests = document.getElementById("guests")?.value || "Not specified";
-    const date = document.getElementById("date")?.value || "Not specified";
+    const eventType =
+      document.getElementById("eventType")?.value || "";
+
+    const location =
+      document.getElementById("location")?.value || "";
+
+    const guests =
+      document.getElementById("guests")?.value || "Not specified";
+
+    const date =
+      document.getElementById("date")?.value || "Not specified";
 
     const message =
 `🔎 NEW VENUE SEARCH REQUEST
@@ -1185,8 +1191,10 @@ Please help me find suitable venues.
 Smart Venue Discovery`;
 
     const whatsappURL =
-      "https://wa.me/" + WHATSAPP_NUMBER +
-      "?text=" + encodeURIComponent(message);
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(message);
 
     window.open(whatsappURL, "_blank");
   });
@@ -1196,11 +1204,6 @@ Smart Venue Discovery`;
 /* -----------------------------------------
    2. VENUE OWNER REGISTRATION
    ----------------------------------------- */
-
-/*
-   Finds the venue registration form automatically.
-   If your form has id="venueForm", it will use that.
-*/
 
 const venueForm =
   document.getElementById("venueForm") ||
@@ -1243,13 +1246,13 @@ Please contact this venue owner regarding onboarding.
 Smart Venue Discovery`;
 
     const whatsappURL =
-      "https://wa.me/" + WHATSAPP_NUMBER +
-      "?text=" + encodeURIComponent(message);
+      "https://wa.me/" +
+      WHATSAPP_NUMBER +
+      "?text=" +
+      encodeURIComponent(message);
 
     window.open(whatsappURL, "_blank");
   });
 }
 </script>
-</body>
-</html>
-```
+
