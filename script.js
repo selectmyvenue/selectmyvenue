@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = ""; // Put your WhatsApp number here, e.g. "919876543210" (country code, no + or spaces).
+const WHATSAPP_NUMBER = "919958716688"; // Put your WhatsApp number here, e.g. "919876543210" (country code, no + or spaces).
 
 const menuToggle = document.getElementById("menuToggle");
 const mainNav = document.getElementById("mainNav");
