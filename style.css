@@ -243,3 +243,30 @@ footer .footer-contact {
   line-height: 1.25 !important;
   text-decoration: none !important;
 }
+/* Premium Select My Venue Contact Grid */
+
+footer .footer-contact {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 0 !important;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px !important;
+  margin: 4px 4px 4px 0 !important;
+  border: 1px solid rgba(22, 210, 178, 0.25) !important;
+  border-radius: 999px !important;
+  background: rgba(22, 210, 178, 0.05) !important;
+  color: #dffaf5 !important;
+  font-size: 11px !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  transition: all .2s ease;
+}
+
+footer .footer-contact:hover {
+  transform: translateY(-1px);
+  border-color: #16d2b2 !important;
+  background: rgba(22, 210, 178, 0.12) !important;
+  color: #16d2b2 !important;
+}
