@@ -30,7 +30,7 @@ const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
    change only this value.
 */
 
-const LEADS_TABLE = "enquiries";
+const LEADS_TABLE = "customer_enquiries";
 
 
 /* =========================================================
@@ -42,8 +42,8 @@ let supabaseClient = null;
 if (
   SUPABASE_URL &&
   SUPABASE_ANON_KEY &&
-  SUPABASE_URL !== "YOUR_SUPABASE_PROJECT_URL" &&
-  SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY"
+  SUPABASE_URL !== "https://uajqwyoqbbswkfiwosyw.supabase.co/" &&
+  SUPABASE_ANON_KEY !== "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7"
 ) {
   supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
