@@ -1182,3 +1182,33 @@ width: 100%;
     padding: 12px;
   }
 }
+/* =========================================================
+   CLICKABLE LEAD TABS
+========================================================= */
+
+.stat-tab {
+  width: 100%;
+  border: 1px solid #e7eaf0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stat-tab:hover {
+  transform: translateY(-2px);
+  border-color: #cfd4f5;
+  box-shadow: 0 10px 30px rgba(25, 34, 52, 0.08);
+}
+
+.stat-tab.active {
+  border-color: #6872d8;
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.10),
+    0 10px 30px rgba(25, 34, 52, 0.06);
+}
+
+.stat-tab.active .stat-icon {
+  background: #6872d8;
+  color: #fff;
+}
