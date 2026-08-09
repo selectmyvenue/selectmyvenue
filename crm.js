@@ -1625,61 +1625,50 @@ async function saveNewEnquiry() {
           requirements:
             requirements || null,
 
-          last_contacted_at:
-            null
+               last_contacted_at:
+        null
 
-        })
-        .select()
-        .single();
+    });
 
+if (error) {
 
-    if (error) {
+  console.error(
+    "ADD ENQUIRY ERROR:",
+    error
+  );
 
-      console.error(
-        "ADD ENQUIRY ERROR:",
-        error
-      );
+  if (message) {
 
+    message.textContent =
+      "Unable to save enquiry: " +
+      error.message;
+  }
 
-      if (message) {
+  return;
+}
 
-        message.textContent =
-          "Unable to save enquiry: " +
-          error.message;
-      }
+console.log(
+  "ENQUIRY CREATED"
+);
 
+if (message) {
 
-      return;
-    }
+  message.textContent =
+    "Enquiry added successfully.";
+}
 
+await loadEnquiries();
 
-    console.log(
-      "ENQUIRY CREATED:",
-      data
-    );
+clearAddEnquiryForm();
 
+setTimeout(
+  () => {
 
-    if (message) {
+    closeAddEnquiryModal();
 
-      message.textContent =
-        "Enquiry added successfully.";
-    }
-
-
-    await loadEnquiries();
-
-
-    clearAddEnquiryForm();
-
-
-    setTimeout(
-      () => {
-
-        closeAddEnquiryModal();
-
-      },
-      500
-    );
+  },
+  500
+);
 
 
   } catch (error) {
