@@ -40,6 +40,7 @@ if (menuToggle && mainNav) {
         "aria-expanded",
         isOpen ? "true" : "false"
       );
+
     }
   );
 
@@ -86,11 +87,14 @@ if (searchForm) {
     async (event) => {
 
       event.preventDefault();
+      event.stopPropagation();
+
 
       const submitButton =
         searchForm.querySelector(
           'button[type="submit"]'
         );
+
 
       const eventType =
         document
@@ -98,17 +102,20 @@ if (searchForm) {
           ?.value
           .trim();
 
+
       const location =
         document
           .getElementById("location")
           ?.value
           .trim();
 
+
       const guests =
         document
           .getElementById("guests")
           ?.value
           .trim();
+
 
       const eventDate =
         document
@@ -118,13 +125,15 @@ if (searchForm) {
 
 
       // -------------------------------------------------
-      // BASIC VALIDATION
+      // VALIDATION
       // -------------------------------------------------
 
       if (!eventType || !location) {
 
-        alert(
-          "Please select your event type and enter your location."
+        showNotification(
+          "Please complete your requirement",
+          "Please select an event type and enter your location.",
+          "error"
         );
 
         return;
@@ -132,7 +141,7 @@ if (searchForm) {
 
 
       // -------------------------------------------------
-      // BUTTON STATE
+      // BUTTON LOADING STATE
       // -------------------------------------------------
 
       if (submitButton) {
@@ -149,10 +158,19 @@ if (searchForm) {
 
 
       // -------------------------------------------------
-      // SUPABASE INSERT
+      // INSERT INTO SUPABASE
       // -------------------------------------------------
 
       try {
+
+        const requirements =
+          buildRequirements(
+            eventType,
+            location,
+            guests,
+            eventDate
+          );
+
 
         const {
           data,
@@ -192,12 +210,7 @@ if (searchForm) {
                 null,
 
               requirements:
-                buildRequirements(
-                  eventType,
-                  location,
-                  guests,
-                  eventDate
-                ),
+                requirements,
 
               source:
                 "Website",
@@ -225,7 +238,7 @@ if (searchForm) {
 
 
         // -------------------------------------------------
-        // ERROR
+        // SUPABASE ERROR
         // -------------------------------------------------
 
         if (error) {
@@ -235,9 +248,13 @@ if (searchForm) {
             error
           );
 
-          alert(
-            "Sorry, your enquiry could not be submitted. Please try again."
+
+          showNotification(
+            "Enquiry could not be submitted",
+            "Something went wrong while saving your enquiry. Please try again.",
+            "error"
           );
+
 
           return;
         }
@@ -256,7 +273,11 @@ if (searchForm) {
         searchForm.reset();
 
 
-        showSuccessMessage();
+        showNotification(
+          "Enquiry submitted successfully!",
+          "Thank you for choosing Select My Venue. We have received your requirement and our team will contact you shortly.",
+          "success"
+        );
 
 
       } catch (error) {
@@ -266,9 +287,13 @@ if (searchForm) {
           error
         );
 
-        alert(
-          "Something went wrong. Please try again."
+
+        showNotification(
+          "Something went wrong",
+          "We could not submit your enquiry right now. Please try again.",
+          "error"
         );
+
 
       } finally {
 
@@ -304,25 +329,21 @@ function convertGuestRangeToNumber(
   }
 
 
+  if (value.includes("500+")) {
+    return 500;
+  }
+
+
   const numbers =
     value.match(/\d+/g);
 
 
   if (!numbers || !numbers.length) {
-
-    if (
-      value.includes("500+")
-    ) {
-      return 500;
-    }
-
     return null;
   }
 
 
-  if (
-    numbers.length >= 2
-  ) {
+  if (numbers.length >= 2) {
 
     const first =
       Number(numbers[0]);
@@ -337,7 +358,9 @@ function convertGuestRangeToNumber(
   }
 
 
-  return Number(numbers[0]);
+  return Number(
+    numbers[0]
+  );
 
 }
 
@@ -355,13 +378,16 @@ function buildRequirements(
 
   const details = [];
 
+
   details.push(
     `Event: ${eventType}`
   );
 
+
   details.push(
     `Location: ${location}`
   );
+
 
   if (guests) {
 
@@ -370,6 +396,7 @@ function buildRequirements(
     );
 
   }
+
 
   if (eventDate) {
 
@@ -386,84 +413,111 @@ function buildRequirements(
 
 
 // =====================================================
-// SUCCESS MESSAGE
+// PREMIUM NOTIFICATION
 // =====================================================
 
-function showSuccessMessage() {
+function showNotification(
+  title,
+  message,
+  type = "success"
+) {
 
-  const message =
+  // Remove any existing notification
+  const oldNotification =
+    document.getElementById(
+      "smvNotification"
+    );
+
+  if (oldNotification) {
+    oldNotification.remove();
+  }
+
+
+  const isSuccess =
+    type === "success";
+
+
+  const overlay =
     document.createElement("div");
 
 
-  message.innerHTML = `
+  overlay.id =
+    "smvNotification";
 
-    <div style="
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.55);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:99999;
-      padding:20px;
-    ">
 
-      <div style="
-        width:min(460px,100%);
-        background:#ffffff;
-        border-radius:22px;
-        padding:35px 28px;
-        text-align:center;
-        box-shadow:0 25px 80px rgba(0,0,0,0.25);
-      ">
+  overlay.innerHTML = `
 
-        <div style="
-          width:60px;
-          height:60px;
-          margin:0 auto 18px;
-          border-radius:50%;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          background:#e9fff3;
-          color:#16a34a;
-          font-size:30px;
-          font-weight:700;
-        ">
-          ✓
-        </div>
+    <div class="smv-notification-overlay">
 
-        <h2 style="
-          margin:0 0 10px;
-          font-size:25px;
-        ">
-          Enquiry Submitted
-        </h2>
-
-        <p style="
-          margin:0 0 24px;
-          color:#667085;
-          line-height:1.6;
-        ">
-          Thank you! We have received your venue requirement.
-          Our team will contact you shortly.
-        </p>
+      <div
+        class="smv-notification-card
+        ${isSuccess
+          ? "smv-notification-success"
+          : "smv-notification-error"}"
+      >
 
         <button
           type="button"
-          id="successCloseBtn"
-          style="
-            border:0;
-            border-radius:12px;
-            padding:13px 28px;
-            background:#111827;
-            color:white;
-            font-size:15px;
-            font-weight:600;
-            cursor:pointer;
-          "
+          class="smv-notification-close"
+          id="smvNotificationClose"
+          aria-label="Close"
         >
-          Done
+          ×
+        </button>
+
+
+        <div
+          class="smv-notification-icon"
+        >
+          ${
+            isSuccess
+              ? "✓"
+              : "!"
+          }
+        </div>
+
+
+        <div
+          class="smv-notification-title"
+        >
+          ${escapeNotificationText(
+            title
+          )}
+        </div>
+
+
+        <div
+          class="smv-notification-message"
+        >
+          ${escapeNotificationText(
+            message
+          )}
+        </div>
+
+
+        ${
+          isSuccess
+            ? `
+              <div
+                class="smv-notification-note"
+              >
+                ✦ Select My Venue
+              </div>
+            `
+            : ""
+        }
+
+
+        <button
+          type="button"
+          class="smv-notification-button"
+          id="smvNotificationDone"
+        >
+          ${
+            isSuccess
+              ? "Done"
+              : "Try Again"
+          }
         </button>
 
       </div>
@@ -474,13 +528,59 @@ function showSuccessMessage() {
 
 
   document.body.appendChild(
-    message
+    overlay
   );
+
+
+  // ---------------------------------------------------
+  // ADD NOTIFICATION CSS
+  // ---------------------------------------------------
+
+  addNotificationStyles();
+
+
+  // ---------------------------------------------------
+  // CLOSE FUNCTION
+  // ---------------------------------------------------
+
+  const closeNotification =
+    () => {
+
+      const element =
+        document.getElementById(
+          "smvNotification"
+        );
+
+      if (element) {
+
+        element.classList.add(
+          "smv-notification-hide"
+        );
+
+
+        setTimeout(
+          () => {
+
+            element.remove();
+
+          },
+          250
+        );
+
+      }
+
+    };
 
 
   const closeButton =
     document.getElementById(
-      "successCloseBtn"
+      "smvNotificationClose"
+    );
+
+
+  const doneButton =
+    document.getElementById(
+      "smvNotificationDone"
     );
 
 
@@ -488,14 +588,452 @@ function showSuccessMessage() {
 
     closeButton.addEventListener(
       "click",
-      () => {
+      closeNotification
+    );
 
-        message.remove();
+  }
+
+
+  if (doneButton) {
+
+    doneButton.addEventListener(
+      "click",
+      closeNotification
+    );
+
+  }
+
+
+  const notificationOverlay =
+    overlay.querySelector(
+      ".smv-notification-overlay"
+    );
+
+
+  if (notificationOverlay) {
+
+    notificationOverlay.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target ===
+          notificationOverlay
+        ) {
+
+          closeNotification();
+
+        }
 
       }
     );
 
   }
+
+
+  // ---------------------------------------------------
+  // ESC KEY
+  // ---------------------------------------------------
+
+  const escHandler =
+    (event) => {
+
+      if (
+        event.key === "Escape"
+      ) {
+
+        closeNotification();
+
+        document.removeEventListener(
+          "keydown",
+          escHandler
+        );
+
+      }
+
+    };
+
+
+  document.addEventListener(
+    "keydown",
+    escHandler
+  );
+
+}
+
+
+// =====================================================
+// NOTIFICATION TEXT ESCAPE
+// =====================================================
+
+function escapeNotificationText(
+  value
+) {
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+// =====================================================
+// NOTIFICATION STYLES
+// =====================================================
+
+function addNotificationStyles() {
+
+  if (
+    document.getElementById(
+      "smvNotificationStyles"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+
+  style.id =
+    "smvNotificationStyles";
+
+
+  style.textContent = `
+
+    .smv-notification-overlay {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 999999;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      padding: 20px;
+
+      background:
+        rgba(7, 10, 20, 0.72);
+
+      backdrop-filter:
+        blur(8px);
+
+      animation:
+        smvFadeIn
+        0.2s ease;
+
+    }
+
+
+    .smv-notification-card {
+
+      position: relative;
+
+      width: min(460px, 100%);
+
+      padding: 38px 30px 30px;
+
+      text-align: center;
+
+      background: #ffffff;
+
+      border-radius: 24px;
+
+      box-shadow:
+        0 30px 100px
+        rgba(0, 0, 0, 0.30);
+
+      animation:
+        smvScaleIn
+        0.25s ease;
+
+    }
+
+
+    .smv-notification-close {
+
+      position: absolute;
+
+      top: 12px;
+
+      right: 14px;
+
+      width: 34px;
+
+      height: 34px;
+
+      border: 0;
+
+      border-radius: 50%;
+
+      background: #f2f4f7;
+
+      color: #667085;
+
+      font-size: 25px;
+
+      line-height: 1;
+
+      cursor: pointer;
+
+    }
+
+
+    .smv-notification-icon {
+
+      width: 72px;
+
+      height: 72px;
+
+      margin: 0 auto 20px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      border-radius: 50%;
+
+      font-size: 34px;
+
+      font-weight: 800;
+
+    }
+
+
+    .smv-notification-success
+    .smv-notification-icon {
+
+      background: #e9fff2;
+
+      color: #16a34a;
+
+      box-shadow:
+        0 0 0 8px #f3fff7;
+
+    }
+
+
+    .smv-notification-error
+    .smv-notification-icon {
+
+      background: #fff0f0;
+
+      color: #dc2626;
+
+      box-shadow:
+        0 0 0 8px #fff7f7;
+
+    }
+
+
+    .smv-notification-title {
+
+      margin-bottom: 12px;
+
+      color: #101828;
+
+      font-size: 25px;
+
+      line-height: 1.25;
+
+      font-weight: 750;
+
+    }
+
+
+    .smv-notification-message {
+
+      max-width: 390px;
+
+      margin: 0 auto;
+
+      color: #667085;
+
+      font-size: 15px;
+
+      line-height: 1.7;
+
+    }
+
+
+    .smv-notification-note {
+
+      margin-top: 18px;
+
+      color: #667085;
+
+      font-size: 13px;
+
+      font-weight: 600;
+
+    }
+
+
+    .smv-notification-button {
+
+      min-width: 130px;
+
+      margin-top: 25px;
+
+      padding: 13px 24px;
+
+      border: 0;
+
+      border-radius: 12px;
+
+      background: #111827;
+
+      color: #ffffff;
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+
+    }
+
+
+    .smv-notification-button:hover {
+
+      transform:
+        translateY(-1px);
+
+      opacity: 0.92;
+
+    }
+
+
+    .smv-notification-hide {
+
+      animation:
+        smvFadeOut
+        0.25s ease
+        forwards;
+
+    }
+
+
+    @keyframes smvFadeIn {
+
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+
+    }
+
+
+    @keyframes smvFadeOut {
+
+      from {
+        opacity: 1;
+      }
+
+      to {
+        opacity: 0;
+      }
+
+    }
+
+
+    @keyframes smvScaleIn {
+
+      from {
+
+        opacity: 0;
+
+        transform:
+          scale(0.94)
+          translateY(10px);
+
+      }
+
+      to {
+
+        opacity: 1;
+
+        transform:
+          scale(1)
+          translateY(0);
+
+      }
+
+    }
+
+
+    @media (max-width: 520px) {
+
+      .smv-notification-card {
+
+        padding:
+          35px 22px 25px;
+
+        border-radius: 20px;
+
+      }
+
+
+      .smv-notification-title {
+
+        font-size: 22px;
+
+      }
+
+
+      .smv-notification-message {
+
+        font-size: 14px;
+
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
 
 }
 
@@ -510,7 +1048,8 @@ window.addEventListener(
 
     console.error(
       "WEBSITE ERROR:",
-      event.error || event.message
+      event.error ||
+      event.message
     );
 
   }
