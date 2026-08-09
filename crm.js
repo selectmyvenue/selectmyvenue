@@ -903,7 +903,6 @@ document.addEventListener(
       await supabaseClient
         .from("customer_enquiries")
         .update({
-          lead_status: status,
           status: status,
           priority: priority,
           follow_up_at:
@@ -1252,7 +1251,7 @@ document.addEventListener("click", async (event) => {
 
           customer_name: name,
 
-          mobile_number: mobile,
+         mobile: mobile,
 
           email:
             email || null,
@@ -1295,8 +1294,7 @@ document.addEventListener("click", async (event) => {
                 ).toISOString()
               : null,
 
-          other_requirements:
-            requirements || null,
+         requirements: requirements
 
           internal_notes:
             notes || null
