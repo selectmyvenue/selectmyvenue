@@ -180,6 +180,8 @@ async function setupCRM() {
 
     setupAddEnquiry();
 
+    setupLeadTabs();
+
     showStaffName(
       session.user
     );
@@ -790,9 +792,9 @@ function applyFilters() {
           );
 
 
-        const matchesStatus =
-          !status ||
-          lead.status === status;
+       const matchesStatus =
+  (!status || lead.status === status) &&
+  (!activeStatus || lead.status === activeStatus);
 
 
         const matchesPriority =
@@ -1794,6 +1796,8 @@ function clearAddEnquiryForm() {
     document.getElementById(
       "newPriority"
     );
+  const activeStatus =
+  activeLeadTab;
 
   if (priority) {
 
@@ -1845,7 +1849,43 @@ function showToast(
 
 }
 
+// =====================================================
+// LEAD TABS
+// =====================================================
 
+let activeLeadTab = "";
+
+function setupLeadTabs() {
+
+  const tabs =
+    document.querySelectorAll(".stat-tab");
+
+  if (!tabs.length) {
+    return;
+  }
+
+  tabs.forEach((tab) => {
+
+    tab.addEventListener(
+      "click",
+      () => {
+
+        activeLeadTab =
+          tab.dataset.status || "";
+
+        tabs.forEach((item) => {
+          item.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        applyFilters();
+      }
+    );
+
+  });
+
+}
 // =====================================================
 // HELPERS
 // =====================================================
