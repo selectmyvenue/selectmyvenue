@@ -1,91 +1,154 @@
 <!DOCTYPE html>
-
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Select My Venue | Smart Venue Discovery</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-<meta
-name="description"
-content="Select My Venue helps you discover suitable venues for weddings, celebrations, corporate events and special occasions across India."
+  <meta
+    name="description"
+    content="Select My Venue helps you discover suitable venues for weddings, celebrations, corporate events and special occasions across India."
+  >
 
->
+  <title>
+    Select My Venue | Smart Venue Discovery
+  </title>
 
-  <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
 </head>
+
 
 <body>
 
-  <!-- =====================================================
-       HEADER
-  ====================================================== -->
 
-  <header class="site-header">
+<!-- =====================================================
+     HEADER
+====================================================== -->
 
-```
-<a href="#home" class="brand" aria-label="Select My Venue Home">
-  <img src="logo.png" alt="Select My Venue">
-</a>
+<header class="site-header">
 
-<button
-  class="menu-toggle"
-  id="menuToggle"
-  aria-label="Open navigation"
-  aria-expanded="false"
->
-  ☰
-</button>
+  <div class="header-inner">
 
-<nav id="mainNav">
+    <a
+      href="#home"
+      class="brand"
+      aria-label="Select My Venue Home"
+    >
 
-  <a href="#home">Home</a>
-  <a href="#how">How It Works</a>
-  <a href="#smart">Smart Discovery</a>
-  <a href="#owners">Venue Owners</a>
-  <a href="#contact" class="nav-cta">Contact</a>
+      <img
+        src="logo.png"
+        alt="Select My Venue"
+      >
 
-</nav>
-```
+    </a>
 
-  </header>
 
-  <main>
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="Open navigation"
+      aria-expanded="false"
+    >
+      ☰
+    </button>
 
-```
+
+    <nav id="mainNav">
+
+      <a href="#home">
+        Home
+      </a>
+
+      <a href="#how">
+        How It Works
+      </a>
+
+      <a href="#smart">
+        Smart Discovery
+      </a>
+
+      <a
+        href="#enquiry"
+        class="nav-cta"
+      >
+        Find a Venue
+      </a>
+
+      <a href="#contact">
+        Contact
+      </a>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+
 <!-- =====================================================
      HERO
 ====================================================== -->
 
-<section class="hero" id="home">
+<section
+  class="hero"
+  id="home"
+>
 
   <div class="hero-content">
 
+
     <div class="ai-badge">
+
       <span class="ai-pulse"></span>
+
       AI-INSPIRED VENUE DISCOVERY
+
     </div>
+
 
     <p class="eyebrow">
       Find the right place for your moment
     </p>
 
+
     <h1>
+
       Discover venues
-      <span>that fit your event.</span>
+
+      <span>
+        that fit your event.
+      </span>
+
     </h1>
 
+
     <p class="hero-text">
+
       Tell us what you need. Select My Venue helps you discover
       suitable venues for weddings, parties, corporate events and
       celebrations — smarter, faster and with less searching.
+
     </p>
 
 
-    <!-- SEARCH FORM -->
+    <!-- CUSTOMER ENQUIRY FORM -->
 
-    <form class="search-card" id="searchForm">
+    <form
+      class="search-card"
+      id="searchForm"
+    >
+
 
       <div class="field">
 
@@ -93,19 +156,46 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
           Event Type
         </label>
 
-        <select id="eventType" required>
+        <select
+          id="eventType"
+          required
+        >
 
           <option value="">
             Select event
           </option>
 
-          <option>Wedding</option>
-          <option>Engagement</option>
-          <option>Birthday Party</option>
-          <option>Corporate Event</option>
-          <option>Reception</option>
-          <option>Anniversary</option>
-          <option>Other Celebration</option>
+          <option value="Wedding">
+            Wedding
+          </option>
+
+          <option value="Engagement">
+            Engagement
+          </option>
+
+          <option value="Birthday">
+            Birthday
+          </option>
+
+          <option value="Anniversary">
+            Anniversary
+          </option>
+
+          <option value="Corporate Event">
+            Corporate Event
+          </option>
+
+          <option value="Reception">
+            Reception
+          </option>
+
+          <option value="Party">
+            Party
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
 
         </select>
 
@@ -137,14 +227,28 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         <select id="guests">
 
           <option value="">
-            Guests
+            Select guests
           </option>
 
-          <option>Up to 50</option>
-          <option>50–100</option>
-          <option>100–250</option>
-          <option>250–500</option>
-          <option>500+</option>
+          <option value="Up to 50">
+            Up to 50
+          </option>
+
+          <option value="50-100">
+            50–100
+          </option>
+
+          <option value="100-250">
+            100–250
+          </option>
+
+          <option value="250-500">
+            250–500
+          </option>
+
+          <option value="500+">
+            500+
+          </option>
 
         </select>
 
@@ -172,16 +276,21 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         Find Venues →
       </button>
 
+
     </form>
 
 
     <p class="micro-note">
-      ✦ Smart matching concept • Verified venue discovery • Built for India
+
+      ✦ Smart matching concept • Requirement based • Built for India
+
     </p>
+
 
   </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -191,33 +300,393 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 <section class="trust-strip">
 
   <div>
-    <strong>✦</strong>
+
+    <strong>
+      ✦
+    </strong>
+
     Smart Discovery
+
   </div>
 
+
   <div>
-    <strong>✓</strong>
+
+    <strong>
+      ✓
+    </strong>
+
     Requirement Based
+
   </div>
 
+
   <div>
-    <strong>◎</strong>
+
+    <strong>
+      ◎
+    </strong>
+
     Built for India
+
   </div>
 
+
   <div>
-    <strong>AI</strong>
+
+    <strong>
+      AI
+    </strong>
+
     Inspired Matching
+
   </div>
 
 </section>
+
+
+
+<!-- =====================================================
+     CUSTOMER ENQUIRY
+====================================================== -->
+
+<section
+  class="section form-section"
+  id="enquiry"
+>
+
+
+  <div class="section-heading">
+
+    <div>
+
+      <p class="eyebrow">
+        CUSTOMER ENQUIRY
+      </p>
+
+
+      <h2>
+
+        Tell us what you're
+
+        <span class="gradient-text">
+          looking for.
+        </span>
+
+      </h2>
+
+    </div>
+
+
+    <p>
+
+      Share your event requirements and our team can help
+      you find suitable venues.
+
+    </p>
+
+  </div>
+
+
+
+  <form
+    class="form-card"
+    id="customerEnquiryForm"
+  >
+
+
+    <!-- CUSTOMER DETAILS -->
+
+    <div class="form-section-title">
+      Customer Details
+    </div>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="customerName">
+          CUSTOMER NAME *
+        </label>
+
+        <input
+          id="customerName"
+          type="text"
+          placeholder="Enter your name"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerMobile">
+          MOBILE NUMBER *
+        </label>
+
+        <input
+          id="customerMobile"
+          type="tel"
+          inputmode="numeric"
+          placeholder="10-digit mobile number"
+          maxlength="10"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerEmail">
+          EMAIL
+        </label>
+
+        <input
+          id="customerEmail"
+          type="email"
+          placeholder="your@email.com"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerLocation">
+          CITY / LOCATION *
+        </label>
+
+        <input
+          id="customerLocation"
+          type="text"
+          placeholder="Delhi, Gurgaon, Noida..."
+          required
+        >
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- EVENT DETAILS -->
+
+    <div class="form-section-title">
+      Event Details
+    </div>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="customerEventType">
+          EVENT TYPE *
+        </label>
+
+        <select
+          id="customerEventType"
+          required
+        >
+
+          <option value="">
+            Select event
+          </option>
+
+          <option value="Wedding">
+            Wedding
+          </option>
+
+          <option value="Engagement">
+            Engagement
+          </option>
+
+          <option value="Birthday">
+            Birthday
+          </option>
+
+          <option value="Anniversary">
+            Anniversary
+          </option>
+
+          <option value="Corporate Event">
+            Corporate Event
+          </option>
+
+          <option value="Reception">
+            Reception
+          </option>
+
+          <option value="Party">
+            Party
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerEventDate">
+          EVENT DATE
+        </label>
+
+        <input
+          id="customerEventDate"
+          type="date"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerGuests">
+          NUMBER OF GUESTS
+        </label>
+
+        <input
+          id="customerGuests"
+          type="number"
+          min="1"
+          placeholder="e.g. 300"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerBudget">
+          BUDGET / PERSON
+        </label>
+
+        <input
+          id="customerBudget"
+          type="number"
+          min="0"
+          placeholder="₹ per person"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerFood">
+          FOOD PREFERENCE
+        </label>
+
+        <select id="customerFood">
+
+          <option value="">
+            Select preference
+          </option>
+
+          <option value="Veg">
+            Veg
+          </option>
+
+          <option value="Non-Veg">
+            Non-Veg
+          </option>
+
+          <option value="Both">
+            Both
+          </option>
+
+          <option value="Not Specified">
+            Not Specified
+          </option>
+
+        </select>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- REQUIREMENTS -->
+
+    <div class="control-group full-width">
+
+      <label for="customerRequirements">
+        OTHER REQUIREMENTS
+      </label>
+
+
+      <textarea
+        id="customerRequirements"
+        rows="5"
+        placeholder="Tell us about your venue requirements, decoration, parking, rooms, catering, special requests, etc."
+      ></textarea>
+
+    </div>
+
+
+
+    <input
+      type="hidden"
+      id="leadSource"
+      value="Website"
+    >
+
+
+    <p
+      id="customerEnquiryMessage"
+      class="form-message"
+      role="alert"
+    ></p>
+
+
+
+    <button
+      class="primary-btn form-submit"
+      id="customerEnquirySubmit"
+      type="submit"
+    >
+
+      Submit Enquiry →
+
+    </button>
+
+
+    <p class="form-note">
+
+      Your information is used only to help us understand
+      your venue requirements and contact you regarding suitable options.
+
+    </p>
+
+
+  </form>
+
+</section>
+
 
 
 <!-- =====================================================
      VENUE DISCOVERY
 ====================================================== -->
 
-<section class="section" id="discover">
+<section
+  class="section"
+  id="discover"
+>
+
 
   <div class="section-heading">
 
@@ -227,25 +696,34 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         Venue Discovery
       </p>
 
+
       <h2>
+
         Your event.
+
         <span class="gradient-text">
           Your perfect venue.
         </span>
+
       </h2>
 
     </div>
 
 
     <p>
-      Stop browsing endless venue listings. Start with your
-      requirements and discover options designed around your event.
+
+      Stop browsing endless venue listings.
+      Start with your requirements and discover options
+      designed around your event.
+
     </p>
 
   </div>
 
 
+
   <div class="venue-placeholder">
+
 
     <div class="placeholder-orbit">
 
@@ -271,21 +749,26 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
 
     <p>
-      Wedding, birthday, engagement, corporate event or any
-      special celebration — your venue search starts here.
+
+      Wedding, birthday, engagement, corporate event or
+      any special celebration — your venue search starts here.
+
     </p>
 
 
     <a
-      href="#contact"
+      href="#enquiry"
       class="secondary-btn"
     >
       Start Your Search →
+
     </a>
+
 
   </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -297,6 +780,7 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
   id="how"
 >
 
+
   <div class="section-heading centered">
 
     <div>
@@ -305,25 +789,33 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         How It Works
       </p>
 
+
       <h2>
+
         Venue discovery,
+
         <span class="gradient-text">
           made smarter.
         </span>
+
       </h2>
 
     </div>
 
 
     <p>
+
       A simple process designed to reduce the time between
       your event requirement and the right venue.
+
     </p>
 
   </div>
 
 
+
   <div class="steps">
+
 
     <article class="step-card">
 
@@ -331,20 +823,26 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         01
       </span>
 
+
       <div class="step-icon">
         ⌕
       </div>
+
 
       <h3>
         Share Your Requirement
       </h3>
 
+
       <p>
+
         Tell us your event type, location, guest count,
         date and important preferences.
+
       </p>
 
     </article>
+
 
 
     <article class="step-card featured-step">
@@ -353,18 +851,24 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         02
       </span>
 
+
       <div class="step-icon">
         ✦
       </div>
+
 
       <h3>
         Smart Matching
       </h3>
 
+
       <p>
+
         Our AI-inspired discovery approach helps identify
         venues that better match your requirements.
+
       </p>
+
 
       <div class="mini-ai">
 
@@ -377,30 +881,38 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
     </article>
 
 
+
     <article class="step-card">
 
       <span class="step-number">
         03
       </span>
 
+
       <div class="step-icon">
         ✓
       </div>
+
 
       <h3>
         Shortlist & Connect
       </h3>
 
+
       <p>
+
         Compare suitable options and connect with venues
         that fit your event needs.
+
       </p>
 
     </article>
 
+
   </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -412,57 +924,94 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
   id="smart"
 >
 
+
   <div class="smart-copy">
+
 
     <p class="eyebrow">
       Smart Venue Discovery
     </p>
 
+
     <h2>
+
       Search less.
+
       <span class="gradient-text">
         Match better.
       </span>
+
     </h2>
 
+
     <p>
+
       Select My Venue is designed around the idea that finding
       a venue should start with your requirements — not endless scrolling.
+
     </p>
+
 
 
     <ul class="check-list">
 
+
       <li>
-        <span>✓</span>
+
+        <span>
+          ✓
+        </span>
+
         Event-specific venue discovery
+
       </li>
 
+
       <li>
-        <span>✓</span>
+
+        <span>
+          ✓
+        </span>
+
         Location and guest-size focused search
+
       </li>
 
+
       <li>
-        <span>✓</span>
+
+        <span>
+          ✓
+        </span>
+
         Smart requirement-based matching
+
       </li>
 
+
       <li>
-        <span>✓</span>
+
+        <span>
+          ✓
+        </span>
+
         Faster venue shortlisting
+
       </li>
+
 
     </ul>
+
 
   </div>
 
 
-  <!-- AI WINDOW -->
 
   <div class="smart-demo">
 
+
     <div class="ai-window-top">
+
 
       <div class="window-dots">
 
@@ -472,13 +1021,17 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
       </div>
 
+
       SMART VENUE ENGINE
+
 
       <b>
         ● ACTIVE
       </b>
 
+
     </div>
+
 
 
     <div class="requirement-label">
@@ -491,11 +1044,13 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
     </div>
 
 
+
     <div class="match">
 
       <div class="match-icon">
         ✓
       </div>
+
 
       <div>
 
@@ -509,6 +1064,7 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
       </div>
 
+
       <strong>
         96%
       </strong>
@@ -516,11 +1072,13 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
     </div>
 
 
+
     <div class="match">
 
       <div class="match-icon">
         ✓
       </div>
+
 
       <div>
 
@@ -534,6 +1092,7 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
       </div>
 
+
       <strong>
         92%
       </strong>
@@ -541,11 +1100,13 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
     </div>
 
 
+
     <div class="match">
 
       <div class="match-icon">
         ✓
       </div>
+
 
       <div>
 
@@ -559,220 +1120,18 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
       </div>
 
+
       <strong>
         89%
       </strong>
 
     </div>
 
-  </div>
-
-</section>
-
-
-<!-- =====================================================
-     VENUE OWNERS
-====================================================== -->
-
-<section
-  class="owner-section"
-  id="owners"
->
-
-  <div class="owner-card">
-
-    <div class="owner-content">
-
-      <p class="eyebrow">
-        For Venue Owners
-      </p>
-
-      <h2>
-        Put your venue in front of
-        <span class="gradient-text">
-          the right customers.
-        </span>
-      </h2>
-
-      <p>
-        Select My Venue helps venue owners receive relevant
-        enquiries from customers actively looking for spaces
-        for their events.
-      </p>
-
-
-      <div class="owner-points">
-
-        <span>
-          ✓ Get relevant enquiries
-        </span>
-
-        <span>
-          ✓ Showcase your venue
-        </span>
-
-        <span>
-          ✓ Reach event customers
-        </span>
-
-        <span>
-          ✓ Build your digital presence
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <a
-      href="#venue-form"
-      class="primary-btn owner-btn"
-    >
-      List Your Venue →
-    </a>
 
   </div>
 
 </section>
 
-
-<!-- =====================================================
-     VENUE REGISTRATION
-====================================================== -->
-
-<section
-  class="section form-section"
-  id="venue-form"
->
-
-  <div class="section-heading">
-
-    <div>
-
-      <p class="eyebrow">
-        Venue Registration
-      </p>
-
-      <h2>
-        Get your venue
-        <span class="gradient-text">
-          discovered.
-        </span>
-      </h2>
-
-    </div>
-
-
-    <p>
-      Share your basic venue details and our team can help you
-      understand the onboarding process.
-    </p>
-
-  </div>
-
-
-  <form
-    class="form-card"
-    id="venueForm"
-  >
-
-    <div class="form-grid">
-
-      <div class="field">
-
-        <label for="ownerName">
-          Owner / Contact Name
-        </label>
-
-        <input
-          id="ownerName"
-          type="text"
-          placeholder="Enter name"
-          required
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="venueName">
-          Venue Name
-        </label>
-
-        <input
-          id="venueName"
-          type="text"
-          placeholder="Enter venue name"
-          required
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="ownerPhone">
-          Contact Number
-        </label>
-
-        <input
-          id="ownerPhone"
-          type="tel"
-          placeholder="Enter contact number"
-          required
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="venueCity">
-          City / Location
-        </label>
-
-        <input
-          id="venueCity"
-          type="text"
-          placeholder="Enter city or area"
-          required
-        >
-
-      </div>
-
-
-      <div class="field full">
-
-        <label for="venueDetails">
-          Venue Details
-        </label>
-
-        <textarea
-          id="venueDetails"
-          placeholder="Tell us about capacity, type of venue, facilities, etc."
-        ></textarea>
-
-      </div>
-
-    </div>
-
-
-    <button
-      class="primary-btn form-submit"
-      type="submit"
-    >
-      Submit Venue Details →
-    </button>
-
-
-    <p class="form-note">
-      Your details are used only for venue onboarding communication.
-    </p>
-
-  </form>
-
-</section>
 
 
 <!-- =====================================================
@@ -784,28 +1143,42 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
   id="contact"
 >
 
+
   <div class="contact-heading">
+
 
     <p class="eyebrow">
       Connect With Us
     </p>
 
+
     <h2>
+
       Have a question?
+
       <span class="gradient-text">
         Let's connect.
       </span>
+
     </h2>
 
+
     <p>
-      Whether you're searching for a venue or want to list your venue,
-      we're here to help you get started.
+
+      Looking for a venue or need help with your enquiry?
+      Our team is here to help.
+
     </p>
+
 
   </div>
 
 
+
   <div class="contact-pills">
+
+
+    <!-- EMAIL -->
 
     <a
       class="contact-pill"
@@ -816,17 +1189,20 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         ✉
       </span>
 
+
       <span class="pill-content">
 
         <small>
           Email
         </small>
 
+
         <strong>
           support@selectmyvenue.com
         </strong>
 
       </span>
+
 
       <span class="pill-arrow">
         ↗
@@ -835,9 +1211,12 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
     </a>
 
 
+
+    <!-- WEBSITE -->
+
     <a
       class="contact-pill"
-      href="https://selectmyvenue.com"
+      href="https://selectmyvenue.github.io/selectmyvenue/"
       target="_blank"
       rel="noopener"
     >
@@ -846,11 +1225,13 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         ◎
       </span>
 
+
       <span class="pill-content">
 
         <small>
           Website
         </small>
+
 
         <strong>
           selectmyvenue.com
@@ -858,12 +1239,16 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
       </span>
 
+
       <span class="pill-arrow">
         ↗
       </span>
 
     </a>
 
+
+
+    <!-- CALL -->
 
     <a
       class="contact-pill"
@@ -874,11 +1259,13 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         ☎
       </span>
 
+
       <span class="pill-content">
 
         <small>
           Call Us
         </small>
+
 
         <strong>
           +91 99587 16688
@@ -886,12 +1273,16 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
       </span>
 
+
       <span class="pill-arrow">
         ↗
       </span>
 
     </a>
 
+
+
+    <!-- WHATSAPP -->
 
     <a
       class="contact-pill"
@@ -904,11 +1295,13 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
         ◉
       </span>
 
+
       <span class="pill-content">
 
         <small>
           WhatsApp
         </small>
+
 
         <strong>
           +91 99587 16688
@@ -916,336 +1309,177 @@ content="Select My Venue helps you discover suitable venues for weddings, celebr
 
       </span>
 
+
       <span class="pill-arrow">
         ↗
       </span>
 
     </a>
 
+
   </div>
 
 </section>
-```
-
-  </main>
-
-  <!-- =====================================================
-       FOOTER
-  ====================================================== -->
-
-  <footer class="footer">
-
-```
-<div class="footer-brand">
-
-  <div class="footer-brand-name">
-    Select<span>My</span>Venue
-  </div>
-
-  <p>
-    Smart venue discovery for weddings, celebrations,
-    corporate events and special occasions across India.
-  </p>
-
-</div>
 
 
-<div class="footer-links">
 
-  <div>
+<!-- =====================================================
+     FOOTER
+====================================================== -->
 
-    <h4>
-      Explore
-    </h4>
+<footer>
 
-    <a href="#home">
-      Home
-    </a>
 
-    <a href="#how">
-      How It Works
-    </a>
+  <div class="footer-brand">
 
-    <a href="#smart">
-      Smart Discovery
-    </a>
+
+    <div class="footer-brand-name">
+
+      Select<span>My</span>Venue
+
+    </div>
+
+
+    <p>
+
+      Smart venue discovery for weddings, celebrations,
+      corporate events and special occasions across India.
+
+    </p>
+
 
   </div>
 
 
-  <div>
 
-    <h4>
-      For Business
-    </h4>
+  <div class="footer-links">
 
-    <a href="#owners">
-      Venue Owners
-    </a>
 
-    <a href="#venue-form">
-      List Your Venue
-    </a>
+    <div>
 
-    <a href="#contact">
-      Contact
-    </a>
+      <h4>
+        Explore
+      </h4>
+
+
+      <a href="#home">
+        Home
+      </a>
+
+
+      <a href="#how">
+        How It Works
+      </a>
+
+
+      <a href="#smart">
+        Smart Discovery
+      </a>
+
+
+    </div>
+
+
+
+    <div>
+
+      <h4>
+        Customer
+      </h4>
+
+
+      <a href="#enquiry">
+        Find a Venue
+      </a>
+
+
+      <a href="#enquiry">
+        Submit Enquiry
+      </a>
+
+
+      <a href="#contact">
+        Contact
+      </a>
+
+
+    </div>
+
+
+
+    <div>
+
+      <h4>
+        Connect
+      </h4>
+
+
+      <a href="mailto:support@selectmyvenue.com">
+        Email
+      </a>
+
+
+      <a href="tel:+919958716688">
+        Call
+      </a>
+
+
+      <a
+        href="https://wa.me/919958716688"
+        target="_blank"
+        rel="noopener"
+      >
+        WhatsApp
+      </a>
+
+
+    </div>
+
 
   </div>
 
 
-  <div>
 
-    <h4>
-      Connect
-    </h4>
+  <div class="copyright">
 
-    <a href="mailto:support@selectmyvenue.com">
-      Email
-    </a>
 
-    <a href="tel:+919958716688">
-      Call
-    </a>
+    <span>
+      © 2026 Select My Venue. All rights reserved.
+    </span>
 
-    <a
-      href="https://wa.me/919958716688"
-      target="_blank"
-      rel="noopener"
-    >
-      WhatsApp
-    </a>
+
+    <span class="footer-tag">
+      Smart Venue Discovery • India
+    </span>
+
 
   </div>
 
-</div>
 
+</footer>
 
-<div class="copyright">
 
-  <span>
-    © 2026 Select My Venue. All rights reserved.
-  </span>
 
-  <span class="footer-tag">
-    Smart Venue Discovery • India
-  </span>
+<!-- =====================================================
+     SUCCESS TOAST
+====================================================== -->
 
-</div>
-```
+<span
+  id="toastMessage"
+  class="toast-message"
+>
+  Enquiry submitted successfully.
+</span>
 
-  </footer>
 
-  <!-- =====================================================
-       MAIN JAVASCRIPT
-  ====================================================== -->
 
-  <script>
+<!-- =====================================================
+     MAIN JAVASCRIPT
+====================================================== -->
 
-    /* =========================================
-       SELECT MY VENUE — MAIN JAVASCRIPT
-       ========================================= */
+<script src="script.js"></script>
 
-
-    /* -----------------------------------------
-       1. MOBILE NAVIGATION
-       ----------------------------------------- */
-
-    const menuToggle =
-      document.getElementById("menuToggle");
-
-    const mainNav =
-      document.getElementById("mainNav");
-
-
-    if (menuToggle && mainNav) {
-
-      menuToggle.addEventListener("click", function () {
-
-        const isOpen =
-          mainNav.classList.toggle("open");
-
-        menuToggle.setAttribute(
-          "aria-expanded",
-          isOpen ? "true" : "false"
-        );
-
-      });
-
-
-      document
-        .querySelectorAll("#mainNav a")
-        .forEach(function (link) {
-
-          link.addEventListener("click", function () {
-
-            mainNav.classList.remove("open");
-
-            menuToggle.setAttribute(
-              "aria-expanded",
-              "false"
-            );
-
-          });
-
-        });
-
-    }
-
-
-    /* -----------------------------------------
-       2. WHATSAPP LEAD SYSTEM
-       ----------------------------------------- */
-
-    const WHATSAPP_NUMBER =
-      "919958716688";
-
-
-    /* -----------------------------------------
-       CUSTOMER VENUE SEARCH
-       ----------------------------------------- */
-
-    const searchForm =
-      document.getElementById("searchForm");
-
-
-    if (searchForm) {
-
-      searchForm.addEventListener(
-        "submit",
-        function (event) {
-
-          event.preventDefault();
-
-
-          const eventType =
-            document.getElementById("eventType")?.value || "";
-
-
-          const location =
-            document.getElementById("location")?.value || "";
-
-
-          const guests =
-            document.getElementById("guests")?.value ||
-            "Not specified";
-
-
-          const date =
-            document.getElementById("date")?.value ||
-            "Not specified";
-
-
-          if (!eventType || !location) {
-            return;
-          }
-
-
-          const message =
-`🔎 NEW VENUE SEARCH REQUEST
-
-Event Type: ${eventType}
-Location: ${location}
-Guests: ${guests}
-Event Date: ${date}
-
-Please help me find suitable venues.
-
-— Select My Venue
-Smart Venue Discovery`;
-
-
-          const whatsappURL =
-            "https://wa.me/" +
-            WHATSAPP_NUMBER +
-            "?text=" +
-            encodeURIComponent(message);
-
-
-          window.open(
-            whatsappURL,
-            "_blank"
-          );
-
-        }
-      );
-
-    }
-
-
-    /* -----------------------------------------
-       VENUE OWNER REGISTRATION
-       ----------------------------------------- */
-
-    const venueForm =
-      document.getElementById("venueForm");
-
-
-    if (venueForm) {
-
-      venueForm.addEventListener(
-        "submit",
-        function (event) {
-
-          event.preventDefault();
-
-
-          const ownerName =
-            document.getElementById("ownerName")?.value || "";
-
-
-          const venueName =
-            document.getElementById("venueName")?.value || "";
-
-
-          const ownerPhone =
-            document.getElementById("ownerPhone")?.value || "";
-
-
-          const venueCity =
-            document.getElementById("venueCity")?.value || "";
-
-
-          const venueDetails =
-            document.getElementById("venueDetails")?.value ||
-            "Not provided";
-
-
-          const message =
-`🏢 NEW VENUE OWNER REGISTRATION
-
-Owner / Contact Name: ${ownerName}
-Venue Name: ${venueName}
-Contact Number: ${ownerPhone}
-City / Location: ${venueCity}
-
-Venue Details:
-${venueDetails}
-
-Please contact this venue owner regarding onboarding.
-
-— Select My Venue
-Smart Venue Discovery`;
-
-
-          const whatsappURL =
-            "https://wa.me/" +
-            WHATSAPP_NUMBER +
-            "?text=" +
-            encodeURIComponent(message);
-
-
-          window.open(
-            whatsappURL,
-            "_blank"
-          );
-
-        }
-      );
-
-    }
-
-  </script>
 
 </body>
+
 </html>
