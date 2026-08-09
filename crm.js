@@ -348,7 +348,7 @@ function updateStats(leads) {
       leads.filter(
         lead =>
           String(
-            lead.lead_status ||
+            lead.status ||
             lead.status ||
             ""
           ).toLowerCase() === "new"
@@ -362,7 +362,7 @@ function updateStats(leads) {
       leads.filter(
         lead =>
           String(
-            lead.lead_status ||
+            lead.status ||
             lead.status ||
             ""
           ).toLowerCase() === "follow_up"
@@ -376,7 +376,7 @@ function updateStats(leads) {
       leads.filter(
         lead =>
           String(
-            lead.lead_status ||
+            lead.status ||
             lead.status ||
             ""
           ).toLowerCase() === "converted"
@@ -429,7 +429,7 @@ function renderFilteredLeads() {
 
       const mobile =
         String(
-          lead.mobile_number ||
+          lead.mobile ||
           lead.mobile ||
           ""
         ).toLowerCase();
@@ -442,7 +442,7 @@ function renderFilteredLeads() {
 
       const leadStatus =
         String(
-          lead.lead_status ||
+          lead.status ||
           lead.status ||
           ""
         ).toLowerCase();
@@ -563,7 +563,7 @@ function renderTable(leads) {
 
 
       const status =
-        lead.lead_status ||
+        lead.status ||
         lead.status ||
         "new";
 
@@ -650,7 +650,7 @@ function openLead(id) {
 
   setText(
     "modalMobile",
-    lead.mobile_number ||
+    lead.mobile ||
     lead.mobile ||
     "—"
   );
@@ -695,7 +695,7 @@ function openLead(id) {
 
   setText(
     "modalRequirements",
-    lead.other_requirements ||
+    lead.requirements ||
     lead.requirements ||
     "—"
   );
@@ -717,7 +717,7 @@ function openLead(id) {
   if (modalStatus) {
 
     modalStatus.value =
-      lead.lead_status ||
+      lead.status ||
       lead.status ||
       "new";
   }
@@ -757,7 +757,7 @@ function openLead(id) {
 
 
   const mobile =
-    lead.mobile_number ||
+    lead.mobile ||
     lead.mobile ||
     "";
 
@@ -1281,7 +1281,7 @@ document.addEventListener("click", async (event) => {
           source:
             source || "Other",
 
-          lead_status:
+          status:
             status,
 
           priority:
