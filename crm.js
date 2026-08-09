@@ -1,40 +1,43 @@
 /* =========================================================
-   SELECT MY VENUE — CRM JAVASCRIPT
+   SELECT MY VENUE — CRM
+   crm.js
    Supabase Authentication + Lead Management
    ========================================================= */
 
 
 /* =========================================================
-   SUPABASE CONFIGURATION
+   1. SUPABASE CONFIGURATION
    ========================================================= */
 
 /*
-   IMPORTANT:
-   Replace these two values with your Supabase project details.
+   MANUAL EDIT #1
 
-   Supabase:
-   Project Settings
-   → API
-   → Project URL
-   → anon / publishable key
+   Replace ONLY these two values:
+
+   SUPABASE_URL
+   SUPABASE_ANON_KEY
+
+   Do not change anything else in this section.
 */
 
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL =
+  "https://uajqwyoqbbswkfiwosyw.supabase.co/";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
 
 /*
-   Database table containing customer enquiries.
+   MANUAL EDIT #2
 
-   If your Supabase table has a different name,
-   change only this value.
+   Your Supabase customer enquiry table.
 */
 
 const LEADS_TABLE = "customer_enquiries";
 
 
 /* =========================================================
-   SUPABASE CLIENT
+   2. SUPABASE CLIENT
    ========================================================= */
 
 let supabaseClient = null;
@@ -42,8 +45,8 @@ let supabaseClient = null;
 if (
   SUPABASE_URL &&
   SUPABASE_ANON_KEY &&
-  SUPABASE_URL !== "https://uajqwyoqbbswkfiwosyw.supabase.co/" &&
-  SUPABASE_ANON_KEY !== "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7"
+  SUPABASE_URL !== "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE" &&
+  SUPABASE_ANON_KEY !== "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE"
 ) {
   supabaseClient = window.supabase.createClient(
     SUPABASE_URL,
@@ -53,27 +56,26 @@ if (
 
 
 /* =========================================================
-   GLOBAL STATE
+   3. GLOBAL STATE
    ========================================================= */
 
 let allLeads = [];
-
 let filteredLeads = [];
-
 let selectedLead = null;
-
 let currentUser = null;
 
 
 /* =========================================================
-   DOM HELPERS
+   4. DOM HELPER
    ========================================================= */
 
-const $ = (id) => document.getElementById(id);
+function $(id) {
+  return document.getElementById(id);
+}
 
 
 /* =========================================================
-   PAGE INITIALIZATION
+   5. PAGE START
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -81,12 +83,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupEventListeners();
 
   if (!supabaseClient) {
-
     showToast(
       "Supabase configuration is missing.",
       true
     );
-
     return;
   }
 
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 /* =========================================================
-   AUTHENTICATION CHECK
+   6. AUTHENTICATION
    ========================================================= */
 
 async function checkAuthentication() {
@@ -109,7 +109,7 @@ async function checkAuthentication() {
     } = await supabaseClient.auth.getSession();
 
     if (error) {
-      console.error(error);
+      console.error("Session error:", error);
       redirectToLogin();
       return;
     }
@@ -142,7 +142,7 @@ async function checkAuthentication() {
 
 
 /* =========================================================
-   STAFF NAME
+   7. STAFF NAME
    ========================================================= */
 
 function updateStaffName() {
@@ -169,7 +169,7 @@ function updateStaffName() {
 
 
 /* =========================================================
-   LOGIN REDIRECT
+   8. LOGIN REDIRECT
    ========================================================= */
 
 function redirectToLogin() {
@@ -180,24 +180,28 @@ function redirectToLogin() {
 
 
 /* =========================================================
-   LOGOUT
+   9. LOGOUT
    ========================================================= */
 
 async function logoutUser() {
 
-  try {
+  if (!supabaseClient) {
+    redirectToLogin();
+    return;
+  }
 
-    if (!supabaseClient) {
-      redirectToLogin();
-      return;
-    }
+  try {
 
     const {
       error
     } = await supabaseClient.auth.signOut();
 
     if (error) {
-      console.error(error);
+
+      console.error(
+        "Logout error:",
+        error
+      );
 
       showToast(
         "Unable to logout.",
@@ -221,7 +225,7 @@ async function logoutUser() {
 
 
 /* =========================================================
-   LOAD LEADS
+   10. LOAD LEADS
    ========================================================= */
 
 async function loadLeads() {
@@ -261,15 +265,17 @@ async function loadLeads() {
       );
 
       renderError(
+        error.message ||
         "Unable to load enquiries."
       );
 
       return;
     }
 
-    allLeads = Array.isArray(data)
-      ? data
-      : [];
+    allLeads =
+      Array.isArray(data)
+        ? data
+        : [];
 
     applyFilters();
 
@@ -289,7 +295,7 @@ async function loadLeads() {
 
 
 /* =========================================================
-   FILTERS
+   11. FILTERS
    ========================================================= */
 
 function applyFilters() {
@@ -303,7 +309,6 @@ function applyFilters() {
   const priorityFilter =
     $("priorityFilter");
 
-
   const search =
     searchInput
       ? searchInput.value
@@ -311,12 +316,10 @@ function applyFilters() {
           .toLowerCase()
       : "";
 
-
   const status =
     statusFilter
       ? statusFilter.value
       : "";
-
 
   const priority =
     priorityFilter
@@ -324,8 +327,8 @@ function applyFilters() {
       : "";
 
 
-  filteredLeads = allLeads.filter(
-    (lead) => {
+  filteredLeads =
+    allLeads.filter((lead) => {
 
       const customerName =
         getField(
@@ -337,7 +340,6 @@ function applyFilters() {
           ]
         );
 
-
       const mobile =
         getField(
           lead,
@@ -348,7 +350,6 @@ function applyFilters() {
             "mobile_number"
           ]
         );
-
 
       const location =
         getField(
@@ -385,7 +386,6 @@ function applyFilters() {
           )
         );
 
-
       const leadPriority =
         normalizeValue(
           getField(
@@ -403,7 +403,6 @@ function applyFilters() {
         leadStatus ===
         normalizeValue(status);
 
-
       const matchesPriority =
         !priority ||
         leadPriority ===
@@ -416,8 +415,7 @@ function applyFilters() {
         matchesPriority
       );
 
-    }
-  );
+    });
 
 
   renderLeads();
@@ -426,7 +424,7 @@ function applyFilters() {
 
 
 /* =========================================================
-   RENDER LEADS
+   12. RENDER LEADS
    ========================================================= */
 
 function renderLeads() {
@@ -436,7 +434,6 @@ function renderLeads() {
 
   const emptyState =
     $("emptyState");
-
 
   if (!tableBody) {
     return;
@@ -452,7 +449,6 @@ function renderLeads() {
     }
 
     return;
-
   }
 
 
@@ -463,25 +459,20 @@ function renderLeads() {
 
   tableBody.innerHTML =
     filteredLeads
-      .map(
-        (lead) =>
-          createLeadRow(lead)
-      )
+      .map(createLeadRow)
       .join("");
-
 
 }
 
 
 /* =========================================================
-   CREATE TABLE ROW
+   13. CREATE TABLE ROW
    ========================================================= */
 
 function createLeadRow(lead) {
 
   const id =
     getLeadId(lead);
-
 
   const name =
     getField(
@@ -493,7 +484,6 @@ function createLeadRow(lead) {
       ],
       "Unknown Customer"
     );
-
 
   const event =
     getField(
@@ -507,7 +497,6 @@ function createLeadRow(lead) {
       "—"
     );
 
-
   const location =
     getField(
       lead,
@@ -519,7 +508,6 @@ function createLeadRow(lead) {
       "—"
     );
 
-
   const eventDate =
     getField(
       lead,
@@ -529,7 +517,6 @@ function createLeadRow(lead) {
       ],
       ""
     );
-
 
   const guests =
     getField(
@@ -542,7 +529,6 @@ function createLeadRow(lead) {
       "—"
     );
 
-
   const budget =
     getField(
       lead,
@@ -553,7 +539,6 @@ function createLeadRow(lead) {
       ],
       "—"
     );
-
 
   const status =
     normalizeValue(
@@ -566,7 +551,6 @@ function createLeadRow(lead) {
         "new"
       )
     );
-
 
   const priority =
     normalizeValue(
@@ -649,7 +633,7 @@ function createLeadRow(lead) {
 
 
 /* =========================================================
-   STATUS BADGE
+   14. STATUS BADGE
    ========================================================= */
 
 function createStatusBadge(status) {
@@ -657,32 +641,40 @@ function createStatusBadge(status) {
   const safeStatus =
     normalizeValue(status || "new");
 
-
   const label =
     formatStatus(safeStatus);
-
 
   let className =
     "status-new";
 
 
   if (safeStatus === "contacted") {
-    className = "status-contacted";
-  }
 
-  else if (
+    className =
+      "status-contacted";
+
+  } else if (
     safeStatus === "follow_up" ||
     safeStatus === "qualified"
   ) {
-    className = "status-progress";
-  }
 
-  else if (safeStatus === "converted") {
-    className = "status-new";
-  }
+    className =
+      "status-progress";
 
-  else if (safeStatus === "closed") {
-    className = "status-closed";
+  } else if (
+    safeStatus === "converted"
+  ) {
+
+    className =
+      "status-new";
+
+  } else if (
+    safeStatus === "closed"
+  ) {
+
+    className =
+      "status-closed";
+
   }
 
 
@@ -696,7 +688,7 @@ function createStatusBadge(status) {
 
 
 /* =========================================================
-   PRIORITY BADGE
+   15. PRIORITY BADGE
    ========================================================= */
 
 function createPriorityBadge(priority) {
@@ -706,29 +698,35 @@ function createPriorityBadge(priority) {
       priority || "normal"
     );
 
-
   let className =
-    "status-closed";
+    "status-progress";
 
 
   if (value === "urgent") {
-    className = "status-lost";
-  }
 
-  else if (value === "high") {
-    className = "status-contacted";
-  }
+    className =
+      "status-lost";
 
-  else if (value === "normal") {
-    className = "status-progress";
+  } else if (
+    value === "high"
+  ) {
+
+    className =
+      "status-contacted";
+
+  } else if (
+    value === "normal"
+  ) {
+
+    className =
+      "status-progress";
+
   }
 
 
   return `
     <span class="status-badge ${className}">
-      ${escapeHTML(
-        capitalize(value)
-      )}
+      ${escapeHTML(capitalize(value))}
     </span>
   `;
 
@@ -736,7 +734,7 @@ function createPriorityBadge(priority) {
 
 
 /* =========================================================
-   CALL BUTTON
+   16. CALL BUTTON
    ========================================================= */
 
 function createCallButton(lead) {
@@ -751,7 +749,6 @@ function createCallButton(lead) {
         "mobile_number"
       ]
     );
-
 
   if (!mobile) {
     return "";
@@ -777,7 +774,7 @@ function createCallButton(lead) {
 
 
 /* =========================================================
-   WHATSAPP BUTTON
+   17. WHATSAPP BUTTON
    ========================================================= */
 
 function createWhatsAppButton(lead) {
@@ -793,7 +790,6 @@ function createWhatsAppButton(lead) {
       ]
     );
 
-
   if (!mobile) {
     return "";
   }
@@ -804,24 +800,20 @@ function createWhatsAppButton(lead) {
       .replace(/\D/g, "");
 
 
-  /*
-     India number support.
-     10 digit number → add +91
-  */
-
-  if (
-    phone.length === 10
-  ) {
+  if (phone.length === 10) {
     phone = "91" + phone;
   }
 
 
   const message =
-    `Hello, this is Select My Venue regarding your venue enquiry.`;
+    "Hello, this is Select My Venue regarding your venue enquiry.";
 
 
   const url =
-    `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    "https://wa.me/" +
+    phone +
+    "?text=" +
+    encodeURIComponent(message);
 
 
   return `
@@ -840,7 +832,7 @@ function createWhatsAppButton(lead) {
 
 
 /* =========================================================
-   UPDATE STATISTICS
+   18. STATISTICS
    ========================================================= */
 
 function updateStatistics() {
@@ -918,7 +910,7 @@ function updateStatistics() {
 
 
 /* =========================================================
-   OPEN LEAD MODAL
+   19. OPEN LEAD MODAL
    ========================================================= */
 
 function openLeadModal(id) {
@@ -962,13 +954,13 @@ function openLeadModal(id) {
         "phone_number",
         "mobile_number"
       ],
-      "—"
+      ""
     );
 
 
   setText(
     "modalMobile",
-    mobile
+    mobile || "—"
   );
 
 
@@ -1006,7 +998,8 @@ function openLeadModal(id) {
       [
         "occasion",
         "event_type",
-        "event"
+        "event",
+        "event_name"
       ],
       "—"
     )
@@ -1114,15 +1107,13 @@ function openLeadModal(id) {
   const statusSelect =
     $("modalStatus");
 
-
-  const prioritySelect =
-    $("modalPriority");
-
-
   if (statusSelect) {
     statusSelect.value = status;
   }
 
+
+  const prioritySelect =
+    $("modalPriority");
 
   if (prioritySelect) {
     prioritySelect.value = priority;
@@ -1143,7 +1134,6 @@ function openLeadModal(id) {
 
   const followUpInput =
     $("modalFollowUp");
-
 
   if (followUpInput) {
 
@@ -1170,15 +1160,41 @@ function openLeadModal(id) {
   const notesInput =
     $("modalNotes");
 
-
   if (notesInput) {
     notesInput.value =
       notes || "";
   }
 
 
+  setupModalContactButtons(mobile);
+
+
+  const modal =
+    $("leadModal");
+
+  if (modal) {
+
+    modal.hidden = false;
+
+    document.body.style.overflow =
+      "hidden";
+
+  }
+
+}
+
+
+/* =========================================================
+   20. MODAL CONTACT BUTTONS
+   ========================================================= */
+
+function setupModalContactButtons(mobile) {
+
   const callBtn =
     $("modalCallBtn");
+
+  const whatsappBtn =
+    $("modalWhatsappBtn");
 
 
   if (callBtn) {
@@ -1205,10 +1221,6 @@ function openLeadModal(id) {
   }
 
 
-  const whatsappBtn =
-    $("modalWhatsappBtn");
-
-
   if (whatsappBtn) {
 
     if (mobile) {
@@ -1218,9 +1230,7 @@ function openLeadModal(id) {
           .replace(/\D/g, "");
 
 
-      if (
-        phone.length === 10
-      ) {
+      if (phone.length === 10) {
         phone = "91" + phone;
       }
 
@@ -1244,25 +1254,11 @@ function openLeadModal(id) {
 
   }
 
-
-  const modal =
-    $("leadModal");
-
-
-  if (modal) {
-
-    modal.hidden = false;
-
-    document.body.style.overflow =
-      "hidden";
-
-  }
-
 }
 
 
 /* =========================================================
-   CLOSE LEAD MODAL
+   21. CLOSE MODAL
    ========================================================= */
 
 function closeLeadModal() {
@@ -1270,11 +1266,9 @@ function closeLeadModal() {
   const modal =
     $("leadModal");
 
-
   if (modal) {
     modal.hidden = true;
   }
-
 
   document.body.style.overflow =
     "";
@@ -1285,7 +1279,7 @@ function closeLeadModal() {
 
 
 /* =========================================================
-   SAVE LEAD
+   22. SAVE LEAD
    ========================================================= */
 
 async function saveLead() {
@@ -1314,7 +1308,7 @@ async function saveLead() {
   const followUp =
     $("modalFollowUp")
       ? $("modalFollowUp").value
-      : null;
+      : "";
 
 
   const notes =
@@ -1351,8 +1345,7 @@ async function saveLead() {
 
   if (saveButton) {
 
-    saveButton.disabled =
-      true;
+    saveButton.disabled = true;
 
     saveButton.textContent =
       "Saving...";
@@ -1387,13 +1380,8 @@ async function saveLead() {
       );
 
       return;
-
     }
 
-
-    /*
-       Update local data immediately.
-    */
 
     const index =
       allLeads.findIndex(
@@ -1438,8 +1426,7 @@ async function saveLead() {
 
     if (saveButton) {
 
-      saveButton.disabled =
-        false;
+      saveButton.disabled = false;
 
       saveButton.textContent =
         "Save Changes";
@@ -1452,19 +1439,16 @@ async function saveLead() {
 
 
 /* =========================================================
-   EVENT LISTENERS
+   23. EVENT LISTENERS
    ========================================================= */
 
 function setupEventListeners() {
 
 
-  /* ---------------------------------------------
-     Search
-  --------------------------------------------- */
+  /* SEARCH */
 
   const searchInput =
     $("searchInput");
-
 
   if (searchInput) {
 
@@ -1476,13 +1460,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Status filter
-  --------------------------------------------- */
+  /* STATUS FILTER */
 
   const statusFilter =
     $("statusFilter");
-
 
   if (statusFilter) {
 
@@ -1494,13 +1475,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Priority filter
-  --------------------------------------------- */
+  /* PRIORITY FILTER */
 
   const priorityFilter =
     $("priorityFilter");
-
 
   if (priorityFilter) {
 
@@ -1512,13 +1490,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Refresh
-  --------------------------------------------- */
+  /* REFRESH */
 
   const refreshBtn =
     $("refreshBtn");
-
 
   if (refreshBtn) {
 
@@ -1526,8 +1501,7 @@ function setupEventListeners() {
       "click",
       async () => {
 
-        refreshBtn.disabled =
-          true;
+        refreshBtn.disabled = true;
 
         refreshBtn.textContent =
           "↻ Loading...";
@@ -1536,8 +1510,7 @@ function setupEventListeners() {
         await loadLeads();
 
 
-        refreshBtn.disabled =
-          false;
+        refreshBtn.disabled = false;
 
         refreshBtn.textContent =
           "↻ Refresh";
@@ -1548,13 +1521,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Logout
-  --------------------------------------------- */
+  /* LOGOUT */
 
   const logoutBtn =
     $("logoutBtn");
-
 
   if (logoutBtn) {
 
@@ -1566,13 +1536,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Table actions
-  --------------------------------------------- */
+  /* TABLE ACTIONS */
 
   const tableBody =
     $("leadsTableBody");
-
 
   if (tableBody) {
 
@@ -1594,17 +1561,12 @@ function setupEventListeners() {
         const action =
           button.dataset.action;
 
-
         const id =
           button.dataset.id;
 
 
-        if (
-          action === "view"
-        ) {
-
+        if (action === "view") {
           openLeadModal(id);
-
         }
 
       }
@@ -1613,13 +1575,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Close modal
-  --------------------------------------------- */
+  /* CLOSE MODAL */
 
   const closeModalBtn =
     $("closeModalBtn");
-
 
   if (closeModalBtn) {
 
@@ -1631,9 +1590,10 @@ function setupEventListeners() {
   }
 
 
+  /* CANCEL */
+
   const cancelModalBtn =
     $("cancelModalBtn");
-
 
   if (cancelModalBtn) {
 
@@ -1645,13 +1605,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Save
-  --------------------------------------------- */
+  /* SAVE */
 
   const saveLeadBtn =
     $("saveLeadBtn");
-
 
   if (saveLeadBtn) {
 
@@ -1663,13 +1620,10 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     Close modal by clicking outside
-  --------------------------------------------- */
+  /* CLICK OUTSIDE MODAL */
 
   const leadModal =
     $("leadModal");
-
 
   if (leadModal) {
 
@@ -1689,25 +1643,21 @@ function setupEventListeners() {
   }
 
 
-  /* ---------------------------------------------
-     ESC key
-  --------------------------------------------- */
+  /* ESC KEY */
 
   document.addEventListener(
     "keydown",
     (event) => {
 
+      if (event.key !== "Escape") {
+        return;
+      }
+
       if (
-        event.key === "Escape"
+        leadModal &&
+        !leadModal.hidden
       ) {
-
-        if (
-          leadModal &&
-          !leadModal.hidden
-        ) {
-          closeLeadModal();
-        }
-
+        closeLeadModal();
       }
 
     }
@@ -1717,7 +1667,7 @@ function setupEventListeners() {
 
 
 /* =========================================================
-   HELPER — GET FIELD
+   24. GET FIELD
    ========================================================= */
 
 function getField(
@@ -1754,7 +1704,7 @@ function getField(
 
 
 /* =========================================================
-   HELPER — GET LEAD ID
+   25. GET LEAD ID
    ========================================================= */
 
 function getLeadId(lead) {
@@ -1773,14 +1723,12 @@ function getLeadId(lead) {
 
 
 /* =========================================================
-   HELPER — NORMALIZE VALUE
+   26. NORMALIZE VALUE
    ========================================================= */
 
 function normalizeValue(value) {
 
-  return String(
-    value || ""
-  )
+  return String(value || "")
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "_")
@@ -1790,7 +1738,7 @@ function normalizeValue(value) {
 
 
 /* =========================================================
-   HELPER — STATUS LABEL
+   27. FORMAT STATUS
    ========================================================= */
 
 function formatStatus(status) {
@@ -1830,7 +1778,7 @@ function formatStatus(status) {
 
 
 /* =========================================================
-   HELPER — CAPITALIZE
+   28. CAPITALIZE
    ========================================================= */
 
 function capitalize(value) {
@@ -1840,17 +1788,19 @@ function capitalize(value) {
   }
 
 
-  return String(value)
-    .charAt(0)
-    .toUpperCase() +
+  return (
     String(value)
-      .slice(1);
+      .charAt(0)
+      .toUpperCase() +
+    String(value)
+      .slice(1)
+  );
 
 }
 
 
 /* =========================================================
-   HELPER — FORMAT DATE
+   29. FORMAT DATE
    ========================================================= */
 
 function formatDate(value) {
@@ -1888,7 +1838,7 @@ function formatDate(value) {
 
 
 /* =========================================================
-   HELPER — DATETIME LOCAL
+   30. FORMAT DATETIME LOCAL
    ========================================================= */
 
 function formatDateTimeLocal(value) {
@@ -1922,28 +1872,20 @@ function formatDateTimeLocal(value) {
   return (
     date.getFullYear() +
     "-" +
-    pad(
-      date.getMonth() + 1
-    ) +
+    pad(date.getMonth() + 1) +
     "-" +
-    pad(
-      date.getDate()
-    ) +
+    pad(date.getDate()) +
     "T" +
-    pad(
-      date.getHours()
-    ) +
+    pad(date.getHours()) +
     ":" +
-    pad(
-      date.getMinutes()
-    )
+    pad(date.getMinutes())
   );
 
 }
 
 
 /* =========================================================
-   HELPER — SET TEXT
+   31. SET TEXT
    ========================================================= */
 
 function setText(
@@ -1966,40 +1908,23 @@ function setText(
 
 
 /* =========================================================
-   HELPER — ESCAPE HTML
+   32. ESCAPE HTML
    ========================================================= */
 
 function escapeHTML(value) {
 
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
 
 /* =========================================================
-   HELPER — ESCAPE ATTRIBUTE
+   33. ESCAPE ATTRIBUTE
    ========================================================= */
 
 function escapeAttribute(value) {
@@ -2010,12 +1935,10 @@ function escapeAttribute(value) {
 
 
 /* =========================================================
-   ERROR STATE
+   34. ERROR STATE
    ========================================================= */
 
-function renderError(
-  message
-) {
+function renderError(message) {
 
   const tableBody =
     $("leadsTableBody");
@@ -2037,12 +1960,11 @@ function renderError(
     </tr>
   `;
 
-
 }
 
 
 /* =========================================================
-   TOAST
+   35. TOAST
    ========================================================= */
 
 function showToast(
@@ -2098,7 +2020,7 @@ function showToast(
 
 
 /* =========================================================
-   AUTH STATE LISTENER
+   36. AUTH STATE LISTENER
    ========================================================= */
 
 if (typeof window !== "undefined") {
