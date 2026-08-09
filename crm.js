@@ -1,11 +1,14 @@
-const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+const SUPABASE_URL =
+  "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+const SUPABASE_ANON_KEY =
+  "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
 // =====================================================
 // GLOBAL CRM STATE
@@ -13,29 +16,32 @@ const supabaseClient = window.supabase.createClient(
 
 let currentEnquiries = [];
 let currentLead = null;
-
+let activeLeadTab = "";
 
 // =====================================================
 // PAGE READY
 // =====================================================
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
 
-  const loginForm = document.getElementById("loginForm");
+    const loginForm =
+      document.getElementById("loginForm");
 
-  if (loginForm) {
-    setupLogin();
-    return;
+    if (loginForm) {
+      setupLogin();
+      return;
+    }
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+    if (logoutBtn) {
+      await setupCRM();
+    }
   }
-
-  const logoutBtn = document.getElementById("logoutBtn");
-
-  if (logoutBtn) {
-    await setupCRM();
-  }
-
-});
-
+);
 
 // =====================================================
 // LOGIN
@@ -49,6 +55,9 @@ function setupLogin() {
   const loginMessage =
     document.getElementById("loginMessage");
 
+  if (!loginForm) {
+    return;
+  }
 
   loginForm.addEventListener(
     "submit",
@@ -57,43 +66,49 @@ function setupLogin() {
       event.preventDefault();
       event.stopPropagation();
 
-
       const email =
-        document.getElementById("email")
-          ?.value.trim();
+        document
+          .getElementById("email")
+          ?.value
+          .trim();
 
       const password =
-        document.getElementById("password")
+        document
+          .getElementById("password")
           ?.value;
-
 
       if (!email || !password) {
 
-        loginMessage.textContent =
-          "Please enter email and password.";
+        if (loginMessage) {
+          loginMessage.textContent =
+            "Please enter email and password.";
 
-        loginMessage.style.display =
-          "block";
+          loginMessage.style.display =
+            "block";
+        }
 
         return;
       }
 
+      if (loginMessage) {
+        loginMessage.textContent =
+          "Signing in...";
 
-      loginMessage.textContent =
-        "Signing in...";
-
-      loginMessage.style.display =
-        "block";
-
+        loginMessage.style.display =
+          "block";
+      }
 
       try {
 
-        const { data, error } =
-          await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-          });
-
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth
+            .signInWithPassword({
+              email,
+              password
+            });
 
         if (error) {
 
@@ -102,26 +117,32 @@ function setupLogin() {
             error
           );
 
-          loginMessage.textContent =
-            "Login failed: " +
-            error.message;
+          if (loginMessage) {
+            loginMessage.textContent =
+              "Login failed: " +
+              error.message;
+          }
 
           return;
         }
 
+        if (
+          !data ||
+          !data.session
+        ) {
 
-        if (!data || !data.session) {
-
-          loginMessage.textContent =
-            "Login failed. No session created.";
+          if (loginMessage) {
+            loginMessage.textContent =
+              "Login failed. No session created.";
+          }
 
           return;
         }
 
-
-        loginMessage.textContent =
-          "Login successful. Opening CRM...";
-
+        if (loginMessage) {
+          loginMessage.textContent =
+            "Login successful. Opening CRM...";
+        }
 
         window.location.href =
           "dashboard.html";
@@ -133,16 +154,15 @@ function setupLogin() {
           error
         );
 
-        loginMessage.textContent =
-          "Login error: " +
-          error.message;
+        if (loginMessage) {
+          loginMessage.textContent =
+            "Login error: " +
+            error.message;
+        }
       }
-
     }
   );
-
 }
-
 
 // =====================================================
 // CRM SETUP
@@ -156,8 +176,9 @@ async function setupCRM() {
       data: {
         session
       }
-    } = await supabaseClient.auth.getSession();
-
+    } =
+      await supabaseClient.auth
+        .getSession();
 
     if (!session) {
 
@@ -167,19 +188,12 @@ async function setupCRM() {
       return;
     }
 
-
     setupLogout();
-
     setupSearch();
-
     setupFilters();
-
     setupRefresh();
-
     setupLeadModal();
-
     setupAddEnquiry();
-
     setupLeadTabs();
 
     showStaffName(
@@ -196,14 +210,11 @@ async function setupCRM() {
     );
 
     showStaffNameError();
-
   }
-
 }
 
-
 // =====================================================
-// STAFF NAME / EMAIL
+// STAFF NAME
 // =====================================================
 
 function showStaffName(user) {
@@ -217,11 +228,9 @@ function showStaffName(user) {
     return;
   }
 
-
   staffName.textContent =
     user?.email || "Staff";
 }
-
 
 function showStaffNameError() {
 
@@ -231,13 +240,10 @@ function showStaffNameError() {
     );
 
   if (staffName) {
-
     staffName.textContent =
       "Staff";
   }
-
 }
-
 
 // =====================================================
 // LOGOUT
@@ -254,25 +260,22 @@ function setupLogout() {
     return;
   }
 
-
   logoutBtn.addEventListener(
     "click",
     async () => {
 
-      logoutBtn.disabled =
-        true;
+      logoutBtn.disabled = true;
 
       logoutBtn.textContent =
         "Logging out...";
-
 
       try {
 
         const {
           error
         } =
-          await supabaseClient.auth.signOut();
-
+          await supabaseClient.auth
+            .signOut();
 
         if (error) {
 
@@ -290,14 +293,13 @@ function setupLogout() {
           return;
         }
 
-
         window.location.href =
           "login.html";
 
       } catch (error) {
 
         console.error(
-          "LOGOUT EXCEPTION:",
+          "LOGOUT ERROR:",
           error
         );
 
@@ -307,12 +309,9 @@ function setupLogout() {
         logoutBtn.textContent =
           "Logout";
       }
-
     }
   );
-
 }
-
 
 // =====================================================
 // LOAD ENQUIRIES
@@ -325,21 +324,16 @@ async function loadEnquiries() {
       "leadsTableBody"
     );
 
-
   if (tableBody) {
 
     tableBody.innerHTML = `
       <tr>
-        <td
-          colspan="9"
-          class="loading-cell"
-        >
+        <td colspan="9" class="loading-cell">
           Loading enquiries...
         </td>
       </tr>
     `;
   }
-
 
   try {
 
@@ -357,7 +351,6 @@ async function loadEnquiries() {
           }
         );
 
-
     if (error) {
 
       console.error(
@@ -371,10 +364,7 @@ async function loadEnquiries() {
 
         tableBody.innerHTML = `
           <tr>
-            <td
-              colspan="9"
-              class="loading-cell"
-            >
+            <td colspan="9" class="loading-cell">
               Unable to load enquiries.
             </td>
           </tr>
@@ -384,19 +374,16 @@ async function loadEnquiries() {
       return;
     }
 
-
     currentEnquiries =
-      data || [];
-
-
-    renderEnquiries(
-      currentEnquiries
-    );
-
+      Array.isArray(data)
+        ? data
+        : [];
 
     updateStats(
       currentEnquiries
     );
+
+    applyFilters();
 
   } catch (error) {
 
@@ -409,20 +396,14 @@ async function loadEnquiries() {
 
       tableBody.innerHTML = `
         <tr>
-          <td
-            colspan="9"
-            class="loading-cell"
-          >
+          <td colspan="9" class="loading-cell">
             Unable to load enquiries.
           </td>
         </tr>
       `;
     }
-
   }
-
 }
-
 
 // =====================================================
 // RENDER ENQUIRIES
@@ -442,16 +423,13 @@ function renderEnquiries(
       "emptyState"
     );
 
-
   if (!tableBody) {
     return;
   }
 
-
   if (!enquiries.length) {
 
     tableBody.innerHTML = "";
-
 
     if (emptyState) {
       emptyState.hidden = false;
@@ -460,110 +438,116 @@ function renderEnquiries(
     return;
   }
 
-
   if (emptyState) {
     emptyState.hidden = true;
   }
 
-
   tableBody.innerHTML =
-    enquiries.map(
-      (lead) => {
+    enquiries
+      .map(
+        (lead) => {
 
-        return `
-          <tr>
+          return `
+            <tr>
 
-            <td>
+              <td>
+                <strong class="customer-name">
+                  ${escapeHTML(
+                    lead.customer_name ||
+                    "Unnamed"
+                  )}
+                </strong>
 
-              <strong>
+                <small style="
+                  display:block;
+                  margin-top:4px;
+                  color:#8b94a5;
+                ">
+                  ${escapeHTML(
+                    lead.mobile || ""
+                  )}
+                </small>
+              </td>
+
+              <td>
                 ${escapeHTML(
-                  lead.customer_name || "Unnamed"
+                  lead.occasion || "—"
                 )}
-              </strong>
+              </td>
 
-              <small>
+              <td>
                 ${escapeHTML(
-                  lead.mobile || ""
+                  lead.location || "—"
                 )}
-              </small>
+              </td>
 
-            </td>
-
-
-            <td>
-              ${escapeHTML(
-                lead.occasion || "—"
-              )}
-            </td>
-
-
-            <td>
-              ${escapeHTML(
-                lead.location || "—"
-              )}
-            </td>
-
-
-            <td>
-              ${formatDate(
-                lead.event_date
-              )}
-            </td>
-
-
-            <td>
-              ${lead.guests || "—"}
-            </td>
-
-
-            <td>
-              ${
-                lead.budget_per_person
-                  ? "₹" +
-                    Number(
-                      lead.budget_per_person
-                    ).toLocaleString("en-IN")
-                  : "—"
-              }
-            </td>
-
-
-            <td>
-              <span class="status-badge">
-                ${formatStatus(
-                  lead.status
+              <td>
+                ${formatDate(
+                  lead.event_date
                 )}
-              </span>
-            </td>
+              </td>
 
+              <td>
+                ${lead.guests || "—"}
+              </td>
 
-            <td>
-              <span class="priority-badge">
-                ${formatPriority(
-                  lead.priority
-                )}
-              </span>
-            </td>
+              <td>
+                ${
+                  lead.budget_per_person
+                    ? "₹" +
+                      Number(
+                        lead.budget_per_person
+                      ).toLocaleString(
+                        "en-IN"
+                      )
+                    : "—"
+                }
+              </td>
 
+              <td>
+                <span class="
+                  status-badge
+                  ${getStatusClass(
+                    lead.status
+                  )}
+                ">
+                  ${formatStatus(
+                    lead.status
+                  )}
+                </span>
+              </td>
 
-            <td>
+              <td>
+                <span class="
+                  priority-badge
+                  priority-${escapeHTML(
+                    lead.priority ||
+                    "normal"
+                  )}
+                ">
+                  ${formatPriority(
+                    lead.priority
+                  )}
+                </span>
+              </td>
 
-              <button
-                type="button"
-                class="view-lead-btn"
-                data-lead-id="${lead.id}"
-              >
-                View
-              </button>
+              <td>
 
-            </td>
+                <button
+                  type="button"
+                  class="view-lead-btn"
+                  data-lead-id="${lead.id}"
+                >
+                  View
+                </button>
 
-          </tr>
-        `;
+              </td>
 
-      }
-    ).join("");
-
+            </tr>
+          `;
+        }
+      )
+      .join("");
 
   document
     .querySelectorAll(
@@ -581,23 +565,21 @@ function renderEnquiries(
 
             const lead =
               currentEnquiries.find(
-                item =>
+                (item) =>
                   String(item.id) ===
                   String(leadId)
               );
 
             if (lead) {
-              openLeadModal(lead);
+              openLeadModal(
+                lead
+              );
             }
-
           }
         );
-
       }
     );
-
 }
-
 
 // =====================================================
 // STATS
@@ -627,45 +609,38 @@ function updateStats(
       "convertedLeads"
     );
 
-
   if (total) {
-
     total.textContent =
       enquiries.length;
   }
-
 
   if (newLeads) {
 
     newLeads.textContent =
       enquiries.filter(
-        lead =>
+        (lead) =>
           lead.status === "new"
       ).length;
   }
-
 
   if (followup) {
 
     followup.textContent =
       enquiries.filter(
-        lead =>
+        (lead) =>
           lead.status === "follow_up"
       ).length;
   }
-
 
   if (converted) {
 
     converted.textContent =
       enquiries.filter(
-        lead =>
+        (lead) =>
           lead.status === "converted"
       ).length;
   }
-
 }
-
 
 // =====================================================
 // SEARCH
@@ -682,17 +657,14 @@ function setupSearch() {
     return;
   }
 
-
   searchInput.addEventListener(
     "input",
     applyFilters
   );
-
 }
 
-
 // =====================================================
-// FILTERS
+// NORMAL FILTERS
 // =====================================================
 
 function setupFilters() {
@@ -707,7 +679,6 @@ function setupFilters() {
       "priorityFilter"
     );
 
-
   if (statusFilter) {
 
     statusFilter.addEventListener(
@@ -716,7 +687,6 @@ function setupFilters() {
     );
   }
 
-
   if (priorityFilter) {
 
     priorityFilter.addEventListener(
@@ -724,9 +694,11 @@ function setupFilters() {
       applyFilters
     );
   }
-
 }
 
+// =====================================================
+// APPLY ALL FILTERS
+// =====================================================
 
 function applyFilters() {
 
@@ -745,23 +717,21 @@ function applyFilters() {
       "priorityFilter"
     );
 
-
   const search =
     (
       searchInput?.value ||
       ""
-    ).trim().toLowerCase();
+    )
+      .trim()
+      .toLowerCase();
 
-
-  const status =
+  const dropdownStatus =
     statusFilter?.value ||
     "";
-
 
   const priority =
     priorityFilter?.value ||
     "";
-
 
   const filtered =
     currentEnquiries.filter(
@@ -770,20 +740,16 @@ function applyFilters() {
         const searchable = [
 
           lead.customer_name,
-
           lead.mobile,
-
           lead.email,
-
           lead.location,
-
-          lead.occasion
+          lead.occasion,
+          lead.source
 
         ]
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
-
 
         const matchesSearch =
           !search ||
@@ -791,33 +757,34 @@ function applyFilters() {
             search
           );
 
+        const matchesTab =
+          !activeLeadTab ||
+          lead.status ===
+            activeLeadTab;
 
-       const matchesStatus =
-  (!status || lead.status === status) &&
-  (!activeStatus || lead.status === activeStatus);
-
+        const matchesStatus =
+          !dropdownStatus ||
+          lead.status ===
+            dropdownStatus;
 
         const matchesPriority =
           !priority ||
-          lead.priority === priority;
-
+          lead.priority ===
+            priority;
 
         return (
           matchesSearch &&
+          matchesTab &&
           matchesStatus &&
           matchesPriority
         );
-
       }
     );
-
 
   renderEnquiries(
     filtered
   );
-
 }
-
 
 // =====================================================
 // REFRESH
@@ -834,7 +801,6 @@ function setupRefresh() {
     return;
   }
 
-
   refreshBtn.addEventListener(
     "click",
     async () => {
@@ -845,24 +811,176 @@ function setupRefresh() {
       refreshBtn.textContent =
         "Refreshing...";
 
-
       await loadEnquiries();
-
 
       refreshBtn.disabled =
         false;
 
       refreshBtn.textContent =
         "↻ Refresh";
-
     }
   );
-
 }
 
+// =====================================================
+// FOUR LEAD TABS
+// TOTAL | NEW | FOLLOW-UP | CONVERTED
+// =====================================================
+
+function setupLeadTabs() {
+
+  const tabs =
+    document.querySelectorAll(
+      ".stat-tab"
+    );
+
+  /*
+    If HTML has .stat-tab classes,
+    use them directly.
+  */
+
+  if (tabs.length) {
+
+    tabs.forEach(
+      (tab) => {
+
+        tab.addEventListener(
+          "click",
+          () => {
+
+            activeLeadTab =
+              tab.dataset.status ||
+              "";
+
+            setActiveLeadTab(
+              tab
+            );
+
+            clearDropdownStatus();
+
+            applyFilters();
+          }
+        );
+      }
+    );
+
+    return;
+  }
+
+  /*
+    Compatibility:
+    If current HTML uses .stat-card
+    instead of .stat-tab, automatically
+    make the four cards clickable.
+  */
+
+  const cards =
+    document.querySelectorAll(
+      ".stats-grid .stat-card"
+    );
+
+  if (!cards.length) {
+    return;
+  }
+
+  cards.forEach(
+    (card, index) => {
+
+      let status = "";
+
+      if (index === 0) {
+        status = "";
+      }
+
+      if (index === 1) {
+        status = "new";
+      }
+
+      if (index === 2) {
+        status = "follow_up";
+      }
+
+      if (index === 3) {
+        status = "converted";
+      }
+
+      card.dataset.status =
+        status;
+
+      card.classList.add(
+        "stat-tab"
+      );
+
+      card.style.cursor =
+        "pointer";
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          activeLeadTab =
+            status;
+
+          setActiveLeadTab(
+            card
+          );
+
+          clearDropdownStatus();
+
+          applyFilters();
+        }
+      );
+    }
+  );
+}
 
 // =====================================================
-// LEAD MODAL
+// ACTIVE TAB STYLE
+// =====================================================
+
+function setActiveLeadTab(
+  selectedTab
+) {
+
+  document
+    .querySelectorAll(
+      ".stat-tab"
+    )
+    .forEach(
+      (tab) => {
+
+        tab.classList.remove(
+          "active"
+        );
+      }
+    );
+
+  if (selectedTab) {
+
+    selectedTab.classList.add(
+      "active"
+    );
+  }
+}
+
+// =====================================================
+// CLEAR STATUS DROPDOWN WHEN TAB USED
+// =====================================================
+
+function clearDropdownStatus() {
+
+  const statusFilter =
+    document.getElementById(
+      "statusFilter"
+    );
+
+  if (statusFilter) {
+    statusFilter.value = "";
+  }
+}
+
+// =====================================================
+// LEAD MODAL SETUP
 // =====================================================
 
 function setupLeadModal() {
@@ -882,7 +1000,6 @@ function setupLeadModal() {
       "saveLeadBtn"
     );
 
-
   if (closeBtn) {
 
     closeBtn.addEventListener(
@@ -890,7 +1007,6 @@ function setupLeadModal() {
       closeLeadModal
     );
   }
-
 
   if (cancelBtn) {
 
@@ -900,7 +1016,6 @@ function setupLeadModal() {
     );
   }
 
-
   if (saveBtn) {
 
     saveBtn.addEventListener(
@@ -909,17 +1024,30 @@ function setupLeadModal() {
     );
   }
 
+  const modal =
+    document.getElementById(
+      "leadModal"
+    );
+
+  if (modal) {
+
+    modal.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target === modal
+        ) {
+          closeLeadModal();
+        }
+      }
+    );
+  }
 
   const callBtn =
     document.getElementById(
       "modalCallBtn"
     );
-
-  const whatsappBtn =
-    document.getElementById(
-      "modalWhatsappBtn"
-    );
-
 
   if (callBtn) {
 
@@ -931,15 +1059,16 @@ function setupLeadModal() {
           !currentLead ||
           !currentLead.mobile
         ) {
-
           event.preventDefault();
         }
-
       }
     );
-
   }
 
+  const whatsappBtn =
+    document.getElementById(
+      "modalWhatsappBtn"
+    );
 
   if (whatsappBtn) {
 
@@ -951,17 +1080,16 @@ function setupLeadModal() {
           !currentLead ||
           !currentLead.mobile
         ) {
-
           event.preventDefault();
         }
-
       }
     );
-
   }
-
 }
 
+// =====================================================
+// OPEN LEAD MODAL
+// =====================================================
 
 function openLeadModal(
   lead
@@ -970,36 +1098,35 @@ function openLeadModal(
   currentLead =
     lead;
 
-
   setText(
     "modalCustomerName",
-    lead.customer_name || "Customer"
+    lead.customer_name ||
+      "Customer"
   );
-
 
   setText(
     "modalMobile",
-    lead.mobile || "—"
+    lead.mobile ||
+      "—"
   );
-
 
   setText(
     "modalEmail",
-    lead.email || "—"
+    lead.email ||
+      "—"
   );
-
 
   setText(
     "modalLocation",
-    lead.location || "—"
+    lead.location ||
+      "—"
   );
-
 
   setText(
     "modalOccasion",
-    lead.occasion || "—"
+    lead.occasion ||
+      "—"
   );
-
 
   setText(
     "modalEventDate",
@@ -1008,12 +1135,11 @@ function openLeadModal(
     )
   );
 
-
   setText(
     "modalGuests",
-    lead.guests || "—"
+    lead.guests ||
+      "—"
   );
-
 
   setText(
     "modalBudget",
@@ -1021,22 +1147,23 @@ function openLeadModal(
       ? "₹" +
         Number(
           lead.budget_per_person
-        ).toLocaleString("en-IN")
+        ).toLocaleString(
+          "en-IN"
+        )
       : "—"
   );
 
-
   setText(
     "modalFood",
-    lead.food_preference || "—"
+    lead.food_preference ||
+      "—"
   );
-
 
   setText(
     "modalRequirements",
-    lead.requirements || "—"
+    lead.requirements ||
+      "—"
   );
-
 
   const status =
     document.getElementById(
@@ -1044,11 +1171,10 @@ function openLeadModal(
     );
 
   if (status) {
-
     status.value =
-      lead.status || "new";
+      lead.status ||
+      "new";
   }
-
 
   const priority =
     document.getElementById(
@@ -1056,11 +1182,10 @@ function openLeadModal(
     );
 
   if (priority) {
-
     priority.value =
-      lead.priority || "normal";
+      lead.priority ||
+      "normal";
   }
-
 
   const followUp =
     document.getElementById(
@@ -1075,7 +1200,6 @@ function openLeadModal(
       );
   }
 
-
   const notes =
     document.getElementById(
       "modalNotes"
@@ -1084,47 +1208,45 @@ function openLeadModal(
   if (notes) {
 
     notes.value =
-      lead.internal_notes || "";
+      lead.internal_notes ||
+      "";
   }
-
 
   const callBtn =
     document.getElementById(
       "modalCallBtn"
     );
 
-
   if (callBtn) {
 
     callBtn.href =
       lead.mobile
-        ? "tel:" + lead.mobile
+        ? "tel:" +
+          lead.mobile
         : "#";
   }
-
 
   const whatsappBtn =
     document.getElementById(
       "modalWhatsappBtn"
     );
 
-
   if (whatsappBtn) {
 
     const cleanMobile =
       String(
-        lead.mobile || ""
+        lead.mobile ||
+          ""
       ).replace(
         /\D/g,
         ""
       );
 
-
     const whatsappNumber =
       cleanMobile.length === 10
-        ? "91" + cleanMobile
+        ? "91" +
+          cleanMobile
         : cleanMobile;
-
 
     whatsappBtn.href =
       whatsappNumber
@@ -1133,20 +1255,24 @@ function openLeadModal(
         : "#";
   }
 
-
   const modal =
     document.getElementById(
       "leadModal"
     );
 
-
   if (modal) {
 
-    modal.hidden = false;
-  }
+    modal.hidden =
+      false;
 
+    document.body.style.overflow =
+      "hidden";
+  }
 }
 
+// =====================================================
+// CLOSE LEAD MODAL
+// =====================================================
 
 function closeLeadModal() {
 
@@ -1155,18 +1281,18 @@ function closeLeadModal() {
       "leadModal"
     );
 
-
   if (modal) {
 
-    modal.hidden = true;
+    modal.hidden =
+      true;
   }
 
+  document.body.style.overflow =
+    "";
 
   currentLead =
     null;
-
 }
-
 
 // =====================================================
 // SAVE LEAD CHANGES
@@ -1174,45 +1300,79 @@ function closeLeadModal() {
 
 async function saveLeadChanges() {
 
-  if (!currentLead || !currentLead.id) {
-    showToast("No lead selected.");
+  if (
+    !currentLead ||
+    !currentLead.id
+  ) {
+
+    showToast(
+      "No lead selected."
+    );
+
     return;
   }
 
   const saveBtn =
-    document.getElementById("saveLeadBtn");
+    document.getElementById(
+      "saveLeadBtn"
+    );
 
   const status =
-    document.getElementById("modalStatus")?.value || "new";
+    document.getElementById(
+      "modalStatus"
+    )?.value ||
+    "new";
 
   const priority =
-    document.getElementById("modalPriority")?.value || "normal";
+    document.getElementById(
+      "modalPriority"
+    )?.value ||
+    "normal";
 
   const followUp =
-    document.getElementById("modalFollowUp")?.value;
+    document.getElementById(
+      "modalFollowUp"
+    )?.value ||
+    "";
 
   const notes =
-    document.getElementById("modalNotes")?.value.trim();
+    document.getElementById(
+      "modalNotes"
+    )?.value
+      .trim() ||
+    "";
 
   if (saveBtn) {
-    saveBtn.disabled = true;
-    saveBtn.textContent = "Saving...";
+
+    saveBtn.disabled =
+      true;
+
+    saveBtn.textContent =
+      "Saving...";
   }
 
   try {
 
     const updateData = {
-      status: status,
 
-      priority: priority,
+      status:
+        status,
 
-      follow_up_at: followUp
-        ? new Date(followUp).toISOString()
-        : null,
+      priority:
+        priority,
 
-      internal_notes: notes || null,
+      follow_up_at:
+        followUp
+          ? new Date(
+              followUp
+            ).toISOString()
+          : null,
 
-      updated_at: new Date().toISOString()
+      internal_notes:
+        notes || null,
+
+      updated_at:
+        new Date().toISOString()
     };
 
     console.log(
@@ -1225,14 +1385,28 @@ async function saveLeadChanges() {
       updateData
     );
 
+    /*
+      IMPORTANT:
+      Do NOT use .single() here.
+      Supabase/PostgREST can return 406
+      when a singular response is expected
+      but the response is empty.
+    */
 
     const {
       error
-    } = await supabaseClient
-      .from("customer_enquiries")
-      .update(updateData)
-      .eq("id", currentLead.id);
-
+    } =
+      await supabaseClient
+        .from(
+          "customer_enquiries"
+        )
+        .update(
+          updateData
+        )
+        .eq(
+          "id",
+          currentLead.id
+        );
 
     if (error) {
 
@@ -1249,22 +1423,48 @@ async function saveLeadChanges() {
       return;
     }
 
+    /*
+      Verify the updated record separately.
+    */
 
-    console.log(
-      "LEAD UPDATE SUCCESSFUL"
-    );
+    const {
+      data: verifyData,
+      error: verifyError
+    } =
+      await supabaseClient
+        .from(
+          "customer_enquiries"
+        )
+        .select("*")
+        .eq(
+          "id",
+          currentLead.id
+        )
+        .maybeSingle();
 
+    if (verifyError) {
+
+      console.warn(
+        "UPDATE VERIFY ERROR:",
+        verifyError
+      );
+    }
+
+    if (verifyData) {
+
+      console.log(
+        "UPDATED LEAD:",
+        verifyData
+      );
+    }
 
     showToast(
       "Lead updated successfully."
     );
 
-
     closeLeadModal();
 
-
     await loadEnquiries();
-
 
   } catch (error) {
 
@@ -1278,7 +1478,6 @@ async function saveLeadChanges() {
       error.message
     );
 
-
   } finally {
 
     if (saveBtn) {
@@ -1289,13 +1488,11 @@ async function saveLeadChanges() {
       saveBtn.textContent =
         "Save Changes";
     }
-
   }
+}
 
-}
-}
 // =====================================================
-// ADD ENQUIRY
+// ADD ENQUIRY SETUP
 // =====================================================
 
 function setupAddEnquiry() {
@@ -1305,24 +1502,20 @@ function setupAddEnquiry() {
       "addEnquiryBtn"
     );
 
-
   const closeBtn =
     document.getElementById(
       "closeAddEnquiryBtn"
     );
-
 
   const cancelBtn =
     document.getElementById(
       "cancelAddEnquiryBtn"
     );
 
-
   const saveBtn =
     document.getElementById(
       "saveNewEnquiryBtn"
     );
-
 
   if (addBtn) {
 
@@ -1332,7 +1525,6 @@ function setupAddEnquiry() {
     );
   }
 
-
   if (closeBtn) {
 
     closeBtn.addEventListener(
@@ -1340,7 +1532,6 @@ function setupAddEnquiry() {
       closeAddEnquiryModal
     );
   }
-
 
   if (cancelBtn) {
 
@@ -1350,7 +1541,6 @@ function setupAddEnquiry() {
     );
   }
 
-
   if (saveBtn) {
 
     saveBtn.addEventListener(
@@ -1359,8 +1549,30 @@ function setupAddEnquiry() {
     );
   }
 
+  const modal =
+    document.getElementById(
+      "addEnquiryModal"
+    );
+
+  if (modal) {
+
+    modal.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target === modal
+        ) {
+          closeAddEnquiryModal();
+        }
+      }
+    );
+  }
 }
 
+// =====================================================
+// OPEN ADD ENQUIRY
+// =====================================================
 
 function openAddEnquiryModal() {
 
@@ -1368,7 +1580,6 @@ function openAddEnquiryModal() {
     document.getElementById(
       "addEnquiryModal"
     );
-
 
   if (!modal) {
 
@@ -1379,12 +1590,16 @@ function openAddEnquiryModal() {
     return;
   }
 
-
   modal.hidden =
     false;
 
+  document.body.style.overflow =
+    "hidden";
 }
 
+// =====================================================
+// CLOSE ADD ENQUIRY
+// =====================================================
 
 function closeAddEnquiryModal() {
 
@@ -1393,28 +1608,30 @@ function closeAddEnquiryModal() {
       "addEnquiryModal"
     );
 
-
   if (modal) {
 
     modal.hidden =
       true;
   }
 
+  document.body.style.overflow =
+    "";
 
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
 
-
   if (message) {
 
     message.textContent =
       "";
   }
-
 }
 
+// =====================================================
+// SAVE NEW ENQUIRY
+// =====================================================
 
 async function saveNewEnquiry() {
 
@@ -1423,102 +1640,96 @@ async function saveNewEnquiry() {
       "newCustomerName"
     )?.value.trim();
 
-
   const mobile =
     document.getElementById(
       "newMobile"
     )?.value.trim();
-
 
   const email =
     document.getElementById(
       "newEmail"
     )?.value.trim();
 
-
   const location =
     document.getElementById(
       "newLocation"
     )?.value.trim();
 
-
   const occasion =
     document.getElementById(
       "newOccasion"
-    )?.value;
-
+    )?.value ||
+    "";
 
   const eventDate =
     document.getElementById(
       "newEventDate"
-    )?.value;
-
+    )?.value ||
+    "";
 
   const guests =
     document.getElementById(
       "newGuests"
-    )?.value;
-
+    )?.value ||
+    "";
 
   const budget =
     document.getElementById(
       "newBudget"
-    )?.value;
-
+    )?.value ||
+    "";
 
   const food =
     document.getElementById(
       "newFood"
-    )?.value;
-
+    )?.value ||
+    "";
 
   const source =
     document.getElementById(
       "newSource"
-    )?.value;
-
+    )?.value ||
+    "Website";
 
   const status =
     document.getElementById(
       "newStatus"
-    )?.value || "new";
-
+    )?.value ||
+    "new";
 
   const priority =
     document.getElementById(
       "newPriority"
-    )?.value || "normal";
-
+    )?.value ||
+    "normal";
 
   const followUp =
     document.getElementById(
       "newFollowUp"
-    )?.value;
-
+    )?.value ||
+    "";
 
   const requirements =
     document.getElementById(
       "newRequirements"
-    )?.value.trim();
-
+    )?.value.trim() ||
+    "";
 
   const notes =
     document.getElementById(
       "newNotes"
-    )?.value.trim();
-
+    )?.value.trim() ||
+    "";
 
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
 
-
   const saveBtn =
     document.getElementById(
       "saveNewEnquiryBtn"
     );
-
 
   if (!name || !mobile) {
 
@@ -1526,12 +1737,10 @@ async function saveNewEnquiry() {
 
       message.textContent =
         "Customer name and mobile number are required.";
-
     }
 
     return;
   }
-
 
   if (saveBtn) {
 
@@ -1542,13 +1751,11 @@ async function saveNewEnquiry() {
       "Saving...";
   }
 
-
   if (message) {
 
     message.textContent =
       "Saving enquiry...";
   }
-
 
   try {
 
@@ -1557,7 +1764,9 @@ async function saveNewEnquiry() {
       error
     } =
       await supabaseClient
-        .from("customer_enquiries")
+        .from(
+          "customer_enquiries"
+        )
         .insert({
 
           customer_name:
@@ -1567,35 +1776,46 @@ async function saveNewEnquiry() {
             mobile,
 
           email:
-            email || null,
+            email ||
+            null,
 
           location:
-            location || null,
+            location ||
+            null,
 
           occasion:
-            occasion || null,
+            occasion ||
+            null,
 
           guests:
             guests
-              ? Number(guests)
+              ? Number(
+                  guests
+                )
               : null,
 
           budget_per_person:
             budget
-              ? Number(budget)
+              ? Number(
+                  budget
+                )
               : null,
 
           food_preference:
-            food || null,
+            food ||
+            null,
 
           event_date:
-            eventDate || null,
+            eventDate ||
+            null,
 
           internal_notes:
-            notes || null,
+            notes ||
+            null,
 
           source:
-            source || "Other",
+            source ||
+            "Other",
 
           status:
             status,
@@ -1614,53 +1834,52 @@ async function saveNewEnquiry() {
             priority,
 
           requirements:
-            requirements || null,
+            requirements ||
+            null,
 
-               last_contacted_at:
-        null
+          last_contacted_at:
+            null
 
-    });
+        });
 
-if (error) {
+    if (error) {
 
-  console.error(
-    "ADD ENQUIRY ERROR:",
-    error
-  );
+      console.error(
+        "ADD ENQUIRY ERROR:",
+        error
+      );
 
-  if (message) {
+      if (message) {
 
-    message.textContent =
-      "Unable to save enquiry: " +
-      error.message;
-  }
+        message.textContent =
+          "Unable to save enquiry: " +
+          error.message;
+      }
 
-  return;
-}
+      return;
+    }
 
-console.log(
-  "ENQUIRY CREATED"
-);
+    console.log(
+      "ENQUIRY CREATED:",
+      data
+    );
 
-if (message) {
+    if (message) {
 
-  message.textContent =
-    "Enquiry added successfully.";
-}
+      message.textContent =
+        "Enquiry added successfully.";
+    }
 
-await loadEnquiries();
+    clearAddEnquiryForm();
 
-clearAddEnquiryForm();
+    await loadEnquiries();
 
-setTimeout(
-  () => {
-
-    closeAddEnquiryModal();
-
-  },
-  500
-);
-
+    setTimeout(
+      () => {
+        closeAddEnquiryModal();
+      },
+      500
+    );
 
   } catch (error) {
 
@@ -1668,7 +1887,6 @@ setTimeout(
       "ADD ENQUIRY EXCEPTION:",
       error
     );
-
 
     if (message) {
 
@@ -1687,11 +1905,8 @@ setTimeout(
       saveBtn.textContent =
         "Save Enquiry";
     }
-
   }
-
 }
-
 
 // =====================================================
 // CLEAR ADD ENQUIRY FORM
@@ -1714,7 +1929,6 @@ function clearAddEnquiryForm() {
 
   ];
 
-
   fields.forEach(
     (id) => {
 
@@ -1724,14 +1938,11 @@ function clearAddEnquiryForm() {
         );
 
       if (element) {
-
         element.value =
           "";
       }
-
     }
   );
-
 
   const occasion =
     document.getElementById(
@@ -1739,11 +1950,9 @@ function clearAddEnquiryForm() {
     );
 
   if (occasion) {
-
     occasion.value =
       "";
   }
-
 
   const food =
     document.getElementById(
@@ -1751,11 +1960,9 @@ function clearAddEnquiryForm() {
     );
 
   if (food) {
-
     food.value =
       "";
   }
-
 
   const source =
     document.getElementById(
@@ -1763,11 +1970,9 @@ function clearAddEnquiryForm() {
     );
 
   if (source) {
-
     source.value =
       "Website";
   }
-
 
   const status =
     document.getElementById(
@@ -1775,27 +1980,20 @@ function clearAddEnquiryForm() {
     );
 
   if (status) {
-
     status.value =
       "new";
   }
-
 
   const priority =
     document.getElementById(
       "newPriority"
     );
-  const activeStatus =
-  activeLeadTab;
 
   if (priority) {
-
     priority.value =
       "normal";
   }
-
 }
-
 
 // =====================================================
 // TOAST
@@ -1805,25 +2003,35 @@ function showToast(
   message
 ) {
 
+  /*
+    Supports both:
+    #toastMessage
+    and #toast
+  */
+
   const toast =
     document.getElementById(
       "toastMessage"
+    ) ||
+    document.getElementById(
+      "toast"
     );
 
-
   if (!toast) {
+    console.log(
+      "TOAST:",
+      message
+    );
+
     return;
   }
-
 
   toast.textContent =
     message;
 
-
   toast.classList.add(
     "show"
   );
-
 
   setTimeout(
     () => {
@@ -1835,46 +2043,8 @@ function showToast(
     },
     2500
   );
-
 }
 
-// =====================================================
-// LEAD TABS
-// =====================================================
-
-let activeLeadTab = "";
-
-function setupLeadTabs() {
-
-  const tabs =
-    document.querySelectorAll(".stat-tab");
-
-  if (!tabs.length) {
-    return;
-  }
-
-  tabs.forEach((tab) => {
-
-    tab.addEventListener(
-      "click",
-      () => {
-
-        activeLeadTab =
-          tab.dataset.status || "";
-
-        tabs.forEach((item) => {
-          item.classList.remove("active");
-        });
-
-        tab.classList.add("active");
-
-        applyFilters();
-      }
-    );
-
-  });
-
-}
 // =====================================================
 // HELPERS
 // =====================================================
@@ -1889,15 +2059,16 @@ function setText(
       id
     );
 
-
   if (element) {
 
     element.textContent =
       value;
   }
-
 }
 
+// =====================================================
+// DATE FORMAT
+// =====================================================
 
 function formatDate(
   value
@@ -1907,32 +2078,37 @@ function formatDate(
     return "—";
   }
 
-
   const date =
     new Date(
       value
     );
 
-
-  if (Number.isNaN(
-    date.getTime()
-  )) {
-
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
     return value;
   }
-
 
   return date.toLocaleDateString(
     "en-IN",
     {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
+      day:
+        "2-digit",
+
+      month:
+        "short",
+
+      year:
+        "numeric"
     }
   );
-
 }
 
+// =====================================================
+// DATETIME LOCAL
+// =====================================================
 
 function toDateTimeLocal(
   value
@@ -1942,26 +2118,27 @@ function toDateTimeLocal(
     return "";
   }
 
-
   const date =
     new Date(
       value
     );
 
-
-  if (Number.isNaN(
-    date.getTime()
-  )) {
-
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
     return "";
   }
 
-
   const pad =
     (number) =>
-      String(number)
-        .padStart(2, "0");
-
+      String(
+        number
+      ).padStart(
+        2,
+        "0"
+      );
 
   return (
     date.getFullYear() +
@@ -1982,9 +2159,11 @@ function toDateTimeLocal(
       date.getMinutes()
     )
   );
-
 }
 
+// =====================================================
+// STATUS
+// =====================================================
 
 function formatStatus(
   status
@@ -2009,18 +2188,49 @@ function formatStatus(
 
     closed:
       "Closed"
-
   };
-
 
   return (
     values[status] ||
     status ||
     "New"
   );
-
 }
 
+function getStatusClass(
+  status
+) {
+
+  const classes = {
+
+    new:
+      "status-new",
+
+    contacted:
+      "status-contacted",
+
+    follow_up:
+      "status-progress",
+
+    qualified:
+      "status-progress",
+
+    converted:
+      "status-contacted",
+
+    closed:
+      "status-closed"
+  };
+
+  return (
+    classes[status] ||
+    "status-new"
+  );
+}
+
+// =====================================================
+// PRIORITY
+// =====================================================
 
 function formatPriority(
   priority
@@ -2039,18 +2249,18 @@ function formatPriority(
 
     low:
       "Low"
-
   };
-
 
   return (
     values[priority] ||
     priority ||
     "Normal"
   );
-
 }
 
+// =====================================================
+// HTML ESCAPE
+// =====================================================
 
 function escapeHTML(
   value
@@ -2079,5 +2289,4 @@ function escapeHTML(
       /'/g,
       "&#039;"
     );
-
 }
