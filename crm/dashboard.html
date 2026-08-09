@@ -1,385 +1,417 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Select My Venue CRM</title>
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
 
-  <link rel="stylesheet" href="../crm.css">
+>
+
+  <title>
+    Select My Venue — CRM
+  </title>
+
+  <!-- CRM CSS -->
+
+  <link
+    rel="stylesheet"
+    href="../crm.css"
+  >
+
 </head>
 
 <body>
 
-  <!-- =====================================================
+  <!-- =================================================
        CRM HEADER
-  ====================================================== -->
+  ================================================== -->
 
   <header class="crm-header">
 
-    <div class="crm-brand">
+```
+<div class="crm-brand">
 
-     <img
-  src="../logo.png"
-  alt="Select My Venue"
->
+  <img
+    src="../logo.png"
+    alt="Select My Venue"
+  >
 
-      <div class="crm-title">
-        <strong>CRM</strong>
-        <span>Lead Management</span>
-      </div>
+  <div class="crm-title">
 
-    </div>
+    <strong>
+      CRM
+    </strong>
+
+    <span>
+      Lead Management
+    </span>
+
+  </div>
+
+</div>
 
 
-    <div class="header-actions">
+<div class="header-actions">
 
-      <span id="staffName" class="staff-name">
-        Loading...
-      </span>
+  <span
+    id="staffName"
+    class="staff-name"
+  >
+    Loading...
+  </span>
 
-      <button
-        id="logoutBtn"
-        class="logout-btn"
-        type="button"
-      >
-        Logout
-      </button>
 
-    </div>
+  <button
+    id="logoutBtn"
+    class="logout-btn"
+    type="button"
+  >
+    Logout
+  </button>
+
+</div>
+```
 
   </header>
 
-
-  <!-- =====================================================
-       MAIN CRM
-  ====================================================== -->
+  <!-- =================================================
+       MAIN CONTENT
+  ================================================== -->
 
   <main class="crm-container">
 
+```
+<!-- PAGE HEADING -->
 
-    <!-- ===================================================
-         PAGE HEADING
-    ==================================================== -->
+<section class="page-heading">
 
-    <section class="page-heading">
+  <div>
 
-      <div>
+    <p class="eyebrow">
+      SELECT MY VENUE
+    </p>
 
-        <p class="eyebrow">
-          SELECT MY VENUE
-        </p>
+    <h1>
+      Customer
+      <span>
+        Enquiries
+      </span>
+    </h1>
 
-        <h1>
-          Customer
-          <span>Enquiries</span>
-        </h1>
+    <p>
+      Manage venue enquiries, follow-ups and customer
+      conversations from one place.
+    </p>
 
-        <p>
-          Manage venue enquiries, follow-ups and customer conversations
-          from one place.
-        </p>
+  </div>
 
-      </div>
 
-      <button
-        id="refreshBtn"
-        class="refresh-btn"
-        type="button"
+  <button
+    id="refreshBtn"
+    class="refresh-btn"
+    type="button"
+  >
+    ↻ Refresh
+  </button>
+
+</section>
+
+
+
+<!-- =================================================
+     STATISTICS
+================================================== -->
+
+<section class="stats-grid">
+
+
+  <div class="stat-card">
+
+    <div class="stat-icon">
+      ✦
+    </div>
+
+    <div>
+
+      <small>
+        TOTAL LEADS
+      </small>
+
+      <strong id="totalLeads">
+        0
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+    <div class="stat-icon">
+      ●
+    </div>
+
+    <div>
+
+      <small>
+        NEW
+      </small>
+
+      <strong id="newLeads">
+        0
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+    <div class="stat-icon">
+      ↻
+    </div>
+
+    <div>
+
+      <small>
+        FOLLOW-UP
+      </small>
+
+      <strong id="followupLeads">
+        0
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <div class="stat-card">
+
+    <div class="stat-icon">
+      ✓
+    </div>
+
+    <div>
+
+      <small>
+        CONVERTED
+      </small>
+
+      <strong id="convertedLeads">
+        0
+      </strong>
+
+    </div>
+
+  </div>
+
+
+</section>
+
+
+
+<!-- =================================================
+     LEAD MANAGEMENT
+================================================== -->
+
+<section class="leads-section">
+
+
+  <!-- FILTER BAR -->
+
+  <div class="filter-bar">
+
+
+    <div class="search-box">
+
+      <span>
+        ⌕
+      </span>
+
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Search customer, mobile or location..."
       >
-        ↻ Refresh
-      </button>
 
-    </section>
+    </div>
 
 
-    <!-- ===================================================
-         STATS
-    ==================================================== -->
+    <select id="statusFilter">
 
-    <section class="stats-grid">
+      <option value="">
+        All Status
+      </option>
 
+      <option value="new">
+        New
+      </option>
 
-      <div class="stat-card">
+      <option value="contacted">
+        Contacted
+      </option>
 
-        <div class="stat-icon">
-          ✦
-        </div>
+      <option value="follow_up">
+        Follow-up
+      </option>
 
-        <div>
+      <option value="qualified">
+        Qualified
+      </option>
 
-          <small>
-            TOTAL LEADS
-          </small>
+      <option value="converted">
+        Converted
+      </option>
 
-          <strong id="totalLeads">
-            0
-          </strong>
+      <option value="closed">
+        Closed
+      </option>
 
-        </div>
-
-      </div>
-
-
-      <div class="stat-card">
-
-        <div class="stat-icon">
-          ●
-        </div>
-
-        <div>
-
-          <small>
-            NEW
-          </small>
-
-          <strong id="newLeads">
-            0
-          </strong>
-
-        </div>
-
-      </div>
+    </select>
 
 
-      <div class="stat-card">
+    <select id="priorityFilter">
 
-        <div class="stat-icon">
-          ↻
-        </div>
+      <option value="">
+        All Priority
+      </option>
 
-        <div>
+      <option value="urgent">
+        Urgent
+      </option>
 
-          <small>
-            FOLLOW-UP
-          </small>
+      <option value="high">
+        High
+      </option>
 
-          <strong id="followupLeads">
-            0
-          </strong>
+      <option value="normal">
+        Normal
+      </option>
 
-        </div>
+      <option value="low">
+        Low
+      </option>
 
-      </div>
-
-
-      <div class="stat-card">
-
-        <div class="stat-icon">
-          ✓
-        </div>
-
-        <div>
-
-          <small>
-            CONVERTED
-          </small>
-
-          <strong id="convertedLeads">
-            0
-          </strong>
-
-        </div>
-
-      </div>
+    </select>
 
 
-    </section>
+  </div>
 
 
-    <!-- ===================================================
-         LEAD MANAGEMENT
-    ==================================================== -->
 
-    <section class="leads-section">
+  <!-- =================================================
+       LEAD TABLE
+  ================================================== -->
+
+  <div class="table-wrapper">
+
+    <table class="leads-table">
+
+      <thead>
+
+        <tr>
+
+          <th>
+            CUSTOMER
+          </th>
+
+          <th>
+            EVENT
+          </th>
+
+          <th>
+            LOCATION
+          </th>
+
+          <th>
+            DATE
+          </th>
+
+          <th>
+            GUESTS
+          </th>
+
+          <th>
+            BUDGET
+          </th>
+
+          <th>
+            STATUS
+          </th>
+
+          <th>
+            PRIORITY
+          </th>
+
+          <th>
+            ACTION
+          </th>
+
+        </tr>
+
+      </thead>
 
 
-      <!-- FILTER BAR -->
+      <tbody id="leadsTableBody">
 
-      <div class="filter-bar">
+        <tr>
 
-
-        <div class="search-box">
-
-          <span>
-            ⌕
-          </span>
-
-          <input
-            type="search"
-            id="searchInput"
-            placeholder="Search customer, mobile or location..."
+          <td
+            colspan="9"
+            class="loading-cell"
           >
+            Loading enquiries...
+          </td>
 
-        </div>
+        </tr>
 
+      </tbody>
 
-        <select id="statusFilter">
-
-          <option value="">
-            All Status
-          </option>
-
-          <option value="new">
-            New
-          </option>
-
-          <option value="contacted">
-            Contacted
-          </option>
-
-          <option value="follow_up">
-            Follow-up
-          </option>
-
-          <option value="qualified">
-            Qualified
-          </option>
-
-          <option value="converted">
-            Converted
-          </option>
-
-          <option value="closed">
-            Closed
-          </option>
-
-        </select>
+    </table>
 
 
-        <select id="priorityFilter">
+    <!-- EMPTY STATE -->
 
-          <option value="">
-            All Priority
-          </option>
+    <div
+      id="emptyState"
+      class="empty-state"
+      hidden
+    >
 
-          <option value="urgent">
-            Urgent
-          </option>
-
-          <option value="high">
-            High
-          </option>
-
-          <option value="normal">
-            Normal
-          </option>
-
-          <option value="low">
-            Low
-          </option>
-
-        </select>
-
-
+      <div class="empty-icon">
+        ✦
       </div>
 
+      <h3>
+        No enquiries found
+      </h3>
 
-      <!-- =================================================
-           LEAD TABLE
-      ================================================== -->
+      <p>
+        New customer enquiries will appear here automatically.
+      </p>
 
-      <div class="table-wrapper">
-
-        <table class="leads-table">
-
-          <thead>
-
-            <tr>
-
-              <th>
-                CUSTOMER
-              </th>
-
-              <th>
-                EVENT
-              </th>
-
-              <th>
-                LOCATION
-              </th>
-
-              <th>
-                DATE
-              </th>
-
-              <th>
-                GUESTS
-              </th>
-
-              <th>
-                BUDGET
-              </th>
-
-              <th>
-                STATUS
-              </th>
-
-              <th>
-                PRIORITY
-              </th>
-
-              <th>
-                ACTION
-              </th>
-
-            </tr>
-
-          </thead>
+    </div>
 
 
-          <tbody id="leadsTableBody">
-
-            <tr>
-
-              <td
-                colspan="9"
-                class="loading-cell"
-              >
-                Loading enquiries...
-              </td>
-
-            </tr>
-
-          </tbody>
-
-        </table>
+  </div>
 
 
-        <!-- EMPTY STATE -->
-
-        <div
-          id="emptyState"
-          class="empty-state"
-          hidden
-        >
-
-          <div class="empty-icon">
-            ✦
-          </div>
-
-          <h3>
-            No enquiries found
-          </h3>
-
-          <p>
-            New customer enquiries will appear here automatically.
-          </p>
-
-        </div>
-
-      </div>
-
-
-    </section>
-
+</section>
+```
 
   </main>
 
-
-  <!-- =====================================================
-       LEAD DETAIL MODAL
-  ====================================================== -->
+  <!-- =================================================
+       LEAD DETAILS MODAL
+  ================================================== -->
 
   <div
     id="leadModal"
@@ -387,336 +419,361 @@
     hidden
   >
 
-    <div id="leadModal" class="lead-modal" hidden>
+```
+<div class="lead-modal">
 
 
-      <div class="modal-header">
+  <!-- MODAL HEADER -->
 
-        <div>
+  <div class="modal-header">
 
-          <p class="eyebrow">
-            CUSTOMER ENQUIRY
-          </p>
+    <div>
 
-          <h2 id="modalCustomerName">
-            Customer
-          </h2>
+      <p class="eyebrow">
+        CUSTOMER ENQUIRY
+      </p>
 
-        </div>
+      <h2 id="modalCustomerName">
+        Customer
+      </h2>
+
+    </div>
 
 
-        <button
-          id="closeModalBtn"
-          class="close-modal"
-          type="button"
+    <button
+      id="closeModalBtn"
+      class="close-modal"
+      type="button"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+
+  <!-- =================================================
+       CUSTOMER INFORMATION
+  ================================================== -->
+
+  <div class="lead-info-grid">
+
+
+    <div class="info-card">
+
+      <small>
+        MOBILE
+      </small>
+
+      <strong id="modalMobile">
+        —
+      </strong>
+
+      <div class="mini-actions">
+
+        <a
+          id="modalCallBtn"
+          href="#"
+          class="mini-action"
         >
-          ×
-        </button>
+          ☎ Call
+        </a>
 
-      </div>
-
-
-      <!-- CUSTOMER INFORMATION -->
-
-      <div class="lead-info-grid">
-
-
-        <div class="info-card">
-
-          <small>
-            MOBILE
-          </small>
-
-          <strong id="modalMobile">
-            —
-          </strong>
-
-          <a
-            id="modalCallBtn"
-            href="#"
-            class="mini-action"
-          >
-            ☎ Call
-          </a>
-
-          <a
-            id="modalWhatsappBtn"
-            href="#"
-            target="_blank"
-            rel="noopener"
-            class="mini-action whatsapp-action"
-          >
-            ◉ WhatsApp
-          </a>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            EMAIL
-          </small>
-
-          <strong id="modalEmail">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            LOCATION
-          </small>
-
-          <strong id="modalLocation">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            OCCASION
-          </small>
-
-          <strong id="modalOccasion">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            EVENT DATE
-          </small>
-
-          <strong id="modalEventDate">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            GUESTS
-          </small>
-
-          <strong id="modalGuests">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            BUDGET / PERSON
-          </small>
-
-          <strong id="modalBudget">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            FOOD PREFERENCE
-          </small>
-
-          <strong id="modalFood">
-            —
-          </strong>
-
-        </div>
-
-
-      </div>
-
-
-      <!-- REQUIREMENTS -->
-
-      <div class="detail-block">
-
-        <label>
-          OTHER REQUIREMENTS
-        </label>
-
-        <div
-          id="modalRequirements"
-          class="detail-content"
+        <a
+          id="modalWhatsappBtn"
+          href="#"
+          target="_blank"
+          rel="noopener"
+          class="mini-action whatsapp-action"
         >
-          —
-        </div>
+          ◉ WhatsApp
+        </a>
 
       </div>
 
-
-      <!-- CRM CONTROLS -->
-
-      <div class="crm-controls">
+    </div>
 
 
-        <div class="control-group">
+    <div class="info-card">
 
-          <label for="modalStatus">
-            LEAD STATUS
-          </label>
+      <small>
+        EMAIL
+      </small>
 
-          <select id="modalStatus">
+      <strong id="modalEmail">
+        —
+      </strong>
 
-            <option value="new">
-              New
-            </option>
-
-            <option value="contacted">
-              Contacted
-            </option>
-
-            <option value="follow_up">
-              Follow-up
-            </option>
-
-            <option value="qualified">
-              Qualified
-            </option>
-
-            <option value="converted">
-              Converted
-            </option>
-
-            <option value="closed">
-              Closed
-            </option>
-
-          </select>
-
-        </div>
+    </div>
 
 
-        <div class="control-group">
+    <div class="info-card">
 
-          <label for="modalPriority">
-            PRIORITY
-          </label>
+      <small>
+        LOCATION
+      </small>
 
-          <select id="modalPriority">
+      <strong id="modalLocation">
+        —
+      </strong>
 
-            <option value="urgent">
-              Urgent
-            </option>
-
-            <option value="high">
-              High
-            </option>
-
-            <option value="normal">
-              Normal
-            </option>
-
-            <option value="low">
-              Low
-            </option>
-
-          </select>
-
-        </div>
+    </div>
 
 
-        <div class="control-group">
+    <div class="info-card">
 
-          <label for="modalFollowUp">
-            FOLLOW-UP
-          </label>
+      <small>
+        OCCASION
+      </small>
 
-          <input
-            type="datetime-local"
-            id="modalFollowUp"
-          >
+      <strong id="modalOccasion">
+        —
+      </strong>
 
-        </div>
-
-
-      </div>
+    </div>
 
 
-      <!-- INTERNAL NOTES -->
+    <div class="info-card">
 
-      <div class="detail-block">
+      <small>
+        EVENT DATE
+      </small>
 
-        <label for="modalNotes">
-          INTERNAL NOTES
-        </label>
+      <strong id="modalEventDate">
+        —
+      </strong>
 
-        <textarea
-          id="modalNotes"
-          rows="5"
-          placeholder="Add internal notes about this lead..."
-        ></textarea>
-
-      </div>
+    </div>
 
 
-      <!-- MODAL ACTIONS -->
+    <div class="info-card">
 
-      <div class="modal-actions">
+      <small>
+        GUESTS
+      </small>
 
-        <button
-          id="saveLeadBtn"
-          class="save-btn"
-          type="button"
-        >
-          Save Changes
-        </button>
+      <strong id="modalGuests">
+        —
+      </strong>
 
-        <button
-          id="cancelModalBtn"
-          class="cancel-btn"
-          type="button"
-        >
-          Cancel
-        </button>
-
-      </div>
+    </div>
 
 
+    <div class="info-card">
+
+      <small>
+        BUDGET / PERSON
+      </small>
+
+      <strong id="modalBudget">
+        —
+      </strong>
+
+    </div>
+
+
+    <div class="info-card">
+
+      <small>
+        FOOD PREFERENCE
+      </small>
+
+      <strong id="modalFood">
+        —
+      </strong>
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- =================================================
+       REQUIREMENTS
+  ================================================== -->
+
+  <div class="detail-block">
+
+    <label>
+      OTHER REQUIREMENTS
+    </label>
+
+    <div
+      id="modalRequirements"
+      class="detail-content"
+    >
+      —
     </div>
 
   </div>
 
 
-  <!-- =====================================================
-       TOAST
-  ====================================================== -->
+
+  <!-- =================================================
+       CRM CONTROLS
+  ================================================== -->
+
+  <div class="crm-controls">
+
+
+    <div class="control-group">
+
+      <label for="modalStatus">
+        LEAD STATUS
+      </label>
+
+      <select id="modalStatus">
+
+        <option value="new">
+          New
+        </option>
+
+        <option value="contacted">
+          Contacted
+        </option>
+
+        <option value="follow_up">
+          Follow-up
+        </option>
+
+        <option value="qualified">
+          Qualified
+        </option>
+
+        <option value="converted">
+          Converted
+        </option>
+
+        <option value="closed">
+          Closed
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="control-group">
+
+      <label for="modalPriority">
+        PRIORITY
+      </label>
+
+      <select id="modalPriority">
+
+        <option value="urgent">
+          Urgent
+        </option>
+
+        <option value="high">
+          High
+        </option>
+
+        <option value="normal">
+          Normal
+        </option>
+
+        <option value="low">
+          Low
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="control-group">
+
+      <label for="modalFollowUp">
+        FOLLOW-UP
+      </label>
+
+      <input
+        type="datetime-local"
+        id="modalFollowUp"
+      >
+
+    </div>
+
+
+  </div>
+
+
+
+  <!-- =================================================
+       INTERNAL NOTES
+  ================================================== -->
+
+  <div class="detail-block">
+
+    <label for="modalNotes">
+      INTERNAL NOTES
+    </label>
+
+    <textarea
+      id="modalNotes"
+      rows="5"
+      placeholder="Add internal notes about this lead..."
+    ></textarea>
+
+  </div>
+
+
+
+  <!-- =================================================
+       MODAL ACTIONS
+  ================================================== -->
+
+  <div class="modal-actions">
+
+    <button
+      id="saveLeadBtn"
+      class="save-btn"
+      type="button"
+    >
+      Save Changes
+    </button>
+
+
+    <button
+      id="cancelModalBtn"
+      class="cancel-btn"
+      type="button"
+    >
+      Cancel
+    </button>
+
+  </div>
+
+
+</div>
+```
+
+  </div>
+
+  <!-- =================================================
+       TOAST MESSAGE
+  ================================================== -->
 
   <div
     id="toast"
     class="toast"
     hidden
   >
-    <span id="toastMessage">
-      Saved
-    </span>
+
+```
+<span id="toastMessage">
+  Done
+</span>
+```
+
   </div>
 
-
-  <!-- =====================================================
-       JAVASCRIPT
-  ====================================================== -->
+  <!-- CRM JavaScript -->
 
   <script src="../crm.js"></script>
 
 </body>
+
 </html>
