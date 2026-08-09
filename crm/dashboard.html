@@ -776,3 +776,402 @@
 </body>
 
 </html>
+<div id="addEnquiryModal" class="lead-modal" hidden>
+
+  <div class="modal-header">
+
+    <div>
+      <p class="eyebrow">NEW CUSTOMER ENQUIRY</p>
+      <h2>Add Enquiry</h2>
+    </div>
+
+    <button
+      id="closeAddEnquiryBtn"
+      class="close-modal"
+      type="button"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <div class="add-enquiry-form">
+
+    <div class="form-section-title">
+      Customer Details
+    </div>
+
+    <div class="form-grid">
+
+      <div class="control-group">
+        <label for="newCustomerName">
+          CUSTOMER NAME *
+        </label>
+
+        <input
+          id="newCustomerName"
+          type="text"
+          placeholder="Enter customer name"
+          required
+        >
+      </div>
+
+
+      <div class="control-group">
+        <label for="newMobile">
+          MOBILE NUMBER *
+        </label>
+
+        <input
+          id="newMobile"
+          type="tel"
+          placeholder="Enter mobile number"
+          required
+        >
+      </div>
+
+
+      <div class="control-group">
+        <label for="newEmail">
+          EMAIL
+        </label>
+
+        <input
+          id="newEmail"
+          type="email"
+          placeholder="customer@email.com"
+        >
+      </div>
+
+
+      <div class="control-group">
+        <label for="newLocation">
+          LOCATION
+        </label>
+
+        <input
+          id="newLocation"
+          type="text"
+          placeholder="Delhi, Gurgaon, Noida..."
+        >
+      </div>
+
+    </div>
+
+
+    <div class="form-section-title">
+      Event Details
+    </div>
+
+    <div class="form-grid">
+
+      <div class="control-group">
+        <label for="newOccasion">
+          OCCASION
+        </label>
+
+        <select id="newOccasion">
+
+          <option value="">
+            Select occasion
+          </option>
+
+          <option value="Wedding">
+            Wedding
+          </option>
+
+          <option value="Engagement">
+            Engagement
+          </option>
+
+          <option value="Birthday">
+            Birthday
+          </option>
+
+          <option value="Anniversary">
+            Anniversary
+          </option>
+
+          <option value="Corporate Event">
+            Corporate Event
+          </option>
+
+          <option value="Party">
+            Party
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
+        </select>
+      </div>
+
+
+      <div class="control-group">
+        <label for="newEventDate">
+          EVENT DATE
+        </label>
+
+        <input
+          id="newEventDate"
+          type="date"
+        >
+      </div>
+
+
+      <div class="control-group">
+        <label for="newGuests">
+          GUESTS
+        </label>
+
+        <input
+          id="newGuests"
+          type="number"
+          min="1"
+          placeholder="Number of guests"
+        >
+      </div>
+
+
+      <div class="control-group">
+        <label for="newBudget">
+          BUDGET / PERSON
+        </label>
+
+        <input
+          id="newBudget"
+          type="number"
+          min="0"
+          placeholder="₹ per person"
+        >
+      </div>
+
+
+      <div class="control-group">
+        <label for="newFood">
+          FOOD PREFERENCE
+        </label>
+
+        <select id="newFood">
+
+          <option value="">
+            Select preference
+          </option>
+
+          <option value="Veg">
+            Veg
+          </option>
+
+          <option value="Non-Veg">
+            Non-Veg
+          </option>
+
+          <option value="Both">
+            Both
+          </option>
+
+          <option value="Not Specified">
+            Not Specified
+          </option>
+
+        </select>
+      </div>
+
+    </div>
+
+
+    <div class="form-section-title">
+      Lead Source & CRM
+    </div>
+
+    <div class="form-grid">
+
+      <div class="control-group">
+
+        <label for="newSource">
+          SOURCE *
+        </label>
+
+        <select id="newSource">
+
+          <option value="Website">
+            Website
+          </option>
+
+          <option value="WhatsApp">
+            WhatsApp
+          </option>
+
+          <option value="Phone Call">
+            Phone Call
+          </option>
+
+          <option value="Facebook">
+            Facebook
+          </option>
+
+          <option value="Instagram">
+            Instagram
+          </option>
+
+          <option value="Referral">
+            Referral
+          </option>
+
+          <option value="Venue">
+            Venue
+          </option>
+
+          <option value="Other">
+            Other
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="control-group">
+
+        <label for="newStatus">
+          LEAD STATUS
+        </label>
+
+        <select id="newStatus">
+
+          <option value="new">
+            New
+          </option>
+
+          <option value="contacted">
+            Contacted
+          </option>
+
+          <option value="follow_up">
+            Follow-up
+          </option>
+
+          <option value="qualified">
+            Qualified
+          </option>
+
+          <option value="converted">
+            Converted
+          </option>
+
+          <option value="closed">
+            Closed
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="control-group">
+
+        <label for="newPriority">
+          PRIORITY
+        </label>
+
+        <select id="newPriority">
+
+          <option value="normal">
+            Normal
+          </option>
+
+          <option value="urgent">
+            Urgent
+          </option>
+
+          <option value="high">
+            High
+          </option>
+
+          <option value="low">
+            Low
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="control-group">
+
+        <label for="newFollowUp">
+          FOLLOW-UP
+        </label>
+
+        <input
+          type="datetime-local"
+          id="newFollowUp"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div class="control-group full-width">
+
+      <label for="newRequirements">
+        OTHER REQUIREMENTS
+      </label>
+
+      <textarea
+        id="newRequirements"
+        rows="4"
+        placeholder="Venue requirements, special requests, etc."
+      ></textarea>
+
+    </div>
+
+
+    <div class="control-group full-width">
+
+      <label for="newNotes">
+        INTERNAL NOTES
+      </label>
+
+      <textarea
+        id="newNotes"
+        rows="4"
+        placeholder="Internal CRM notes..."
+      ></textarea>
+
+    </div>
+
+
+    <p
+      id="addEnquiryMessage"
+      class="form-message"
+      role="alert"
+    ></p>
+
+
+    <div class="modal-actions">
+
+      <button
+        id="saveNewEnquiryBtn"
+        class="save-btn"
+        type="button"
+      >
+        Save Enquiry
+      </button>
+
+      <button
+        id="cancelAddEnquiryBtn"
+        class="cancel-btn"
+        type="button"
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
