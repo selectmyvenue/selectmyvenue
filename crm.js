@@ -1,14 +1,17 @@
+```javascript
 /* =========================================================
    SELECT MY VENUE — CRM
-   Supabase Authentication + Lead Management
+   Fresh CRM JavaScript
 ========================================================= */
 
 
 /* =========================================================
-   1. SUPABASE CONFIGURATION
+   1. SUPABASE CONFIG
+   EDIT ONLY THESE 2 VALUES
 ========================================================= */
 
-const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co/";
+const SUPABASE_URL =
+  "https://uajqwyoqbbswkfiwosyw.supabase.co/";
 
 const SUPABASE_ANON_KEY =
   "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
@@ -28,6 +31,7 @@ const LEADS_TABLE = "customer_enquiries";
 let supabaseClient = null;
 
 if (
+  typeof window.supabase !== "undefined" &&
   SUPABASE_URL !== "PASTE_YOUR_SUPABASE_PROJECT_URL_HERE" &&
   SUPABASE_ANON_KEY !== "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE"
 ) {
@@ -39,380 +43,343 @@ if (
 
 
 /* =========================================================
-   4. GLOBAL DATA
+   4. PAGE ELEMENTS
 ========================================================= */
 
-let allLeads = [];
-let filteredLeads = [];
-let selectedLead = null;
-let currentUser = null;
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
+
+const logoutBtn = document.getElementById("logoutBtn");
+const refreshBtn = document.getElementById("refreshBtn");
+
+const staffName = document.getElementById("staffName");
+
+const leadsTableBody =
+  document.getElementById("leadsTableBody");
+
+const emptyState =
+  document.getElementById("emptyState");
+
+const searchInput =
+  document.getElementById("searchInput");
+
+const statusFilter =
+  document.getElementById("statusFilter");
+
+const priorityFilter =
+  document.getElementById("priorityFilter");
 
 
 /* =========================================================
-   5. HELPER
+   5. LOGIN
 ========================================================= */
 
-function $(id) {
-  return document.getElementById(id);
-}
+if (loginForm) {
 
+  loginForm.addEventListener("submit", async function (event) {
 
-/* =========================================================
-   6. PAGE START
-========================================================= */
+    event.preventDefault();
 
-document.addEventListener("DOMContentLoaded", async function () {
+    event.stopPropagation();
 
-  setupEventListeners();
+    if (!supabaseClient) {
 
-  if (!supabaseClient) {
-    showToast(
-      "Supabase configuration is missing.",
-      true
-    );
-    return;
-  }
-
-  await checkAuthentication();
-
-});
-
-
-/* =========================================================
-   7. AUTHENTICATION
-========================================================= */
-
-async function checkAuthentication() {
-
-  try {
-
-    const {
-      data,
-      error
-    } = await supabaseClient.auth.getSession();
-
-    if (error) {
-      console.error(error);
-      redirectToLogin();
-      return;
-    }
-
-    if (!data.session || !data.session.user) {
-      redirectToLogin();
-      return;
-    }
-
-    currentUser = data.session.user;
-
-    updateStaffName();
-
-    await loadLeads();
-
-  } catch (error) {
-
-    console.error(
-      "Authentication error:",
-      error
-    );
-
-    redirectToLogin();
-
-  }
-
-}
-
-
-/* =========================================================
-   8. STAFF NAME
-========================================================= */
-
-function updateStaffName() {
-
-  const staffName = $("staffName");
-
-  if (!staffName || !currentUser) {
-    return;
-  }
-
-  const metadata =
-    currentUser.user_metadata || {};
-
-  const name =
-    metadata.full_name ||
-    metadata.name ||
-    currentUser.email ||
-    "CRM Staff";
-
-  staffName.textContent = name;
-
-}
-
-
-/* =========================================================
-   9. LOGIN REDIRECT
-========================================================= */
-
-function redirectToLogin() {
-
-  window.location.href = "login.html";
-
-}
-
-
-/* =========================================================
-   10. LOGOUT
-========================================================= */
-
-async function logoutUser() {
-
-  if (!supabaseClient) {
-    redirectToLogin();
-    return;
-  }
-
-  try {
-
-    const {
-      error
-    } = await supabaseClient.auth.signOut();
-
-    if (error) {
-
-      console.error(error);
-
-      showToast(
-        "Unable to logout.",
+      showLoginMessage(
+        "CRM connection is not configured yet.",
         true
       );
 
       return;
+
     }
 
-    window.location.href = "login.html";
+    const emailInput =
+      document.getElementById("email");
 
-  } catch (error) {
+    const passwordInput =
+      document.getElementById("password");
 
-    console.error(error);
+    const email =
+      emailInput.value.trim();
 
-    window.location.href = "login.html";
+    const password =
+      passwordInput.value;
 
-  }
+    if (!email || !password) {
 
-}
+      showLoginMessage(
+        "Please enter email and password.",
+        true
+      );
 
+      return;
 
-/* =========================================================
-   11. LOAD LEADS
-========================================================= */
+    }
 
-async function loadLeads() {
-
-  const tableBody =
-    $("leadsTableBody");
-
-  if (tableBody) {
-
-    tableBody.innerHTML = `
-      <tr>
-        <td colspan="9" class="loading-cell">
-          Loading enquiries...
-        </td>
-      </tr>
-    `;
-
-  }
-
-  try {
+    showLoginMessage("Signing in...", false);
 
     const {
       data,
       error
-    } = await supabaseClient
-      .from(LEADS_TABLE)
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
+    } = await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
 
     if (error) {
 
-      console.error(
-        "Lead loading error:",
-        error
-      );
+      console.error("Login error:", error);
 
-      renderError(
-        error.message ||
-        "Unable to load enquiries."
+      showLoginMessage(
+        error.message,
+        true
       );
 
       return;
+
     }
 
-    allLeads =
-      Array.isArray(data)
-        ? data
-        : [];
+    if (!data.session) {
 
-    updateStatistics();
-
-    applyFilters();
-
-  } catch (error) {
-
-    console.error(error);
-
-    renderError(
-      "Something went wrong while loading enquiries."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   12. FILTERS
-========================================================= */
-
-function applyFilters() {
-
-  const searchInput =
-    $("searchInput");
-
-  const statusFilter =
-    $("statusFilter");
-
-  const priorityFilter =
-    $("priorityFilter");
-
-  const search =
-    searchInput
-      ? searchInput.value
-          .trim()
-          .toLowerCase()
-      : "";
-
-  const status =
-    statusFilter
-      ? statusFilter.value
-      : "";
-
-  const priority =
-    priorityFilter
-      ? priorityFilter.value
-      : "";
-
-  filteredLeads =
-    allLeads.filter(function (lead) {
-
-      const customerName =
-        getField(
-          lead,
-          [
-            "customer_name",
-            "name",
-            "full_name"
-          ]
-        );
-
-      const mobile =
-        getField(
-          lead,
-          [
-            "mobile",
-            "mobile_number",
-            "phone",
-            "phone_number"
-          ]
-        );
-
-      const location =
-        getField(
-          lead,
-          [
-            "location",
-            "city",
-            "venue_location"
-          ]
-        );
-
-      const matchesSearch =
-        !search ||
-        String(customerName)
-          .toLowerCase()
-          .includes(search) ||
-        String(mobile)
-          .toLowerCase()
-          .includes(search) ||
-        String(location)
-          .toLowerCase()
-          .includes(search);
-
-      const leadStatus =
-        normalizeValue(
-          getField(
-            lead,
-            [
-              "status",
-              "lead_status"
-            ]
-          )
-        );
-
-      const leadPriority =
-        normalizeValue(
-          getField(
-            lead,
-            [
-              "priority",
-              "lead_priority"
-            ]
-          )
-        );
-
-      const matchesStatus =
-        !status ||
-        leadStatus ===
-        normalizeValue(status);
-
-      const matchesPriority =
-        !priority ||
-        leadPriority ===
-        normalizeValue(priority);
-
-      return (
-        matchesSearch &&
-        matchesStatus &&
-        matchesPriority
+      showLoginMessage(
+        "Login failed. Please try again.",
+        true
       );
 
-    });
+      return;
 
-  renderLeads();
+    }
+
+    window.location.href =
+      "dashboard.html";
+
+  });
 
 }
 
 
 /* =========================================================
-   13. RENDER LEADS
+   6. LOGIN MESSAGE
 ========================================================= */
 
-function renderLeads() {
+function showLoginMessage(message, isError) {
 
-  const tableBody =
-    $("leadsTableBody");
-
-  const emptyState =
-    $("emptyState");
-
-  if (!tableBody) {
+  if (!loginMessage) {
     return;
   }
 
-  if (!filteredLeads.length) {
+  loginMessage.textContent = message;
 
-    tableBody.innerHTML = "";
+  loginMessage.style.display = "block";
+
+  loginMessage.style.opacity = "1";
+
+  if (isError) {
+    loginMessage.classList.add("error");
+  } else {
+    loginMessage.classList.remove("error");
+  }
+
+}
+
+
+/* =========================================================
+   7. DASHBOARD SESSION CHECK
+========================================================= */
+
+async function checkSession() {
+
+  if (!supabaseClient) {
+    return;
+  }
+
+  const {
+    data,
+    error
+  } = await supabaseClient.auth.getSession();
+
+  if (error) {
+
+    console.error(
+      "Session error:",
+      error
+    );
+
+    return;
+
+  }
+
+  const session = data.session;
+
+  /*
+     If this is dashboard.html and
+     there is no logged-in user,
+     send user back to login.
+  */
+
+  if (
+    document.getElementById("leadsTableBody") &&
+    !session
+  ) {
+
+    window.location.href =
+      "login.html";
+
+    return;
+
+  }
+
+  if (
+    session &&
+    staffName
+  ) {
+
+    staffName.textContent =
+      session.user.email || "Staff";
+
+  }
+
+}
+
+
+/* =========================================================
+   8. LOGOUT
+========================================================= */
+
+if (logoutBtn) {
+
+  logoutBtn.addEventListener(
+    "click",
+    async function () {
+
+      if (!supabaseClient) {
+        return;
+      }
+
+      const {
+        error
+      } = await supabaseClient.auth.signOut();
+
+      if (error) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+        return;
+
+      }
+
+      window.location.href =
+        "login.html";
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   9. LOAD LEADS
+========================================================= */
+
+async function loadLeads() {
+
+  if (!supabaseClient) {
+
+    showTableMessage(
+      "CRM connection is not configured."
+    );
+
+    return;
+
+  }
+
+  if (!leadsTableBody) {
+    return;
+  }
+
+  showTableMessage(
+    "Loading enquiries..."
+  );
+
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from(LEADS_TABLE)
+    .select("*")
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "Lead loading error:",
+      error
+    );
+
+    showTableMessage(
+      "Unable to load enquiries."
+    );
+
+    return;
+
+  }
+
+  window.crmLeads =
+    data || [];
+
+  updateDashboardStats(
+    window.crmLeads
+  );
+
+  renderLeads(
+    window.crmLeads
+  );
+
+}
+
+
+/* =========================================================
+   10. TABLE MESSAGE
+========================================================= */
+
+function showTableMessage(message) {
+
+  if (!leadsTableBody) {
+    return;
+  }
+
+  leadsTableBody.innerHTML = `
+    <tr>
+      <td colspan="9" class="loading-cell">
+        ${escapeHtml(message)}
+      </td>
+    </tr>
+  `;
+
+}
+
+
+/* =========================================================
+   11. RENDER LEADS
+========================================================= */
+
+function renderLeads(leads) {
+
+  if (!leadsTableBody) {
+    return;
+  }
+
+  if (!leads || leads.length === 0) {
+
+    leadsTableBody.innerHTML = "";
 
     if (emptyState) {
       emptyState.hidden = false;
@@ -426,386 +393,159 @@ function renderLeads() {
     emptyState.hidden = true;
   }
 
-  tableBody.innerHTML =
-    filteredLeads
-      .map(createLeadRow)
-      .join("");
+  leadsTableBody.innerHTML =
+    leads.map(function (lead) {
+
+      const customer =
+        lead.customer_name ||
+        "Unknown Customer";
+
+      const occasion =
+        lead.occasion ||
+        "—";
+
+      const location =
+        lead.location ||
+        "—";
+
+      const eventDate =
+        lead.event_date ||
+        "—";
+
+      const guests =
+        lead.guests ||
+        "—";
+
+      const budget =
+        lead.budget_per_person ||
+        "—";
+
+      const status =
+        lead.lead_status ||
+        lead.status ||
+        "new";
+
+      const priority =
+        lead.priority ||
+        "normal";
+
+      return `
+        <tr>
+
+          <td>
+            <strong>
+              ${escapeHtml(customer)}
+            </strong>
+
+            <small>
+              ${escapeHtml(
+                lead.mobile_number ||
+                lead.mobile ||
+                ""
+              )}
+            </small>
+          </td>
+
+          <td>
+            ${escapeHtml(occasion)}
+          </td>
+
+          <td>
+            ${escapeHtml(location)}
+          </td>
+
+          <td>
+            ${escapeHtml(
+              formatDate(eventDate)
+            )}
+          </td>
+
+          <td>
+            ${escapeHtml(
+              String(guests)
+            )}
+          </td>
+
+          <td>
+            ${escapeHtml(
+              String(budget)
+            )}
+          </td>
+
+          <td>
+            <span class="status-badge ${escapeHtml(status)}">
+              ${escapeHtml(
+                formatLabel(status)
+              )}
+            </span>
+          </td>
+
+          <td>
+            <span class="priority-badge ${escapeHtml(priority)}">
+              ${escapeHtml(
+                formatLabel(priority)
+              )}
+            </span>
+          </td>
+
+          <td>
+            <button
+              type="button"
+              class="view-lead-btn"
+              onclick="openLead(${lead.id})"
+            >
+              View
+            </button>
+          </td>
+
+        </tr>
+      `;
+
+    }).join("");
 
 }
 
 
 /* =========================================================
-   14. CREATE TABLE ROW
+   12. DASHBOARD STATS
 ========================================================= */
 
-function createLeadRow(lead) {
-
-  const id =
-    getLeadId(lead);
-
-  const name =
-    getField(
-      lead,
-      [
-        "customer_name",
-        "name",
-        "full_name"
-      ],
-      "Unknown Customer"
-    );
-
-  const event =
-    getField(
-      lead,
-      [
-        "occasion",
-        "event_type",
-        "event"
-      ],
-      "—"
-    );
-
-  const location =
-    getField(
-      lead,
-      [
-        "location",
-        "city",
-        "venue_location"
-      ],
-      "—"
-    );
-
-  const eventDate =
-    getField(
-      lead,
-      [
-        "event_date",
-        "date"
-      ],
-      ""
-    );
-
-  const guests =
-    getField(
-      lead,
-      [
-        "guests",
-        "guest_count",
-        "number_of_guests"
-      ],
-      "—"
-    );
-
-  const budget =
-    getField(
-      lead,
-      [
-        "budget_per_person",
-        "budget",
-        "budget_per_guest"
-      ],
-      "—"
-    );
-
-  const status =
-    normalizeValue(
-      getField(
-        lead,
-        [
-          "status",
-          "lead_status"
-        ],
-        "new"
-      )
-    );
-
-  const priority =
-    normalizeValue(
-      getField(
-        lead,
-        [
-          "priority",
-          "lead_priority"
-        ],
-        "normal"
-      )
-    );
-
-  return `
-    <tr>
-
-      <td>
-        <strong class="customer-name">
-          ${escapeHTML(name)}
-        </strong>
-      </td>
-
-      <td>
-        ${escapeHTML(event)}
-      </td>
-
-      <td>
-        ${escapeHTML(location)}
-      </td>
-
-      <td>
-        ${formatDate(eventDate)}
-      </td>
-
-      <td>
-        ${escapeHTML(guests)}
-      </td>
-
-      <td>
-        ${escapeHTML(budget)}
-      </td>
-
-      <td>
-        ${createStatusBadge(status)}
-      </td>
-
-      <td>
-        ${createPriorityBadge(priority)}
-      </td>
-
-      <td>
-
-        <div class="table-actions">
-
-          <button
-            type="button"
-            class="action-btn"
-            data-action="view"
-            data-id="${escapeAttribute(id)}"
-          >
-            View
-          </button>
-
-          ${createCallButton(lead)}
-
-          ${createWhatsAppButton(lead)}
-
-        </div>
-
-      </td>
-
-    </tr>
-  `;
-
-}
-
-
-/* =========================================================
-   15. STATUS BADGE
-========================================================= */
-
-function createStatusBadge(status) {
-
-  const value =
-    normalizeValue(status || "new");
-
-  let className =
-    "status-new";
-
-  if (value === "contacted") {
-    className = "status-contacted";
-  }
-
-  else if (
-    value === "follow_up" ||
-    value === "qualified"
-  ) {
-    className = "status-progress";
-  }
-
-  else if (value === "closed") {
-    className = "status-closed";
-  }
-
-  return `
-    <span class="status-badge ${className}">
-      ${escapeHTML(formatStatus(value))}
-    </span>
-  `;
-
-}
-
-
-/* =========================================================
-   16. PRIORITY BADGE
-========================================================= */
-
-function createPriorityBadge(priority) {
-
-  const value =
-    normalizeValue(priority || "normal");
-
-  let className =
-    "status-progress";
-
-  if (value === "urgent") {
-    className = "status-lost";
-  }
-
-  else if (value === "high") {
-    className = "status-contacted";
-  }
-
-  else if (value === "low") {
-    className = "status-closed";
-  }
-
-  return `
-    <span class="status-badge ${className}">
-      ${escapeHTML(capitalize(value))}
-    </span>
-  `;
-
-}
-
-
-/* =========================================================
-   17. CALL BUTTON
-========================================================= */
-
-function createCallButton(lead) {
-
-  const mobile =
-    getField(
-      lead,
-      [
-        "mobile",
-        "mobile_number",
-        "phone",
-        "phone_number"
-      ]
-    );
-
-  if (!mobile) {
-    return "";
-  }
-
-  const phone =
-    String(mobile)
-      .replace(/[^\d+]/g, "");
-
-  return `
-    <a
-      class="action-btn call"
-      href="tel:${escapeAttribute(phone)}"
-      title="Call customer"
-    >
-      ☎
-    </a>
-  `;
-
-}
-
-
-/* =========================================================
-   18. WHATSAPP BUTTON
-========================================================= */
-
-function createWhatsAppButton(lead) {
-
-  const mobile =
-    getField(
-      lead,
-      [
-        "mobile",
-        "mobile_number",
-        "phone",
-        "phone_number"
-      ]
-    );
-
-  if (!mobile) {
-    return "";
-  }
-
-  let phone =
-    String(mobile)
-      .replace(/\D/g, "");
-
-  if (phone.length === 10) {
-    phone = "91" + phone;
-  }
-
-  const message =
-    "Hello, this is Select My Venue regarding your venue enquiry.";
-
-  const url =
-    `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
-  return `
-    <a
-      class="action-btn whatsapp"
-      href="${escapeAttribute(url)}"
-      target="_blank"
-      rel="noopener"
-      title="WhatsApp customer"
-    >
-      ◉
-    </a>
-  `;
-
-}
-
-
-/* =========================================================
-   19. STATISTICS
-========================================================= */
-
-function updateStatistics() {
+function updateDashboardStats(leads) {
 
   const total =
-    allLeads.length;
+    leads.length;
 
   const newCount =
-    allLeads.filter(function (lead) {
+    leads.filter(function (lead) {
 
-      return normalizeValue(
-        getField(
-          lead,
-          [
-            "status",
-            "lead_status"
-          ]
-        )
-      ) === "new";
+      return (
+        (lead.lead_status ||
+          lead.status ||
+          "new") === "new"
+      );
 
     }).length;
 
   const followupCount =
-    allLeads.filter(function (lead) {
+    leads.filter(function (lead) {
 
-      return normalizeValue(
-        getField(
-          lead,
-          [
-            "status",
-            "lead_status"
-          ]
-        )
-      ) === "follow_up";
+      return (
+        (lead.lead_status ||
+          lead.status) === "follow_up"
+      );
 
     }).length;
 
   const convertedCount =
-    allLeads.filter(function (lead) {
+    leads.filter(function (lead) {
 
-      return normalizeValue(
-        getField(
-          lead,
-          [
-            "status",
-            "lead_status"
-          ]
-        )
-      ) === "converted";
+      return (
+        (lead.lead_status ||
+          lead.status) === "converted"
+      );
 
     }).length;
+
 
   setText(
     "totalLeads",
@@ -831,774 +571,554 @@ function updateStatistics() {
 
 
 /* =========================================================
-   20. OPEN LEAD
+   13. SEARCH + FILTER
 ========================================================= */
 
-function openLeadModal(id) {
+function filterLeads() {
 
-  const lead =
-    allLeads.find(function (item) {
+  const leads =
+    window.crmLeads || [];
 
-      return String(
-        getLeadId(item)
-      ) === String(id);
+  const search =
+    searchInput
+      ? searchInput.value
+          .trim()
+          .toLowerCase()
+      : "";
+
+  const status =
+    statusFilter
+      ? statusFilter.value
+      : "";
+
+  const priority =
+    priorityFilter
+      ? priorityFilter.value
+      : "";
+
+
+  const filtered =
+    leads.filter(function (lead) {
+
+      const searchable = [
+
+        lead.customer_name,
+
+        lead.mobile_number,
+
+        lead.mobile,
+
+        lead.location,
+
+        lead.email,
+
+        lead.occasion
+
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+
+      const leadStatus =
+        lead.lead_status ||
+        lead.status ||
+        "new";
+
+
+      const leadPriority =
+        lead.priority ||
+        "normal";
+
+
+      const matchesSearch =
+        !search ||
+        searchable.includes(search);
+
+
+      const matchesStatus =
+        !status ||
+        leadStatus === status;
+
+
+      const matchesPriority =
+        !priority ||
+        leadPriority === priority;
+
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesPriority
+      );
 
     });
 
-  if (!lead) {
+
+  renderLeads(filtered);
+
+}
+
+
+/* =========================================================
+   14. FILTER EVENTS
+========================================================= */
+
+if (searchInput) {
+
+  searchInput.addEventListener(
+    "input",
+    filterLeads
+  );
+
+}
+
+if (statusFilter) {
+
+  statusFilter.addEventListener(
+    "change",
+    filterLeads
+  );
+
+}
+
+if (priorityFilter) {
+
+  priorityFilter.addEventListener(
+    "change",
+    filterLeads
+  );
+
+}
+
+
+/* =========================================================
+   15. REFRESH
+========================================================= */
+
+if (refreshBtn) {
+
+  refreshBtn.addEventListener(
+    "click",
+    loadLeads
+  );
+
+}
+
+
+/* =========================================================
+   16. LEAD MODAL
+========================================================= */
+
+let currentLead = null;
+
+window.openLead = function (leadId) {
+
+  const leads =
+    window.crmLeads || [];
+
+  currentLead =
+    leads.find(function (lead) {
+
+      return String(lead.id) ===
+        String(leadId);
+
+    });
+
+
+  if (!currentLead) {
     return;
   }
 
-  selectedLead = lead;
 
   setText(
     "modalCustomerName",
-    getField(
-      lead,
-      [
-        "customer_name",
-        "name",
-        "full_name"
-      ],
-      "Customer"
-    )
+    currentLead.customer_name ||
+    "Customer"
   );
 
   setText(
     "modalMobile",
-    getField(
-      lead,
-      [
-        "mobile",
-        "mobile_number",
-        "phone",
-        "phone_number"
-      ],
-      "—"
-    )
+    currentLead.mobile_number ||
+    currentLead.mobile ||
+    "—"
   );
 
   setText(
     "modalEmail",
-    getField(
-      lead,
-      [
-        "email",
-        "customer_email"
-      ],
-      "—"
-    )
+    currentLead.email ||
+    "—"
   );
 
   setText(
     "modalLocation",
-    getField(
-      lead,
-      [
-        "location",
-        "city",
-        "venue_location"
-      ],
-      "—"
-    )
+    currentLead.location ||
+    "—"
   );
 
   setText(
     "modalOccasion",
-    getField(
-      lead,
-      [
-        "occasion",
-        "event_type",
-        "event"
-      ],
-      "—"
-    )
+    currentLead.occasion ||
+    "—"
   );
 
   setText(
     "modalEventDate",
     formatDate(
-      getField(
-        lead,
-        [
-          "event_date",
-          "date"
-        ],
-        ""
-      )
+      currentLead.event_date
     )
   );
 
   setText(
     "modalGuests",
-    getField(
-      lead,
-      [
-        "guests",
-        "guest_count",
-        "number_of_guests"
-      ],
-      "—"
-    )
+    currentLead.guests ||
+    "—"
   );
 
   setText(
     "modalBudget",
-    getField(
-      lead,
-      [
-        "budget_per_person",
-        "budget",
-        "budget_per_guest"
-      ],
-      "—"
-    )
+    currentLead.budget_per_person ||
+    "—"
   );
 
   setText(
     "modalFood",
-    getField(
-      lead,
-      [
-        "food_preference",
-        "food",
-        "cuisine"
-      ],
-      "—"
-    )
+    currentLead.food_preference ||
+    "—"
   );
 
   setText(
     "modalRequirements",
-    getField(
-      lead,
-      [
-        "other_requirements",
-        "requirements",
-        "message",
-        "notes"
-      ],
-      "—"
-    )
+    currentLead.other_requirements ||
+    currentLead.requirements ||
+    "—"
   );
 
-  const status =
-    normalizeValue(
-      getField(
-        lead,
-        [
-          "status",
-          "lead_status"
-        ],
-        "new"
-      )
+
+  const modalStatus =
+    document.getElementById(
+      "modalStatus"
     );
 
-  const priority =
-    normalizeValue(
-      getField(
-        lead,
-        [
-          "priority",
-          "lead_priority"
-        ],
-        "normal"
-      )
+  const modalPriority =
+    document.getElementById(
+      "modalPriority"
     );
 
-  if ($("modalStatus")) {
-    $("modalStatus").value = status;
-  }
-
-  if ($("modalPriority")) {
-    $("modalPriority").value = priority;
-  }
-
-  const followUp =
-    getField(
-      lead,
-      [
-        "follow_up_at",
-        "followup_at"
-      ],
-      ""
+  const modalFollowUp =
+    document.getElementById(
+      "modalFollowUp"
     );
 
-  if ($("modalFollowUp")) {
-    $("modalFollowUp").value =
-      formatDateTimeLocal(followUp);
-  }
-
-  const notes =
-    getField(
-      lead,
-      [
-        "internal_notes",
-        "crm_notes"
-      ],
-      ""
+  const modalNotes =
+    document.getElementById(
+      "modalNotes"
     );
 
-  if ($("modalNotes")) {
-    $("modalNotes").value =
-      notes || "";
+
+  if (modalStatus) {
+
+    modalStatus.value =
+      currentLead.lead_status ||
+      currentLead.status ||
+      "new";
+
   }
 
-  setupContactButtons(lead);
+
+  if (modalPriority) {
+
+    modalPriority.value =
+      currentLead.priority ||
+      "normal";
+
+  }
+
+
+  if (modalFollowUp) {
+
+    modalFollowUp.value =
+      toDateTimeLocal(
+        currentLead.follow_up_at
+      );
+
+  }
+
+
+  if (modalNotes) {
+
+    modalNotes.value =
+      currentLead.internal_notes ||
+      "";
+
+  }
+
 
   const modal =
-    $("leadModal");
-
-  if (modal) {
-    modal.hidden = false;
-    document.body.style.overflow = "hidden";
-  }
-
-}
-
-
-/* =========================================================
-   21. CONTACT BUTTONS
-========================================================= */
-
-function setupContactButtons(lead) {
-
-  const mobile =
-    getField(
-      lead,
-      [
-        "mobile",
-        "mobile_number",
-        "phone",
-        "phone_number"
-      ]
+    document.getElementById(
+      "leadModal"
     );
 
+  if (modal) {
+
+    modal.hidden = false;
+
+  }
+
+
   const callBtn =
-    $("modalCallBtn");
+    document.getElementById(
+      "modalCallBtn"
+    );
 
   const whatsappBtn =
-    $("modalWhatsappBtn");
+    document.getElementById(
+      "modalWhatsappBtn"
+    );
+
+
+  const phone =
+    currentLead.mobile_number ||
+    currentLead.mobile ||
+    "";
+
 
   if (callBtn) {
 
-    if (mobile) {
-
-      const phone =
-        String(mobile)
-          .replace(/[^\d+]/g, "");
-
-      callBtn.href =
-        `tel:${phone}`;
-
-      callBtn.style.display =
-        "inline-flex";
-
-    } else {
-
-      callBtn.style.display =
-        "none";
-
-    }
+    callBtn.href =
+      phone
+        ? "tel:" + phone
+        : "#";
 
   }
+
 
   if (whatsappBtn) {
 
-    if (mobile) {
+    const cleanPhone =
+      phone.replace(
+        /[^0-9]/g,
+        ""
+      );
 
-      let phone =
-        String(mobile)
-          .replace(/\D/g, "");
-
-      if (phone.length === 10) {
-        phone = "91" + phone;
-      }
-
-      const message =
-        "Hello, this is Select My Venue regarding your venue enquiry.";
-
-      whatsappBtn.href =
-        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-
-      whatsappBtn.style.display =
-        "inline-flex";
-
-    } else {
-
-      whatsappBtn.style.display =
-        "none";
-
-    }
+    whatsappBtn.href =
+      cleanPhone
+        ? "https://wa.me/" +
+          cleanPhone
+        : "#";
 
   }
 
-}
+};
 
 
 /* =========================================================
-   22. CLOSE MODAL
+   17. CLOSE MODAL
 ========================================================= */
 
 function closeLeadModal() {
 
   const modal =
-    $("leadModal");
+    document.getElementById(
+      "leadModal"
+    );
 
   if (modal) {
+
     modal.hidden = true;
+
   }
 
-  document.body.style.overflow = "";
-
-  selectedLead = null;
+  currentLead = null;
 
 }
 
 
-/* =========================================================
-   23. SAVE LEAD
-========================================================= */
+const closeModalBtn =
+  document.getElementById(
+    "closeModalBtn"
+  );
 
-async function saveLead() {
+const cancelModalBtn =
+  document.getElementById(
+    "cancelModalBtn"
+  );
 
-  if (!selectedLead) {
-    return;
-  }
 
-  const id =
-    getLeadId(selectedLead);
+if (closeModalBtn) {
 
-  const status =
-    $("modalStatus")
-      ? $("modalStatus").value
-      : "new";
-
-  const priority =
-    $("modalPriority")
-      ? $("modalPriority").value
-      : "normal";
-
-  const followUp =
-    $("modalFollowUp")
-      ? $("modalFollowUp").value
-      : "";
-
-  const notes =
-    $("modalNotes")
-      ? $("modalNotes").value.trim()
-      : "";
-
-  const updates = {
-
-    status: status,
-
-    priority: priority,
-
-    follow_up_at:
-      followUp
-        ? new Date(followUp).toISOString()
-        : null,
-
-    internal_notes: notes,
-
-    updated_at:
-      new Date().toISOString()
-
-  };
-
-  const saveButton =
-    $("saveLeadBtn");
-
-  if (saveButton) {
-
-    saveButton.disabled = true;
-
-    saveButton.textContent =
-      "Saving...";
-
-  }
-
-  try {
-
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from(LEADS_TABLE)
-      .update(updates)
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) {
-
-      console.error(
-        "Save lead error:",
-        error
-      );
-
-      showToast(
-        error.message ||
-        "Unable to save changes.",
-        true
-      );
-
-      return;
-    }
-
-    const index =
-      allLeads.findIndex(function (lead) {
-
-        return String(
-          getLeadId(lead)
-        ) === String(id);
-
-      });
-
-    if (index !== -1) {
-
-      allLeads[index] =
-        data || {
-          ...allLeads[index],
-          ...updates
-        };
-
-    }
-
-    updateStatistics();
-
-    applyFilters();
-
-    closeLeadModal();
-
-    showToast(
-      "Lead updated successfully."
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    showToast(
-      "Unable to save lead.",
-      true
-    );
-
-  } finally {
-
-    if (saveButton) {
-
-      saveButton.disabled = false;
-
-      saveButton.textContent =
-        "Save Changes";
-
-    }
-
-  }
+  closeModalBtn.addEventListener(
+    "click",
+    closeLeadModal
+  );
 
 }
 
+if (cancelModalBtn) {
 
-/* =========================================================
-   24. EVENT LISTENERS
-========================================================= */
-
-function setupEventListeners() {
-
-  const searchInput =
-    $("searchInput");
-
-  if (searchInput) {
-
-    searchInput.addEventListener(
-      "input",
-      applyFilters
-    );
-
-  }
-
-  const statusFilter =
-    $("statusFilter");
-
-  if (statusFilter) {
-
-    statusFilter.addEventListener(
-      "change",
-      applyFilters
-    );
-
-  }
-
-  const priorityFilter =
-    $("priorityFilter");
-
-  if (priorityFilter) {
-
-    priorityFilter.addEventListener(
-      "change",
-      applyFilters
-    );
-
-  }
-
-  const refreshBtn =
-    $("refreshBtn");
-
-  if (refreshBtn) {
-
-    refreshBtn.addEventListener(
-      "click",
-      async function () {
-
-        refreshBtn.disabled = true;
-
-        refreshBtn.textContent =
-          "↻ Loading...";
-
-        await loadLeads();
-
-        refreshBtn.disabled = false;
-
-        refreshBtn.textContent =
-          "↻ Refresh";
-
-      }
-    );
-
-  }
-
-  const logoutBtn =
-    $("logoutBtn");
-
-  if (logoutBtn) {
-
-    logoutBtn.addEventListener(
-      "click",
-      logoutUser
-    );
-
-  }
-
-  const tableBody =
-    $("leadsTableBody");
-
-  if (tableBody) {
-
-    tableBody.addEventListener(
-      "click",
-      function (event) {
-
-        const button =
-          event.target.closest(
-            "[data-action]"
-          );
-
-        if (!button) {
-          return;
-        }
-
-        if (
-          button.dataset.action ===
-          "view"
-        ) {
-
-          openLeadModal(
-            button.dataset.id
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-  const closeModalBtn =
-    $("closeModalBtn");
-
-  if (closeModalBtn) {
-
-    closeModalBtn.addEventListener(
-      "click",
-      closeLeadModal
-    );
-
-  }
-
-  const cancelModalBtn =
-    $("cancelModalBtn");
-
-  if (cancelModalBtn) {
-
-    cancelModalBtn.addEventListener(
-      "click",
-      closeLeadModal
-    );
-
-  }
-
-  const saveLeadBtn =
-    $("saveLeadBtn");
-
-  if (saveLeadBtn) {
-
-    saveLeadBtn.addEventListener(
-      "click",
-      saveLead
-    );
-
-  }
-
-  const leadModal =
-    $("leadModal");
-
-  if (leadModal) {
-
-    leadModal.addEventListener(
-      "click",
-      function (event) {
-
-        if (
-          event.target === leadModal
-        ) {
-          closeLeadModal();
-        }
-
-      }
-    );
-
-  }
-
-  document.addEventListener(
-    "keydown",
-    function (event) {
-
-      if (event.key === "Escape") {
-
-        const modal =
-          $("leadModal");
-
-        if (
-          modal &&
-          !modal.hidden
-        ) {
-          closeLeadModal();
-        }
-
-      }
-
-    }
+  cancelModalBtn.addEventListener(
+    "click",
+    closeLeadModal
   );
 
 }
 
 
 /* =========================================================
-   25. HELPERS
+   18. SAVE LEAD
 ========================================================= */
 
-function getField(
-  object,
-  possibleNames,
-  fallback = ""
-) {
+const saveLeadBtn =
+  document.getElementById(
+    "saveLeadBtn"
+  );
 
-  if (!object) {
-    return fallback;
-  }
 
-  for (
-    const name of possibleNames
+if (saveLeadBtn) {
+
+  saveLeadBtn.addEventListener(
+    "click",
+    saveLeadChanges
+  );
+
+}
+
+
+async function saveLeadChanges() {
+
+  if (
+    !currentLead ||
+    !supabaseClient
   ) {
 
-    if (
-      object[name] !== undefined &&
-      object[name] !== null &&
-      object[name] !== ""
-    ) {
-
-      return object[name];
-
-    }
+    return;
 
   }
 
-  return fallback;
 
-}
+  const status =
+    document.getElementById(
+      "modalStatus"
+    )?.value || "new";
 
 
-function getLeadId(lead) {
+  const priority =
+    document.getElementById(
+      "modalPriority"
+    )?.value || "normal";
 
-  return getField(
-    lead,
-    [
+
+  const followUp =
+    document.getElementById(
+      "modalFollowUp"
+    )?.value || null;
+
+
+  const notes =
+    document.getElementById(
+      "modalNotes"
+    )?.value || "";
+
+
+  saveLeadBtn.disabled = true;
+
+  saveLeadBtn.textContent =
+    "Saving...";
+
+
+  const {
+    error
+  } = await supabaseClient
+    .from(LEADS_TABLE)
+    .update({
+
+      lead_status: status,
+
+      status: status,
+
+      priority: priority,
+
+      follow_up_at:
+        followUp
+          ? new Date(
+              followUp
+            ).toISOString()
+          : null,
+
+      internal_notes: notes,
+
+      updated_at:
+        new Date().toISOString()
+
+    })
+    .eq(
       "id",
-      "lead_id",
-      "enquiry_id"
-    ],
-    ""
-  );
+      currentLead.id
+    );
+
+
+  saveLeadBtn.disabled = false;
+
+  saveLeadBtn.textContent =
+    "Save Changes";
+
+
+  if (error) {
+
+    console.error(
+      "Save lead error:",
+      error
+    );
+
+    alert(
+      "Unable to save changes."
+    );
+
+    return;
+
+  }
+
+
+  closeLeadModal();
+
+  await loadLeads();
 
 }
 
 
-function normalizeValue(value) {
+/* =========================================================
+   19. HELPERS
+========================================================= */
 
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "_")
-    .replace(/-/g, "_");
+function setText(
+  id,
+  value
+) {
 
-}
+  const element =
+    document.getElementById(id);
 
+  if (element) {
 
-function formatStatus(status) {
+    element.textContent =
+      value ?? "—";
 
-  const labels = {
-
-    new: "New",
-
-    contacted: "Contacted",
-
-    follow_up: "Follow-up",
-
-    qualified: "Qualified",
-
-    converted: "Converted",
-
-    closed: "Closed"
-
-  };
-
-  return (
-    labels[status] ||
-    capitalize(
-      String(status)
-        .replace(/_/g, " ")
-    )
-  );
+  }
 
 }
 
 
-function capitalize(value) {
+function formatLabel(value) {
 
   if (!value) {
-    return "";
+    return "—";
   }
 
-  return (
-    String(value)
-      .charAt(0)
-      .toUpperCase() +
-    String(value)
-      .slice(1)
-  );
+  return String(value)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, function (letter) {
+      return letter.toUpperCase();
+    });
 
 }
 
@@ -1634,7 +1154,7 @@ function formatDate(value) {
 }
 
 
-function formatDateTimeLocal(value) {
+function toDateTimeLocal(value) {
 
   if (!value) {
     return "";
@@ -1653,184 +1173,76 @@ function formatDateTimeLocal(value) {
 
   }
 
-  const pad =
-    function (number) {
+  const offset =
+    date.getTimezoneOffset();
 
-      return String(number)
-        .padStart(2, "0");
+  const localDate =
+    new Date(
+      date.getTime() -
+      offset * 60000
+    );
 
-    };
-
-  return (
-    date.getFullYear() +
-    "-" +
-    pad(date.getMonth() + 1) +
-    "-" +
-    pad(date.getDate()) +
-    "T" +
-    pad(date.getHours()) +
-    ":" +
-    pad(date.getMinutes())
-  );
+  return localDate
+    .toISOString()
+    .slice(0, 16);
 
 }
 
 
-function setText(
-  id,
-  value
-) {
+function escapeHtml(value) {
 
-  const element =
-    $(id);
-
-  if (element) {
-
-    element.textContent =
-      value ?? "—";
-
-  }
-
-}
-
-
-function escapeHTML(value) {
-
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-function escapeAttribute(value) {
-
-  return escapeHTML(value);
-
-}
-
-
-/* =========================================================
-   26. ERROR
-========================================================= */
-
-function renderError(message) {
-
-  const tableBody =
-    $("leadsTableBody");
-
-  if (!tableBody) {
-    return;
-  }
-
-  tableBody.innerHTML = `
-    <tr>
-      <td colspan="9" class="loading-cell">
-        ${escapeHTML(message)}
-      </td>
-    </tr>
-  `;
-
-}
-
-
-/* =========================================================
-   27. TOAST
-========================================================= */
-
-function showToast(
-  message,
-  isError = false
-) {
-
-  const toast =
-    $("toast");
-
-  const toastMessage =
-    $("toastMessage");
-
-  if (!toast) {
-    return;
-  }
-
-  if (toastMessage) {
-
-    toastMessage.textContent =
-      message;
-
-  }
-
-  toast.hidden = false;
-
-  toast.classList.toggle(
-    "error",
-    isError
-  );
-
-  clearTimeout(
-    showToast.timer
-  );
-
-  showToast.timer =
-    setTimeout(
-      function () {
-
-        toast.hidden = true;
-
-      },
-      3000
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
     );
 
 }
 
 
 /* =========================================================
-   28. AUTH STATE
+   20. START CRM
 ========================================================= */
 
-if (
-  typeof window !== "undefined"
-) {
+document.addEventListener(
+  "DOMContentLoaded",
+  async function () {
 
-  window.addEventListener(
-    "load",
-    function () {
+    await checkSession();
 
-      if (!supabaseClient) {
-        return;
-      }
+    /*
+       Only load leads when
+       dashboard is actually open.
+    */
 
-      supabaseClient.auth.onAuthStateChange(
-        function (event, session) {
+    if (
+      document.getElementById(
+        "leadsTableBody"
+      )
+    ) {
 
-          if (
-            event === "SIGNED_OUT"
-          ) {
-
-            window.location.href =
-              "login.html";
-
-          }
-
-          if (
-            event === "SIGNED_IN" &&
-            session
-          ) {
-
-            currentUser =
-              session.user;
-
-            updateStaffName();
-
-          }
-
-        }
-      );
+      await loadLeads();
 
     }
-  );
 
-}
+  }
+);
+```
