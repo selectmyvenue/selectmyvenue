@@ -1037,3 +1037,419 @@ function escapeHtml(value) {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 }
+// =====================================================
+// ADD NEW ENQUIRY
+// =====================================================
+
+document.addEventListener("click", (event) => {
+
+  if (event.target.id === "addEnquiryBtn") {
+
+    const modal =
+      document.getElementById("addEnquiryModal");
+
+    if (modal) {
+      modal.hidden = false;
+    }
+  }
+
+
+  if (
+    event.target.id === "closeAddEnquiryBtn" ||
+    event.target.id === "cancelAddEnquiryBtn"
+  ) {
+
+    closeAddEnquiryModal();
+  }
+
+});
+
+
+function closeAddEnquiryModal() {
+
+  const modal =
+    document.getElementById("addEnquiryModal");
+
+  if (modal) {
+    modal.hidden = true;
+  }
+
+  const message =
+    document.getElementById("addEnquiryMessage");
+
+  if (message) {
+    message.textContent = "";
+  }
+}
+
+
+// =====================================================
+// SAVE NEW ENQUIRY
+// =====================================================
+
+document.addEventListener("click", async (event) => {
+
+  if (
+    event.target.id !==
+    "saveNewEnquiryBtn"
+  ) {
+    return;
+  }
+
+
+  const name =
+    document.getElementById(
+      "newCustomerName"
+    )?.value.trim();
+
+
+  const mobile =
+    document.getElementById(
+      "newMobile"
+    )?.value.trim();
+
+
+  const email =
+    document.getElementById(
+      "newEmail"
+    )?.value.trim();
+
+
+  const location =
+    document.getElementById(
+      "newLocation"
+    )?.value.trim();
+
+
+  const occasion =
+    document.getElementById(
+      "newOccasion"
+    )?.value;
+
+
+  const eventDate =
+    document.getElementById(
+      "newEventDate"
+    )?.value;
+
+
+  const guests =
+    document.getElementById(
+      "newGuests"
+    )?.value;
+
+
+  const budget =
+    document.getElementById(
+      "newBudget"
+    )?.value;
+
+
+  const food =
+    document.getElementById(
+      "newFood"
+    )?.value;
+
+
+  const source =
+    document.getElementById(
+      "newSource"
+    )?.value;
+
+
+  const status =
+    document.getElementById(
+      "newStatus"
+    )?.value || "new";
+
+
+  const priority =
+    document.getElementById(
+      "newPriority"
+    )?.value || "normal";
+
+
+  const followUp =
+    document.getElementById(
+      "newFollowUp"
+    )?.value;
+
+
+  const requirements =
+    document.getElementById(
+      "newRequirements"
+    )?.value.trim();
+
+
+  const notes =
+    document.getElementById(
+      "newNotes"
+    )?.value.trim();
+
+
+  const message =
+    document.getElementById(
+      "addEnquiryMessage"
+    );
+
+
+  const saveBtn =
+    document.getElementById(
+      "saveNewEnquiryBtn"
+    );
+
+
+  // ---------------------------------------------------
+  // REQUIRED FIELDS
+  // ---------------------------------------------------
+
+  if (!name || !mobile) {
+
+    if (message) {
+
+      message.textContent =
+        "Customer name and mobile number are required.";
+
+      message.style.display = "block";
+    }
+
+    return;
+  }
+
+
+  // ---------------------------------------------------
+  // BUTTON STATE
+  // ---------------------------------------------------
+
+  if (saveBtn) {
+
+    saveBtn.disabled = true;
+    saveBtn.textContent =
+      "Saving...";
+  }
+
+
+  if (message) {
+
+    message.textContent =
+      "Saving enquiry...";
+
+    message.style.display =
+      "block";
+  }
+
+
+  // ---------------------------------------------------
+  // INSERT INTO SUPABASE
+  // ---------------------------------------------------
+
+  try {
+
+    const { data, error } =
+      await supabaseClient
+        .from("customer_enquiries")
+        .insert({
+
+          customer_name: name,
+
+          mobile_number: mobile,
+
+          email:
+            email || null,
+
+          location:
+            location || null,
+
+          occasion:
+            occasion || null,
+
+          event_date:
+            eventDate || null,
+
+          guests:
+            guests
+              ? Number(guests)
+              : null,
+
+          budget_per_person:
+            budget
+              ? Number(budget)
+              : null,
+
+          food_preference:
+            food || null,
+
+          source:
+            source || "Other",
+
+          lead_status:
+            status,
+
+          priority:
+            priority,
+
+          follow_up_at:
+            followUp
+              ? new Date(
+                  followUp
+                ).toISOString()
+              : null,
+
+          other_requirements:
+            requirements || null,
+
+          internal_notes:
+            notes || null
+
+        })
+        .select()
+        .single();
+
+
+    if (error) {
+
+      console.error(
+        "ADD ENQUIRY ERROR:",
+        error
+      );
+
+      if (message) {
+
+        message.textContent =
+          "Unable to save enquiry: " +
+          error.message;
+      }
+
+      if (saveBtn) {
+
+        saveBtn.disabled = false;
+
+        saveBtn.textContent =
+          "Save Enquiry";
+      }
+
+      return;
+    }
+
+
+    console.log(
+      "New enquiry created:",
+      data
+    );
+
+
+    // -------------------------------------------------
+    // SUCCESS
+    // -------------------------------------------------
+
+    if (message) {
+
+      message.textContent =
+        "Enquiry added successfully.";
+    }
+
+
+    // Refresh CRM list
+
+    await loadEnquiries();
+
+
+    // Clear form
+
+    document.getElementById(
+      "newCustomerName"
+    ).value = "";
+
+    document.getElementById(
+      "newMobile"
+    ).value = "";
+
+    document.getElementById(
+      "newEmail"
+    ).value = "";
+
+    document.getElementById(
+      "newLocation"
+    ).value = "";
+
+    document.getElementById(
+      "newOccasion"
+    ).value = "";
+
+    document.getElementById(
+      "newEventDate"
+    ).value = "";
+
+    document.getElementById(
+      "newGuests"
+    ).value = "";
+
+    document.getElementById(
+      "newBudget"
+    ).value = "";
+
+    document.getElementById(
+      "newFood"
+    ).value = "";
+
+    document.getElementById(
+      "newSource"
+    ).value = "Website";
+
+    document.getElementById(
+      "newStatus"
+    ).value = "new";
+
+    document.getElementById(
+      "newPriority"
+    ).value = "normal";
+
+    document.getElementById(
+      "newFollowUp"
+    ).value = "";
+
+    document.getElementById(
+      "newRequirements"
+    ).value = "";
+
+    document.getElementById(
+      "newNotes"
+    ).value = "";
+
+
+    // Close after short delay
+
+    setTimeout(() => {
+
+      closeAddEnquiryModal();
+
+    }, 700);
+
+
+  } catch (error) {
+
+    console.error(
+      "ADD ENQUIRY EXCEPTION:",
+      error
+    );
+
+    if (message) {
+
+      message.textContent =
+        "Something went wrong: " +
+        error.message;
+    }
+
+  } finally {
+
+    if (saveBtn) {
+
+      saveBtn.disabled = false;
+
+      saveBtn.textContent =
+        "Save Enquiry";
+    }
+
+  }
+
+});
