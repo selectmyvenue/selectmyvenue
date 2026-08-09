@@ -22,24 +22,34 @@ document.addEventListener("DOMContentLoaded", () => {
     loginMessage.textContent = "Signing in...";
     loginMessage.style.display = "block";
 
-    const { data, error } =
-      await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
+    try {
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
 
-    if (error) {
-      console.error("SUPABASE LOGIN ERROR:", error);
-      loginMessage.textContent = "Login failed: " + error.message;
-      return;
+      if (error) {
+        console.error("SUPABASE LOGIN ERROR:", error);
+        loginMessage.textContent = "Login failed: " + error.message;
+        return;
+      }
+
+      if (!data || !data.session) {
+        loginMessage.textContent =
+          "Login failed. No session created.";
+        return;
+      }
+
+      loginMessage.textContent =
+        "Login successful. Opening CRM...";
+
+      window.location.href = "dashboard.html";
+
+    } catch (error) {
+      console.error("LOGIN ERROR:", error);
+      loginMessage.textContent =
+        "Login error: " + error.message;
     }
-
-    if (!data.session) {
-      loginMessage.textContent = "Login failed. No session created.";
-      return;
-    }
-
-    loginMessage.textContent = "Login successful. Opening CRM...";
-
-    window.location.href = "dashboard.html";
   });
+});
