@@ -1174,85 +1174,55 @@ function closeLeadModal() {
 
 async function saveLeadChanges() {
 
-  if (!currentLead) {
+  if (!currentLead || !currentLead.id) {
+    showToast("No lead selected.");
     return;
   }
 
-
   const saveBtn =
-    document.getElementById(
-      "saveLeadBtn"
-    );
-
+    document.getElementById("saveLeadBtn");
 
   const status =
-    document.getElementById(
-      "modalStatus"
-    )?.value || "new";
-
+    document.getElementById("modalStatus")?.value || "new";
 
   const priority =
-    document.getElementById(
-      "modalPriority"
-    )?.value || "normal";
-
+    document.getElementById("modalPriority")?.value || "normal";
 
   const followUp =
-    document.getElementById(
-      "modalFollowUp"
-    )?.value;
-
+    document.getElementById("modalFollowUp")?.value;
 
   const notes =
-    document.getElementById(
-      "modalNotes"
-    )?.value.trim();
-
+    document.getElementById("modalNotes")?.value.trim();
 
   if (saveBtn) {
-
-    saveBtn.disabled =
-      true;
-
-    saveBtn.textContent =
-      "Saving...";
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
   }
-
 
   try {
 
+    const updateData = {
+      status: status,
+      priority: priority,
+      follow_up_at: followUp
+        ? new Date(followUp).toISOString()
+        : null,
+      internal_notes: notes || null,
+      updated_at: new Date().toISOString()
+    };
+
+    console.log("UPDATING LEAD:", currentLead.id);
+    console.log("UPDATE DATA:", updateData);
+
     const {
+      data,
       error
-    } =
-      await supabaseClient
-        .from("customer_enquiries")
-        .update({
-
-          status:
-            status,
-
-          priority:
-            priority,
-
-          follow_up_at:
-            followUp
-              ? new Date(
-                  followUp
-                ).toISOString()
-              : null,
-
-          internal_notes:
-            notes || null,
-
-          updated_at:
-            new Date().toISOString()
-
-        })
-        .eq(
-          "id",
-          currentLead.id
-        );
-
+    } = await supabaseClient
+      .from("customer_enquiries")
+      .update(updateData)
+      .eq("id", currentLead.id)
+      .select()
+      .single();
 
     if (error) {
 
@@ -1262,21 +1232,39 @@ async function saveLeadChanges() {
       );
 
       showToast(
-        "Unable to save changes."
+        "Unable to save: " + error.message
       );
 
       return;
     }
 
+    if (!data) {
+
+      console.error(
+        "UPDATE RETURNED NO ROW"
+      );
+
+      showToast(
+        "Lead was not updated. Check CRM permissions."
+      );
+
+      return;
+    }
+
+    console.log(
+      "LEAD UPDATED SUCCESSFULLY:",
+      data
+    );
 
     showToast(
       "Lead updated successfully."
     );
 
-
-    closeLeadModal();
+    currentLead = data;
 
     await loadEnquiries();
+
+    closeLeadModal();
 
   } catch (error) {
 
@@ -1286,25 +1274,20 @@ async function saveLeadChanges() {
     );
 
     showToast(
-      "Something went wrong."
+      "Something went wrong: " +
+      error.message
     );
 
   } finally {
 
     if (saveBtn) {
-
-      saveBtn.disabled =
-        false;
-
-      saveBtn.textContent =
-        "Save Changes";
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save Changes";
     }
 
   }
 
 }
-
-
 // =====================================================
 // ADD ENQUIRY
 // =====================================================
