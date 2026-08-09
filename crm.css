@@ -1147,3 +1147,38 @@ width: 100%;
 }
 
 }
+/* =========================================================
+   ADD ENQUIRY MODAL — KEEP TOP CONTENT VISIBLE
+   ========================================================= */
+
+#addEnquiryModal {
+  align-items: flex-start;
+  padding: 30px 20px;
+  overflow-y: auto;
+}
+
+#addEnquiryModal > * {
+  width: min(1000px, 100%);
+}
+
+#addEnquiryModal .modal-header {
+  background: #fff;
+  border-radius: 18px 18px 0 0;
+}
+
+#addEnquiryModal .add-enquiry-form,
+#addEnquiryModal .modal-body {
+  background: #fff;
+}
+
+/* Make the complete form scroll naturally */
+#addEnquiryModal {
+  min-height: 100vh;
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+  #addEnquiryModal {
+    padding: 12px;
+  }
+}
