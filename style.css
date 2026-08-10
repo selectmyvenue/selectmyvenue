@@ -246,3 +246,84 @@ nav a.active:after{content:"";position:absolute;left:0;right:0;bottom:-11px;heig
 
   display: block;
 }
+/* =====================================================
+   FOOTER SMV LOGO — SHOW ONLY SMV FROM FULL LOGO
+===================================================== */
+
+.footer-smv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.smv-logo-crop {
+  position: relative;
+  display: block;
+  width: 82px;
+  height: 58px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Full logo image is used, but only its SMV portion is visible */
+.smv-logo-crop img {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 58px;
+  width: auto;
+  max-width: none;
+  transform: translateY(-50%);
+  display: block;
+}
+
+/* Keep footer text clean */
+.footer-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.footer-brand-text strong {
+  color: #f4f8f7;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.footer-brand-text span {
+  color: #6f9b98;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* Footer brand alignment */
+.footer-brand-mini {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+
+  .smv-logo-crop {
+    width: 70px;
+    height: 50px;
+  }
+
+  .smv-logo-crop img {
+    height: 50px;
+  }
+
+  .footer-brand-text strong {
+    font-size: 14px;
+  }
+
+  .footer-brand-text span {
+    font-size: 11px;
+  }
+
+}
