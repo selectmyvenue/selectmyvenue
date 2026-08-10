@@ -4,11 +4,17 @@
 // Website → Supabase → CRM
 // =====================================================
 
+
+// =====================================================
+// SUPABASE CONNECTION
+// =====================================================
+
 const SUPABASE_URL =
   "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
 const SUPABASE_ANON_KEY =
   "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+
 
 const supabaseClient =
   window.supabase.createClient(
@@ -26,6 +32,7 @@ const menuToggle =
 
 const mainNav =
   document.getElementById("mainNav");
+
 
 if (menuToggle && mainNav) {
 
@@ -73,7 +80,7 @@ document
 
 
 // =====================================================
-// CUSTOMER SEARCH FORM
+// TOP SEARCH FORM
 // =====================================================
 
 const searchForm =
@@ -131,17 +138,18 @@ if (searchForm) {
       if (!eventType || !location) {
 
         showNotification(
-          "Please complete your requirement",
+          "Requirement Required",
           "Please select an event type and enter your location.",
           "error"
         );
 
         return;
+
       }
 
 
       // -------------------------------------------------
-      // BUTTON LOADING STATE
+      // BUTTON LOADING
       // -------------------------------------------------
 
       if (submitButton) {
@@ -158,19 +166,23 @@ if (searchForm) {
 
 
       // -------------------------------------------------
-      // INSERT INTO SUPABASE
+      // BUILD REQUIREMENTS
+      // -------------------------------------------------
+
+      const requirements =
+        buildRequirements(
+          eventType,
+          location,
+          guests,
+          eventDate
+        );
+
+
+      // -------------------------------------------------
+      // SAVE TOP SEARCH AS ENQUIRY
       // -------------------------------------------------
 
       try {
-
-        const requirements =
-          buildRequirements(
-            eventType,
-            location,
-            guests,
-            eventDate
-          );
-
 
         const {
           data,
@@ -238,25 +250,26 @@ if (searchForm) {
 
 
         // -------------------------------------------------
-        // SUPABASE ERROR
+        // ERROR
         // -------------------------------------------------
 
         if (error) {
 
           console.error(
-            "SUPABASE ENQUIRY ERROR:",
+            "TOP SEARCH SUPABASE ERROR:",
             error
           );
 
 
           showNotification(
-            "Enquiry could not be submitted",
-            "Something went wrong while saving your enquiry. Please try again.",
+            "Enquiry Could Not Be Submitted",
+            "Something went wrong while saving your requirement. Please try again.",
             "error"
           );
 
 
           return;
+
         }
 
 
@@ -265,7 +278,7 @@ if (searchForm) {
         // -------------------------------------------------
 
         console.log(
-          "CUSTOMER ENQUIRY CREATED:",
+          "TOP SEARCH ENQUIRY CREATED:",
           data
         );
 
@@ -274,8 +287,8 @@ if (searchForm) {
 
 
         showNotification(
-          "Enquiry submitted successfully!",
-          "Thank you for choosing Select My Venue. We have received your requirement and our team will contact you shortly.",
+          "Enquiry Submitted Successfully!",
+          "Thank you for choosing Select My Venue. Our team will contact you shortly.",
           "success"
         );
 
@@ -283,13 +296,13 @@ if (searchForm) {
       } catch (error) {
 
         console.error(
-          "CUSTOMER ENQUIRY EXCEPTION:",
+          "TOP SEARCH EXCEPTION:",
           error
         );
 
 
         showNotification(
-          "Something went wrong",
+          "Something Went Wrong",
           "We could not submit your enquiry right now. Please try again.",
           "error"
         );
@@ -317,6 +330,436 @@ if (searchForm) {
 
 
 // =====================================================
+// MAIN CUSTOMER ENQUIRY FORM
+// Website → Supabase → CRM
+// =====================================================
+
+const customerEnquiryForm =
+  document.getElementById(
+    "customerEnquiryForm"
+  );
+
+
+if (customerEnquiryForm) {
+
+  customerEnquiryForm.addEventListener(
+    "submit",
+    async (event) => {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+
+      // -------------------------------------------------
+      // ELEMENTS
+      // -------------------------------------------------
+
+      const submitButton =
+        document.getElementById(
+          "customerEnquirySubmit"
+        );
+
+
+      const messageBox =
+        document.getElementById(
+          "customerEnquiryMessage"
+        );
+
+
+      // -------------------------------------------------
+      // GET CUSTOMER DETAILS
+      // -------------------------------------------------
+
+      const customerName =
+        document
+          .getElementById("customerName")
+          ?.value
+          .trim();
+
+
+      const customerMobile =
+        document
+          .getElementById("customerMobile")
+          ?.value
+          .trim();
+
+
+      const customerEmail =
+        document
+          .getElementById("customerEmail")
+          ?.value
+          .trim();
+
+
+      const customerLocation =
+        document
+          .getElementById("customerLocation")
+          ?.value
+          .trim();
+
+
+      // -------------------------------------------------
+      // GET EVENT DETAILS
+      // -------------------------------------------------
+
+      const customerEventType =
+        document
+          .getElementById("customerEventType")
+          ?.value
+          .trim();
+
+
+      const customerEventDate =
+        document
+          .getElementById("customerEventDate")
+          ?.value
+          .trim();
+
+
+      const customerGuests =
+        document
+          .getElementById("customerGuests")
+          ?.value
+          .trim();
+
+
+      const customerBudget =
+        document
+          .getElementById("customerBudget")
+          ?.value
+          .trim();
+
+
+      const customerFood =
+        document
+          .getElementById("customerFood")
+          ?.value
+          .trim();
+
+
+      const customerRequirements =
+        document
+          .getElementById(
+            "customerRequirements"
+          )
+          ?.value
+          .trim();
+
+
+      // -------------------------------------------------
+      // VALIDATION
+      // -------------------------------------------------
+
+      if (
+        !customerName ||
+        !customerMobile ||
+        !customerLocation ||
+        !customerEventType
+      ) {
+
+        showInlineEnquiryMessage(
+          "Please complete all required fields.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      // -------------------------------------------------
+      // MOBILE VALIDATION
+      // -------------------------------------------------
+
+      if (
+        !/^[0-9]{10}$/.test(
+          customerMobile
+        )
+      ) {
+
+        showInlineEnquiryMessage(
+          "Please enter a valid 10-digit mobile number.",
+          "error"
+        );
+
+        return;
+
+      }
+
+
+      // -------------------------------------------------
+      // BUTTON LOADING
+      // -------------------------------------------------
+
+      if (submitButton) {
+
+        submitButton.disabled = true;
+
+        submitButton.dataset.originalText =
+          submitButton.textContent;
+
+        submitButton.textContent =
+          "Submitting...";
+
+      }
+
+
+      // -------------------------------------------------
+      // BUILD REQUIREMENTS
+      // -------------------------------------------------
+
+      const requirementParts = [];
+
+
+      if (customerRequirements) {
+
+        requirementParts.push(
+          `Other Requirements: ${customerRequirements}`
+        );
+
+      }
+
+
+      if (customerFood) {
+
+        requirementParts.push(
+          `Food Preference: ${customerFood}`
+        );
+
+      }
+
+
+      const requirements =
+        requirementParts.length
+          ? requirementParts.join("\n")
+          : null;
+
+
+      // -------------------------------------------------
+      // SUPABASE INSERT
+      // -------------------------------------------------
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("customer_enquiries")
+            .insert({
+
+              customer_name:
+                customerName,
+
+              mobile:
+                customerMobile,
+
+              email:
+                customerEmail ||
+                null,
+
+              location:
+                customerLocation,
+
+              occasion:
+                customerEventType,
+
+              event_date:
+                customerEventDate ||
+                null,
+
+              guests:
+                customerGuests
+                  ? Number(
+                      customerGuests
+                    )
+                  : null,
+
+              budget_per_person:
+                customerBudget
+                  ? Number(
+                      customerBudget
+                    )
+                  : null,
+
+              food_preference:
+                customerFood ||
+                null,
+
+              requirements:
+                requirements,
+
+              source:
+                "Website",
+
+              status:
+                "new",
+
+              priority:
+                "normal",
+
+              assigned_to:
+                null,
+
+              follow_up_at:
+                null,
+
+              internal_notes:
+                null,
+
+              last_contacted_at:
+                null
+
+            })
+            .select();
+
+
+        // -------------------------------------------------
+        // SUPABASE ERROR
+        // -------------------------------------------------
+
+        if (error) {
+
+          console.error(
+            "CUSTOMER ENQUIRY SUPABASE ERROR:",
+            error
+          );
+
+
+          showInlineEnquiryMessage(
+            "We couldn't submit your enquiry. Please try again.",
+            "error"
+          );
+
+
+          return;
+
+        }
+
+
+        // -------------------------------------------------
+        // SUCCESS
+        // -------------------------------------------------
+
+        console.log(
+          "CUSTOMER ENQUIRY CREATED:",
+          data
+        );
+
+
+        // Show confirmation BEFORE reset
+        showInlineEnquiryMessage(
+          "✓ Enquiry submitted successfully! Our team will contact you shortly.",
+          "success"
+        );
+
+
+        // Reset form
+        customerEnquiryForm.reset();
+
+
+        // Put success message back after reset
+        showInlineEnquiryMessage(
+          "✓ Enquiry submitted successfully! Our team will contact you shortly.",
+          "success"
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "CUSTOMER ENQUIRY EXCEPTION:",
+          error
+        );
+
+
+        showInlineEnquiryMessage(
+          "Something went wrong. Please try again.",
+          "error"
+        );
+
+
+      } finally {
+
+        if (submitButton) {
+
+          submitButton.disabled =
+            false;
+
+          submitButton.textContent =
+            submitButton.dataset.originalText ||
+            "Submit Enquiry →";
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// INLINE ENQUIRY CONFIRMATION
+// =====================================================
+
+function showInlineEnquiryMessage(
+  message,
+  type = "success"
+) {
+
+  const messageBox =
+    document.getElementById(
+      "customerEnquiryMessage"
+    );
+
+
+  if (!messageBox) {
+    return;
+  }
+
+
+  messageBox.textContent =
+    message;
+
+
+  if (type === "success") {
+
+    messageBox.className =
+      "form-message enquiry-success";
+
+  } else {
+
+    messageBox.className =
+      "form-message enquiry-error";
+
+  }
+
+
+  // Make message visible
+  messageBox.style.display =
+    "block";
+
+
+  // Keep message near enquiry form
+  setTimeout(
+    () => {
+
+      messageBox.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+
+    },
+    100
+  );
+
+}
+
+
+// =====================================================
 // GUEST RANGE → NUMBER
 // =====================================================
 
@@ -329,30 +772,52 @@ function convertGuestRangeToNumber(
   }
 
 
-  if (value.includes("500+")) {
+  if (
+    value.includes("500+")
+  ) {
+
     return 500;
+
   }
 
 
   const numbers =
-    value.match(/\d+/g);
+    value.match(
+      /\d+/g
+    );
 
 
-  if (!numbers || !numbers.length) {
+  if (
+    !numbers ||
+    !numbers.length
+  ) {
+
     return null;
+
   }
 
 
-  if (numbers.length >= 2) {
+  if (
+    numbers.length >= 2
+  ) {
 
     const first =
-      Number(numbers[0]);
+      Number(
+        numbers[0]
+      );
+
 
     const second =
-      Number(numbers[1]);
+      Number(
+        numbers[1]
+      );
+
 
     return Math.round(
-      (first + second) / 2
+      (
+        first +
+        second
+      ) / 2
     );
 
   }
@@ -407,13 +872,16 @@ function buildRequirements(
   }
 
 
-  return details.join("\n");
+  return details.join(
+    "\n"
+  );
 
 }
 
 
 // =====================================================
 // PREMIUM NOTIFICATION
+// Used ONLY for top search form
 // =====================================================
 
 function showNotification(
@@ -422,14 +890,16 @@ function showNotification(
   type = "success"
 ) {
 
-  // Remove any existing notification
   const oldNotification =
     document.getElementById(
       "smvNotification"
     );
 
+
   if (oldNotification) {
+
     oldNotification.remove();
+
   }
 
 
@@ -438,7 +908,9 @@ function showNotification(
 
 
   const overlay =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
 
   overlay.id =
@@ -450,10 +922,11 @@ function showNotification(
     <div class="smv-notification-overlay">
 
       <div
-        class="smv-notification-card
-        ${isSuccess
-          ? "smv-notification-success"
-          : "smv-notification-error"}"
+        class="smv-notification-card ${
+          isSuccess
+            ? "smv-notification-success"
+            : "smv-notification-error"
+        }"
       >
 
         <button
@@ -466,9 +939,7 @@ function showNotification(
         </button>
 
 
-        <div
-          class="smv-notification-icon"
-        >
+        <div class="smv-notification-icon">
           ${
             isSuccess
               ? "✓"
@@ -477,30 +948,20 @@ function showNotification(
         </div>
 
 
-        <div
-          class="smv-notification-title"
-        >
-          ${escapeNotificationText(
-            title
-          )}
+        <div class="smv-notification-title">
+          ${escapeNotificationText(title)}
         </div>
 
 
-        <div
-          class="smv-notification-message"
-        >
-          ${escapeNotificationText(
-            message
-          )}
+        <div class="smv-notification-message">
+          ${escapeNotificationText(message)}
         </div>
 
 
         ${
           isSuccess
             ? `
-              <div
-                class="smv-notification-note"
-              >
+              <div class="smv-notification-note">
                 ✦ Select My Venue
               </div>
             `
@@ -532,16 +993,12 @@ function showNotification(
   );
 
 
-  // ---------------------------------------------------
-  // ADD NOTIFICATION CSS
-  // ---------------------------------------------------
-
   addNotificationStyles();
 
 
-  // ---------------------------------------------------
-  // CLOSE FUNCTION
-  // ---------------------------------------------------
+  // -------------------------------------------------
+  // CLOSE
+  // -------------------------------------------------
 
   const closeNotification =
     () => {
@@ -550,6 +1007,7 @@ function showNotification(
         document.getElementById(
           "smvNotification"
         );
+
 
       if (element) {
 
@@ -631,9 +1089,9 @@ function showNotification(
   }
 
 
-  // ---------------------------------------------------
-  // ESC KEY
-  // ---------------------------------------------------
+  // -------------------------------------------------
+  // ESC
+  // -------------------------------------------------
 
   const escHandler =
     (event) => {
@@ -663,7 +1121,7 @@ function showNotification(
 
 
 // =====================================================
-// NOTIFICATION TEXT ESCAPE
+// ESCAPE NOTIFICATION TEXT
 // =====================================================
 
 function escapeNotificationText(
@@ -759,15 +1217,20 @@ function addNotificationStyles() {
 
       position: relative;
 
-      width: min(460px, 100%);
+      width:
+        min(460px, 100%);
 
-      padding: 38px 30px 30px;
+      padding:
+        38px 30px 30px;
 
-      text-align: center;
+      text-align:
+        center;
 
-      background: #ffffff;
+      background:
+        #ffffff;
 
-      border-radius: 24px;
+      border-radius:
+        24px;
 
       box-shadow:
         0 30px 100px
@@ -782,52 +1245,73 @@ function addNotificationStyles() {
 
     .smv-notification-close {
 
-      position: absolute;
+      position:
+        absolute;
 
-      top: 12px;
+      top:
+        12px;
 
-      right: 14px;
+      right:
+        14px;
 
-      width: 34px;
+      width:
+        34px;
 
-      height: 34px;
+      height:
+        34px;
 
-      border: 0;
+      border:
+        0;
 
-      border-radius: 50%;
+      border-radius:
+        50%;
 
-      background: #f2f4f7;
+      background:
+        #f2f4f7;
 
-      color: #667085;
+      color:
+        #667085;
 
-      font-size: 25px;
+      font-size:
+        25px;
 
-      line-height: 1;
+      line-height:
+        1;
 
-      cursor: pointer;
+      cursor:
+        pointer;
 
     }
 
 
     .smv-notification-icon {
 
-      width: 72px;
+      width:
+        72px;
 
-      height: 72px;
+      height:
+        72px;
 
-      margin: 0 auto 20px;
+      margin:
+        0 auto 20px;
 
-      display: flex;
+      display:
+        flex;
 
-      align-items: center;
+      align-items:
+        center;
 
-      justify-content: center;
+      justify-content:
+        center;
 
-      border-radius: 50%;
+      border-radius:
+        50%;
 
-      font-size: 34px;
+      font-size:
+        34px;
 
-      font-weight: 800;
+      font-weight:
+        800;
 
     }
 
@@ -835,12 +1319,15 @@ function addNotificationStyles() {
     .smv-notification-success
     .smv-notification-icon {
 
-      background: #e9fff2;
+      background:
+        #e9fff2;
 
-      color: #16a34a;
+      color:
+        #16a34a;
 
       box-shadow:
-        0 0 0 8px #f3fff7;
+        0 0 0 8px
+        #f3fff7;
 
     }
 
@@ -848,84 +1335,113 @@ function addNotificationStyles() {
     .smv-notification-error
     .smv-notification-icon {
 
-      background: #fff0f0;
+      background:
+        #fff0f0;
 
-      color: #dc2626;
+      color:
+        #dc2626;
 
       box-shadow:
-        0 0 0 8px #fff7f7;
+        0 0 0 8px
+        #fff7f7;
 
     }
 
 
     .smv-notification-title {
 
-      margin-bottom: 12px;
+      margin-bottom:
+        12px;
 
-      color: #101828;
+      color:
+        #101828;
 
-      font-size: 25px;
+      font-size:
+        25px;
 
-      line-height: 1.25;
+      line-height:
+        1.25;
 
-      font-weight: 750;
+      font-weight:
+        750;
 
     }
 
 
     .smv-notification-message {
 
-      max-width: 390px;
+      max-width:
+        390px;
 
-      margin: 0 auto;
+      margin:
+        0 auto;
 
-      color: #667085;
+      color:
+        #667085;
 
-      font-size: 15px;
+      font-size:
+        15px;
 
-      line-height: 1.7;
+      line-height:
+        1.7;
 
     }
 
 
     .smv-notification-note {
 
-      margin-top: 18px;
+      margin-top:
+        18px;
 
-      color: #667085;
+      color:
+        #667085;
 
-      font-size: 13px;
+      font-size:
+        13px;
 
-      font-weight: 600;
+      font-weight:
+        600;
 
     }
 
 
     .smv-notification-button {
 
-      min-width: 130px;
+      min-width:
+        130px;
 
-      margin-top: 25px;
+      margin-top:
+        25px;
 
-      padding: 13px 24px;
+      padding:
+        13px 24px;
 
-      border: 0;
+      border:
+        0;
 
-      border-radius: 12px;
+      border-radius:
+        12px;
 
-      background: #111827;
+      background:
+        #111827;
 
-      color: #ffffff;
+      color:
+        #ffffff;
 
-      font-size: 15px;
+      font-size:
+        15px;
 
-      font-weight: 700;
+      font-weight:
+        700;
 
-      cursor: pointer;
+      cursor:
+        pointer;
 
       transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
+        transform
+        0.15s ease,
+        opacity
+        0.15s ease;
 
     }
 
@@ -935,7 +1451,8 @@ function addNotificationStyles() {
       transform:
         translateY(-1px);
 
-      opacity: 0.92;
+      opacity:
+        0.92;
 
     }
 
@@ -1008,21 +1525,24 @@ function addNotificationStyles() {
         padding:
           35px 22px 25px;
 
-        border-radius: 20px;
+        border-radius:
+          20px;
 
       }
 
 
       .smv-notification-title {
 
-        font-size: 22px;
+        font-size:
+          22px;
 
       }
 
 
       .smv-notification-message {
 
-        font-size: 14px;
+        font-size:
+          14px;
 
       }
 
