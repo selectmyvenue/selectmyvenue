@@ -13,7 +13,7 @@
 <header class="site-header">
   <div class="header-inner">
     <a href="#home" class="brand" aria-label="Select My Venue Home">
-      <img src="logo.png" alt="Select My Venue">
+      <img src="logo.png" alt="Select My Venue" class="main-logo">
     </a>
 
     <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
@@ -24,7 +24,6 @@
       <a href="#smart">Smart Discovery</a>
       <a href="#enquiry" class="nav-cta">Find a Venue</a>
       <a href="#contact">Contact</a>
-      <a href="crm/login.html" class="login-btn">↪ Login</a>
     </nav>
   </div>
 </header>
@@ -206,7 +205,7 @@
   </form>
 </section>
 
-<section class="about-section">
+<section class="about-section" id="about">
   <div class="about-copy">
     <div class="section-kicker">ABOUT SELECT MY VENUE</div>
     <h2>Finding the right venue should be <span>exciting — not exhausting.</span></h2>
@@ -239,13 +238,52 @@
 
 </main>
 
-<footer>
-  <div class="footer-line"></div>
-  <a class="footer-smv" href="#home" aria-label="Select My Venue">
-    <img src="logo.png" alt="SMV">
-  </a>
-  <p>Smart Venue Discovery • India</p>
-  <small>© 2026 Select My Venue. All rights reserved.</small>
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <div class="footer-top">
+      <div class="footer-brand-mini">
+        <a class="footer-smv" href="#home" aria-label="Select My Venue Home">
+          <img src="logo.png" alt="SMV">
+        </a>
+        <div>
+          <strong>Select My Venue</strong>
+          <span>Smart Venue Discovery • India</span>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-link-group">
+          <h4>Explore</h4>
+          <a href="#home">Home</a>
+          <a href="#how">How It Works</a>
+          <a href="#smart">Smart Discovery</a>
+          <a href="#enquiry">Find a Venue</a>
+        </div>
+
+        <div class="footer-link-group">
+          <h4>Company</h4>
+          <a href="#about">About Us</a>
+          <a href="#contact">Contact</a>
+          <a href="#home">Select My Venue</a>
+          <a href="#enquiry">Submit Enquiry</a>
+        </div>
+
+        <div class="footer-link-group">
+          <h4>Connect</h4>
+          <a href="mailto:support@selectmyvenue.com">Email</a>
+          <a href="tel:+919958716688">Call Us</a>
+          <a href="https://wa.me/919958716688" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2026 Select My Venue. All rights reserved.</span>
+      <span>Smart Venue Discovery • India</span>
+    </div>
+
+  </div>
 </footer>
 
 <span id="toastMessage" class="toast-message">Enquiry submitted successfully.</span>
