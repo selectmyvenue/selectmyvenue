@@ -4,9 +4,8 @@
 // Website → Supabase → CRM
 // =====================================================
 
-
 // =====================================================
-// SUPABASE CONNECTION
+// SUPABASE
 // =====================================================
 
 const SUPABASE_URL =
@@ -14,7 +13,6 @@ const SUPABASE_URL =
 
 const SUPABASE_ANON_KEY =
   "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-
 
 const supabaseClient =
   window.supabase.createClient(
@@ -33,75 +31,71 @@ const menuToggle =
 const mainNav =
   document.getElementById("mainNav");
 
-
 if (menuToggle && mainNav) {
 
-  menuToggle.addEventListener(
-    "click",
-    () => {
+  menuToggle.addEventListener("click", function () {
 
-      const isOpen =
-        mainNav.classList.toggle("open");
+    const isOpen =
+      mainNav.classList.toggle("open");
 
-      menuToggle.setAttribute(
-        "aria-expanded",
-        isOpen ? "true" : "false"
-      );
+    menuToggle.setAttribute(
+      "aria-expanded",
+      isOpen ? "true" : "false"
+    );
 
-    }
-  );
+  });
 
 }
 
 
+// Close mobile menu after clicking a link
+
 document
   .querySelectorAll("#mainNav a")
-  .forEach((link) => {
+  .forEach(function (link) {
 
-    link.addEventListener(
-      "click",
-      () => {
+    link.addEventListener("click", function () {
 
-        if (mainNav) {
-          mainNav.classList.remove("open");
-        }
-
-        if (menuToggle) {
-          menuToggle.setAttribute(
-            "aria-expanded",
-            "false"
-          );
-        }
-
+      if (mainNav) {
+        mainNav.classList.remove("open");
       }
-    );
+
+      if (menuToggle) {
+        menuToggle.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+      }
+
+    });
 
   });
 
 
 // =====================================================
-// TOP SEARCH FORM
+// CUSTOMER SEARCH FORM
+// HERO FORM
 // =====================================================
 
 const searchForm =
   document.getElementById("searchForm");
 
-
 if (searchForm) {
 
   searchForm.addEventListener(
     "submit",
-    async (event) => {
+    async function (event) {
+
+      // VERY IMPORTANT
+      // Prevent page jumping to top
 
       event.preventDefault();
       event.stopPropagation();
-
 
       const submitButton =
         searchForm.querySelector(
           'button[type="submit"]'
         );
-
 
       const eventType =
         document
@@ -109,20 +103,17 @@ if (searchForm) {
           ?.value
           .trim();
 
-
       const location =
         document
           .getElementById("location")
           ?.value
           .trim();
 
-
       const guests =
         document
           .getElementById("guests")
           ?.value
           .trim();
-
 
       const eventDate =
         document
@@ -137,14 +128,12 @@ if (searchForm) {
 
       if (!eventType || !location) {
 
-        showNotification(
-          "Requirement Required",
+        showFormMessage(
           "Please select an event type and enter your location.",
           "error"
         );
 
         return;
-
       }
 
 
@@ -165,47 +154,35 @@ if (searchForm) {
       }
 
 
-      // -------------------------------------------------
-      // BUILD REQUIREMENTS
-      // -------------------------------------------------
-
-      const requirements =
-        buildRequirements(
-          eventType,
-          location,
-          guests,
-          eventDate
-        );
-
-
-      // -------------------------------------------------
-      // SAVE TOP SEARCH AS ENQUIRY
-      // -------------------------------------------------
-
       try {
 
-        const {
-          data,
-          error
-        } =
+        const requirements =
+          buildRequirements(
+            eventType,
+            location,
+            guests,
+            eventDate
+          );
+
+
+        // -------------------------------------------------
+        // SAVE TO SUPABASE
+        // -------------------------------------------------
+
+        const { data, error } =
           await supabaseClient
             .from("customer_enquiries")
             .insert({
 
-              customer_name:
-                null,
+              customer_name: null,
 
-              mobile:
-                null,
+              mobile: null,
 
-              email:
-                null,
+              email: null,
 
-              location:
-                location,
+              location: location,
 
-              occasion:
-                eventType,
+              occasion: eventType,
 
               event_date:
                 eventDate || null,
@@ -215,80 +192,60 @@ if (searchForm) {
                   guests
                 ),
 
-              budget_per_person:
-                null,
+              budget_per_person: null,
 
-              food_preference:
-                null,
+              food_preference: null,
 
               requirements:
                 requirements,
 
-              source:
-                "Website",
+              source: "Website",
 
-              status:
-                "new",
+              status: "new",
 
-              priority:
-                "normal",
+              priority: "normal",
 
-              assigned_to:
-                null,
+              assigned_to: null,
 
-              follow_up_at:
-                null,
+              follow_up_at: null,
 
-              internal_notes:
-                null,
+              internal_notes: null,
 
-              last_contacted_at:
-                null
+              last_contacted_at: null
 
             })
             .select();
 
 
-        // -------------------------------------------------
-        // ERROR
-        // -------------------------------------------------
-
         if (error) {
 
           console.error(
-            "TOP SEARCH SUPABASE ERROR:",
+            "SUPABASE SEARCH FORM ERROR:",
             error
           );
 
-
-          showNotification(
-            "Enquiry Could Not Be Submitted",
-            "Something went wrong while saving your requirement. Please try again.",
+          showFormMessage(
+            "Something went wrong while submitting your enquiry. Please try again.",
             "error"
           );
 
-
           return;
-
         }
 
 
-        // -------------------------------------------------
-        // SUCCESS
-        // -------------------------------------------------
-
         console.log(
-          "TOP SEARCH ENQUIRY CREATED:",
+          "SEARCH ENQUIRY CREATED:",
           data
         );
 
 
+        // Reset only after successful submission
+
         searchForm.reset();
 
 
-        showNotification(
-          "Enquiry Submitted Successfully!",
-          "Thank you for choosing Select My Venue. Our team will contact you shortly.",
+        showFormMessage(
+          "Enquiry submitted successfully! Our team will contact you shortly.",
           "success"
         );
 
@@ -296,14 +253,12 @@ if (searchForm) {
       } catch (error) {
 
         console.error(
-          "TOP SEARCH EXCEPTION:",
+          "SEARCH FORM ERROR:",
           error
         );
 
-
-        showNotification(
-          "Something Went Wrong",
-          "We could not submit your enquiry right now. Please try again.",
+        showFormMessage(
+          "Unable to submit your enquiry right now. Please try again.",
           "error"
         );
 
@@ -312,8 +267,7 @@ if (searchForm) {
 
         if (submitButton) {
 
-          submitButton.disabled =
-            false;
+          submitButton.disabled = false;
 
           submitButton.textContent =
             submitButton.dataset.originalText ||
@@ -330,8 +284,8 @@ if (searchForm) {
 
 
 // =====================================================
-// MAIN CUSTOMER ENQUIRY FORM
-// Website → Supabase → CRM
+// FULL CUSTOMER ENQUIRY FORM
+// MAIN FORM
 // =====================================================
 
 const customerEnquiryForm =
@@ -339,20 +293,27 @@ const customerEnquiryForm =
     "customerEnquiryForm"
   );
 
+const customerEnquiryMessage =
+  document.getElementById(
+    "customerEnquiryMessage"
+  );
+
 
 if (customerEnquiryForm) {
 
   customerEnquiryForm.addEventListener(
     "submit",
-    async (event) => {
+    async function (event) {
+
+      // -------------------------------------------------
+      // VERY IMPORTANT
+      // STOP NORMAL FORM SUBMISSION
+      // This prevents page jumping to top
+      // -------------------------------------------------
 
       event.preventDefault();
       event.stopPropagation();
 
-
-      // -------------------------------------------------
-      // ELEMENTS
-      // -------------------------------------------------
 
       const submitButton =
         document.getElementById(
@@ -360,14 +321,8 @@ if (customerEnquiryForm) {
         );
 
 
-      const messageBox =
-        document.getElementById(
-          "customerEnquiryMessage"
-        );
-
-
       // -------------------------------------------------
-      // GET CUSTOMER DETAILS
+      // GET FORM VALUES
       // -------------------------------------------------
 
       const customerName =
@@ -376,13 +331,11 @@ if (customerEnquiryForm) {
           ?.value
           .trim();
 
-
       const customerMobile =
         document
           .getElementById("customerMobile")
           ?.value
           .trim();
-
 
       const customerEmail =
         document
@@ -390,17 +343,11 @@ if (customerEnquiryForm) {
           ?.value
           .trim();
 
-
       const customerLocation =
         document
           .getElementById("customerLocation")
           ?.value
           .trim();
-
-
-      // -------------------------------------------------
-      // GET EVENT DETAILS
-      // -------------------------------------------------
 
       const customerEventType =
         document
@@ -408,13 +355,11 @@ if (customerEnquiryForm) {
           ?.value
           .trim();
 
-
       const customerEventDate =
         document
           .getElementById("customerEventDate")
           ?.value
           .trim();
-
 
       const customerGuests =
         document
@@ -422,13 +367,11 @@ if (customerEnquiryForm) {
           ?.value
           .trim();
 
-
       const customerBudget =
         document
           .getElementById("customerBudget")
           ?.value
           .trim();
-
 
       const customerFood =
         document
@@ -436,12 +379,9 @@ if (customerEnquiryForm) {
           ?.value
           .trim();
 
-
       const customerRequirements =
         document
-          .getElementById(
-            "customerRequirements"
-          )
+          .getElementById("customerRequirements")
           ?.value
           .trim();
 
@@ -457,13 +397,12 @@ if (customerEnquiryForm) {
         !customerEventType
       ) {
 
-        showInlineEnquiryMessage(
+        showCustomerMessage(
           "Please complete all required fields.",
           "error"
         );
 
         return;
-
       }
 
 
@@ -471,19 +410,21 @@ if (customerEnquiryForm) {
       // MOBILE VALIDATION
       // -------------------------------------------------
 
-      if (
-        !/^[0-9]{10}$/.test(
-          customerMobile
-        )
-      ) {
+      const cleanMobile =
+        customerMobile.replace(
+          /\D/g,
+          ""
+        );
 
-        showInlineEnquiryMessage(
+
+      if (cleanMobile.length !== 10) {
+
+        showCustomerMessage(
           "Please enter a valid 10-digit mobile number.",
           "error"
         );
 
         return;
-
       }
 
 
@@ -504,47 +445,94 @@ if (customerEnquiryForm) {
       }
 
 
-      // -------------------------------------------------
-      // BUILD REQUIREMENTS
-      // -------------------------------------------------
+      // Clear previous message
 
-      const requirementParts = [];
+      showCustomerMessage(
+        "",
+        ""
+      );
 
-
-      if (customerRequirements) {
-
-        requirementParts.push(
-          `Other Requirements: ${customerRequirements}`
-        );
-
-      }
-
-
-      if (customerFood) {
-
-        requirementParts.push(
-          `Food Preference: ${customerFood}`
-        );
-
-      }
-
-
-      const requirements =
-        requirementParts.length
-          ? requirementParts.join("\n")
-          : null;
-
-
-      // -------------------------------------------------
-      // SUPABASE INSERT
-      // -------------------------------------------------
 
       try {
 
-        const {
-          data,
-          error
-        } =
+        // -------------------------------------------------
+        // BUILD COMPLETE REQUIREMENTS
+        // -------------------------------------------------
+
+        const requirementLines = [];
+
+
+        requirementLines.push(
+          "Event: " +
+          customerEventType
+        );
+
+
+        requirementLines.push(
+          "Location: " +
+          customerLocation
+        );
+
+
+        if (customerEventDate) {
+
+          requirementLines.push(
+            "Event Date: " +
+            customerEventDate
+          );
+
+        }
+
+
+        if (customerGuests) {
+
+          requirementLines.push(
+            "Guests: " +
+            customerGuests
+          );
+
+        }
+
+
+        if (customerBudget) {
+
+          requirementLines.push(
+            "Budget / Person: ₹" +
+            customerBudget
+          );
+
+        }
+
+
+        if (customerFood) {
+
+          requirementLines.push(
+            "Food Preference: " +
+            customerFood
+          );
+
+        }
+
+
+        if (customerRequirements) {
+
+          requirementLines.push(
+            "Other Requirements: " +
+            customerRequirements
+          );
+
+        }
+
+
+        const finalRequirements =
+          requirementLines.join("\n");
+
+
+        // -------------------------------------------------
+        // INSERT INTO SUPABASE
+        // -------------------------------------------------
+
+        const { data, error } =
           await supabaseClient
             .from("customer_enquiries")
             .insert({
@@ -553,7 +541,7 @@ if (customerEnquiryForm) {
                 customerName,
 
               mobile:
-                customerMobile,
+                cleanMobile,
 
               email:
                 customerEmail ||
@@ -571,16 +559,12 @@ if (customerEnquiryForm) {
 
               guests:
                 customerGuests
-                  ? Number(
-                      customerGuests
-                    )
+                  ? Number(customerGuests)
                   : null,
 
               budget_per_person:
                 customerBudget
-                  ? Number(
-                      customerBudget
-                    )
+                  ? Number(customerBudget)
                   : null,
 
               food_preference:
@@ -588,9 +572,12 @@ if (customerEnquiryForm) {
                 null,
 
               requirements:
-                requirements,
+                finalRequirements,
 
               source:
+                document
+                  .getElementById("leadSource")
+                  ?.value ||
                 "Website",
 
               status:
@@ -622,19 +609,18 @@ if (customerEnquiryForm) {
         if (error) {
 
           console.error(
-            "CUSTOMER ENQUIRY SUPABASE ERROR:",
+            "SUPABASE CUSTOMER ENQUIRY ERROR:",
             error
           );
 
 
-          showInlineEnquiryMessage(
-            "We couldn't submit your enquiry. Please try again.",
+          showCustomerMessage(
+            "Your enquiry could not be submitted. Please try again.",
             "error"
           );
 
 
           return;
-
         }
 
 
@@ -648,22 +634,30 @@ if (customerEnquiryForm) {
         );
 
 
-        // Show confirmation BEFORE reset
-        showInlineEnquiryMessage(
-          "✓ Enquiry submitted successfully! Our team will contact you shortly.",
-          "success"
-        );
-
-
         // Reset form
+
         customerEnquiryForm.reset();
 
 
-        // Put success message back after reset
-        showInlineEnquiryMessage(
-          "✓ Enquiry submitted successfully! Our team will contact you shortly.",
+        // Show message BELOW form fields
+
+        showCustomerMessage(
+          "✓ Enquiry submitted successfully! Thank you for choosing Select My Venue. Our team will contact you shortly.",
           "success"
         );
+
+
+        // Keep user around the form.
+        // DO NOT scroll to top.
+
+        if (customerEnquiryMessage) {
+
+          customerEnquiryMessage.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+
+        }
 
 
       } catch (error) {
@@ -674,7 +668,7 @@ if (customerEnquiryForm) {
         );
 
 
-        showInlineEnquiryMessage(
+        showCustomerMessage(
           "Something went wrong. Please try again.",
           "error"
         );
@@ -702,59 +696,103 @@ if (customerEnquiryForm) {
 
 
 // =====================================================
-// INLINE ENQUIRY CONFIRMATION
+// CUSTOMER FORM MESSAGE
 // =====================================================
 
-function showInlineEnquiryMessage(
+function showCustomerMessage(
   message,
-  type = "success"
+  type
 ) {
 
-  const messageBox =
+  const messageElement =
     document.getElementById(
       "customerEnquiryMessage"
     );
 
 
-  if (!messageBox) {
+  if (!messageElement) {
     return;
   }
 
 
-  messageBox.textContent =
+  messageElement.textContent =
     message;
+
+
+  messageElement.className =
+    "form-message";
 
 
   if (type === "success") {
 
-    messageBox.className =
-      "form-message enquiry-success";
-
-  } else {
-
-    messageBox.className =
-      "form-message enquiry-error";
+    messageElement.classList.add(
+      "success"
+    );
 
   }
 
 
-  // Make message visible
-  messageBox.style.display =
-    "block";
+  if (type === "error") {
+
+    messageElement.classList.add(
+      "error"
+    );
+
+  }
+
+}
 
 
-  // Keep message near enquiry form
-  setTimeout(
-    () => {
+// =====================================================
+// HERO FORM MESSAGE
+// =====================================================
 
-      messageBox.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest"
-      });
+function showFormMessage(
+  message,
+  type
+) {
 
-    },
-    100
-  );
+  let existing =
+    document.getElementById(
+      "heroFormMessage"
+    );
+
+
+  if (!existing) {
+
+    existing =
+      document.createElement("p");
+
+    existing.id =
+      "heroFormMessage";
+
+    existing.className =
+      "hero-form-message";
+
+    const searchForm =
+      document.getElementById(
+        "searchForm"
+      );
+
+    if (searchForm) {
+
+      searchForm.insertAdjacentElement(
+        "afterend",
+        existing
+      );
+
+    }
+
+  }
+
+
+  existing.textContent =
+    message;
+
+
+  existing.className =
+    "hero-form-message " +
+    (type || "");
 
 }
 
@@ -772,19 +810,13 @@ function convertGuestRangeToNumber(
   }
 
 
-  if (
-    value.includes("500+")
-  ) {
-
+  if (value.includes("500+")) {
     return 500;
-
   }
 
 
   const numbers =
-    value.match(
-      /\d+/g
-    );
+    value.match(/\d+/g);
 
 
   if (
@@ -797,27 +829,17 @@ function convertGuestRangeToNumber(
   }
 
 
-  if (
-    numbers.length >= 2
-  ) {
+  if (numbers.length >= 2) {
 
     const first =
-      Number(
-        numbers[0]
-      );
-
+      Number(numbers[0]);
 
     const second =
-      Number(
-        numbers[1]
-      );
+      Number(numbers[1]);
 
 
     return Math.round(
-      (
-        first +
-        second
-      ) / 2
+      (first + second) / 2
     );
 
   }
@@ -831,7 +853,7 @@ function convertGuestRangeToNumber(
 
 
 // =====================================================
-// BUILD REQUIREMENTS
+// BUILD HERO REQUIREMENTS
 // =====================================================
 
 function buildRequirements(
@@ -845,19 +867,22 @@ function buildRequirements(
 
 
   details.push(
-    `Event: ${eventType}`
+    "Event: " +
+    eventType
   );
 
 
   details.push(
-    `Location: ${location}`
+    "Location: " +
+    location
   );
 
 
   if (guests) {
 
     details.push(
-      `Guests: ${guests}`
+      "Guests: " +
+      guests
     );
 
   }
@@ -866,304 +891,27 @@ function buildRequirements(
   if (eventDate) {
 
     details.push(
-      `Event Date: ${eventDate}`
+      "Event Date: " +
+      eventDate
     );
 
   }
 
 
-  return details.join(
-    "\n"
-  );
+  return details.join("\n");
 
 }
 
 
 // =====================================================
-// PREMIUM NOTIFICATION
-// Used ONLY for top search form
+// FORM MESSAGE STYLES
 // =====================================================
 
-function showNotification(
-  title,
-  message,
-  type = "success"
-) {
-
-  const oldNotification =
-    document.getElementById(
-      "smvNotification"
-    );
-
-
-  if (oldNotification) {
-
-    oldNotification.remove();
-
-  }
-
-
-  const isSuccess =
-    type === "success";
-
-
-  const overlay =
-    document.createElement(
-      "div"
-    );
-
-
-  overlay.id =
-    "smvNotification";
-
-
-  overlay.innerHTML = `
-
-    <div class="smv-notification-overlay">
-
-      <div
-        class="smv-notification-card ${
-          isSuccess
-            ? "smv-notification-success"
-            : "smv-notification-error"
-        }"
-      >
-
-        <button
-          type="button"
-          class="smv-notification-close"
-          id="smvNotificationClose"
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-
-        <div class="smv-notification-icon">
-          ${
-            isSuccess
-              ? "✓"
-              : "!"
-          }
-        </div>
-
-
-        <div class="smv-notification-title">
-          ${escapeNotificationText(title)}
-        </div>
-
-
-        <div class="smv-notification-message">
-          ${escapeNotificationText(message)}
-        </div>
-
-
-        ${
-          isSuccess
-            ? `
-              <div class="smv-notification-note">
-                ✦ Select My Venue
-              </div>
-            `
-            : ""
-        }
-
-
-        <button
-          type="button"
-          class="smv-notification-button"
-          id="smvNotificationDone"
-        >
-          ${
-            isSuccess
-              ? "Done"
-              : "Try Again"
-          }
-        </button>
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  document.body.appendChild(
-    overlay
-  );
-
-
-  addNotificationStyles();
-
-
-  // -------------------------------------------------
-  // CLOSE
-  // -------------------------------------------------
-
-  const closeNotification =
-    () => {
-
-      const element =
-        document.getElementById(
-          "smvNotification"
-        );
-
-
-      if (element) {
-
-        element.classList.add(
-          "smv-notification-hide"
-        );
-
-
-        setTimeout(
-          () => {
-
-            element.remove();
-
-          },
-          250
-        );
-
-      }
-
-    };
-
-
-  const closeButton =
-    document.getElementById(
-      "smvNotificationClose"
-    );
-
-
-  const doneButton =
-    document.getElementById(
-      "smvNotificationDone"
-    );
-
-
-  if (closeButton) {
-
-    closeButton.addEventListener(
-      "click",
-      closeNotification
-    );
-
-  }
-
-
-  if (doneButton) {
-
-    doneButton.addEventListener(
-      "click",
-      closeNotification
-    );
-
-  }
-
-
-  const notificationOverlay =
-    overlay.querySelector(
-      ".smv-notification-overlay"
-    );
-
-
-  if (notificationOverlay) {
-
-    notificationOverlay.addEventListener(
-      "click",
-      (event) => {
-
-        if (
-          event.target ===
-          notificationOverlay
-        ) {
-
-          closeNotification();
-
-        }
-
-      }
-    );
-
-  }
-
-
-  // -------------------------------------------------
-  // ESC
-  // -------------------------------------------------
-
-  const escHandler =
-    (event) => {
-
-      if (
-        event.key === "Escape"
-      ) {
-
-        closeNotification();
-
-        document.removeEventListener(
-          "keydown",
-          escHandler
-        );
-
-      }
-
-    };
-
-
-  document.addEventListener(
-    "keydown",
-    escHandler
-  );
-
-}
-
-
-// =====================================================
-// ESCAPE NOTIFICATION TEXT
-// =====================================================
-
-function escapeNotificationText(
-  value
-) {
-
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-// =====================================================
-// NOTIFICATION STYLES
-// =====================================================
-
-function addNotificationStyles() {
+(function addFormMessageStyles() {
 
   if (
     document.getElementById(
-      "smvNotificationStyles"
+      "smvFormMessageStyles"
     )
   ) {
 
@@ -1173,378 +921,115 @@ function addNotificationStyles() {
 
 
   const style =
-    document.createElement(
-      "style"
-    );
+    document.createElement("style");
 
 
   style.id =
-    "smvNotificationStyles";
+    "smvFormMessageStyles";
 
 
   style.textContent = `
 
-    .smv-notification-overlay {
+    .form-message {
 
-      position: fixed;
+      width: 100%;
 
-      inset: 0;
+      margin: 14px 0 0;
 
-      z-index: 999999;
+      padding: 13px 16px;
 
-      display: flex;
+      border-radius: 12px;
 
-      align-items: center;
+      font-size: 14px;
 
-      justify-content: center;
+      line-height: 1.5;
 
-      padding: 20px;
+      font-weight: 600;
 
-      background:
-        rgba(7, 10, 20, 0.72);
-
-      backdrop-filter:
-        blur(8px);
-
-      animation:
-        smvFadeIn
-        0.2s ease;
+      display: block;
 
     }
 
 
-    .smv-notification-card {
+    .form-message:empty {
 
-      position: relative;
-
-      width:
-        min(460px, 100%);
-
-      padding:
-        38px 30px 30px;
-
-      text-align:
-        center;
-
-      background:
-        #ffffff;
-
-      border-radius:
-        24px;
-
-      box-shadow:
-        0 30px 100px
-        rgba(0, 0, 0, 0.30);
-
-      animation:
-        smvScaleIn
-        0.25s ease;
+      display: none;
 
     }
 
 
-    .smv-notification-close {
+    .form-message.success {
 
-      position:
-        absolute;
+      background: #ecfdf3;
 
-      top:
-        12px;
+      border: 1px solid #a7f3d0;
 
-      right:
-        14px;
-
-      width:
-        34px;
-
-      height:
-        34px;
-
-      border:
-        0;
-
-      border-radius:
-        50%;
-
-      background:
-        #f2f4f7;
-
-      color:
-        #667085;
-
-      font-size:
-        25px;
-
-      line-height:
-        1;
-
-      cursor:
-        pointer;
+      color: #047857;
 
     }
 
 
-    .smv-notification-icon {
+    .form-message.error {
 
-      width:
-        72px;
+      background: #fef2f2;
 
-      height:
-        72px;
+      border: 1px solid #fecaca;
 
-      margin:
-        0 auto 20px;
-
-      display:
-        flex;
-
-      align-items:
-        center;
-
-      justify-content:
-        center;
-
-      border-radius:
-        50%;
-
-      font-size:
-        34px;
-
-      font-weight:
-        800;
+      color: #b91c1c;
 
     }
 
 
-    .smv-notification-success
-    .smv-notification-icon {
+    .hero-form-message {
 
-      background:
-        #e9fff2;
+      width: min(1100px, calc(100% - 40px));
 
-      color:
-        #16a34a;
+      margin: 14px auto 0;
 
-      box-shadow:
-        0 0 0 8px
-        #f3fff7;
+      padding: 12px 16px;
 
-    }
+      border-radius: 12px;
 
+      font-size: 14px;
 
-    .smv-notification-error
-    .smv-notification-icon {
+      font-weight: 600;
 
-      background:
-        #fff0f0;
-
-      color:
-        #dc2626;
-
-      box-shadow:
-        0 0 0 8px
-        #fff7f7;
+      text-align: center;
 
     }
 
 
-    .smv-notification-title {
+    .hero-form-message:empty {
 
-      margin-bottom:
-        12px;
-
-      color:
-        #101828;
-
-      font-size:
-        25px;
-
-      line-height:
-        1.25;
-
-      font-weight:
-        750;
+      display: none;
 
     }
 
 
-    .smv-notification-message {
+    .hero-form-message.success {
 
-      max-width:
-        390px;
+      background: #ecfdf3;
 
-      margin:
-        0 auto;
-
-      color:
-        #667085;
-
-      font-size:
-        15px;
-
-      line-height:
-        1.7;
+      color: #047857;
 
     }
 
 
-    .smv-notification-note {
+    .hero-form-message.error {
 
-      margin-top:
-        18px;
+      background: #fef2f2;
 
-      color:
-        #667085;
-
-      font-size:
-        13px;
-
-      font-weight:
-        600;
+      color: #b91c1c;
 
     }
 
 
-    .smv-notification-button {
+    .form-submit:disabled,
+    .search-btn:disabled {
 
-      min-width:
-        130px;
+      opacity: 0.65;
 
-      margin-top:
-        25px;
-
-      padding:
-        13px 24px;
-
-      border:
-        0;
-
-      border-radius:
-        12px;
-
-      background:
-        #111827;
-
-      color:
-        #ffffff;
-
-      font-size:
-        15px;
-
-      font-weight:
-        700;
-
-      cursor:
-        pointer;
-
-      transition:
-        transform
-        0.15s ease,
-        opacity
-        0.15s ease;
-
-    }
-
-
-    .smv-notification-button:hover {
-
-      transform:
-        translateY(-1px);
-
-      opacity:
-        0.92;
-
-    }
-
-
-    .smv-notification-hide {
-
-      animation:
-        smvFadeOut
-        0.25s ease
-        forwards;
-
-    }
-
-
-    @keyframes smvFadeIn {
-
-      from {
-        opacity: 0;
-      }
-
-      to {
-        opacity: 1;
-      }
-
-    }
-
-
-    @keyframes smvFadeOut {
-
-      from {
-        opacity: 1;
-      }
-
-      to {
-        opacity: 0;
-      }
-
-    }
-
-
-    @keyframes smvScaleIn {
-
-      from {
-
-        opacity: 0;
-
-        transform:
-          scale(0.94)
-          translateY(10px);
-
-      }
-
-      to {
-
-        opacity: 1;
-
-        transform:
-          scale(1)
-          translateY(0);
-
-      }
-
-    }
-
-
-    @media (max-width: 520px) {
-
-      .smv-notification-card {
-
-        padding:
-          35px 22px 25px;
-
-        border-radius:
-          20px;
-
-      }
-
-
-      .smv-notification-title {
-
-        font-size:
-          22px;
-
-      }
-
-
-      .smv-notification-message {
-
-        font-size:
-          14px;
-
-      }
+      cursor: not-allowed;
 
     }
 
@@ -1555,7 +1040,7 @@ function addNotificationStyles() {
     style
   );
 
-}
+})();
 
 
 // =====================================================
@@ -1564,7 +1049,7 @@ function addNotificationStyles() {
 
 window.addEventListener(
   "error",
-  (event) => {
+  function (event) {
 
     console.error(
       "WEBSITE ERROR:",
