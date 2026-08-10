@@ -1,34 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta
     name="description"
     content="Select My Venue helps you discover suitable venues for weddings, celebrations, corporate events and special occasions across India."
   >
 
-  <title>
-    Select My Venue | Smart Venue Discovery
-  </title>
+  <title>Select My Venue | Smart Venue Discovery</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
-
+  <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
-
 
 <!-- =====================================================
      HEADER
@@ -43,14 +29,11 @@
       class="brand"
       aria-label="Select My Venue Home"
     >
-
       <img
         src="logo.png"
         alt="Select My Venue"
       >
-
     </a>
-
 
     <button
       class="menu-toggle"
@@ -62,10 +45,9 @@
       ☰
     </button>
 
-
     <nav id="mainNav">
 
-      <a href="#home">
+      <a href="#home" class="active">
         Home
       </a>
 
@@ -95,54 +77,105 @@
 </header>
 
 
+<main id="home">
+
 
 <!-- =====================================================
      HERO
 ====================================================== -->
 
-<section
-  class="hero"
-  id="home"
->
+<section class="hero">
+
+  <div class="hero-glow"></div>
+
+  <div class="hero-orbit orbit-one"></div>
+  <div class="hero-orbit orbit-two"></div>
+  <div class="hero-orbit orbit-three"></div>
+
 
   <div class="hero-content">
 
 
-    <div class="ai-badge">
+    <div class="hero-copy">
 
-      <span class="ai-pulse"></span>
+      <div class="ai-badge">
 
-      AI-INSPIRED VENUE DISCOVERY
+        <span class="ai-pulse"></span>
+
+        AI-INSPIRED VENUE DISCOVERY
+
+      </div>
+
+
+      <p class="eyebrow">
+
+        FIND THE RIGHT PLACE FOR YOUR MOMENT
+
+      </p>
+
+
+      <h1>
+
+        Discover venues
+
+        <br>
+
+        <span>
+          that fit your event.
+        </span>
+
+      </h1>
+
+
+      <p class="hero-text">
+
+        Tell us what you need. Select My Venue helps you
+        discover suitable venues for weddings, parties,
+        corporate events and celebrations — smarter,
+        faster and with less searching.
+
+      </p>
 
     </div>
 
 
-    <p class="eyebrow">
-      Find the right place for your moment
-    </p>
+
+    <!-- FUTURISTIC VENUE VISUAL -->
+
+    <div
+      class="hero-visual"
+      aria-hidden="true"
+    >
+
+      <div class="visual-core">
+        ⌂
+      </div>
+
+      <div class="visual-node node-top">
+        ♨
+      </div>
+
+      <div class="visual-node node-right">
+        ♡
+      </div>
+
+      <div class="visual-node node-left">
+        ▣
+      </div>
+
+      <div class="visual-node node-bottom">
+        ✦
+      </div>
+
+      <div class="visual-ray ray-one"></div>
+
+      <div class="visual-ray ray-two"></div>
+
+    </div>
 
 
-    <h1>
 
-      Discover venues
-
-      <span>
-        that fit your event.
-      </span>
-
-    </h1>
-
-
-    <p class="hero-text">
-
-      Tell us what you need. Select My Venue helps you discover
-      suitable venues for weddings, parties, corporate events and
-      celebrations — smarter, faster and with less searching.
-
-    </p>
-
-
-    <!-- CUSTOMER ENQUIRY FORM -->
+    <!-- QUICK SEARCH -->
 
     <form
       class="search-card"
@@ -153,7 +186,7 @@
       <div class="field">
 
         <label for="eventType">
-          Event Type
+          EVENT TYPE
         </label>
 
         <select
@@ -165,35 +198,35 @@
             Select event
           </option>
 
-          <option value="Wedding">
+          <option>
             Wedding
           </option>
 
-          <option value="Engagement">
+          <option>
             Engagement
           </option>
 
-          <option value="Birthday">
+          <option>
             Birthday
           </option>
 
-          <option value="Anniversary">
+          <option>
             Anniversary
           </option>
 
-          <option value="Corporate Event">
+          <option>
             Corporate Event
           </option>
 
-          <option value="Reception">
+          <option>
             Reception
           </option>
 
-          <option value="Party">
+          <option>
             Party
           </option>
 
-          <option value="Other">
+          <option>
             Other
           </option>
 
@@ -202,10 +235,11 @@
       </div>
 
 
+
       <div class="field">
 
         <label for="location">
-          Location
+          LOCATION
         </label>
 
         <input
@@ -218,10 +252,11 @@
       </div>
 
 
+
       <div class="field">
 
         <label for="guests">
-          Guests
+          GUESTS
         </label>
 
         <select id="guests">
@@ -230,23 +265,23 @@
             Select guests
           </option>
 
-          <option value="Up to 50">
+          <option>
             Up to 50
           </option>
 
-          <option value="50-100">
-            50–100
+          <option>
+            50-100
           </option>
 
-          <option value="100-250">
-            100–250
+          <option>
+            100-250
           </option>
 
-          <option value="250-500">
-            250–500
+          <option>
+            250-500
           </option>
 
-          <option value="500+">
+          <option>
             500+
           </option>
 
@@ -255,10 +290,11 @@
       </div>
 
 
+
       <div class="field">
 
         <label for="date">
-          Event Date
+          EVENT DATE
         </label>
 
         <input
@@ -269,11 +305,14 @@
       </div>
 
 
+
       <button
         class="primary-btn search-btn"
         type="submit"
       >
+
         Find Venues →
+
       </button>
 
 
@@ -282,7 +321,9 @@
 
     <p class="micro-note">
 
-      ✦ Smart matching concept • Requirement based • Built for India
+      ✦ Smart matching concept
+      • Requirement based
+      • Built for India
 
     </p>
 
@@ -299,15 +340,27 @@
 
 <section class="trust-strip">
 
+
   <div>
 
     <strong>
       ✦
     </strong>
 
-    Smart Discovery
+    <span>
+
+      <b>
+        Smart Discovery
+      </b>
+
+      <small>
+        AI-inspired matching
+      </small>
+
+    </span>
 
   </div>
+
 
 
   <div>
@@ -316,9 +369,20 @@
       ✓
     </strong>
 
-    Requirement Based
+    <span>
+
+      <b>
+        Requirement Based
+      </b>
+
+      <small>
+        Your needs, our priority
+      </small>
+
+    </span>
 
   </div>
+
 
 
   <div>
@@ -327,9 +391,20 @@
       ◎
     </strong>
 
-    Built for India
+    <span>
+
+      <b>
+        Built for India
+      </b>
+
+      <small>
+        Local insights & support
+      </small>
+
+    </span>
 
   </div>
+
 
 
   <div>
@@ -338,9 +413,20 @@
       AI
     </strong>
 
-    Inspired Matching
+    <span>
+
+      <b>
+        AI Inspired Matching
+      </b>
+
+      <small>
+        Smarter. Faster. Better.
+      </small>
+
+    </span>
 
   </div>
+
 
 </section>
 
@@ -351,43 +437,64 @@
 ====================================================== -->
 
 <section
-  class="section form-section"
+  class="compact-grid"
   id="enquiry"
 >
 
 
-  <div class="section-heading">
+  <!-- LEFT SIDE -->
 
-    <div>
+  <div class="enquiry-intro">
 
-      <p class="eyebrow">
-        CUSTOMER ENQUIRY
-      </p>
+    <p class="eyebrow">
+      CUSTOMER ENQUIRY
+    </p>
 
 
-      <h2>
+    <h2>
 
-        Tell us what you're
+      Tell us what you're
 
-        <span class="gradient-text">
-          looking for.
-        </span>
+      <span class="gradient-text">
+        looking for.
+      </span>
 
-      </h2>
-
-    </div>
+    </h2>
 
 
     <p>
 
       Share your event requirements and our team can help
-      you find suitable venues.
+      you find suitable venues. No endless browsing —
+      just tell us what matters.
 
     </p>
+
+
+    <div class="intro-points">
+
+      <div>
+        <span>✓</span>
+        Event-specific discovery
+      </div>
+
+      <div>
+        <span>✓</span>
+        Location & guest focused
+      </div>
+
+      <div>
+        <span>✓</span>
+        Requirement-based matching
+      </div>
+
+    </div>
 
   </div>
 
 
+
+  <!-- RIGHT SIDE FORM -->
 
   <form
     class="form-card"
@@ -398,7 +505,9 @@
     <!-- CUSTOMER DETAILS -->
 
     <div class="form-section-title">
-      Customer Details
+
+      CUSTOMER DETAILS
+
     </div>
 
 
@@ -421,6 +530,7 @@
       </div>
 
 
+
       <div class="field">
 
         <label for="customerMobile">
@@ -439,6 +549,7 @@
       </div>
 
 
+
       <div class="field">
 
         <label for="customerEmail">
@@ -452,6 +563,7 @@
         >
 
       </div>
+
 
 
       <div class="field">
@@ -477,7 +589,9 @@
     <!-- EVENT DETAILS -->
 
     <div class="form-section-title">
-      Event Details
+
+      EVENT DETAILS
+
     </div>
 
 
@@ -499,41 +613,42 @@
             Select event
           </option>
 
-          <option value="Wedding">
+          <option>
             Wedding
           </option>
 
-          <option value="Engagement">
+          <option>
             Engagement
           </option>
 
-          <option value="Birthday">
+          <option>
             Birthday
           </option>
 
-          <option value="Anniversary">
+          <option>
             Anniversary
           </option>
 
-          <option value="Corporate Event">
+          <option>
             Corporate Event
           </option>
 
-          <option value="Reception">
+          <option>
             Reception
           </option>
 
-          <option value="Party">
+          <option>
             Party
           </option>
 
-          <option value="Other">
+          <option>
             Other
           </option>
 
         </select>
 
       </div>
+
 
 
       <div class="field">
@@ -548,6 +663,7 @@
         >
 
       </div>
+
 
 
       <div class="field">
@@ -566,6 +682,7 @@
       </div>
 
 
+
       <div class="field">
 
         <label for="customerBudget">
@@ -582,31 +699,34 @@
       </div>
 
 
+
       <div class="field">
 
         <label for="customerFood">
           FOOD PREFERENCE
         </label>
 
-        <select id="customerFood">
+        <select
+          id="customerFood"
+        >
 
           <option value="">
             Select preference
           </option>
 
-          <option value="Veg">
+          <option>
             Veg
           </option>
 
-          <option value="Non-Veg">
+          <option>
             Non-Veg
           </option>
 
-          <option value="Both">
+          <option>
             Both
           </option>
 
-          <option value="Not Specified">
+          <option>
             Not Specified
           </option>
 
@@ -619,19 +739,21 @@
 
 
 
-    <!-- REQUIREMENTS -->
+    <!-- OTHER REQUIREMENTS -->
 
     <div class="control-group full-width">
 
       <label for="customerRequirements">
+
         OTHER REQUIREMENTS
+
       </label>
 
 
       <textarea
         id="customerRequirements"
-        rows="5"
-        placeholder="Tell us about your venue requirements, decoration, parking, rooms, catering, special requests, etc."
+        rows="3"
+        placeholder="Decoration, parking, rooms, catering, special requests, etc."
       ></textarea>
 
     </div>
@@ -666,106 +788,14 @@
 
     <p class="form-note">
 
-      Your information is used only to help us understand
-      your venue requirements and contact you regarding suitable options.
+      Your information is used only to understand your
+      requirements and contact you regarding suitable options.
 
     </p>
 
 
   </form>
 
-</section>
-
-
-
-<!-- =====================================================
-     VENUE DISCOVERY
-====================================================== -->
-
-<section
-  class="section"
-  id="discover"
->
-
-
-  <div class="section-heading">
-
-    <div>
-
-      <p class="eyebrow">
-        Venue Discovery
-      </p>
-
-
-      <h2>
-
-        Your event.
-
-        <span class="gradient-text">
-          Your perfect venue.
-        </span>
-
-      </h2>
-
-    </div>
-
-
-    <p>
-
-      Stop browsing endless venue listings.
-      Start with your requirements and discover options
-      designed around your event.
-
-    </p>
-
-  </div>
-
-
-
-  <div class="venue-placeholder">
-
-
-    <div class="placeholder-orbit">
-
-      <div class="placeholder-icon">
-        ⌁
-      </div>
-
-    </div>
-
-
-    <div class="status-chip">
-
-      <i></i>
-
-      Smart Discovery Engine
-
-    </div>
-
-
-    <h3>
-      Tell us what you're planning
-    </h3>
-
-
-    <p>
-
-      Wedding, birthday, engagement, corporate event or
-      any special celebration — your venue search starts here.
-
-    </p>
-
-
-    <a
-      href="#enquiry"
-      class="secondary-btn"
-    >
-      Start Your Search →
-
-    </a>
-
-
-  </div>
 
 </section>
 
@@ -776,17 +806,18 @@
 ====================================================== -->
 
 <section
-  class="section dark-section"
+  class="how-section"
   id="how"
 >
 
 
-  <div class="section-heading centered">
+  <div class="section-heading">
+
 
     <div>
 
       <p class="eyebrow">
-        How It Works
+        HOW IT WORKS
       </p>
 
 
@@ -810,6 +841,7 @@
 
     </p>
 
+
   </div>
 
 
@@ -823,16 +855,13 @@
         01
       </span>
 
-
       <div class="step-icon">
         ⌕
       </div>
 
-
       <h3>
         Share Your Requirement
       </h3>
-
 
       <p>
 
@@ -851,16 +880,13 @@
         02
       </span>
 
-
       <div class="step-icon">
         ✦
       </div>
 
-
       <h3>
         Smart Matching
       </h3>
-
 
       <p>
 
@@ -868,7 +894,6 @@
         venues that better match your requirements.
 
       </p>
-
 
       <div class="mini-ai">
 
@@ -888,16 +913,13 @@
         03
       </span>
 
-
       <div class="step-icon">
         ✓
       </div>
 
-
       <h3>
         Shortlist & Connect
       </h3>
-
 
       <p>
 
@@ -929,7 +951,7 @@
 
 
     <p class="eyebrow">
-      Smart Venue Discovery
+      SMART DISCOVERY
     </p>
 
 
@@ -946,11 +968,11 @@
 
     <p>
 
-      Select My Venue is designed around the idea that finding
-      a venue should start with your requirements — not endless scrolling.
+      Select My Venue is designed around the idea that
+      finding a venue should start with your requirements —
+      not endless scrolling.
 
     </p>
-
 
 
     <ul class="check-list">
@@ -1035,17 +1057,22 @@
 
 
     <div class="requirement-label">
+
       USER REQUIREMENT
+
     </div>
 
 
     <div class="requirement">
+
       Wedding • Delhi • 300 Guests • Premium
+
     </div>
 
 
 
     <div class="match">
+
 
       <div class="match-icon">
         ✓
@@ -1069,11 +1096,13 @@
         96%
       </strong>
 
+
     </div>
 
 
 
     <div class="match">
+
 
       <div class="match-icon">
         ✓
@@ -1097,11 +1126,13 @@
         92%
       </strong>
 
+
     </div>
 
 
 
     <div class="match">
+
 
       <div class="match-icon">
         ✓
@@ -1125,10 +1156,12 @@
         89%
       </strong>
 
+
     </div>
 
 
   </div>
+
 
 </section>
 
@@ -1148,7 +1181,9 @@
 
 
     <p class="eyebrow">
-      Connect With Us
+
+      CONNECT WITH US
+
     </p>
 
 
@@ -1196,7 +1231,6 @@
           Email
         </small>
 
-
         <strong>
           support@selectmyvenue.com
         </strong>
@@ -1232,7 +1266,6 @@
           Website
         </small>
 
-
         <strong>
           selectmyvenue.com
         </strong>
@@ -1265,7 +1298,6 @@
         <small>
           Call Us
         </small>
-
 
         <strong>
           +91 99587 16688
@@ -1302,7 +1334,6 @@
           WhatsApp
         </small>
 
-
         <strong>
           +91 99587 16688
         </strong>
@@ -1319,7 +1350,11 @@
 
   </div>
 
+
 </section>
+
+
+</main>
 
 
 
@@ -1332,126 +1367,25 @@
 
   <div class="footer-brand">
 
+    <!-- SMALL SMV LOGO ONLY -->
 
-    <div class="footer-brand-name">
-
-      Select<span>My</span>Venue
-
-    </div>
-
-
-    <p>
-
-      Smart venue discovery for weddings, celebrations,
-      corporate events and special occasions across India.
-
-    </p>
-
+    <img
+      src="logo.png"
+      alt="SMV"
+    >
 
   </div>
-
-
-
-  <div class="footer-links">
-
-
-    <div>
-
-      <h4>
-        Explore
-      </h4>
-
-
-      <a href="#home">
-        Home
-      </a>
-
-
-      <a href="#how">
-        How It Works
-      </a>
-
-
-      <a href="#smart">
-        Smart Discovery
-      </a>
-
-
-    </div>
-
-
-
-    <div>
-
-      <h4>
-        Customer
-      </h4>
-
-
-      <a href="#enquiry">
-        Find a Venue
-      </a>
-
-
-      <a href="#enquiry">
-        Submit Enquiry
-      </a>
-
-
-      <a href="#contact">
-        Contact
-      </a>
-
-
-    </div>
-
-
-
-    <div>
-
-      <h4>
-        Connect
-      </h4>
-
-
-      <a href="mailto:support@selectmyvenue.com">
-        Email
-      </a>
-
-
-      <a href="tel:+919958716688">
-        Call
-      </a>
-
-
-      <a
-        href="https://wa.me/919958716688"
-        target="_blank"
-        rel="noopener"
-      >
-        WhatsApp
-      </a>
-
-
-    </div>
-
-
-  </div>
-
 
 
   <div class="copyright">
-
 
     <span>
       © 2026 Select My Venue. All rights reserved.
     </span>
 
-
     <span class="footer-tag">
       Smart Venue Discovery • India
     </span>
-
 
   </div>
 
@@ -1468,18 +1402,19 @@
   id="toastMessage"
   class="toast-message"
 >
+
   Enquiry submitted successfully.
+
 </span>
 
 
 
 <!-- =====================================================
-     MAIN JAVASCRIPT
+     JAVASCRIPT
 ====================================================== -->
 
 <script src="script.js"></script>
 
 
 </body>
-
 </html>
