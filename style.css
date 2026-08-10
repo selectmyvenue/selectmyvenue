@@ -214,3 +214,35 @@ nav a.active:after{content:"";position:absolute;left:0;right:0;bottom:-11px;heig
   .footer-link-group{min-width:85px}
   .footer-bottom{display:block;line-height:1.8}
 }
+/* =====================================================
+   FOOTER — SMALL SMV LOGO ONLY
+===================================================== */
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 60px;
+}
+
+.footer-smv-logo {
+  display: block;
+  width: 78px;
+  height: 48px;
+  overflow: hidden;
+  text-decoration: none;
+  position: relative;
+}
+
+.footer-smv-logo img {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 270px;
+  max-width: none;
+  height: auto;
+
+  display: block;
+}
