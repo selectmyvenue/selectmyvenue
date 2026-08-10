@@ -1,303 +1,1518 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Select My Venue helps you discover suitable venues for weddings, celebrations, corporate events and special occasions across India.">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <meta
+    name="description"
+    content="Select My Venue helps you discover suitable venues for weddings, celebrations, corporate events and special occasions across India."
+  >
+
   <title>Select My Venue | Smart Venue Discovery</title>
-  <link rel="stylesheet" href="style.css">
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
 </head>
+
 
 <body>
 
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
 <header class="site-header">
+
   <div class="header-inner">
-    <a href="#home" class="brand" aria-label="Select My Venue Home">
-      <img src="logo.png" alt="Select My Venue" class="main-logo">
+
+    <a
+      href="#home"
+      class="brand"
+      aria-label="Select My Venue Home"
+    >
+
+      <img
+        src="logo.png"
+        alt="Select My Venue"
+        class="main-logo"
+      >
+
     </a>
 
-    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="Open navigation"
+      aria-expanded="false"
+    >
+      ☰
+    </button>
+
 
     <nav id="mainNav">
-      <a href="#home" class="active">Home</a>
-      <a href="#how">How It Works</a>
-      <a href="#smart">Smart Discovery</a>
-      <a href="#enquiry" class="nav-cta">Find a Venue</a>
-      <a href="#contact">Contact</a>
+
+      <a
+        href="#home"
+        class="active"
+      >
+        Home
+      </a>
+
+      <a href="#how">
+        How It Works
+      </a>
+
+      <a href="#smart">
+        Smart Discovery
+      </a>
+
+      <a
+        href="#enquiry"
+        class="nav-cta"
+      >
+        Find a Venue
+      </a>
+
+      <a href="#contact">
+        Contact
+      </a>
+
     </nav>
+
   </div>
+
 </header>
+
+
 
 <main>
 
-<section class="hero" id="home">
+
+<!-- =====================================================
+     HERO
+====================================================== -->
+
+<section
+  class="hero"
+  id="home"
+>
+
   <div class="hero-inner">
+
+
     <div class="hero-copy">
-      <div class="ai-badge"><span></span> AI-INSPIRED VENUE DISCOVERY</div>
-      <p class="eyebrow">FIND THE RIGHT PLACE FOR YOUR MOMENT</p>
-      <h1>Discover venues<br><span>that fit your event.</span></h1>
+
+      <div class="ai-badge">
+        <span></span>
+        AI-INSPIRED VENUE DISCOVERY
+      </div>
+
+
+      <p class="eyebrow">
+        FIND THE RIGHT PLACE FOR YOUR MOMENT
+      </p>
+
+
+      <h1>
+        Discover venues
+        <br>
+        <span>
+          that fit your event.
+        </span>
+      </h1>
+
+
       <p class="hero-text">
+
         Tell us what you need. Select My Venue helps you discover suitable venues for weddings,
         parties, corporate events and celebrations — smarter, faster and with less searching.
+
       </p>
+
     </div>
 
-    <div class="hero-orbit" aria-hidden="true">
+
+
+    <div
+      class="hero-orbit"
+      aria-hidden="true"
+    >
+
       <div class="orbit orbit-1"></div>
+
       <div class="orbit orbit-2"></div>
+
       <div class="orbit orbit-3"></div>
-      <div class="venue-core">⌂</div>
-      <div class="orbit-icon icon-top">♨</div>
-      <div class="orbit-icon icon-right">♡</div>
-      <div class="orbit-icon icon-left">▣</div>
-      <div class="orbit-icon icon-bottom">✧</div>
+
+      <div class="venue-core">
+        ⌂
+      </div>
+
+      <div class="orbit-icon icon-top">
+        ♨
+      </div>
+
+      <div class="orbit-icon icon-right">
+        ♡
+      </div>
+
+      <div class="orbit-icon icon-left">
+        ▣
+      </div>
+
+      <div class="orbit-icon icon-bottom">
+        ✧
+      </div>
+
     </div>
+
   </div>
 
-  <form class="search-card" id="searchForm">
+
+
+  <form
+    class="search-card"
+    id="searchForm"
+  >
+
     <div class="field">
-      <label for="eventType">EVENT TYPE</label>
-      <select id="eventType" required>
-        <option value="">Select event</option>
-        <option>Wedding</option>
-        <option>Engagement</option>
-        <option>Birthday</option>
-        <option>Anniversary</option>
-        <option>Corporate Event</option>
-        <option>Reception</option>
-        <option>Party</option>
-        <option>Other</option>
+
+      <label for="eventType">
+        EVENT TYPE
+      </label>
+
+      <select
+        id="eventType"
+        required
+      >
+
+        <option value="">
+          Select event
+        </option>
+
+        <option>
+          Wedding
+        </option>
+
+        <option>
+          Engagement
+        </option>
+
+        <option>
+          Birthday
+        </option>
+
+        <option>
+          Anniversary
+        </option>
+
+        <option>
+          Corporate Event
+        </option>
+
+        <option>
+          Reception
+        </option>
+
+        <option>
+          Party
+        </option>
+
+        <option>
+          Other
+        </option>
+
       </select>
+
     </div>
 
-    <div class="field">
-      <label for="location">LOCATION</label>
-      <input id="location" type="text" placeholder="City / Area" required>
-    </div>
+
 
     <div class="field">
-      <label for="guests">GUESTS</label>
+
+      <label for="location">
+        LOCATION
+      </label>
+
+      <input
+        id="location"
+        type="text"
+        placeholder="City / Area"
+        required
+      >
+
+    </div>
+
+
+
+    <div class="field">
+
+      <label for="guests">
+        GUESTS
+      </label>
+
       <select id="guests">
-        <option value="">Select guests</option>
-        <option>Up to 50</option>
-        <option>50–100</option>
-        <option>100–250</option>
-        <option>250–500</option>
-        <option>500+</option>
+
+        <option value="">
+          Select guests
+        </option>
+
+        <option>
+          Up to 50
+        </option>
+
+        <option>
+          50–100
+        </option>
+
+        <option>
+          100–250
+        </option>
+
+        <option>
+          250–500
+        </option>
+
+        <option>
+          500+
+        </option>
+
       </select>
+
     </div>
+
+
 
     <div class="field">
-      <label for="date">EVENT DATE</label>
-      <input id="date" type="date">
+
+      <label for="date">
+        EVENT DATE
+      </label>
+
+      <input
+        id="date"
+        type="date"
+      >
+
     </div>
 
-    <button class="primary-btn search-btn" type="submit">Find Venues →</button>
+
+
+    <button
+      class="primary-btn search-btn"
+      type="submit"
+    >
+      Find Venues →
+    </button>
+
   </form>
 
-  <p class="micro-note">✦ Smart matching concept • Requirement based • Built for India</p>
+
+
+  <p class="micro-note">
+    ✦ Smart matching concept • Requirement based • Built for India
+  </p>
+
 </section>
+
+
+
+<!-- =====================================================
+     TRUST STRIP
+====================================================== -->
 
 <section class="trust-strip">
-  <div><span class="trust-icon">✦</span><span><strong>Smart Discovery</strong><small>AI-inspired matching</small></span></div>
-  <div><span class="trust-icon">✓</span><span><strong>Requirement Based</strong><small>Your needs, our priority</small></span></div>
-  <div><span class="trust-icon">◎</span><span><strong>Built for India</strong><small>Local insights & support</small></span></div>
-  <div><span class="trust-icon">AI</span><span><strong>AI Inspired Matching</strong><small>Smarter. Faster. Better.</small></span></div>
+
+  <div>
+
+    <span class="trust-icon">
+      ✦
+    </span>
+
+    <span>
+
+      <strong>
+        Smart Discovery
+      </strong>
+
+      <small>
+        AI-inspired matching
+      </small>
+
+    </span>
+
+  </div>
+
+
+
+  <div>
+
+    <span class="trust-icon">
+      ✓
+    </span>
+
+    <span>
+
+      <strong>
+        Requirement Based
+      </strong>
+
+      <small>
+        Your needs, our priority
+      </small>
+
+    </span>
+
+  </div>
+
+
+
+  <div>
+
+    <span class="trust-icon">
+      ◎
+    </span>
+
+    <span>
+
+      <strong>
+        Built for India
+      </strong>
+
+      <small>
+        Local insights & support
+      </small>
+
+    </span>
+
+  </div>
+
+
+
+  <div>
+
+    <span class="trust-icon">
+      AI
+    </span>
+
+    <span>
+
+      <strong>
+        AI Inspired Matching
+      </strong>
+
+      <small>
+        Smarter. Faster. Better.
+      </small>
+
+    </span>
+
+  </div>
+
 </section>
+
+
+
+<!-- =====================================================
+     POPULAR EVENTS
+====================================================== -->
 
 <section class="popular-section">
-  <div class="section-kicker">POPULAR EVENTS</div>
-  <div class="event-grid">
-    <article class="event-card"><div class="event-symbol wedding">◯◯</div><h3>Wedding</h3><p>Make your big day perfect</p></article>
-    <article class="event-card"><div class="event-symbol birthday">♨</div><h3>Birthday</h3><p>Celebrate in style</p></article>
-    <article class="event-card"><div class="event-symbol engagement">♡</div><h3>Engagement</h3><p>Beautiful beginnings</p></article>
-    <article class="event-card"><div class="event-symbol corporate">▣</div><h3>Corporate Event</h3><p>Professional gatherings</p></article>
-    <article class="event-card"><div class="event-symbol party">✧</div><h3>Party</h3><p>Fun with your people</p></article>
+
+  <div class="section-kicker">
+    POPULAR EVENTS
   </div>
-  <div class="slider-dots"><i class="selected"></i><i></i><i></i></div>
+
+
+
+  <div class="event-grid">
+
+    <article class="event-card">
+
+      <div class="event-symbol wedding">
+        ◯◯
+      </div>
+
+      <h3>
+        Wedding
+      </h3>
+
+      <p>
+        Make your big day perfect
+      </p>
+
+    </article>
+
+
+
+    <article class="event-card">
+
+      <div class="event-symbol birthday">
+        ♨
+      </div>
+
+      <h3>
+        Birthday
+      </h3>
+
+      <p>
+        Celebrate in style
+      </p>
+
+    </article>
+
+
+
+    <article class="event-card">
+
+      <div class="event-symbol engagement">
+        ♡
+      </div>
+
+      <h3>
+        Engagement
+      </h3>
+
+      <p>
+        Beautiful beginnings
+      </p>
+
+    </article>
+
+
+
+    <article class="event-card">
+
+      <div class="event-symbol corporate">
+        ▣
+      </div>
+
+      <h3>
+        Corporate Event
+      </h3>
+
+      <p>
+        Professional gatherings
+      </p>
+
+    </article>
+
+
+
+    <article class="event-card">
+
+      <div class="event-symbol party">
+        ✧
+      </div>
+
+      <h3>
+        Party
+      </h3>
+
+      <p>
+        Fun with your people
+      </p>
+
+    </article>
+
+  </div>
+
+
+
+  <div class="slider-dots">
+
+    <i class="selected"></i>
+
+    <i></i>
+
+    <i></i>
+
+  </div>
+
 </section>
+
+
+
+<!-- =====================================================
+     FEATURE ROW
+====================================================== -->
 
 <section class="feature-row">
+
+
   <article class="feature-card enquiry-mini">
+
     <div>
-      <div class="section-kicker">CUSTOMER ENQUIRY</div>
-      <h2>Tell us what you're <span>looking for.</span></h2>
-      <p>Share your event requirements and our team can help you find suitable venues.</p>
-      <a class="secondary-btn" href="#enquiry">Submit Enquiry →</a>
+
+      <div class="section-kicker">
+        CUSTOMER ENQUIRY
+      </div>
+
+      <h2>
+        Tell us what you're
+        <span>
+          looking for.
+        </span>
+      </h2>
+
+      <p>
+        Share your event requirements and our team can help you find suitable venues.
+      </p>
+
+      <a
+        class="secondary-btn"
+        href="#enquiry"
+      >
+        Submit Enquiry →
+      </a>
+
     </div>
-    <div class="feature-visual clipboard">✓</div>
+
+
+    <div class="feature-visual clipboard">
+      ✓
+    </div>
+
   </article>
 
-  <article class="feature-card" id="how">
-    <div class="section-kicker">HOW IT WORKS</div>
-    <h2>Venue discovery,<br><span>made smarter.</span></h2>
+
+
+  <article
+    class="feature-card"
+    id="how"
+  >
+
+    <div class="section-kicker">
+      HOW IT WORKS
+    </div>
+
+    <h2>
+      Venue discovery,
+      <br>
+      <span>
+        made smarter.
+      </span>
+    </h2>
+
+
+
     <div class="steps-mini">
-      <div><b>⌕</b><strong>01</strong><small>Share Your<br>Requirement</small></div>
-      <em>›</em>
-      <div><b>✦</b><strong>02</strong><small>Smart<br>Matching</small></div>
-      <em>›</em>
-      <div><b>✓</b><strong>03</strong><small>Shortlist &<br>Connect</small></div>
+
+      <div>
+
+        <b>
+          ⌕
+        </b>
+
+        <strong>
+          01
+        </strong>
+
+        <small>
+          Share Your
+          <br>
+          Requirement
+        </small>
+
+      </div>
+
+
+      <em>
+        ›
+      </em>
+
+
+      <div>
+
+        <b>
+          ✦
+        </b>
+
+        <strong>
+          02
+        </strong>
+
+        <small>
+          Smart
+          <br>
+          Matching
+        </small>
+
+      </div>
+
+
+      <em>
+        ›
+      </em>
+
+
+      <div>
+
+        <b>
+          ✓
+        </b>
+
+        <strong>
+          03
+        </strong>
+
+        <small>
+          Shortlist &
+          <br>
+          Connect
+        </small>
+
+      </div>
+
     </div>
-    <a class="secondary-btn" href="#enquiry">Learn More →</a>
+
+
+
+    <a
+      class="secondary-btn"
+      href="#enquiry"
+    >
+      Learn More →
+    </a>
+
   </article>
 
-  <article class="feature-card" id="smart">
-    <div class="section-kicker">SMART DISCOVERY</div>
-    <h2>Search less.<br><span>Match better.</span></h2>
-    <ul class="check-list">
-      <li>Event-specific venue discovery</li>
-      <li>Location and guest-size focused search</li>
-      <li>Smart requirement-based matching</li>
-      <li>Faster venue shortlisting</li>
-    </ul>
-    <div class="match-mini">
-      <small>USER REQUIREMENT</small>
-      <b>Wedding • Delhi • 300 Guests • Premium</b>
-      <p>✓ Premium Banquet Venue <strong>96%</strong></p>
-      <p>✓ Wedding & Celebration Space <strong>92%</strong></p>
-      <p>✓ Large Guest Capacity <strong>89%</strong></p>
+
+
+  <article
+    class="feature-card"
+    id="smart"
+  >
+
+    <div class="section-kicker">
+      SMART DISCOVERY
     </div>
+
+    <h2>
+      Search less.
+      <br>
+      <span>
+        Match better.
+      </span>
+    </h2>
+
+
+
+    <ul class="check-list">
+
+      <li>
+        Event-specific venue discovery
+      </li>
+
+      <li>
+        Location and guest-size focused search
+      </li>
+
+      <li>
+        Smart requirement-based matching
+      </li>
+
+      <li>
+        Faster venue shortlisting
+      </li>
+
+    </ul>
+
+
+
+    <div class="match-mini">
+
+      <small>
+        USER REQUIREMENT
+      </small>
+
+      <b>
+        Wedding • Delhi • 300 Guests • Premium
+      </b>
+
+      <p>
+        ✓ Premium Banquet Venue
+        <strong>
+          96%
+        </strong>
+      </p>
+
+      <p>
+        ✓ Wedding & Celebration Space
+        <strong>
+          92%
+        </strong>
+      </p>
+
+      <p>
+        ✓ Large Guest Capacity
+        <strong>
+          89%
+        </strong>
+      </p>
+
+    </div>
+
   </article>
+
 </section>
 
-<section class="enquiry-section" id="enquiry">
+
+
+<!-- =====================================================
+     CUSTOMER ENQUIRY
+====================================================== -->
+
+<section
+  class="enquiry-section"
+  id="enquiry"
+>
+
   <div class="section-heading">
+
     <div>
-      <div class="section-kicker">CUSTOMER ENQUIRY</div>
-      <h2>Tell us what you're <span>looking for.</span></h2>
+
+      <div class="section-kicker">
+        CUSTOMER ENQUIRY
+      </div>
+
+      <h2>
+        Tell us what you're
+        <span>
+          looking for.
+        </span>
+      </h2>
+
     </div>
-    <p>Share your requirements once. We use them to understand your event and help identify suitable venue options.</p>
+
+
+    <p>
+      Share your requirements once. We use them to understand your event and help identify suitable venue options.
+    </p>
+
   </div>
 
-  <form class="form-card" id="customerEnquiryForm">
-    <div class="form-section-title">CUSTOMER DETAILS</div>
-    <div class="form-grid four">
-      <div class="field"><label for="customerName">CUSTOMER NAME *</label><input id="customerName" type="text" placeholder="Enter your name" required></div>
-      <div class="field"><label for="customerMobile">MOBILE NUMBER *</label><input id="customerMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required></div>
-      <div class="field"><label for="customerEmail">EMAIL</label><input id="customerEmail" type="email" placeholder="your@email.com"></div>
-      <div class="field"><label for="customerLocation">CITY / LOCATION *</label><input id="customerLocation" type="text" placeholder="Delhi, Gurgaon, Noida..." required></div>
+
+
+  <form
+    class="form-card"
+    id="customerEnquiryForm"
+  >
+
+
+    <!-- CUSTOMER DETAILS -->
+
+    <div class="form-section-title">
+      CUSTOMER DETAILS
     </div>
 
-    <div class="form-section-title">EVENT DETAILS</div>
-    <div class="form-grid five">
-      <div class="field"><label for="customerEventType">EVENT TYPE *</label>
-        <select id="customerEventType" required>
-          <option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Birthday</option><option>Anniversary</option><option>Corporate Event</option><option>Reception</option><option>Party</option><option>Other</option>
-        </select>
+
+
+    <div class="form-grid four">
+
+      <div class="field">
+
+        <label for="customerName">
+          CUSTOMER NAME *
+        </label>
+
+        <input
+          id="customerName"
+          type="text"
+          placeholder="Enter your name"
+          required
+        >
+
       </div>
-      <div class="field"><label for="customerEventDate">EVENT DATE</label><input id="customerEventDate" type="date"></div>
-      <div class="field"><label for="customerGuests">NUMBER OF GUESTS</label><input id="customerGuests" type="number" min="1" placeholder="e.g. 300"></div>
-      <div class="field"><label for="customerBudget">BUDGET / PERSON</label><input id="customerBudget" type="number" min="0" placeholder="₹ per person"></div>
-      <div class="field"><label for="customerFood">FOOD PREFERENCE</label>
-        <select id="customerFood"><option value="">Select preference</option><option>Veg</option><option>Non-Veg</option><option>Both</option><option>Not Specified</option></select>
+
+
+
+      <div class="field">
+
+        <label for="customerMobile">
+          MOBILE NUMBER *
+        </label>
+
+        <input
+          id="customerMobile"
+          type="tel"
+          inputmode="numeric"
+          maxlength="10"
+          placeholder="10-digit mobile number"
+          required
+        >
+
       </div>
+
+
+
+      <div class="field">
+
+        <label for="customerEmail">
+          EMAIL
+        </label>
+
+        <input
+          id="customerEmail"
+          type="email"
+          placeholder="your@email.com"
+        >
+
+      </div>
+
+
+
+      <div class="field">
+
+        <label for="customerLocation">
+          CITY / LOCATION *
+        </label>
+
+        <input
+          id="customerLocation"
+          type="text"
+          placeholder="Delhi, Gurgaon, Noida..."
+          required
+        >
+
+      </div>
+
     </div>
+
+
+
+    <!-- EVENT DETAILS -->
+
+    <div class="form-section-title">
+      EVENT DETAILS
+    </div>
+
+
+
+    <div class="form-grid five">
+
+      <div class="field">
+
+        <label for="customerEventType">
+          EVENT TYPE *
+        </label>
+
+        <select
+          id="customerEventType"
+          required
+        >
+
+          <option value="">
+            Select event
+          </option>
+
+          <option>
+            Wedding
+          </option>
+
+          <option>
+            Engagement
+          </option>
+
+          <option>
+            Birthday
+          </option>
+
+          <option>
+            Anniversary
+          </option>
+
+          <option>
+            Corporate Event
+          </option>
+
+          <option>
+            Reception
+          </option>
+
+          <option>
+            Party
+          </option>
+
+          <option>
+            Other
+          </option>
+
+        </select>
+
+      </div>
+
+
+
+      <div class="field">
+
+        <label for="customerEventDate">
+          EVENT DATE
+        </label>
+
+        <input
+          id="customerEventDate"
+          type="date"
+        >
+
+      </div>
+
+
+
+      <div class="field">
+
+        <label for="customerGuests">
+          NUMBER OF GUESTS
+        </label>
+
+        <input
+          id="customerGuests"
+          type="number"
+          min="1"
+          placeholder="e.g. 300"
+        >
+
+      </div>
+
+
+
+      <div class="field">
+
+        <label for="customerBudget">
+          BUDGET / PERSON
+        </label>
+
+        <input
+          id="customerBudget"
+          type="number"
+          min="0"
+          placeholder="₹ per person"
+        >
+
+      </div>
+
+
+
+      <div class="field">
+
+        <label for="customerFood">
+          FOOD PREFERENCE
+        </label>
+
+        <select id="customerFood">
+
+          <option value="">
+            Select preference
+          </option>
+
+          <option>
+            Veg
+          </option>
+
+          <option>
+            Non-Veg
+          </option>
+
+          <option>
+            Both
+          </option>
+
+          <option>
+            Not Specified
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- OTHER REQUIREMENTS -->
 
     <div class="requirements-row">
-      <div class="field"><label for="customerRequirements">OTHER REQUIREMENTS</label><textarea id="customerRequirements" rows="2" placeholder="Decoration, parking, rooms, catering, special requests, etc."></textarea></div>
-      <div class="submit-wrap">
-        <input type="hidden" id="leadSource" value="Website">
-        <p id="customerEnquiryMessage" class="form-message" role="alert"></p>
-        <button class="primary-btn form-submit" id="customerEnquirySubmit" type="submit">Submit Enquiry →</button>
+
+      <div class="field">
+
+        <label for="customerRequirements">
+          OTHER REQUIREMENTS
+        </label>
+
+        <textarea
+          id="customerRequirements"
+          rows="2"
+          placeholder="Decoration, parking, rooms, catering, special requests, etc."
+        ></textarea>
+
       </div>
+
+
+
+      <div class="submit-wrap">
+
+        <input
+          type="hidden"
+          id="leadSource"
+          value="Website"
+        >
+
+        <p
+          id="customerEnquiryMessage"
+          class="form-message"
+          role="alert"
+        ></p>
+
+        <button
+          class="primary-btn form-submit"
+          id="customerEnquirySubmit"
+          type="submit"
+        >
+          Submit Enquiry →
+        </button>
+
+      </div>
+
     </div>
-    <p class="form-note">Your information is used only to understand your venue requirements and contact you regarding suitable options.</p>
+
+
+
+    <p class="form-note">
+      Your information is used only to understand your venue requirements and contact you regarding suitable options.
+    </p>
+
   </form>
+
 </section>
 
-<section class="about-section" id="about">
+
+
+<!-- =====================================================
+     ABOUT US
+====================================================== -->
+
+<section
+  class="about-section"
+  id="about"
+>
+
   <div class="about-copy">
-    <div class="section-kicker">ABOUT SELECT MY VENUE</div>
-    <h2>Finding the right venue should be <span>exciting — not exhausting.</span></h2>
+
+    <div class="section-kicker">
+      ABOUT SELECT MY VENUE
+    </div>
+
+
+    <h2>
+      Finding the right venue should be
+      <span>
+        exciting — not exhausting.
+      </span>
+    </h2>
+
+
     <p>
       Select My Venue is a smart venue discovery platform built to make event planning simpler,
       faster and more relevant. Whether you're planning a wedding, birthday, engagement, corporate
       event or a special celebration, we help you start with what you actually need rather than
       making you scroll through endless venue listings.
     </p>
-    <p>Share your requirements — location, date, guest count, budget and preferences — and our smart discovery approach helps you identify venues that fit your occasion.</p>
+
+
+    <p>
+      Share your requirements — location, date, guest count, budget and preferences — and our smart discovery approach helps you identify venues that fit your occasion.
+    </p>
+
+
     <div class="about-points">
-      <span>✓ Verified Venues</span><span>♧ Quality Enquiries</span><span>✧ Better Matches</span><span>♧ Human Support</span>
+
+      <span>
+        ✓ Verified Venues
+      </span>
+
+      <span>
+        ♧ Quality Enquiries
+      </span>
+
+      <span>
+        ✧ Better Matches
+      </span>
+
+      <span>
+        ♧ Human Support
+      </span>
+
     </div>
+
   </div>
-  <div class="about-image"><div class="image-overlay"></div><span>YOUR EVENT. YOUR VENUE.</span></div>
+
+
+
+  <div class="about-image">
+
+    <div class="image-overlay"></div>
+
+    <span>
+      YOUR EVENT. YOUR VENUE.
+    </span>
+
+  </div>
+
 </section>
 
-<section class="contact-section" id="contact">
-  <div class="section-kicker">CONNECT WITH US</div>
-  <h2>Have a question? <span>Let's connect.</span></h2>
-  <p>Looking for a venue or need help with your enquiry? Our team is here to help.</p>
+
+
+<!-- =====================================================
+     CONTACT
+====================================================== -->
+
+<section
+  class="contact-section"
+  id="contact"
+>
+
+  <div class="section-kicker">
+    CONNECT WITH US
+  </div>
+
+
+  <h2>
+    Have a question?
+    <span>
+      Let's connect.
+    </span>
+  </h2>
+
+
+  <p>
+    Looking for a venue or need help with your enquiry? Our team is here to help.
+  </p>
+
+
 
   <div class="contact-grid">
-    <a class="contact-card" href="mailto:support@selectmyvenue.com"><b>✉</b><strong>Email</strong><span>support@selectmyvenue.com</span><small>We reply within 24 hours</small></a>
-    <a class="contact-card" href="tel:+919958716688"><b>⌕</b><strong>Call Us</strong><span>+91 99587 16688</span><small>Mon - Sun: 9 AM - 8 PM</small></a>
-    <a class="contact-card" href="https://wa.me/919958716688" target="_blank" rel="noopener"><b>◉</b><strong>WhatsApp</strong><span>+91 99587 16688</span><small>Chat with us on WhatsApp</small></a>
-    <a class="contact-card" href="https://selectmyvenue.github.io/selectmyvenue/" target="_blank" rel="noopener"><b>◎</b><strong>Website</strong><span>selectmyvenue.com</span><small>Visit our website</small></a>
+
+
+    <!-- EMAIL -->
+
+    <a
+      class="contact-card"
+      href="mailto:support@selectmyvenue.com"
+    >
+
+      <b>
+        ✉
+      </b>
+
+      <strong>
+        Email
+      </strong>
+
+      <span>
+        support@selectmyvenue.com
+      </span>
+
+      <small>
+        We reply within 24 hours
+      </small>
+
+    </a>
+
+
+
+    <!-- CALL -->
+
+    <a
+      class="contact-card"
+      href="tel:+919958716688"
+    >
+
+      <b>
+        ⌕
+      </b>
+
+      <strong>
+        Call Us
+      </strong>
+
+      <span>
+        +91 99587 16688
+      </span>
+
+      <small>
+        Mon - Sun: 9 AM - 8 PM
+      </small>
+
+    </a>
+
+
+
+    <!-- WHATSAPP -->
+
+    <a
+      class="contact-card"
+      href="https://wa.me/919958716688"
+      target="_blank"
+      rel="noopener"
+    >
+
+      <b>
+        ◉
+      </b>
+
+      <strong>
+        WhatsApp
+      </strong>
+
+      <span>
+        +91 99587 16688
+      </span>
+
+      <small>
+        Chat with us on WhatsApp
+      </small>
+
+    </a>
+
+
+
+    <!-- WEBSITE -->
+
+    <a
+      class="contact-card"
+      href="https://selectmyvenue.github.io/selectmyvenue/"
+      target="_blank"
+      rel="noopener"
+    >
+
+      <b>
+        ◎
+      </b>
+
+      <strong>
+        Website
+      </strong>
+
+      <span>
+        selectmyvenue.com
+      </span>
+
+      <small>
+        Visit our website
+      </small>
+
+    </a>
+
   </div>
+
 </section>
+
 
 </main>
 
+
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+
 <footer class="site-footer">
+
   <div class="footer-inner">
 
+
     <div class="footer-top">
-      <div class="footer-brand-mini">
-        <a class="footer-smv" href="#home" aria-label="Select My Venue Home">
-          <img src="logo.png" alt="SMV">
+
+
+      <!-- ONLY SMV LOGO -->
+
+      <div class="footer-brand">
+
+        <a
+          href="#home"
+          class="footer-smv-logo"
+          aria-label="Select My Venue Home"
+        >
+
+          <img
+            src="logo.png"
+            alt="SMV"
+          >
+
         </a>
-        <div>
-          <strong>Select My Venue</strong>
-          <span>Smart Venue Discovery • India</span>
-        </div>
+
       </div>
+
+
+
+      <!-- FOOTER LINKS -->
 
       <div class="footer-links">
-        <div class="footer-link-group">
-          <h4>Explore</h4>
-          <a href="#home">Home</a>
-          <a href="#how">How It Works</a>
-          <a href="#smart">Smart Discovery</a>
-          <a href="#enquiry">Find a Venue</a>
-        </div>
+
 
         <div class="footer-link-group">
-          <h4>Company</h4>
-          <a href="#about">About Us</a>
-          <a href="#contact">Contact</a>
-          <a href="#home">Select My Venue</a>
-          <a href="#enquiry">Submit Enquiry</a>
+
+          <h4>
+            Explore
+          </h4>
+
+          <a href="#home">
+            Home
+          </a>
+
+          <a href="#how">
+            How It Works
+          </a>
+
+          <a href="#smart">
+            Smart Discovery
+          </a>
+
+          <a href="#enquiry">
+            Find a Venue
+          </a>
+
         </div>
 
+
+
         <div class="footer-link-group">
-          <h4>Connect</h4>
-          <a href="mailto:support@selectmyvenue.com">Email</a>
-          <a href="tel:+919958716688">Call Us</a>
-          <a href="https://wa.me/919958716688" target="_blank" rel="noopener">WhatsApp</a>
+
+          <h4>
+            Company
+          </h4>
+
+          <a href="#about">
+            About Us
+          </a>
+
+          <a href="#contact">
+            Contact
+          </a>
+
+          <a href="#home">
+            Select My Venue
+          </a>
+
+          <a href="#enquiry">
+            Submit Enquiry
+          </a>
+
         </div>
+
+
+
+        <div class="footer-link-group">
+
+          <h4>
+            Connect
+          </h4>
+
+          <a href="mailto:support@selectmyvenue.com">
+            Email
+          </a>
+
+          <a href="tel:+919958716688">
+            Call Us
+          </a>
+
+          <a
+            href="https://wa.me/919958716688"
+            target="_blank"
+            rel="noopener"
+          >
+            WhatsApp
+          </a>
+
+        </div>
+
       </div>
+
     </div>
 
+
+
+    <!-- FOOTER BOTTOM -->
+
     <div class="footer-bottom">
-      <span>© 2026 Select My Venue. All rights reserved.</span>
-      <span>Smart Venue Discovery • India</span>
+
+      <span>
+        © 2026 Select My Venue. All rights reserved.
+      </span>
+
+      <span>
+        Smart Venue Discovery • India
+      </span>
+
     </div>
 
   </div>
+
 </footer>
 
-<span id="toastMessage" class="toast-message">Enquiry submitted successfully.</span>
+
+
+<!-- =====================================================
+     SUCCESS TOAST
+====================================================== -->
+
+<span
+  id="toastMessage"
+  class="toast-message"
+>
+  Enquiry submitted successfully.
+</span>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
 
 <script src="script.js"></script>
+
+
 <script>
-  const menuToggle = document.getElementById('menuToggle');
-  const nav = document.getElementById('mainNav');
+
+  const menuToggle =
+    document.getElementById('menuToggle');
+
+  const nav =
+    document.getElementById('mainNav');
+
+
   if (menuToggle && nav) {
-    menuToggle.addEventListener('click', () => {
-      nav.classList.toggle('open');
-      menuToggle.setAttribute('aria-expanded', nav.classList.contains('open'));
-    });
+
+    menuToggle.addEventListener(
+      'click',
+      () => {
+
+        nav.classList.toggle('open');
+
+        menuToggle.setAttribute(
+          'aria-expanded',
+          nav.classList.contains('open')
+        );
+
+      }
+    );
+
   }
+
 </script>
+
+
 </body>
+
 </html>
