@@ -1472,3 +1472,253 @@ a {
   }
 
 }
+
+/* =========================================================
+   FINAL HEADER ALIGNMENT FIX
+   ========================================================= */
+
+/* Header ko compact rakho */
+.crm-header {
+  height: 72px !important;
+  min-height: 72px !important;
+  padding: 5px 24px !important;
+}
+
+/* LEFT: Logo + Select My Venue CRM */
+.crm-brand {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+
+  gap: 10px !important;
+}
+
+/* Logo — medium-large, but not too wide */
+.crm-header-logo {
+  width: 170px !important;
+  min-width: 170px !important;
+  max-width: 170px !important;
+
+  height: 42px !important;
+  max-height: 42px !important;
+
+  object-fit: contain !important;
+  object-position: left center !important;
+
+  display: block !important;
+}
+
+/* Select My Venue CRM stays beside logo */
+.crm-brand-name {
+  display: block !important;
+
+  white-space: nowrap !important;
+
+  color: #27315f !important;
+
+  font-size: 16px !important;
+  line-height: 1 !important;
+
+  font-weight: 900 !important;
+
+  letter-spacing: -0.45px !important;
+}
+
+/* CENTER Lead Management */
+.crm-header-center {
+  position: absolute !important;
+
+  left: 50% !important;
+  top: 50% !important;
+
+  transform: translate(-50%, -50%) !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  white-space: nowrap !important;
+
+  pointer-events: none !important;
+}
+
+/* Lead Management DOUBLE SIZE */
+.crm-header-title {
+  font-size: 32px !important;
+  line-height: 1 !important;
+
+  font-weight: 950 !important;
+
+  letter-spacing: -0.7px !important;
+
+  background: linear-gradient(
+    135deg,
+    #4f46c8 0%,
+    #6872d8 45%,
+    #0798b7 100%
+  ) !important;
+
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* RIGHT SIDE */
+.header-actions {
+  flex: 1 1 0 !important;
+
+  min-width: 0 !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+
+  gap: 10px !important;
+}
+
+/* =========================================================
+   CUSTOMER ENQUIRIES — HALF SIZE
+   ========================================================= */
+
+.page-heading h1 {
+  font-size: 22px !important;
+  line-height: 1.1 !important;
+
+  letter-spacing: -0.7px !important;
+
+  margin-bottom: 6px !important;
+}
+
+.page-heading h1 span {
+  color: #6872d8 !important;
+}
+
+/* Keep description neat */
+.page-heading p:not(.eyebrow) {
+  font-size: 13px !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1150px) {
+
+  .crm-header-logo {
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+
+    height: 40px !important;
+    max-height: 40px !important;
+  }
+
+  .crm-brand-name {
+    font-size: 14px !important;
+  }
+
+  .crm-header-title {
+    font-size: 27px !important;
+  }
+}
+
+
+@media (max-width: 900px) {
+
+  .crm-header {
+    padding: 5px 16px !important;
+  }
+
+  .crm-header-logo {
+    width: 135px !important;
+    min-width: 135px !important;
+    max-width: 135px !important;
+
+    height: 38px !important;
+  }
+
+  .crm-brand-name {
+    font-size: 13px !important;
+  }
+
+  .crm-header-title {
+    font-size: 23px !important;
+  }
+}
+
+
+@media (max-width: 700px) {
+
+  .crm-header {
+    height: 66px !important;
+    min-height: 66px !important;
+
+    padding: 4px 12px !important;
+  }
+
+  .crm-header-logo {
+    width: 120px !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+
+    height: 35px !important;
+  }
+
+  .crm-brand {
+    gap: 6px !important;
+  }
+
+  .crm-brand-name {
+    font-size: 12px !important;
+  }
+
+  .crm-header-center {
+    position: static !important;
+    transform: none !important;
+
+    margin: 0 6px !important;
+  }
+
+  .crm-header-title {
+    font-size: 18px !important;
+  }
+
+  .page-heading h1 {
+    font-size: 20px !important;
+  }
+}
+
+
+@media (max-width: 520px) {
+
+  .crm-header {
+    height: 62px !important;
+    min-height: 62px !important;
+
+    padding: 4px 9px !important;
+  }
+
+  .crm-header-logo {
+    width: 105px !important;
+    min-width: 105px !important;
+    max-width: 105px !important;
+
+    height: 32px !important;
+  }
+
+  .crm-brand-name {
+    font-size: 10px !important;
+  }
+
+  .crm-header-title {
+    font-size: 15px !important;
+  }
+
+  .page-heading h1 {
+    font-size: 19px !important;
+  }
+}
