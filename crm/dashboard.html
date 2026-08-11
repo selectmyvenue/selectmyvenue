@@ -47,7 +47,7 @@
     </div>
 
 
-    <!-- CENTER ONLY -->
+    <!-- CENTER -->
     <div class="crm-header-center">
 
       <div class="crm-header-title">
@@ -92,7 +92,6 @@
 
       <div>
 
-       
         <h1>
           Customer
           <span>Enquiries</span>
@@ -438,6 +437,8 @@
 
     <div class="lead-modal-card">
 
+      <!-- MODAL HEADER -->
+
       <div class="modal-header">
 
         <div>
@@ -457,6 +458,7 @@
           id="closeModalBtn"
           class="close-modal"
           type="button"
+          aria-label="Close"
         >
           ×
         </button>
@@ -464,7 +466,9 @@
       </div>
 
 
-      <!-- CUSTOMER INFORMATION -->
+      <!-- =================================================
+           CUSTOMER INFORMATION
+      ================================================== -->
 
       <div class="lead-info-grid">
 
@@ -596,7 +600,9 @@
       </div>
 
 
-      <!-- REQUIREMENTS -->
+      <!-- =================================================
+           OTHER REQUIREMENTS
+      ================================================== -->
 
       <div class="detail-block">
 
@@ -614,7 +620,9 @@
       </div>
 
 
-      <!-- CRM CONTROLS -->
+      <!-- =================================================
+           CRM CONTROLS
+      ================================================== -->
 
       <div class="crm-controls">
 
@@ -700,7 +708,36 @@
       </div>
 
 
-      <!-- INTERNAL NOTES -->
+      <!-- =================================================
+           CUSTOMER CONTACT REMARK
+      ================================================== -->
+
+      <div class="detail-block contact-remark-block">
+
+        <div class="remark-heading">
+
+          <label for="modalContactRemark">
+            CUSTOMER CONTACT REMARK
+          </label>
+
+          <span class="remark-hint">
+            Latest call / WhatsApp update
+          </span>
+
+        </div>
+
+        <textarea
+          id="modalContactRemark"
+          rows="4"
+          placeholder="Example: Called customer — interested in 500 guests, budget around ₹1,500/person. Will confirm tomorrow."
+        ></textarea>
+
+      </div>
+
+
+      <!-- =================================================
+           INTERNAL NOTES
+      ================================================== -->
 
       <div class="detail-block">
 
@@ -717,7 +754,9 @@
       </div>
 
 
-      <!-- ACTIONS -->
+      <!-- =================================================
+           ACTIONS
+      ================================================== -->
 
       <div class="modal-actions">
 
@@ -756,6 +795,8 @@
 
     <div class="add-enquiry-card">
 
+      <!-- HEADER -->
+
       <div class="modal-header">
 
         <div>
@@ -775,6 +816,7 @@
           id="closeAddEnquiryBtn"
           class="close-modal"
           type="button"
+          aria-label="Close"
         >
           ×
         </button>
@@ -784,7 +826,9 @@
 
       <div class="add-enquiry-form">
 
-        <!-- CUSTOMER DETAILS -->
+        <!-- =================================================
+             CUSTOMER DETAILS
+        ================================================== -->
 
         <div class="form-section-title">
           Customer Details
@@ -857,7 +901,9 @@
         </div>
 
 
-        <!-- EVENT DETAILS -->
+        <!-- =================================================
+             EVENT DETAILS
+        ================================================== -->
 
         <div class="form-section-title">
           Event Details
@@ -992,7 +1038,9 @@
         </div>
 
 
-        <!-- LEAD SOURCE -->
+        <!-- =================================================
+             LEAD SOURCE & CRM
+        ================================================== -->
 
         <div class="form-section-title">
           Lead Source & CRM
@@ -1128,7 +1176,9 @@
         </div>
 
 
-        <!-- REQUIREMENTS -->
+        <!-- =================================================
+             REQUIREMENTS
+        ================================================== -->
 
         <div class="control-group full-width">
 
@@ -1145,7 +1195,28 @@
         </div>
 
 
-        <!-- NOTES -->
+        <!-- =================================================
+             CUSTOMER CONTACT REMARK
+        ================================================== -->
+
+        <div class="control-group full-width">
+
+          <label for="newContactRemark">
+            CUSTOMER CONTACT REMARK
+          </label>
+
+          <textarea
+            id="newContactRemark"
+            rows="4"
+            placeholder="Add the latest customer call / WhatsApp remark..."
+          ></textarea>
+
+        </div>
+
+
+        <!-- =================================================
+             INTERNAL NOTES
+        ================================================== -->
 
         <div class="control-group full-width">
 
@@ -1162,12 +1233,16 @@
         </div>
 
 
+        <!-- MESSAGE -->
+
         <p
           id="addEnquiryMessage"
           class="form-message"
           role="alert"
         ></p>
 
+
+        <!-- ACTIONS -->
 
         <div class="modal-actions">
 
