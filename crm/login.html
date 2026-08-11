@@ -1,660 +1,547 @@
-```html
 <!DOCTYPE html>
-<html lang="en">
 
+<html lang="en">
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>Select My Venue CRM — Login</title>
+<title>Select My Venue CRM — Login</title>
 
-    <!-- CRM CSS -->
-    <link
-        rel="stylesheet"
-        href="./crm.css"
-    >
+<link
+    rel="stylesheet"
+    href="./crm.css"
+>
 
-    <!-- Supabase -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <style>
+<style>
+    /* =====================================================
+       SELECT MY VENUE — CRM LOGIN
+       FULL SCREEN LOGIN
+    ===================================================== */
 
-        /* =====================================================
-           LOGIN PAGE — FULL SCREEN
-        ===================================================== */
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+    }
 
-        html,
-        body {
-            width: 100%;
-            min-height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+    body {
+        min-height: 100vh;
+        background:
+            radial-gradient(
+                circle at 50% 20%,
+                rgba(21, 154, 140, 0.12),
+                transparent 40%
+            ),
+            linear-gradient(
+                135deg,
+                #071018 0%,
+                #0b1420 45%,
+                #071018 100%
+            );
+        color: #ffffff;
+        font-family:
+            Inter,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
+    }
 
-        body {
-            min-height: 100vh;
-            background:
-                radial-gradient(
-                    circle at 15% 20%,
-                    rgba(21, 154, 140, 0.14),
-                    transparent 32%
-                ),
-                radial-gradient(
-                    circle at 85% 80%,
-                    rgba(8, 127, 115, 0.12),
-                    transparent 35%
-                ),
-                #070b14;
-            color: #ffffff;
-        }
+    .login-page {
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
 
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-        /* =====================================================
-           FULL PAGE WRAPPER
-        ===================================================== */
+        box-sizing: border-box;
+        padding: 30px 20px;
+
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* subtle background glow */
+
+    .login-page::before {
+        content: "";
+        position: absolute;
+
+        width: 520px;
+        height: 520px;
+
+        top: 50%;
+        left: 50%;
+
+        transform: translate(-50%, -55%);
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(21, 154, 140, 0.12) 0%,
+                rgba(21, 154, 140, 0.04) 35%,
+                transparent 70%
+            );
+
+        pointer-events: none;
+    }
+
+    .login-card {
+        position: relative;
+        z-index: 2;
+
+        width: min(430px, 100%);
+
+        box-sizing: border-box;
+
+        padding: 42px 38px 32px;
+
+        border-radius: 24px;
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(21, 31, 48, 0.98),
+                rgba(10, 18, 30, 0.98)
+            );
+
+        border: 1px solid
+            rgba(255, 255, 255, 0.09);
+
+        box-shadow:
+            0 30px 90px
+            rgba(0, 0, 0, 0.55),
+            0 0 60px
+            rgba(21, 154, 140, 0.06);
+    }
+
+    .login-logo {
+        display: block;
+
+        width: 125px;
+        height: 125px;
+
+        object-fit: contain;
+
+        margin: 0 auto 22px;
+
+        border-radius: 18px;
+    }
+
+    .login-brand {
+        text-align: center;
+
+        margin-bottom: 30px;
+    }
+
+    .login-brand h1 {
+        margin: 0;
+
+        font-size: 26px;
+        line-height: 1.2;
+
+        font-weight: 750;
+
+        letter-spacing: -0.4px;
+
+        color: #ffffff;
+    }
+
+    .login-brand p {
+        margin: 9px 0 0;
+
+        font-size: 13px;
+
+        color:
+            rgba(255, 255, 255, 0.58);
+
+        letter-spacing: 0.2px;
+    }
+
+    .login-form {
+        display: grid;
+        gap: 18px;
+    }
+
+    .login-field {
+        display: grid;
+        gap: 8px;
+    }
+
+    .login-field label {
+        font-size: 11px;
+
+        font-weight: 750;
+
+        letter-spacing: 0.09em;
+
+        color:
+            rgba(255, 255, 255, 0.72);
+    }
+
+    .login-field input {
+        width: 100%;
+
+        box-sizing: border-box;
+
+        padding: 14px 15px;
+
+        border-radius: 12px;
+
+        border: 1px solid
+            rgba(255, 255, 255, 0.10);
+
+        background:
+            rgba(255, 255, 255, 0.045);
+
+        color: #ffffff;
+
+        outline: none;
+
+        font-size: 15px;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    .login-field input::placeholder {
+        color:
+            rgba(255, 255, 255, 0.35);
+    }
+
+    .login-field input:focus {
+        border-color:
+            rgba(52, 211, 153, 0.75);
+
+        background:
+            rgba(255, 255, 255, 0.065);
+
+        box-shadow:
+            0 0 0 3px
+            rgba(52, 211, 153, 0.10);
+    }
+
+    .login-btn {
+        width: 100%;
+
+        border: 0;
+
+        border-radius: 12px;
+
+        padding: 14px 18px;
+
+        margin-top: 2px;
+
+        cursor: pointer;
+
+        font-size: 15px;
+
+        font-weight: 750;
+
+        color: #ffffff;
+
+        background:
+            linear-gradient(
+                135deg,
+                #159a8c,
+                #087f73
+            );
+
+        box-shadow:
+            0 8px 24px
+            rgba(8, 127, 115, 0.25);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            opacity 0.2s ease;
+    }
+
+    .login-btn:hover {
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 12px 28px
+            rgba(8, 127, 115, 0.35);
+    }
+
+    .login-btn:active {
+        transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+        opacity: 0.55;
+
+        cursor: not-allowed;
+
+        transform: none;
+
+        box-shadow: none;
+    }
+
+    .login-message {
+        min-height: 20px;
+
+        text-align: center;
+
+        font-size: 13px;
+
+        line-height: 1.4;
+
+        margin-top: 2px;
+    }
+
+    .login-message.error {
+        color: #ff8f8f;
+    }
+
+    .login-message.success {
+        color: #63e6be;
+    }
+
+    .login-footer {
+        text-align: center;
+
+        margin-top: 26px;
+
+        font-size: 10px;
+
+        letter-spacing: 0.2px;
+
+        color:
+            rgba(255, 255, 255, 0.35);
+    }
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media (max-width: 520px) {
 
         .login-page {
-            width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            box-sizing: border-box;
-
-            padding: 30px 20px;
-
-            position: relative;
-            overflow: hidden;
+            padding: 20px 15px;
         }
-
-
-        /* =====================================================
-           BACKGROUND GLOW
-        ===================================================== */
-
-        .login-page::before {
-            content: "";
-            position: absolute;
-
-            width: 520px;
-            height: 520px;
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(21, 154, 140, 0.10),
-                    transparent 70%
-                );
-
-            top: -220px;
-            left: -180px;
-
-            pointer-events: none;
-        }
-
-        .login-page::after {
-            content: "";
-            position: absolute;
-
-            width: 520px;
-            height: 520px;
-
-            border-radius: 50%;
-
-            background:
-                radial-gradient(
-                    circle,
-                    rgba(21, 154, 140, 0.08),
-                    transparent 70%
-                );
-
-            bottom: -240px;
-            right: -180px;
-
-            pointer-events: none;
-        }
-
-
-        /* =====================================================
-           LOGIN CARD
-        ===================================================== */
 
         .login-card {
-            position: relative;
-            z-index: 2;
+            padding: 34px 24px 28px;
 
-            width: min(430px, 100%);
-
-            box-sizing: border-box;
-
-            padding: 40px;
-
-            border-radius: 24px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(20, 28, 45, 0.98),
-                    rgba(12, 18, 31, 0.98)
-                );
-
-            border: 1px solid rgba(255, 255, 255, 0.08);
-
-            box-shadow:
-                0 30px 90px rgba(0, 0, 0, 0.55),
-                0 0 0 1px rgba(21, 154, 140, 0.03);
-
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            border-radius: 20px;
         }
-
-
-        /* =====================================================
-           LOGO
-        ===================================================== */
 
         .login-logo {
-            display: block;
+            width: 105px;
+            height: 105px;
 
-            width: 86px;
-            height: auto;
-
-            max-height: 86px;
-
-            margin: 0 auto 22px;
-
-            object-fit: contain;
-        }
-
-
-        /* =====================================================
-           BRAND
-        ===================================================== */
-
-        .login-brand {
-            text-align: center;
-
-            margin-bottom: 30px;
+            margin-bottom: 18px;
         }
 
         .login-brand h1 {
-            margin: 0;
-
-            font-size: 27px;
-            line-height: 1.2;
-
-            font-weight: 700;
-
-            letter-spacing: -0.02em;
+            font-size: 23px;
         }
-
-        .login-brand p {
-            margin: 9px 0 0;
-
-            color: rgba(255, 255, 255, 0.62);
-
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-
-        /* =====================================================
-           FORM
-        ===================================================== */
-
-        .login-form {
-            display: grid;
-
-            gap: 18px;
-        }
-
-
-        /* =====================================================
-           FIELD
-        ===================================================== */
-
-        .login-field {
-            display: grid;
-
-            gap: 8px;
-        }
-
-        .login-field label {
-            font-size: 11px;
-
-            font-weight: 700;
-
-            letter-spacing: 0.09em;
-
-            color: rgba(255, 255, 255, 0.72);
-        }
-
-        .login-field input {
-            width: 100%;
-
-            box-sizing: border-box;
-
-            padding: 14px 15px;
-
-            border-radius: 12px;
-
-            border: 1px solid rgba(255, 255, 255, 0.10);
-
-            background: rgba(255, 255, 255, 0.045);
-
-            color: #ffffff;
-
-            outline: none;
-
-            font-family: inherit;
-
-            font-size: 15px;
-
-            transition:
-                border-color 0.2s ease,
-                box-shadow 0.2s ease,
-                background 0.2s ease;
-        }
-
-        .login-field input::placeholder {
-            color: rgba(255, 255, 255, 0.34);
-        }
-
-        .login-field input:hover {
-            background: rgba(255, 255, 255, 0.06);
-        }
-
-        .login-field input:focus {
-            border-color:
-                rgba(52, 211, 153, 0.75);
-
-            background:
-                rgba(255, 255, 255, 0.065);
-
-            box-shadow:
-                0 0 0 3px
-                rgba(52, 211, 153, 0.10);
-        }
-
-
-        /* =====================================================
-           LOGIN BUTTON
-        ===================================================== */
-
-        .login-btn {
-            width: 100%;
-
-            border: 0;
-
-            border-radius: 12px;
-
-            padding: 14px 18px;
-
-            cursor: pointer;
-
-            font-family: inherit;
-
-            font-size: 15px;
-
-            font-weight: 700;
-
-            color: #ffffff;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #159a8c,
-                    #087f73
-                );
-
-            box-shadow:
-                0 10px 25px
-                rgba(8, 127, 115, 0.22);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease,
-                opacity 0.2s ease;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-1px);
-
-            box-shadow:
-                0 14px 30px
-                rgba(8, 127, 115, 0.30);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .login-btn:disabled {
-            opacity: 0.6;
-
-            cursor: not-allowed;
-
-            transform: none;
-
-            box-shadow: none;
-        }
-
-
-        /* =====================================================
-           LOGIN MESSAGE
-        ===================================================== */
-
-        .login-message {
-            min-height: 20px;
-
-            text-align: center;
-
-            font-size: 13px;
-
-            line-height: 1.4;
-
-            margin-top: 2px;
-        }
-
-        .login-message.error {
-            color: #ff8f8f;
-        }
-
-        .login-message.success {
-            color: #63e6be;
-        }
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .login-footer {
-            text-align: center;
-
-            margin-top: 25px;
-
-            font-size: 11px;
-
-            color:
-                rgba(255, 255, 255, 0.35);
-        }
-
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
-
-        @media (max-width: 600px) {
-
-            .login-page {
-                padding: 20px 15px;
-            }
-
-            .login-card {
-                width: 100%;
-
-                padding: 30px 22px;
-
-                border-radius: 20px;
-            }
-
-            .login-logo {
-                width: 76px;
-
-                margin-bottom: 18px;
-            }
-
-            .login-brand {
-                margin-bottom: 25px;
-            }
-
-            .login-brand h1 {
-                font-size: 23px;
-            }
-
-            .login-brand p {
-                font-size: 13px;
-            }
-
-        }
-
-
-        /* =====================================================
-           VERY SMALL SCREENS
-        ===================================================== */
-
-        @media (max-height: 650px) {
-
-            .login-page {
-                align-items: flex-start;
-
-                padding-top: 25px;
-                padding-bottom: 25px;
-            }
-
-            .login-card {
-                padding-top: 28px;
-                padding-bottom: 28px;
-            }
-
-        }
-
-    </style>
+    }
+</style>
+```
 
 </head>
 
-
 <body>
 
+```
+<main class="login-page">
 
-    <!-- =====================================================
-         LOGIN PAGE
-    ===================================================== -->
+    <section class="login-card">
 
-    <main class="login-page">
-
-
-        <!-- =================================================
-             LOGIN CARD
-        ================================================== -->
-
-        <section
-            class="login-card"
-            aria-labelledby="loginTitle"
+        <img
+            src="../logo.png"
+            alt="Select My Venue"
+            class="login-logo"
         >
 
+        <div class="login-brand">
 
-            <!-- LOGO -->
+            <h1>
+                Select My Venue CRM
+            </h1>
 
-            <img
-                src="../logo.png"
-                alt="Select My Venue"
-                class="login-logo"
-            >
+            <p>
+                Employee Lead Management System
+            </p>
 
-
-            <!-- BRAND -->
-
-            <div class="login-brand">
-
-                <h1 id="loginTitle">
-                    Select My Venue CRM
-                </h1>
-
-                <p>
-                    Employee Lead Management System
-                </p>
-
-            </div>
+        </div>
 
 
-            <!-- =================================================
-                 LOGIN FORM
-            ================================================== -->
+        <form
+            id="loginForm"
+            class="login-form"
+            autocomplete="on"
+        >
 
-            <form
-                id="loginForm"
-                class="login-form"
-            >
+            <div class="login-field">
 
+                <label for="email">
+                    EMAIL ADDRESS
+                </label>
 
-                <!-- EMAIL -->
-
-                <div class="login-field">
-
-                    <label for="email">
-                        EMAIL ADDRESS
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email"
-                        autocomplete="username"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- PASSWORD -->
-
-                <div class="login-field">
-
-                    <label for="password">
-                        PASSWORD
-                    </label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Enter your password"
-                        autocomplete="current-password"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- LOGIN BUTTON -->
-
-                <button
-                    type="submit"
-                    id="loginBtn"
-                    class="login-btn"
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="username"
+                    required
                 >
-                    Login to CRM
-                </button>
 
-
-                <!-- MESSAGE -->
-
-                <div
-                    id="loginMessage"
-                    class="login-message"
-                    role="alert"
-                    aria-live="polite"
-                ></div>
-
-
-            </form>
-
-
-            <!-- FOOTER -->
-
-            <div class="login-footer">
-                Select My Venue · Secure Employee CRM
             </div>
 
 
-        </section>
+            <div class="login-field">
+
+                <label for="password">
+                    PASSWORD
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
 
 
-    </main>
+            <button
+                type="submit"
+                id="loginBtn"
+                class="login-btn"
+            >
+                Login to CRM
+            </button>
 
 
-    <!-- =====================================================
-         LOGIN SCRIPT
-    ===================================================== -->
+            <div
+                id="loginMessage"
+                class="login-message"
+                role="alert"
+                aria-live="polite"
+            ></div>
 
-    <script>
-
-        /*
-         * Supabase configuration
-         *
-         * These values are used only by the login page.
-         */
-
-        const SUPABASE_URL =
-            "https://uajqwyoqbbswkfiwosyw.supabase.co";
-
-        const SUPABASE_ANON_KEY =
-            "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+        </form>
 
 
-        /*
-         * Create Supabase client
-         */
+        <div class="login-footer">
+            Select My Venue · Secure Employee CRM
+        </div>
 
-        const supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
+    </section>
+
+</main>
 
 
-        /*
-         * Login elements
-         */
+<!-- =====================================================
+     SUPABASE CONFIG
+====================================================== -->
 
-        const loginForm =
-            document.getElementById("loginForm");
+<script>
 
-        const loginBtn =
-            document.getElementById("loginBtn");
+    window.SUPABASE_URL =
+        "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
-        const loginMessage =
-            document.getElementById("loginMessage");
+    window.SUPABASE_ANON_KEY =
+        "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
-
-        /*
-         * Show message
-         */
-
-        function showLoginMessage(
-            message,
-            type = "error"
-        ) {
-
-            loginMessage.textContent =
-                message;
-
-            loginMessage.className =
-                "login-message " + type;
-
-        }
+</script>
 
 
-        /*
-         * Check existing session
-         */
+<!-- =====================================================
+     LOGIN SCRIPT
+====================================================== -->
 
-        async function checkExistingSession() {
+<script>
+
+    const supabaseLogin =
+        window.supabase.createClient(
+            window.SUPABASE_URL,
+            window.SUPABASE_ANON_KEY
+        );
+
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+    const loginMessage =
+        document.getElementById("loginMessage");
+
+
+    function showLoginMessage(
+        message,
+        type = "error"
+    ) {
+
+        loginMessage.textContent =
+            message;
+
+        loginMessage.className =
+            "login-message " + type;
+    }
+
+
+    loginForm.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+
+            if (!email || !password) {
+
+                showLoginMessage(
+                    "Please enter email and password.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            loginBtn.disabled = true;
+
+            loginBtn.textContent =
+                "Signing in...";
+
+            showLoginMessage("");
+
 
             try {
 
@@ -662,178 +549,118 @@
                     data,
                     error
                 } =
-                    await supabaseClient
-                        .auth
-                        .getSession();
+                    await supabaseLogin.auth
+                        .signInWithPassword({
+                            email: email,
+                            password: password
+                        });
 
 
                 if (error) {
 
                     console.error(
-                        "Session check error:",
+                        "Login error:",
                         error
                     );
 
+                    showLoginMessage(
+                        error.message ||
+                        "Invalid email or password.",
+                        "error"
+                    );
+
                     return;
-
                 }
 
 
-                if (data.session) {
+                if (data && data.session) {
 
-                    window.location.href =
-                        "dashboard.html";
+                    showLoginMessage(
+                        "Login successful. Opening CRM...",
+                        "success"
+                    );
 
+
+                    setTimeout(
+                        function() {
+
+                            window.location.href =
+                                "./dashboard.html";
+
+                        },
+                        500
+                    );
+
+                } else {
+
+                    showLoginMessage(
+                        "Login failed. Please try again.",
+                        "error"
+                    );
                 }
+
 
             } catch (error) {
 
                 console.error(
-                    "Session check failed:",
+                    "Login exception:",
                     error
                 );
 
+                showLoginMessage(
+                    "Unable to connect to Supabase.",
+                    "error"
+                );
+
+            } finally {
+
+                loginBtn.disabled = false;
+
+                loginBtn.textContent =
+                    "Login to CRM";
             }
 
         }
+    );
 
 
-        /*
-         * Login
-         */
+    /* =====================================================
+       CHECK EXISTING SESSION
+    ====================================================== */
 
-        loginForm.addEventListener(
-            "submit",
-            async function(event) {
+    (async function checkExistingSession() {
 
-                event.preventDefault();
+        try {
 
-
-                const email =
-                    document
-                        .getElementById("email")
-                        .value
-                        .trim();
-
-                const password =
-                    document
-                        .getElementById("password")
-                        .value;
+            const {
+                data
+            } =
+                await supabaseLogin.auth
+                    .getSession();
 
 
-                if (!email || !password) {
+            if (
+                data &&
+                data.session
+            ) {
 
-                    showLoginMessage(
-                        "Please enter email and password.",
-                        "error"
-                    );
-
-                    return;
-
-                }
-
-
-                loginBtn.disabled = true;
-
-                loginBtn.textContent =
-                    "Signing in...";
-
-                showLoginMessage(
-                    "",
-                    "success"
-                );
-
-
-                try {
-
-                    const {
-                        data,
-                        error
-                    } =
-                        await supabaseClient
-                            .auth
-                            .signInWithPassword({
-                                email: email,
-                                password: password
-                            });
-
-
-                    if (error) {
-
-                        console.error(
-                            "Login error:",
-                            error
-                        );
-
-                        showLoginMessage(
-                            error.message ||
-                            "Invalid email or password.",
-                            "error"
-                        );
-
-                        loginBtn.disabled = false;
-
-                        loginBtn.textContent =
-                            "Login to CRM";
-
-                        return;
-
-                    }
-
-
-                    if (data.session) {
-
-                        showLoginMessage(
-                            "Login successful. Opening CRM...",
-                            "success"
-                        );
-
-
-                        setTimeout(
-                            function() {
-
-                                window.location.href =
-                                    "dashboard.html";
-
-                            },
-                            300
-                        );
-
-                    }
-
-                } catch (error) {
-
-                    console.error(
-                        "Login failed:",
-                        error
-                    );
-
-                    showLoginMessage(
-                        "Unable to login. Please try again.",
-                        "error"
-                    );
-
-                    loginBtn.disabled = false;
-
-                    loginBtn.textContent =
-                        "Login to CRM";
-
-                }
-
+                window.location.href =
+                    "./dashboard.html";
             }
-        );
 
+        } catch (error) {
 
-        /*
-         * Start
-         */
+            console.error(
+                "Session check failed:",
+                error
+            );
 
-        checkExistingSession();
+        }
 
-    </script>
+    })();
 
+</script>
+```
 
 </body>
-
 </html>
-```
