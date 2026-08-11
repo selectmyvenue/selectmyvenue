@@ -28,54 +28,68 @@
        CRM HEADER
   ====================================================== -->
 
-  <header class="crm-header">
+ <header class="crm-header">
 
-    <div class="crm-brand">
+  <!-- LEFT: LARGE LOGO + BRAND -->
+  <div class="crm-brand">
 
-      <img
-        src="../logo.png"
-        alt="Select My Venue"
-        class="crm-main-logo"
-      >
+    <img
+      src="../logo.png"
+      alt="Select My Venue"
+      class="crm-logo-large"
+      style="
+        width: 110px !important;
+        height: 58px !important;
+        max-width: none !important;
+        max-height: none !important;
+        object-fit: contain !important;
+        display: block !important;
+      "
+    >
 
-      <div class="crm-brand-text">
+    <div class="crm-brand-text">
 
-        <div class="brand-name">
-          Select My Venue&nbsp;&nbsp;CRM
-        </div>
-
-        <div class="brand-subtitle">
-          Lead Management
-        </div>
-
+      <div class="crm-brand-name">
+        Select My Venue&nbsp;&nbsp;CRM
       </div>
 
     </div>
 
+  </div>
 
-    <div class="header-actions">
 
-      <span
-        id="staffName"
-        class="staff-name"
-      >
-        Loading...
-      </span>
+  <!-- CENTER: LEAD MANAGEMENT -->
+  <div class="crm-header-center">
 
-      <button
-        id="logoutBtn"
-        class="logout-btn"
-        type="button"
-      >
-        Logout
-      </button>
-
+    <div class="crm-header-label">
+      Lead Management
     </div>
 
-  </header>
+  </div>
 
 
+  <!-- RIGHT: STAFF + LOGOUT -->
+  <div class="header-actions">
 
+    <span
+      id="staffName"
+      class="staff-name"
+    >
+      Loading...
+    </span>
+
+    <button
+      id="logoutBtn"
+      class="logout-btn"
+      type="button"
+    >
+      Logout
+    </button>
+
+  </div>
+
+</header>
+  
   <!-- =====================================================
        MAIN CRM
   ====================================================== -->
