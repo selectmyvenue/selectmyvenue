@@ -1,3 +1,8 @@
+/* =========================================================
+   SELECT MY VENUE — CRM
+   COMPLETE CRM JAVASCRIPT
+   ========================================================= */
+
 const SUPABASE_URL =
   "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
@@ -11,18 +16,18 @@ const supabaseClient =
   );
 
 
-// =====================================================
-// GLOBAL CRM STATE
-// =====================================================
+/* =========================================================
+   GLOBAL STATE
+   ========================================================= */
 
 let currentEnquiries = [];
 let currentLead = null;
 let activeLeadTab = "";
 
 
-// =====================================================
-// PAGE READY
-// =====================================================
+/* =========================================================
+   PAGE READY
+   ========================================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -40,12 +45,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (logoutBtn) {
     await setupCRM();
   }
+
 });
 
 
-// =====================================================
-// LOGIN
-// =====================================================
+/* =========================================================
+   LOGIN
+   ========================================================= */
 
 function setupLogin() {
 
@@ -60,7 +66,6 @@ function setupLogin() {
   loginForm.addEventListener("submit", async (event) => {
 
     event.preventDefault();
-    event.stopPropagation();
 
     const email =
       document.getElementById("email")?.value.trim();
@@ -94,10 +99,7 @@ function setupLogin() {
 
       if (error) {
 
-        console.error(
-          "SUPABASE LOGIN ERROR:",
-          error
-        );
+        console.error("LOGIN ERROR:", error);
 
         if (loginMessage) {
           loginMessage.textContent =
@@ -107,7 +109,7 @@ function setupLogin() {
         return;
       }
 
-      if (!data || !data.session) {
+      if (!data?.session) {
 
         if (loginMessage) {
           loginMessage.textContent =
@@ -126,20 +128,23 @@ function setupLogin() {
 
     } catch (error) {
 
-      console.error("LOGIN ERROR:", error);
+      console.error("LOGIN EXCEPTION:", error);
 
       if (loginMessage) {
         loginMessage.textContent =
           "Login error: " + error.message;
       }
+
     }
+
   });
+
 }
 
 
-// =====================================================
-// CRM SETUP
-// =====================================================
+/* =========================================================
+   CRM SETUP
+   ========================================================= */
 
 async function setupCRM() {
 
@@ -154,37 +159,35 @@ async function setupCRM() {
 
       window.location.href = "login.html";
       return;
+
     }
 
     setupLogout();
     setupSearch();
     setupFilters();
     setupRefresh();
+    setupLeadTabs();
     setupLeadModal();
     setupAddEnquiry();
-    setupLeadTabs();
 
     showStaffName(session.user);
-
-    injectLeadDetailsStyles();
 
     await loadEnquiries();
 
   } catch (error) {
 
-    console.error(
-      "CRM SETUP ERROR:",
-      error
-    );
+    console.error("CRM SETUP ERROR:", error);
 
     showStaffNameError();
+
   }
+
 }
 
 
-// =====================================================
-// STAFF NAME
-// =====================================================
+/* =========================================================
+   STAFF NAME
+   ========================================================= */
 
 function showStaffName(user) {
 
@@ -195,6 +198,7 @@ function showStaffName(user) {
 
   staffName.textContent =
     user?.email || "Staff";
+
 }
 
 
@@ -206,12 +210,13 @@ function showStaffNameError() {
   if (staffName) {
     staffName.textContent = "Staff";
   }
+
 }
 
 
-// =====================================================
-// LOGOUT
-// =====================================================
+/* =========================================================
+   LOGOUT
+   ========================================================= */
 
 function setupLogout() {
 
@@ -232,10 +237,7 @@ function setupLogout() {
 
       if (error) {
 
-        console.error(
-          "LOGOUT ERROR:",
-          error
-        );
+        console.error("LOGOUT ERROR:", error);
 
         logoutBtn.disabled = false;
         logoutBtn.textContent = "Logout";
@@ -247,21 +249,21 @@ function setupLogout() {
 
     } catch (error) {
 
-      console.error(
-        "LOGOUT ERROR:",
-        error
-      );
+      console.error("LOGOUT EXCEPTION:", error);
 
       logoutBtn.disabled = false;
       logoutBtn.textContent = "Logout";
+
     }
+
   });
+
 }
 
 
-// =====================================================
-// LOAD ENQUIRIES
-// =====================================================
+/* =========================================================
+   LOAD ENQUIRIES
+   ========================================================= */
 
 async function loadEnquiries() {
 
@@ -272,11 +274,12 @@ async function loadEnquiries() {
 
     tableBody.innerHTML = `
       <tr>
-        <td colspan="9" class="loading-cell">
+        <td colspan="10" class="loading-cell">
           Loading enquiries...
         </td>
       </tr>
     `;
+
   }
 
   try {
@@ -288,19 +291,13 @@ async function loadEnquiries() {
       await supabaseClient
         .from("customer_enquiries")
         .select("*")
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
-        );
+        .order("created_at", {
+          ascending: false
+        });
 
     if (error) {
 
-      console.error(
-        "LOAD ENQUIRIES ERROR:",
-        error
-      );
+      console.error("LOAD ENQUIRIES ERROR:", error);
 
       currentEnquiries = [];
 
@@ -308,11 +305,12 @@ async function loadEnquiries() {
 
         tableBody.innerHTML = `
           <tr>
-            <td colspan="9" class="loading-cell">
+            <td colspan="10" class="loading-cell">
               Unable to load enquiries.
             </td>
           </tr>
         `;
+
       }
 
       return;
@@ -327,40 +325,36 @@ async function loadEnquiries() {
 
   } catch (error) {
 
-    console.error(
-      "LOAD ENQUIRIES EXCEPTION:",
-      error
-    );
+    console.error("LOAD ENQUIRIES EXCEPTION:", error);
 
     if (tableBody) {
 
       tableBody.innerHTML = `
         <tr>
-          <td colspan="9" class="loading-cell">
+          <td colspan="10" class="loading-cell">
             Unable to load enquiries.
           </td>
         </tr>
       `;
+
     }
+
   }
+
 }
 
 
-// =====================================================
-// RENDER ENQUIRIES
-// =====================================================
+/* =========================================================
+   RENDER ENQUIRIES
+   ========================================================= */
 
 function renderEnquiries(enquiries) {
 
   const tableBody =
-    document.getElementById(
-      "leadsTableBody"
-    );
+    document.getElementById("leadsTableBody");
 
   const emptyState =
-    document.getElementById(
-      "emptyState"
-    );
+    document.getElementById("emptyState");
 
   if (!tableBody) return;
 
@@ -379,178 +373,490 @@ function renderEnquiries(enquiries) {
     emptyState.hidden = true;
   }
 
+
   tableBody.innerHTML =
-    enquiries
-      .map((lead) => {
+    enquiries.map((lead) => {
 
-        return `
-          <tr>
+      const status =
+        lead.status ||
+        lead.lead_status ||
+        "new";
 
-            <td>
+      const priority =
+        lead.priority ||
+        "normal";
 
-              <strong class="customer-name">
-                ${escapeHTML(
-                  lead.customer_name ||
-                  "Unnamed"
-                )}
-              </strong>
+      const mobile =
+        lead.mobile ||
+        lead.mobile_number ||
+        "";
 
-              <small style="
-                display:block;
-                margin-top:4px;
-                color:#8b94a5;
-              ">
-                ${escapeHTML(
-                  lead.mobile ||
-                  lead.mobile_number ||
-                  ""
-                )}
-              </small>
 
-            </td>
+      return `
+        <tr>
 
-            <td>
+          <!-- CUSTOMER -->
+
+          <td>
+
+            <strong class="customer-name">
               ${escapeHTML(
-                lead.occasion ||
-                "—"
+                lead.customer_name || "Unnamed"
               )}
-            </td>
+            </strong>
 
-            <td>
+            <small>
               ${escapeHTML(
-                lead.location ||
-                "—"
+                lead.email || ""
               )}
-            </td>
+            </small>
 
-            <td>
-              ${formatDate(
-                lead.event_date
-              )}
-            </td>
+          </td>
 
-            <td>
-              ${lead.guests || "—"}
-            </td>
 
-            <td>
-              ${
-                lead.budget_per_person
-                  ? "₹" +
-                    Number(
-                      lead.budget_per_person
-                    ).toLocaleString("en-IN")
-                  : "—"
-              }
-            </td>
+          <!-- PHONE -->
 
-            <td>
+          <td>
 
-              <span class="
-                status-badge
-                ${getStatusClass(
-                  lead.status ||
-                  lead.lead_status
-                )}
-              ">
-                ${formatStatus(
-                  lead.status ||
-                  lead.lead_status
-                )}
-              </span>
+            ${
+              mobile
+                ? `
+                  <a
+                    href="tel:${escapeHTML(mobile)}"
+                    class="phone-link"
+                  >
+                    ☎ ${escapeHTML(mobile)}
+                  </a>
+                `
+                : "—"
+            }
 
-            </td>
+          </td>
 
-            <td>
 
-              <span class="
-                priority-badge
-                priority-${escapeHTML(
-                  lead.priority ||
-                  "normal"
-                )}
-              ">
-                ${formatPriority(
-                  lead.priority
-                )}
-              </span>
+          <!-- EVENT -->
 
-            </td>
+          <td>
+            ${escapeHTML(
+              lead.occasion || "—"
+            )}
+          </td>
 
-            <td>
 
-              <button
-                type="button"
-                class="view-lead-btn"
-                data-lead-id="${lead.id}"
+          <!-- LOCATION -->
+
+          <td>
+            ${escapeHTML(
+              lead.location || "—"
+            )}
+          </td>
+
+
+          <!-- DATE -->
+
+          <td>
+            ${formatDate(
+              lead.event_date
+            )}
+          </td>
+
+
+          <!-- GUESTS -->
+
+          <td>
+            ${lead.guests || "—"}
+          </td>
+
+
+          <!-- BUDGET -->
+
+          <td>
+
+            ${
+              lead.budget_per_person
+                ? "₹" +
+                  Number(
+                    lead.budget_per_person
+                  ).toLocaleString("en-IN")
+                : "—"
+            }
+
+          </td>
+
+
+          <!-- STATUS -->
+
+          <td>
+
+            <select
+              class="inline-status-select ${getStatusClass(status)}"
+              data-lead-id="${escapeHTML(String(lead.id))}"
+              data-current-value="${escapeHTML(status)}"
+              aria-label="Change lead status"
+            >
+
+              <option
+                value="new"
+                ${status === "new" ? "selected" : ""}
               >
-                View
-              </button>
+                New
+              </option>
 
-            </td>
+              <option
+                value="contacted"
+                ${status === "contacted" ? "selected" : ""}
+              >
+                Contacted
+              </option>
 
-          </tr>
-        `;
-      })
-      .join("");
+              <option
+                value="follow_up"
+                ${status === "follow_up" ? "selected" : ""}
+              >
+                Follow-up
+              </option>
+
+              <option
+                value="qualified"
+                ${status === "qualified" ? "selected" : ""}
+              >
+                Qualified
+              </option>
+
+              <option
+                value="converted"
+                ${status === "converted" ? "selected" : ""}
+              >
+                Converted
+              </option>
+
+              <option
+                value="closed"
+                ${status === "closed" ? "selected" : ""}
+              >
+                Closed
+              </option>
+
+            </select>
+
+          </td>
+
+
+          <!-- PRIORITY -->
+
+          <td>
+
+            <select
+              class="inline-priority-select priority-${escapeHTML(priority)}"
+              data-lead-id="${escapeHTML(String(lead.id))}"
+              data-current-value="${escapeHTML(priority)}"
+              aria-label="Change lead priority"
+            >
+
+              <option
+                value="urgent"
+                ${priority === "urgent" ? "selected" : ""}
+              >
+                Urgent
+              </option>
+
+              <option
+                value="high"
+                ${priority === "high" ? "selected" : ""}
+              >
+                High
+              </option>
+
+              <option
+                value="normal"
+                ${priority === "normal" ? "selected" : ""}
+              >
+                Normal
+              </option>
+
+              <option
+                value="low"
+                ${priority === "low" ? "selected" : ""}
+              >
+                Low
+              </option>
+
+            </select>
+
+          </td>
+
+
+          <!-- ACTION -->
+
+          <td>
+
+            <button
+              type="button"
+              class="view-lead-btn"
+              data-lead-id="${escapeHTML(String(lead.id))}"
+            >
+              View
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+
+    }).join("");
+
+
+  setupInlineLeadControls();
+
 
   document
     .querySelectorAll(".view-lead-btn")
     .forEach((button) => {
 
-      button.addEventListener(
-        "click",
-        () => {
+      button.addEventListener("click", () => {
 
-          const leadId =
-            button.dataset.leadId;
+        const leadId =
+          button.dataset.leadId;
 
-          const lead =
-            currentEnquiries.find(
-              (item) =>
-                String(item.id) ===
-                String(leadId)
-            );
+        const lead =
+          currentEnquiries.find(
+            (item) =>
+              String(item.id) ===
+              String(leadId)
+          );
 
-          if (lead) {
-            openLeadModal(lead);
-          }
+        if (lead) {
+          openLeadModal(lead);
         }
-      );
+
+      });
+
     });
+
 }
 
 
-// =====================================================
-// STATS
-// =====================================================
+/* =========================================================
+   INLINE STATUS / PRIORITY
+   ========================================================= */
+
+function setupInlineLeadControls() {
+
+  document
+    .querySelectorAll(".inline-status-select")
+    .forEach((select) => {
+
+      select.addEventListener("change", async () => {
+
+        const leadId =
+          select.dataset.leadId;
+
+        const newStatus =
+          select.value;
+
+        await updateLeadInline(
+          leadId,
+          {
+            status: newStatus
+          },
+          select
+        );
+
+      });
+
+    });
+
+
+  document
+    .querySelectorAll(".inline-priority-select")
+    .forEach((select) => {
+
+      select.addEventListener("change", async () => {
+
+        const leadId =
+          select.dataset.leadId;
+
+        const newPriority =
+          select.value;
+
+        await updateLeadInline(
+          leadId,
+          {
+            priority: newPriority
+          },
+          select
+        );
+
+      });
+
+    });
+
+}
+
+
+/* =========================================================
+   INLINE UPDATE
+   ========================================================= */
+
+async function updateLeadInline(
+  leadId,
+  changes,
+  selectElement
+) {
+
+  if (!leadId) return;
+
+
+  const lead =
+    currentEnquiries.find(
+      (item) =>
+        String(item.id) ===
+        String(leadId)
+    );
+
+
+  if (!lead) return;
+
+
+  const previousValue =
+    selectElement.dataset.currentValue;
+
+
+  selectElement.disabled = true;
+
+
+  try {
+
+    const updateData = {
+      ...changes,
+      updated_at:
+        new Date().toISOString()
+    };
+
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("customer_enquiries")
+        .update(updateData)
+        .eq("id", leadId);
+
+
+    if (error) {
+
+      console.error(
+        "INLINE UPDATE ERROR:",
+        error
+      );
+
+      selectElement.value =
+        previousValue;
+
+      showToast(
+        "Unable to update lead: " +
+        error.message
+      );
+
+      return;
+    }
+
+
+    Object.assign(
+      lead,
+      changes
+    );
+
+
+    selectElement.dataset.currentValue =
+      selectElement.value;
+
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        changes,
+        "status"
+      )
+    ) {
+
+      selectElement.className =
+        "inline-status-select " +
+        getStatusClass(
+          changes.status
+        );
+
+    }
+
+
+    if (
+      Object.prototype.hasOwnProperty.call(
+        changes,
+        "priority"
+      )
+    ) {
+
+      selectElement.className =
+        "inline-priority-select priority-" +
+        changes.priority;
+
+    }
+
+
+    updateStats(currentEnquiries);
+
+
+    showToast(
+      "Lead updated successfully."
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "INLINE UPDATE EXCEPTION:",
+      error
+    );
+
+    selectElement.value =
+      previousValue;
+
+    showToast(
+      "Something went wrong."
+    );
+
+  } finally {
+
+    selectElement.disabled = false;
+
+  }
+
+}
+
+
+/* =========================================================
+   STATS
+   ========================================================= */
 
 function updateStats(enquiries) {
 
   const total =
-    document.getElementById(
-      "totalLeads"
-    );
+    document.getElementById("totalLeads");
 
   const newLeads =
-    document.getElementById(
-      "newLeads"
-    );
+    document.getElementById("newLeads");
 
   const followup =
-    document.getElementById(
-      "followupLeads"
-    );
+    document.getElementById("followupLeads");
 
   const converted =
-    document.getElementById(
-      "convertedLeads"
-    );
+    document.getElementById("convertedLeads");
+
 
   if (total) {
     total.textContent =
       enquiries.length;
   }
+
 
   if (newLeads) {
 
@@ -561,7 +867,9 @@ function updateStats(enquiries) {
             lead.lead_status) ===
           "new"
       ).length;
+
   }
+
 
   if (followup) {
 
@@ -572,7 +880,9 @@ function updateStats(enquiries) {
             lead.lead_status) ===
           "follow_up"
       ).length;
+
   }
+
 
   if (converted) {
 
@@ -583,20 +893,20 @@ function updateStats(enquiries) {
             lead.lead_status) ===
           "converted"
       ).length;
+
   }
+
 }
 
 
-// =====================================================
-// SEARCH
-// =====================================================
+/* =========================================================
+   SEARCH
+   ========================================================= */
 
 function setupSearch() {
 
   const searchInput =
-    document.getElementById(
-      "searchInput"
-    );
+    document.getElementById("searchInput");
 
   if (!searchInput) return;
 
@@ -604,32 +914,40 @@ function setupSearch() {
     "input",
     applyFilters
   );
+
 }
 
 
-// =====================================================
-// FILTERS
-// =====================================================
+/* =========================================================
+   FILTERS
+   ========================================================= */
 
 function setupFilters() {
 
   const statusFilter =
-    document.getElementById(
-      "statusFilter"
-    );
+    document.getElementById("statusFilter");
 
   const priorityFilter =
-    document.getElementById(
-      "priorityFilter"
-    );
+    document.getElementById("priorityFilter");
+
 
   if (statusFilter) {
 
     statusFilter.addEventListener(
       "change",
-      applyFilters
+      () => {
+
+        activeLeadTab = "";
+
+        setActiveLeadTab(null);
+
+        applyFilters();
+
+      }
     );
+
   }
+
 
   if (priorityFilter) {
 
@@ -637,30 +955,27 @@ function setupFilters() {
       "change",
       applyFilters
     );
+
   }
+
 }
 
 
-// =====================================================
-// APPLY FILTERS
-// =====================================================
+/* =========================================================
+   APPLY FILTERS
+   ========================================================= */
 
 function applyFilters() {
 
   const searchInput =
-    document.getElementById(
-      "searchInput"
-    );
+    document.getElementById("searchInput");
 
   const statusFilter =
-    document.getElementById(
-      "statusFilter"
-    );
+    document.getElementById("statusFilter");
 
   const priorityFilter =
-    document.getElementById(
-      "priorityFilter"
-    );
+    document.getElementById("priorityFilter");
+
 
   const search =
     (
@@ -670,81 +985,91 @@ function applyFilters() {
       .trim()
       .toLowerCase();
 
+
   const dropdownStatus =
     statusFilter?.value ||
     "";
+
 
   const priority =
     priorityFilter?.value ||
     "";
 
+
   const filtered =
-    currentEnquiries.filter(
-      (lead) => {
+    currentEnquiries.filter((lead) => {
 
-        const searchable = [
+      const searchable = [
 
-          lead.customer_name,
-          lead.mobile,
-          lead.mobile_number,
-          lead.email,
-          lead.location,
-          lead.occasion,
-          lead.source,
-          lead.requirements,
-          lead.other_requirements
+        lead.customer_name,
+        lead.mobile,
+        lead.mobile_number,
+        lead.email,
+        lead.location,
+        lead.occasion,
+        lead.source
 
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
-        const status =
-          lead.status ||
-          lead.lead_status ||
-          "";
 
-        const matchesSearch =
-          !search ||
-          searchable.includes(search);
+      const matchesSearch =
+        !search ||
+        searchable.includes(search);
 
-        const matchesTab =
-          !activeLeadTab ||
-          status === activeLeadTab;
 
-        const matchesStatus =
-          !dropdownStatus ||
-          status === dropdownStatus;
+      const leadStatus =
+        lead.status ||
+        lead.lead_status ||
+        "new";
 
-        const matchesPriority =
-          !priority ||
-          lead.priority === priority;
 
-        return (
-          matchesSearch &&
-          matchesTab &&
-          matchesStatus &&
-          matchesPriority
-        );
-      }
-    );
+      const matchesTab =
+        !activeLeadTab ||
+        leadStatus ===
+        activeLeadTab;
+
+
+      const matchesStatus =
+        !dropdownStatus ||
+        leadStatus ===
+        dropdownStatus;
+
+
+      const matchesPriority =
+        !priority ||
+        (lead.priority || "normal") ===
+        priority;
+
+
+      return (
+        matchesSearch &&
+        matchesTab &&
+        matchesStatus &&
+        matchesPriority
+      );
+
+    });
+
 
   renderEnquiries(filtered);
+
 }
 
 
-// =====================================================
-// REFRESH
-// =====================================================
+/* =========================================================
+   REFRESH
+   ========================================================= */
 
 function setupRefresh() {
 
   const refreshBtn =
-    document.getElementById(
-      "refreshBtn"
-    );
+    document.getElementById("refreshBtn");
 
   if (!refreshBtn) return;
+
 
   refreshBtn.addEventListener(
     "click",
@@ -754,19 +1079,23 @@ function setupRefresh() {
       refreshBtn.textContent =
         "Refreshing...";
 
+
       await loadEnquiries();
+
 
       refreshBtn.disabled = false;
       refreshBtn.textContent =
         "↻ Refresh";
+
     }
   );
+
 }
 
 
-// =====================================================
-// LEAD TABS
-// =====================================================
+/* =========================================================
+   LEAD TABS
+   ========================================================= */
 
 function setupLeadTabs() {
 
@@ -775,84 +1104,48 @@ function setupLeadTabs() {
       ".stat-tab"
     );
 
-  if (tabs.length) {
 
-    tabs.forEach((tab) => {
+  if (!tabs.length) return;
 
-      tab.addEventListener(
-        "click",
-        () => {
 
-          activeLeadTab =
-            tab.dataset.status ||
-            "";
+  tabs.forEach((tab) => {
 
-          setActiveLeadTab(tab);
-
-          clearDropdownStatus();
-
-          applyFilters();
-        }
-      );
-    });
-
-    return;
-  }
-
-  const cards =
-    document.querySelectorAll(
-      ".stats-grid .stat-card"
-    );
-
-  if (!cards.length) return;
-
-  cards.forEach((card, index) => {
-
-    let status = "";
-
-    if (index === 1) {
-      status = "new";
-    }
-
-    if (index === 2) {
-      status = "follow_up";
-    }
-
-    if (index === 3) {
-      status = "converted";
-    }
-
-    card.dataset.status =
-      status;
-
-    card.classList.add(
-      "stat-tab"
-    );
-
-    card.style.cursor =
-      "pointer";
-
-    card.addEventListener(
+    tab.addEventListener(
       "click",
       () => {
 
         activeLeadTab =
-          status;
+          tab.dataset.status ||
+          "";
 
-        setActiveLeadTab(card);
 
-        clearDropdownStatus();
+        setActiveLeadTab(tab);
+
+
+        const statusFilter =
+          document.getElementById(
+            "statusFilter"
+          );
+
+
+        if (statusFilter) {
+          statusFilter.value = "";
+        }
+
 
         applyFilters();
+
       }
     );
+
   });
+
 }
 
 
-// =====================================================
-// ACTIVE TAB
-// =====================================================
+/* =========================================================
+   ACTIVE TAB
+   ========================================================= */
 
 function setActiveLeadTab(
   selectedTab
@@ -867,736 +1160,373 @@ function setActiveLeadTab(
       tab.classList.remove(
         "active"
       );
+
     });
+
 
   if (selectedTab) {
 
     selectedTab.classList.add(
       "active"
     );
+
   }
+
 }
 
 
-function clearDropdownStatus() {
-
-  const statusFilter =
-    document.getElementById(
-      "statusFilter"
-    );
-
-  if (statusFilter) {
-    statusFilter.value = "";
-  }
-}
-
-
-// =====================================================
-// LEAD MODAL SETUP
-// =====================================================
+/* =========================================================
+   LEAD MODAL
+   ========================================================= */
 
 function setupLeadModal() {
+
+  const closeBtn =
+    document.getElementById(
+      "closeModalBtn"
+    );
+
+  const cancelBtn =
+    document.getElementById(
+      "cancelModalBtn"
+    );
+
+  const saveBtn =
+    document.getElementById(
+      "saveLeadBtn"
+    );
+
+
+  if (closeBtn) {
+    closeBtn.addEventListener(
+      "click",
+      closeLeadModal
+    );
+  }
+
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener(
+      "click",
+      closeLeadModal
+    );
+  }
+
+
+  if (saveBtn) {
+    saveBtn.addEventListener(
+      "click",
+      saveLeadChanges
+    );
+  }
+
+
+  const modal =
+    document.getElementById(
+      "leadModal"
+    );
+
+
+  if (modal) {
+
+    modal.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target ===
+          modal
+        ) {
+          closeLeadModal();
+        }
+
+      }
+    );
+
+  }
+
 
   document.addEventListener(
     "keydown",
     (event) => {
 
       if (
-        event.key === "Escape" &&
-        document.getElementById(
-          "smvLeadDetailsModal"
-        )
-      ) {
-        closeLeadModal();
-      }
-    }
-  );
-
-  document.addEventListener(
-    "click",
-    (event) => {
-
-      const closeButton =
-        event.target.closest(
-          "[data-smv-close-lead]"
-        );
-
-      if (closeButton) {
-        closeLeadModal();
-      }
-
-      const saveButton =
-        event.target.closest(
-          "[data-smv-save-lead]"
-        );
-
-      if (saveButton) {
-        saveLeadChanges();
-      }
-
-      const callButton =
-        event.target.closest(
-          "[data-smv-call]"
-        );
-
-      if (
-        callButton &&
-        currentLead
+        event.key === "Escape"
       ) {
 
-        const mobile =
-          currentLead.mobile ||
-          currentLead.mobile_number ||
-          "";
-
-        if (mobile) {
-
-          window.location.href =
-            "tel:" + mobile;
-        }
-      }
-
-      const whatsappButton =
-        event.target.closest(
-          "[data-smv-whatsapp]"
-        );
-
-      if (
-        whatsappButton &&
-        currentLead
-      ) {
-
-        const mobile =
-          currentLead.mobile ||
-          currentLead.mobile_number ||
-          "";
-
-        const cleanMobile =
-          String(mobile)
-            .replace(/\D/g, "");
-
-        const whatsappNumber =
-          cleanMobile.length === 10
-            ? "91" + cleanMobile
-            : cleanMobile;
-
-        if (whatsappNumber) {
-
-          window.open(
-            "https://wa.me/" +
-              whatsappNumber,
-            "_blank"
+        const leadModal =
+          document.getElementById(
+            "leadModal"
           );
+
+        const addModal =
+          document.getElementById(
+            "addEnquiryModal"
+          );
+
+
+        if (
+          leadModal &&
+          !leadModal.hidden
+        ) {
+          closeLeadModal();
         }
+
+
+        if (
+          addModal &&
+          !addModal.hidden
+        ) {
+          closeAddEnquiryModal();
+        }
+
       }
 
-      const overlay =
-        event.target.closest(
-          "#smvLeadDetailsModal"
-        );
-
-      if (
-        overlay &&
-        event.target === overlay
-      ) {
-        closeLeadModal();
-      }
     }
   );
+
 }
 
 
-// =====================================================
-// OPEN NEW PROFESSIONAL LEAD MODAL
-// =====================================================
+/* =========================================================
+   OPEN LEAD MODAL
+   ========================================================= */
 
 function openLeadModal(lead) {
 
   currentLead = lead;
 
-  const oldModal =
-    document.getElementById(
-      "smvLeadDetailsModal"
-    );
 
-  if (oldModal) {
-    oldModal.remove();
-  }
+  setText(
+    "modalCustomerName",
+    lead.customer_name ||
+    "Customer"
+  );
+
 
   const mobile =
     lead.mobile ||
     lead.mobile_number ||
     "";
 
-  const requirements =
+
+  setText(
+    "modalMobile",
+    mobile || "—"
+  );
+
+
+  setText(
+    "modalEmail",
+    lead.email || "—"
+  );
+
+
+  setText(
+    "modalLocation",
+    lead.location || "—"
+  );
+
+
+  setText(
+    "modalOccasion",
+    lead.occasion || "—"
+  );
+
+
+  setText(
+    "modalEventDate",
+    formatDate(
+      lead.event_date
+    )
+  );
+
+
+  setText(
+    "modalGuests",
+    lead.guests || "—"
+  );
+
+
+  setText(
+    "modalBudget",
+    lead.budget_per_person
+      ? "₹" +
+        Number(
+          lead.budget_per_person
+        ).toLocaleString("en-IN")
+      : "—"
+  );
+
+
+  setText(
+    "modalFood",
+    lead.food_preference ||
+    "—"
+  );
+
+
+  setText(
+    "modalRequirements",
     lead.requirements ||
     lead.other_requirements ||
-    "No additional requirements provided.";
+    "—"
+  );
+
 
   const status =
-    lead.status ||
-    lead.lead_status ||
-    "new";
+    document.getElementById(
+      "modalStatus"
+    );
+
+
+  if (status) {
+
+    status.value =
+      lead.status ||
+      lead.lead_status ||
+      "new";
+
+  }
+
+
+  const priority =
+    document.getElementById(
+      "modalPriority"
+    );
+
+
+  if (priority) {
+
+    priority.value =
+      lead.priority ||
+      "normal";
+
+  }
+
+
+  const followUp =
+    document.getElementById(
+      "modalFollowUp"
+    );
+
+
+  if (followUp) {
+
+    followUp.value =
+      toDateTimeLocal(
+        lead.follow_up_at
+      );
+
+  }
+
+
+  const notes =
+    document.getElementById(
+      "modalNotes"
+    );
+
+
+  if (notes) {
+
+    notes.value =
+      lead.internal_notes ||
+      "";
+
+  }
+
+
+  const callBtn =
+    document.getElementById(
+      "modalCallBtn"
+    );
+
+
+  if (callBtn) {
+
+    callBtn.href =
+      mobile
+        ? "tel:" + mobile
+        : "#";
+
+  }
+
+
+  const whatsappBtn =
+    document.getElementById(
+      "modalWhatsappBtn"
+    );
+
+
+  if (whatsappBtn) {
+
+    const cleanMobile =
+      String(mobile)
+        .replace(/\D/g, "");
+
+
+    const whatsappNumber =
+      cleanMobile.length === 10
+        ? "91" + cleanMobile
+        : cleanMobile;
+
+
+    whatsappBtn.href =
+      whatsappNumber
+        ? "https://wa.me/" +
+          whatsappNumber
+        : "#";
+
+  }
+
 
   const modal =
-    document.createElement("div");
+    document.getElementById(
+      "leadModal"
+    );
 
-  modal.id =
-    "smvLeadDetailsModal";
 
-  modal.className =
-    "smv-lead-modal-overlay";
+  if (modal) {
 
-  modal.innerHTML = `
+    modal.hidden = false;
 
-    <div class="smv-lead-modal">
+    document.body.style.overflow =
+      "hidden";
 
-      <!-- HEADER -->
+  }
 
-      <div class="smv-lead-modal-header">
-
-        <div class="smv-lead-title-area">
-
-          <div class="smv-lead-avatar">
-            ${escapeHTML(
-              getInitials(
-                lead.customer_name ||
-                "Customer"
-              )
-            )}
-          </div>
-
-          <div>
-
-            <div class="smv-modal-kicker">
-              CUSTOMER ENQUIRY
-            </div>
-
-            <h2>
-              ${escapeHTML(
-                lead.customer_name ||
-                "Unnamed Customer"
-              )}
-            </h2>
-
-            <span class="smv-lead-id">
-              Lead ID: ${escapeHTML(
-                String(
-                  lead.id ||
-                  "—"
-                )
-              )}
-            </span>
-
-          </div>
-
-        </div>
-
-        <button
-          type="button"
-          class="smv-modal-close"
-          data-smv-close-lead
-          aria-label="Close"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <!-- QUICK ACTIONS -->
-
-      <div class="smv-lead-actions">
-
-        <button
-          type="button"
-          class="smv-action-call"
-          data-smv-call
-          ${mobile ? "" : "disabled"}
-        >
-          ☎ Call Customer
-        </button>
-
-        <button
-          type="button"
-          class="smv-action-whatsapp"
-          data-smv-whatsapp
-          ${mobile ? "" : "disabled"}
-        >
-          ◉ WhatsApp
-        </button>
-
-      </div>
-
-
-      <!-- BODY -->
-
-      <div class="smv-lead-modal-body">
-
-
-        <!-- CUSTOMER INFORMATION -->
-
-        <section class="smv-detail-section">
-
-          <div class="smv-section-heading">
-
-            <div class="smv-section-icon">
-              👤
-            </div>
-
-            <div>
-
-              <strong>
-                Customer Information
-              </strong>
-
-              <span>
-                Contact details
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div class="smv-info-grid">
-
-            ${detailCard(
-              "Mobile Number",
-              mobile || "—",
-              "smv-phone"
-            )}
-
-            ${detailCard(
-              "Email Address",
-              lead.email || "—",
-              "smv-email"
-            )}
-
-            ${detailCard(
-              "City / Location",
-              lead.location || "—",
-              "smv-location"
-            )}
-
-            ${detailCard(
-              "Lead Source",
-              lead.source || "Website",
-              "smv-source"
-            )}
-
-          </div>
-
-        </section>
-
-
-        <!-- EVENT INFORMATION -->
-
-        <section class="smv-detail-section">
-
-          <div class="smv-section-heading">
-
-            <div class="smv-section-icon">
-              ✦
-            </div>
-
-            <div>
-
-              <strong>
-                Event Requirements
-              </strong>
-
-              <span>
-                Customer's event details
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div class="smv-info-grid smv-event-grid">
-
-            ${detailCard(
-              "Event Type",
-              lead.occasion || "—",
-              "smv-event"
-            )}
-
-            ${detailCard(
-              "Event Date",
-              formatDate(
-                lead.event_date
-              ),
-              "smv-date"
-            )}
-
-            ${detailCard(
-              "Number of Guests",
-              lead.guests
-                ? Number(
-                    lead.guests
-                  ).toLocaleString("en-IN")
-                : "—",
-              "smv-guests"
-            )}
-
-            ${detailCard(
-              "Budget / Person",
-              lead.budget_per_person
-                ? "₹" +
-                  Number(
-                    lead.budget_per_person
-                  ).toLocaleString("en-IN")
-                : "—",
-              "smv-budget"
-            )}
-
-            ${detailCard(
-              "Food Preference",
-              lead.food_preference || "—",
-              "smv-food"
-            )}
-
-          </div>
-
-        </section>
-
-
-        <!-- OTHER REQUIREMENTS -->
-
-        <section class="smv-detail-section">
-
-          <div class="smv-section-heading">
-
-            <div class="smv-section-icon">
-              📝
-            </div>
-
-            <div>
-
-              <strong>
-                Other Requirements
-              </strong>
-
-              <span>
-                Additional customer requests
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div class="smv-requirements-box">
-
-            <div class="smv-requirements-label">
-              CUSTOMER REQUEST
-            </div>
-
-            <div class="smv-requirements-text">
-              ${escapeHTML(
-                requirements
-              ).replace(
-                /\n/g,
-                "<br>"
-              )}
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- CRM MANAGEMENT -->
-
-        <section class="smv-detail-section smv-crm-section">
-
-          <div class="smv-section-heading">
-
-            <div class="smv-section-icon">
-              ⚙
-            </div>
-
-            <div>
-
-              <strong>
-                CRM Management
-              </strong>
-
-              <span>
-                Update lead progress
-              </span>
-
-            </div>
-
-          </div>
-
-
-          <div class="smv-crm-grid">
-
-
-            <div class="smv-control">
-
-              <label>
-                LEAD STATUS
-              </label>
-
-              <select id="smvModalStatus">
-
-                <option
-                  value="new"
-                  ${status === "new" ? "selected" : ""}
-                >
-                  New
-                </option>
-
-                <option
-                  value="contacted"
-                  ${status === "contacted" ? "selected" : ""}
-                >
-                  Contacted
-                </option>
-
-                <option
-                  value="follow_up"
-                  ${status === "follow_up" ? "selected" : ""}
-                >
-                  Follow-up
-                </option>
-
-                <option
-                  value="qualified"
-                  ${status === "qualified" ? "selected" : ""}
-                >
-                  Qualified
-                </option>
-
-                <option
-                  value="converted"
-                  ${status === "converted" ? "selected" : ""}
-                >
-                  Converted
-                </option>
-
-                <option
-                  value="closed"
-                  ${status === "closed" ? "selected" : ""}
-                >
-                  Closed
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="smv-control">
-
-              <label>
-                PRIORITY
-              </label>
-
-              <select id="smvModalPriority">
-
-                <option
-                  value="urgent"
-                  ${lead.priority === "urgent" ? "selected" : ""}
-                >
-                  Urgent
-                </option>
-
-                <option
-                  value="high"
-                  ${lead.priority === "high" ? "selected" : ""}
-                >
-                  High
-                </option>
-
-                <option
-                  value="normal"
-                  ${(!lead.priority ||
-                    lead.priority === "normal")
-                    ? "selected"
-                    : ""}
-                >
-                  Normal
-                </option>
-
-                <option
-                  value="low"
-                  ${lead.priority === "low" ? "selected" : ""}
-                >
-                  Low
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="smv-control">
-
-              <label>
-                FOLLOW-UP DATE & TIME
-              </label>
-
-              <input
-                type="datetime-local"
-                id="smvModalFollowUp"
-                value="${escapeHTML(
-                  toDateTimeLocal(
-                    lead.follow_up_at
-                  )
-                )}"
-              >
-
-            </div>
-
-          </div>
-
-
-          <!-- INTERNAL NOTES -->
-
-          <div class="smv-notes-control">
-
-            <label>
-              INTERNAL NOTES
-            </label>
-
-            <textarea
-              id="smvModalNotes"
-              rows="4"
-              placeholder="Add internal notes about this lead..."
-            >${escapeHTML(
-              lead.internal_notes || ""
-            )}</textarea>
-
-            <small>
-              Notes are visible to CRM staff only.
-            </small>
-
-          </div>
-
-        </section>
-
-
-      </div>
-
-
-      <!-- FOOTER -->
-
-      <div class="smv-lead-modal-footer">
-
-        <div class="smv-footer-hint">
-          Changes are saved to the CRM.
-        </div>
-
-        <div class="smv-footer-buttons">
-
-          <button
-            type="button"
-            class="smv-cancel-btn"
-            data-smv-close-lead
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            class="smv-save-btn"
-            data-smv-save-lead
-          >
-            ✓ Save Changes
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  document.body.style.overflow =
-    "hidden";
-
-  requestAnimationFrame(() => {
-
-    modal.classList.add("show");
-  });
 }
 
 
-// =====================================================
-// DETAIL CARD
-// =====================================================
-
-function detailCard(
-  label,
-  value,
-  iconClass
-) {
-
-  return `
-
-    <div class="smv-info-card">
-
-      <div class="smv-info-card-label">
-        ${escapeHTML(label)}
-      </div>
-
-      <div class="
-        smv-info-card-value
-        ${iconClass || ""}
-      ">
-        ${escapeHTML(
-          value
-        )}
-      </div>
-
-    </div>
-
-  `;
-}
-
-
-// =====================================================
-// CLOSE LEAD MODAL
-// =====================================================
+/* =========================================================
+   CLOSE LEAD MODAL
+   ========================================================= */
 
 function closeLeadModal() {
 
   const modal =
     document.getElementById(
-      "smvLeadDetailsModal"
+      "leadModal"
     );
+
 
   if (modal) {
-
-    modal.classList.remove(
-      "show"
-    );
-
-    setTimeout(() => {
-
-      modal.remove();
-
-    }, 180);
+    modal.hidden = true;
   }
+
 
   document.body.style.overflow =
     "";
 
-  currentLead =
-    null;
+
+  currentLead = null;
+
 }
 
 
-// =====================================================
-// SAVE LEAD CHANGES
-// =====================================================
+/* =========================================================
+   SAVE LEAD MODAL CHANGES
+   ========================================================= */
 
 async function saveLeadChanges() {
 
@@ -1612,50 +1542,57 @@ async function saveLeadChanges() {
     return;
   }
 
+
   const saveBtn =
-    document.querySelector(
-      "[data-smv-save-lead]"
+    document.getElementById(
+      "saveLeadBtn"
     );
+
 
   const status =
     document.getElementById(
-      "smvModalStatus"
+      "modalStatus"
     )?.value ||
     "new";
 
+
   const priority =
     document.getElementById(
-      "smvModalPriority"
+      "modalPriority"
     )?.value ||
     "normal";
 
+
   const followUp =
     document.getElementById(
-      "smvModalFollowUp"
+      "modalFollowUp"
     )?.value ||
     "";
 
+
   const notes =
     document.getElementById(
-      "smvModalNotes"
+      "modalNotes"
     )?.value.trim() ||
     "";
+
 
   if (saveBtn) {
 
     saveBtn.disabled = true;
-    saveBtn.textContent = "Saving...";
+    saveBtn.textContent =
+      "Saving...";
+
   }
+
 
   try {
 
     const updateData = {
 
-      status:
-        status,
+      status,
 
-      priority:
-        priority,
+      priority,
 
       follow_up_at:
         followUp
@@ -1669,7 +1606,9 @@ async function saveLeadChanges() {
 
       updated_at:
         new Date().toISOString()
+
     };
+
 
     const {
       error
@@ -1681,6 +1620,7 @@ async function saveLeadChanges() {
           "id",
           currentLead.id
         );
+
 
     if (error) {
 
@@ -1697,18 +1637,27 @@ async function saveLeadChanges() {
       return;
     }
 
+
+    Object.assign(
+      currentLead,
+      updateData
+    );
+
+
     showToast(
       "Lead updated successfully."
     );
+
 
     closeLeadModal();
 
     await loadEnquiries();
 
+
   } catch (error) {
 
     console.error(
-      "UPDATE LEAD EXCEPTION:",
+      "SAVE LEAD EXCEPTION:",
       error
     );
 
@@ -1717,21 +1666,25 @@ async function saveLeadChanges() {
       error.message
     );
 
+
   } finally {
 
     if (saveBtn) {
 
       saveBtn.disabled = false;
       saveBtn.textContent =
-        "✓ Save Changes";
+        "Save Changes";
+
     }
+
   }
+
 }
 
 
-// =====================================================
-// ADD ENQUIRY SETUP
-// =====================================================
+/* =========================================================
+   ADD ENQUIRY SETUP
+   ========================================================= */
 
 function setupAddEnquiry() {
 
@@ -1755,13 +1708,16 @@ function setupAddEnquiry() {
       "saveNewEnquiryBtn"
     );
 
+
   if (addBtn) {
 
     addBtn.addEventListener(
       "click",
       openAddEnquiryModal
     );
+
   }
+
 
   if (closeBtn) {
 
@@ -1769,7 +1725,9 @@ function setupAddEnquiry() {
       "click",
       closeAddEnquiryModal
     );
+
   }
+
 
   if (cancelBtn) {
 
@@ -1777,7 +1735,9 @@ function setupAddEnquiry() {
       "click",
       closeAddEnquiryModal
     );
+
   }
+
 
   if (saveBtn) {
 
@@ -1785,12 +1745,15 @@ function setupAddEnquiry() {
       "click",
       saveNewEnquiry
     );
+
   }
+
 
   const modal =
     document.getElementById(
       "addEnquiryModal"
     );
+
 
   if (modal) {
 
@@ -1799,19 +1762,23 @@ function setupAddEnquiry() {
       (event) => {
 
         if (
-          event.target === modal
+          event.target ===
+          modal
         ) {
           closeAddEnquiryModal();
         }
+
       }
     );
+
   }
+
 }
 
 
-// =====================================================
-// OPEN ADD ENQUIRY
-// =====================================================
+/* =========================================================
+   OPEN ADD ENQUIRY
+   ========================================================= */
 
 function openAddEnquiryModal() {
 
@@ -1819,6 +1786,7 @@ function openAddEnquiryModal() {
     document.getElementById(
       "addEnquiryModal"
     );
+
 
   if (!modal) {
 
@@ -1829,16 +1797,18 @@ function openAddEnquiryModal() {
     return;
   }
 
+
   modal.hidden = false;
 
   document.body.style.overflow =
     "hidden";
+
 }
 
 
-// =====================================================
-// CLOSE ADD ENQUIRY
-// =====================================================
+/* =========================================================
+   CLOSE ADD ENQUIRY
+   ========================================================= */
 
 function closeAddEnquiryModal() {
 
@@ -1847,26 +1817,32 @@ function closeAddEnquiryModal() {
       "addEnquiryModal"
     );
 
+
   if (modal) {
     modal.hidden = true;
   }
 
-  document.body.style.overflow = "";
+
+  document.body.style.overflow =
+    "";
+
 
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
 
+
   if (message) {
     message.textContent = "";
   }
+
 }
 
 
-// =====================================================
-// SAVE NEW ENQUIRY
-// =====================================================
+/* =========================================================
+   SAVE NEW ENQUIRY
+   ========================================================= */
 
 async function saveNewEnquiry() {
 
@@ -1875,45 +1851,59 @@ async function saveNewEnquiry() {
       "newCustomerName"
     )?.value.trim();
 
+
   const mobile =
     document.getElementById(
       "newMobile"
     )?.value.trim();
+
 
   const email =
     document.getElementById(
       "newEmail"
     )?.value.trim();
 
+
   const location =
     document.getElementById(
       "newLocation"
     )?.value.trim();
 
+
   const occasion =
     document.getElementById(
       "newOccasion"
-    )?.value || "";
+    )?.value ||
+    "";
+
 
   const eventDate =
     document.getElementById(
       "newEventDate"
-    )?.value || "";
+    )?.value ||
+    "";
+
 
   const guests =
     document.getElementById(
       "newGuests"
-    )?.value || "";
+    )?.value ||
+    "";
+
 
   const budget =
     document.getElementById(
       "newBudget"
-    )?.value || "";
+    )?.value ||
+    "";
+
 
   const food =
     document.getElementById(
       "newFood"
-    )?.value || "";
+    )?.value ||
+    "";
+
 
   const source =
     document.getElementById(
@@ -1921,11 +1911,13 @@ async function saveNewEnquiry() {
     )?.value ||
     "Website";
 
+
   const status =
     document.getElementById(
       "newStatus"
     )?.value ||
     "new";
+
 
   const priority =
     document.getElementById(
@@ -1933,10 +1925,13 @@ async function saveNewEnquiry() {
     )?.value ||
     "normal";
 
+
   const followUp =
     document.getElementById(
       "newFollowUp"
-    )?.value || "";
+    )?.value ||
+    "";
+
 
   const requirements =
     document.getElementById(
@@ -1944,21 +1939,25 @@ async function saveNewEnquiry() {
     )?.value.trim() ||
     "";
 
+
   const notes =
     document.getElementById(
       "newNotes"
     )?.value.trim() ||
     "";
 
+
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
 
+
   const saveBtn =
     document.getElementById(
       "saveNewEnquiryBtn"
     );
+
 
   if (!name || !mobile) {
 
@@ -1966,21 +1965,27 @@ async function saveNewEnquiry() {
 
       message.textContent =
         "Customer name and mobile number are required.";
+
     }
 
     return;
   }
 
+
   if (saveBtn) {
 
     saveBtn.disabled = true;
-    saveBtn.textContent = "Saving...";
+    saveBtn.textContent =
+      "Saving...";
+
   }
+
 
   if (message) {
     message.textContent =
       "Saving enquiry...";
   }
+
 
   try {
 
@@ -2029,8 +2034,7 @@ async function saveNewEnquiry() {
           source:
             source || "Other",
 
-          status:
-            status,
+          status,
 
           assigned_to:
             null,
@@ -2042,15 +2046,16 @@ async function saveNewEnquiry() {
                 ).toISOString()
               : null,
 
-          priority:
-            priority,
+          priority,
 
           requirements:
             requirements || null,
 
           last_contacted_at:
             null
+
         });
+
 
     if (error) {
 
@@ -2059,30 +2064,38 @@ async function saveNewEnquiry() {
         error
       );
 
+
       if (message) {
 
         message.textContent =
           "Unable to save enquiry: " +
           error.message;
+
       }
 
       return;
     }
+
 
     console.log(
       "ENQUIRY CREATED:",
       data
     );
 
+
     if (message) {
 
       message.textContent =
         "Enquiry added successfully.";
+
     }
+
 
     clearAddEnquiryForm();
 
+
     await loadEnquiries();
+
 
     setTimeout(
       () => {
@@ -2091,6 +2104,7 @@ async function saveNewEnquiry() {
       500
     );
 
+
   } catch (error) {
 
     console.error(
@@ -2098,28 +2112,35 @@ async function saveNewEnquiry() {
       error
     );
 
+
     if (message) {
 
       message.textContent =
         "Something went wrong: " +
         error.message;
+
     }
+
 
   } finally {
 
     if (saveBtn) {
 
       saveBtn.disabled = false;
+
       saveBtn.textContent =
         "Save Enquiry";
+
     }
+
   }
+
 }
 
 
-// =====================================================
-// CLEAR ADD ENQUIRY FORM
-// =====================================================
+/* =========================================================
+   CLEAR ADD ENQUIRY FORM
+   ========================================================= */
 
 function clearAddEnquiryForm() {
 
@@ -2138,6 +2159,7 @@ function clearAddEnquiryForm() {
 
   ];
 
+
   fields.forEach((id) => {
 
     const element =
@@ -2146,7 +2168,9 @@ function clearAddEnquiryForm() {
     if (element) {
       element.value = "";
     }
+
   });
+
 
   const occasion =
     document.getElementById(
@@ -2157,6 +2181,7 @@ function clearAddEnquiryForm() {
     occasion.value = "";
   }
 
+
   const food =
     document.getElementById(
       "newFood"
@@ -2165,6 +2190,7 @@ function clearAddEnquiryForm() {
   if (food) {
     food.value = "";
   }
+
 
   const source =
     document.getElementById(
@@ -2175,6 +2201,7 @@ function clearAddEnquiryForm() {
     source.value = "Website";
   }
 
+
   const status =
     document.getElementById(
       "newStatus"
@@ -2184,6 +2211,7 @@ function clearAddEnquiryForm() {
     status.value = "new";
   }
 
+
   const priority =
     document.getElementById(
       "newPriority"
@@ -2192,12 +2220,13 @@ function clearAddEnquiryForm() {
   if (priority) {
     priority.value = "normal";
   }
+
 }
 
 
-// =====================================================
-// TOAST
-// =====================================================
+/* =========================================================
+   TOAST
+   ========================================================= */
 
 function showToast(message) {
 
@@ -2209,6 +2238,7 @@ function showToast(message) {
       "toast"
     );
 
+
   if (!toast) {
 
     console.log(
@@ -2219,23 +2249,50 @@ function showToast(message) {
     return;
   }
 
+
   toast.textContent =
     message;
 
-  toast.classList.add("show");
 
-  setTimeout(
-    () => {
-      toast.classList.remove("show");
-    },
-    2500
+  toast.classList.add(
+    "show"
   );
+
+
+  setTimeout(() => {
+
+    toast.classList.remove(
+      "show"
+    );
+
+  }, 2500);
+
 }
 
 
-// =====================================================
-// DATE FORMAT
-// =====================================================
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function setText(
+  id,
+  value
+) {
+
+  const element =
+    document.getElementById(id);
+
+  if (element) {
+    element.textContent =
+      value;
+  }
+
+}
+
+
+/* =========================================================
+   DATE FORMAT
+   ========================================================= */
 
 function formatDate(value) {
 
@@ -2243,16 +2300,21 @@ function formatDate(value) {
     return "—";
   }
 
+
   const date =
     new Date(value);
+
 
   if (
     Number.isNaN(
       date.getTime()
     )
   ) {
+
     return value;
+
   }
+
 
   return date.toLocaleDateString(
     "en-IN",
@@ -2262,12 +2324,13 @@ function formatDate(value) {
       year: "numeric"
     }
   );
+
 }
 
 
-// =====================================================
-// DATETIME LOCAL
-// =====================================================
+/* =========================================================
+   DATETIME LOCAL
+   ========================================================= */
 
 function toDateTimeLocal(value) {
 
@@ -2275,23 +2338,27 @@ function toDateTimeLocal(value) {
     return "";
   }
 
+
   const date =
     new Date(value);
+
 
   if (
     Number.isNaN(
       date.getTime()
     )
   ) {
+
     return "";
+
   }
+
 
   const pad =
     (number) =>
-      String(number).padStart(
-        2,
-        "0"
-      );
+      String(number)
+        .padStart(2, "0");
+
 
   return (
     date.getFullYear() +
@@ -2312,12 +2379,13 @@ function toDateTimeLocal(value) {
       date.getMinutes()
     )
   );
+
 }
 
 
-// =====================================================
-// STATUS
-// =====================================================
+/* =========================================================
+   STATUS
+   ========================================================= */
 
 function formatStatus(status) {
 
@@ -2340,13 +2408,16 @@ function formatStatus(status) {
 
     closed:
       "Closed"
+
   };
+
 
   return (
     values[status] ||
     status ||
     "New"
   );
+
 }
 
 
@@ -2371,18 +2442,21 @@ function getStatusClass(status) {
 
     closed:
       "status-closed"
+
   };
+
 
   return (
     classes[status] ||
     "status-new"
   );
+
 }
 
 
-// =====================================================
-// PRIORITY
-// =====================================================
+/* =========================================================
+   PRIORITY
+   ========================================================= */
 
 function formatPriority(priority) {
 
@@ -2399,673 +2473,52 @@ function formatPriority(priority) {
 
     low:
       "Low"
+
   };
+
 
   return (
     values[priority] ||
     priority ||
     "Normal"
   );
+
 }
 
 
-// =====================================================
-// INITIALS
-// =====================================================
-
-function getInitials(name) {
-
-  return String(name || "C")
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map(
-      (word) =>
-        word.charAt(0).toUpperCase()
-    )
-    .join("");
-}
-
-
-// =====================================================
-// HTML ESCAPE
-// =====================================================
+/* =========================================================
+   HTML ESCAPE
+   ========================================================= */
 
 function escapeHTML(value) {
 
   return String(
     value ?? ""
   )
+
     .replace(
       /&/g,
       "&amp;"
     )
+
     .replace(
       /</g,
       "&lt;"
     )
+
     .replace(
       />/g,
       "&gt;"
     )
+
     .replace(
       /"/g,
       "&quot;"
     )
+
     .replace(
       /'/g,
       "&#039;"
     );
-}
 
-
-// =====================================================
-// PROFESSIONAL LEAD MODAL CSS
-// =====================================================
-
-function injectLeadDetailsStyles() {
-
-  if (
-    document.getElementById(
-      "smvLeadDetailsStyles"
-    )
-  ) {
-    return;
-  }
-
-  const style =
-    document.createElement("style");
-
-  style.id =
-    "smvLeadDetailsStyles";
-
-  style.textContent = `
-
-    /* =========================================
-       LEAD DETAILS MODAL
-       ========================================= */
-
-    .smv-lead-modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: rgba(9, 14, 24, 0.72);
-      backdrop-filter: blur(8px);
-      opacity: 0;
-      transition: opacity .18s ease;
-    }
-
-    .smv-lead-modal-overlay.show {
-      opacity: 1;
-    }
-
-
-    .smv-lead-modal {
-      width: min(1120px, 100%);
-      max-height: calc(100vh - 48px);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      background: #ffffff;
-      border: 1px solid #e5e9f1;
-      border-radius: 22px;
-      box-shadow:
-        0 30px 80px rgba(0,0,0,.28);
-      transform: translateY(12px) scale(.985);
-      transition:
-        transform .18s ease;
-    }
-
-    .smv-lead-modal-overlay.show
-    .smv-lead-modal {
-      transform: translateY(0) scale(1);
-    }
-
-
-    /* HEADER */
-
-    .smv-lead-modal-header {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 22px 26px;
-      border-bottom: 1px solid #edf0f5;
-      background:
-        linear-gradient(
-          135deg,
-          #ffffff 0%,
-          #f8fbff 100%
-        );
-    }
-
-
-    .smv-lead-title-area {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      min-width: 0;
-    }
-
-
-    .smv-lead-avatar {
-      width: 54px;
-      height: 54px;
-      flex: 0 0 54px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 15px;
-      background:
-        linear-gradient(
-          135deg,
-          #16233f,
-          #314f89
-        );
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: .5px;
-    }
-
-
-    .smv-modal-kicker {
-      margin-bottom: 3px;
-      color: #6b7da0;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1.6px;
-      text-transform: uppercase;
-    }
-
-
-    .smv-lead-title-area h2 {
-      margin: 0;
-      color: #172033;
-      font-size: 24px;
-      line-height: 1.15;
-      font-weight: 800;
-    }
-
-
-    .smv-lead-id {
-      display: block;
-      margin-top: 5px;
-      color: #98a2b3;
-      font-size: 11px;
-    }
-
-
-    .smv-modal-close {
-      width: 40px;
-      height: 40px;
-      flex: 0 0 40px;
-      border: 1px solid #dfe4ec;
-      border-radius: 12px;
-      background: #ffffff;
-      color: #68748a;
-      font-size: 25px;
-      line-height: 1;
-      cursor: pointer;
-      transition: .15s ease;
-    }
-
-
-    .smv-modal-close:hover {
-      background: #f3f5f8;
-      color: #172033;
-      transform: rotate(4deg);
-    }
-
-
-    /* ACTION BAR */
-
-    .smv-lead-actions {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 12px 26px;
-      border-bottom: 1px solid #edf0f5;
-      background: #fbfcfe;
-    }
-
-
-    .smv-lead-actions button {
-      min-height: 36px;
-      padding: 0 14px;
-      border-radius: 9px;
-      border: 1px solid #dfe5ee;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: .15s ease;
-    }
-
-
-    .smv-action-call {
-      background: #eef2ff;
-      color: #4354c8;
-    }
-
-
-    .smv-action-whatsapp {
-      background: #ecfbf3;
-      color: #17804b;
-    }
-
-
-    .smv-lead-actions button:hover {
-      transform: translateY(-1px);
-    }
-
-
-    .smv-lead-actions button:disabled {
-      opacity: .45;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-
-    /* BODY */
-
-    .smv-lead-modal-body {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      padding: 24px 26px 28px;
-      background: #f7f9fc;
-    }
-
-
-    .smv-detail-section {
-      margin-bottom: 22px;
-      padding: 20px;
-      border: 1px solid #e6eaf1;
-      border-radius: 16px;
-      background: #ffffff;
-    }
-
-
-    .smv-detail-section:last-child {
-      margin-bottom: 0;
-    }
-
-
-    .smv-section-heading {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      margin-bottom: 17px;
-    }
-
-
-    .smv-section-icon {
-      width: 34px;
-      height: 34px;
-      flex: 0 0 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 9px;
-      background: #eef3ff;
-      color: #5369cf;
-      font-size: 15px;
-    }
-
-
-    .smv-section-heading strong {
-      display: block;
-      color: #202a3d;
-      font-size: 14px;
-      font-weight: 800;
-    }
-
-
-    .smv-section-heading span {
-      display: block;
-      margin-top: 2px;
-      color: #8b96a8;
-      font-size: 11px;
-    }
-
-
-    /* INFO GRID */
-
-    .smv-info-grid {
-      display: grid;
-      grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-
-    .smv-event-grid {
-      grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-    }
-
-
-    .smv-info-card {
-      min-width: 0;
-      min-height: 76px;
-      padding: 13px 14px;
-      border: 1px solid #e7ebf2;
-      border-radius: 12px;
-      background: #fbfcfe;
-    }
-
-
-    .smv-info-card-label {
-      margin-bottom: 8px;
-      color: #8994a7;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1.1px;
-      text-transform: uppercase;
-    }
-
-
-    .smv-info-card-value {
-      color: #273249;
-      font-size: 14px;
-      line-height: 1.35;
-      font-weight: 700;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-
-    /* REQUIREMENTS */
-
-    .smv-requirements-box {
-      padding: 17px 18px;
-      border: 1px solid #dfe6f0;
-      border-radius: 13px;
-      background:
-        linear-gradient(
-          135deg,
-          #f9fbff,
-          #f5f8fc
-        );
-    }
-
-
-    .smv-requirements-label {
-      margin-bottom: 9px;
-      color: #77859b;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1.2px;
-    }
-
-
-    .smv-requirements-text {
-      color: #2b3548;
-      font-size: 14px;
-      line-height: 1.65;
-      white-space: normal;
-      overflow-wrap: anywhere;
-    }
-
-
-    /* CRM CONTROLS */
-
-    .smv-crm-section {
-      background: #fbfcff;
-    }
-
-
-    .smv-crm-grid {
-      display: grid;
-      grid-template-columns:
-        1fr 1fr 1.35fr;
-      gap: 13px;
-      margin-bottom: 17px;
-    }
-
-
-    .smv-control label,
-    .smv-notes-control label {
-      display: block;
-      margin-bottom: 7px;
-      color: #778398;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
-
-
-    .smv-control select,
-    .smv-control input,
-    .smv-notes-control textarea {
-      width: 100%;
-      box-sizing: border-box;
-      border: 1px solid #dce2eb;
-      border-radius: 10px;
-      outline: none;
-      background: #ffffff;
-      color: #253046;
-      font-family: inherit;
-      font-size: 13px;
-      transition: border-color .15s ease,
-                  box-shadow .15s ease;
-    }
-
-
-    .smv-control select,
-    .smv-control input {
-      height: 44px;
-      padding: 0 12px;
-    }
-
-
-    .smv-notes-control textarea {
-      min-height: 94px;
-      padding: 12px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-
-    .smv-control select:focus,
-    .smv-control input:focus,
-    .smv-notes-control textarea:focus {
-      border-color: #7488dd;
-      box-shadow:
-        0 0 0 3px rgba(
-          91,
-          112,
-          207,
-          .10
-        );
-    }
-
-
-    .smv-notes-control small {
-      display: block;
-      margin-top: 6px;
-      color: #9aa4b4;
-      font-size: 10px;
-    }
-
-
-    /* FOOTER */
-
-    .smv-lead-modal-footer {
-      flex: 0 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 16px 26px;
-      border-top: 1px solid #e8ebf1;
-      background: #ffffff;
-    }
-
-
-    .smv-footer-hint {
-      color: #8d98a9;
-      font-size: 11px;
-    }
-
-
-    .smv-footer-buttons {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-
-    .smv-cancel-btn,
-    .smv-save-btn {
-      height: 42px;
-      padding: 0 18px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: .15s ease;
-    }
-
-
-    .smv-cancel-btn {
-      border: 1px solid #dce2ea;
-      background: #ffffff;
-      color: #536075;
-    }
-
-
-    .smv-save-btn {
-      border: 1px solid #182642;
-      background: #182642;
-      color: #ffffff;
-      box-shadow:
-        0 6px 15px rgba(
-          24,
-          38,
-          66,
-          .18
-        );
-    }
-
-
-    .smv-cancel-btn:hover,
-    .smv-save-btn:hover {
-      transform: translateY(-1px);
-    }
-
-
-    .smv-save-btn:disabled {
-      opacity: .6;
-      cursor: wait;
-      transform: none;
-    }
-
-
-    /* SCROLLBAR */
-
-    .smv-lead-modal-body::-webkit-scrollbar {
-      width: 7px;
-    }
-
-    .smv-lead-modal-body::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .smv-lead-modal-body::-webkit-scrollbar-thumb {
-      background: #cbd3df;
-      border-radius: 20px;
-    }
-
-
-    /* =========================================
-       MOBILE
-       ========================================= */
-
-    @media (max-width: 900px) {
-
-      .smv-info-grid,
-      .smv-event-grid {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-      }
-
-      .smv-crm-grid {
-        grid-template-columns:
-          1fr 1fr;
-      }
-
-      .smv-control:last-child {
-        grid-column: 1 / -1;
-      }
-    }
-
-
-    @media (max-width: 620px) {
-
-      .smv-lead-modal-overlay {
-        padding: 0;
-        align-items: flex-end;
-      }
-
-      .smv-lead-modal {
-        width: 100%;
-        max-height: 94vh;
-        border-radius:
-          20px 20px 0 0;
-      }
-
-      .smv-lead-modal-header {
-        padding: 17px;
-      }
-
-      .smv-lead-modal-body {
-        padding: 17px;
-      }
-
-      .smv-lead-actions {
-        padding: 10px 17px;
-      }
-
-      .smv-detail-section {
-        padding: 15px;
-      }
-
-      .smv-info-grid,
-      .smv-event-grid,
-      .smv-crm-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .smv-control:last-child {
-        grid-column: auto;
-      }
-
-      .smv-lead-modal-footer {
-        padding: 13px 17px;
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .smv-footer-buttons {
-        width: 100%;
-      }
-
-      .smv-cancel-btn,
-      .smv-save-btn {
-        flex: 1;
-      }
-
-      .smv-lead-title-area h2 {
-        font-size: 20px;
-      }
-    }
-
-  `;
-
-  document.head.appendChild(style);
 }
