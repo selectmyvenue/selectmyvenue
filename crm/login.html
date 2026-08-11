@@ -1,6 +1,9 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -10,6 +13,7 @@
 
     <title>Select My Venue CRM — Login</title>
 
+    <!-- CRM CSS -->
     <link
         rel="stylesheet"
         href="./crm.css"
@@ -21,113 +25,347 @@
     ></script>
 
     <style>
-        .login-page {
+
+        /* =====================================================
+           LOGIN PAGE — FULL SCREEN
+        ===================================================== */
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
             min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at 15% 20%,
+                    rgba(21, 154, 140, 0.14),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 85% 80%,
+                    rgba(8, 127, 115, 0.12),
+                    transparent 35%
+                ),
+                #070b14;
+            color: #ffffff;
+        }
+
+
+        /* =====================================================
+           FULL PAGE WRAPPER
+        ===================================================== */
+
+        .login-page {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 24px;
+
+            box-sizing: border-box;
+
+            padding: 30px 20px;
+
+            position: relative;
+            overflow: hidden;
         }
 
-        .login-card {
-            width: min(440px, 100%);
-            padding: 38px;
-            border-radius: 24px;
-            background: rgba(20, 28, 45, 0.96);
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+
+        /* =====================================================
+           BACKGROUND GLOW
+        ===================================================== */
+
+        .login-page::before {
+            content: "";
+            position: absolute;
+
+            width: 520px;
+            height: 520px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(21, 154, 140, 0.10),
+                    transparent 70%
+                );
+
+            top: -220px;
+            left: -180px;
+
+            pointer-events: none;
         }
+
+        .login-page::after {
+            content: "";
+            position: absolute;
+
+            width: 520px;
+            height: 520px;
+
+            border-radius: 50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(21, 154, 140, 0.08),
+                    transparent 70%
+                );
+
+            bottom: -240px;
+            right: -180px;
+
+            pointer-events: none;
+        }
+
+
+        /* =====================================================
+           LOGIN CARD
+        ===================================================== */
+
+        .login-card {
+            position: relative;
+            z-index: 2;
+
+            width: min(430px, 100%);
+
+            box-sizing: border-box;
+
+            padding: 40px;
+
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(20, 28, 45, 0.98),
+                    rgba(12, 18, 31, 0.98)
+                );
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            box-shadow:
+                0 30px 90px rgba(0, 0, 0, 0.55),
+                0 0 0 1px rgba(21, 154, 140, 0.03);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+
+        /* =====================================================
+           LOGO
+        ===================================================== */
 
         .login-logo {
             display: block;
-            width: 92px;
+
+            width: 86px;
             height: auto;
+
+            max-height: 86px;
+
             margin: 0 auto 22px;
+
             object-fit: contain;
         }
 
+
+        /* =====================================================
+           BRAND
+        ===================================================== */
+
         .login-brand {
             text-align: center;
+
             margin-bottom: 30px;
         }
 
         .login-brand h1 {
             margin: 0;
+
             font-size: 27px;
+            line-height: 1.2;
+
             font-weight: 700;
+
+            letter-spacing: -0.02em;
         }
 
         .login-brand p {
-            margin: 8px 0 0;
-            opacity: 0.7;
+            margin: 9px 0 0;
+
+            color: rgba(255, 255, 255, 0.62);
+
             font-size: 14px;
+            line-height: 1.5;
         }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
 
         .login-form {
             display: grid;
+
             gap: 18px;
         }
 
+
+        /* =====================================================
+           FIELD
+        ===================================================== */
+
         .login-field {
             display: grid;
+
             gap: 8px;
         }
 
         .login-field label {
-            font-size: 12px;
+            font-size: 11px;
+
             font-weight: 700;
-            letter-spacing: 0.08em;
+
+            letter-spacing: 0.09em;
+
+            color: rgba(255, 255, 255, 0.72);
         }
 
         .login-field input {
             width: 100%;
+
             box-sizing: border-box;
+
             padding: 14px 15px;
+
             border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.10);
-            background: rgba(255,255,255,0.05);
-            color: inherit;
+
+            border: 1px solid rgba(255, 255, 255, 0.10);
+
+            background: rgba(255, 255, 255, 0.045);
+
+            color: #ffffff;
+
             outline: none;
+
+            font-family: inherit;
+
             font-size: 15px;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background 0.2s ease;
+        }
+
+        .login-field input::placeholder {
+            color: rgba(255, 255, 255, 0.34);
+        }
+
+        .login-field input:hover {
+            background: rgba(255, 255, 255, 0.06);
         }
 
         .login-field input:focus {
-            border-color: rgba(52, 211, 153, 0.7);
-            box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.10);
+            border-color:
+                rgba(52, 211, 153, 0.75);
+
+            background:
+                rgba(255, 255, 255, 0.065);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(52, 211, 153, 0.10);
         }
+
+
+        /* =====================================================
+           LOGIN BUTTON
+        ===================================================== */
 
         .login-btn {
             width: 100%;
+
             border: 0;
+
             border-radius: 12px;
+
             padding: 14px 18px;
+
             cursor: pointer;
+
+            font-family: inherit;
+
             font-size: 15px;
+
             font-weight: 700;
-            color: #fff;
-            background: linear-gradient(
-                135deg,
-                #159a8c,
-                #087f73
-            );
-            transition: 0.2s ease;
+
+            color: #ffffff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #159a8c,
+                    #087f73
+                );
+
+            box-shadow:
+                0 10px 25px
+                rgba(8, 127, 115, 0.22);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                opacity 0.2s ease;
         }
 
         .login-btn:hover {
             transform: translateY(-1px);
+
+            box-shadow:
+                0 14px 30px
+                rgba(8, 127, 115, 0.30);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
         }
 
         .login-btn:disabled {
             opacity: 0.6;
+
             cursor: not-allowed;
+
             transform: none;
+
+            box-shadow: none;
         }
+
+
+        /* =====================================================
+           LOGIN MESSAGE
+        ===================================================== */
 
         .login-message {
             min-height: 20px;
+
             text-align: center;
+
             font-size: 13px;
-            margin-top: 4px;
+
+            line-height: 1.4;
+
+            margin-top: 2px;
         }
 
         .login-message.error {
@@ -138,251 +376,285 @@
             color: #63e6be;
         }
 
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
         .login-footer {
             text-align: center;
+
             margin-top: 25px;
+
             font-size: 11px;
-            opacity: 0.45;
+
+            color:
+                rgba(255, 255, 255, 0.35);
         }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 600px) {
+
+            .login-page {
+                padding: 20px 15px;
+            }
+
+            .login-card {
+                width: 100%;
+
+                padding: 30px 22px;
+
+                border-radius: 20px;
+            }
+
+            .login-logo {
+                width: 76px;
+
+                margin-bottom: 18px;
+            }
+
+            .login-brand {
+                margin-bottom: 25px;
+            }
+
+            .login-brand h1 {
+                font-size: 23px;
+            }
+
+            .login-brand p {
+                font-size: 13px;
+            }
+
+        }
+
+
+        /* =====================================================
+           VERY SMALL SCREENS
+        ===================================================== */
+
+        @media (max-height: 650px) {
+
+            .login-page {
+                align-items: flex-start;
+
+                padding-top: 25px;
+                padding-bottom: 25px;
+            }
+
+            .login-card {
+                padding-top: 28px;
+                padding-bottom: 28px;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div class="login-page">
 
-    <div class="login-card">
+    <!-- =====================================================
+         LOGIN PAGE
+    ===================================================== -->
 
-        <img
-            src="../logo.png"
-            alt="Select My Venue"
-            class="login-logo"
+    <main class="login-page">
+
+
+        <!-- =================================================
+             LOGIN CARD
+        ================================================== -->
+
+        <section
+            class="login-card"
+            aria-labelledby="loginTitle"
         >
 
-        <div class="login-brand">
 
-            <h1>
-                Select My Venue CRM
-            </h1>
+            <!-- LOGO -->
 
-            <p>
-                Employee Lead Management System
-            </p>
-
-        </div>
-
-
-        <form
-            id="loginForm"
-            class="login-form"
-        >
-
-            <div class="login-field">
-
-                <label for="email">
-                    EMAIL ADDRESS
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    autocomplete="username"
-                    required
-                >
-
-            </div>
-
-
-            <div class="login-field">
-
-                <label for="password">
-                    PASSWORD
-                </label>
-
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    autocomplete="current-password"
-                    required
-                >
-
-            </div>
-
-
-            <button
-                type="submit"
-                id="loginBtn"
-                class="login-btn"
+            <img
+                src="../logo.png"
+                alt="Select My Venue"
+                class="login-logo"
             >
-                Login to CRM
-            </button>
 
 
-            <div
-                id="loginMessage"
-                class="login-message"
-                role="alert"
-                aria-live="polite"
-            ></div>
+            <!-- BRAND -->
 
-        </form>
+            <div class="login-brand">
 
+                <h1 id="loginTitle">
+                    Select My Venue CRM
+                </h1>
 
-        <div class="login-footer">
-            Select My Venue · Secure Employee CRM
-        </div>
+                <p>
+                    Employee Lead Management System
+                </p>
 
-    </div>
-
-</div>
+            </div>
 
 
-<script>
+            <!-- =================================================
+                 LOGIN FORM
+            ================================================== -->
 
-    /* =====================================================
-       SUPABASE CONFIGURATION
-    ===================================================== */
-
-    const SUPABASE_URL =
-        "https://uajqwyoqbbswkfiwosyw.supabase.co";
-
-    const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+            <form
+                id="loginForm"
+                class="login-form"
+            >
 
 
-    /* =====================================================
-       SUPABASE CLIENT
-    ===================================================== */
+                <!-- EMAIL -->
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-        );
+                <div class="login-field">
 
+                    <label for="email">
+                        EMAIL ADDRESS
+                    </label>
 
-    /* =====================================================
-       DOM
-    ===================================================== */
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="username"
+                        required
+                    >
 
-    const loginForm =
-        document.getElementById("loginForm");
-
-    const loginBtn =
-        document.getElementById("loginBtn");
-
-    const loginMessage =
-        document.getElementById("loginMessage");
+                </div>
 
 
-    /* =====================================================
-       MESSAGE
-    ===================================================== */
+                <!-- PASSWORD -->
 
-    function showLoginMessage(
-        message,
-        type = "error"
-    ) {
+                <div class="login-field">
 
-        loginMessage.textContent =
-            message;
+                    <label for="password">
+                        PASSWORD
+                    </label>
 
-        loginMessage.className =
-            "login-message " + type;
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
 
-    }
+                </div>
 
 
-    /* =====================================================
-       CHECK EXISTING SESSION
-    ===================================================== */
+                <!-- LOGIN BUTTON -->
 
-    async function checkExistingSession() {
+                <button
+                    type="submit"
+                    id="loginBtn"
+                    class="login-btn"
+                >
+                    Login to CRM
+                </button>
 
-        try {
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient.auth.getSession();
+                <!-- MESSAGE -->
 
-            if (error) {
-                console.error(
-                    "Session check error:",
-                    error
-                );
+                <div
+                    id="loginMessage"
+                    class="login-message"
+                    role="alert"
+                    aria-live="polite"
+                ></div>
 
-                return;
-            }
 
-            if (data && data.session) {
+            </form>
 
-                window.location.href =
-                    "./dashboard.html";
 
-            }
+            <!-- FOOTER -->
 
-        } catch (error) {
+            <div class="login-footer">
+                Select My Venue · Secure Employee CRM
+            </div>
 
-            console.error(
-                "Session check failed:",
-                error
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         LOGIN SCRIPT
+    ===================================================== -->
+
+    <script>
+
+        /*
+         * Supabase configuration
+         *
+         * These values are used only by the login page.
+         */
+
+        const SUPABASE_URL =
+            "https://uajqwyoqbbswkfiwosyw.supabase.co";
+
+        const SUPABASE_ANON_KEY =
+            "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+
+
+        /*
+         * Create Supabase client
+         */
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
             );
+
+
+        /*
+         * Login elements
+         */
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const loginBtn =
+            document.getElementById("loginBtn");
+
+        const loginMessage =
+            document.getElementById("loginMessage");
+
+
+        /*
+         * Show message
+         */
+
+        function showLoginMessage(
+            message,
+            type = "error"
+        ) {
+
+            loginMessage.textContent =
+                message;
+
+            loginMessage.className =
+                "login-message " + type;
 
         }
 
-    }
 
+        /*
+         * Check existing session
+         */
 
-    /* =====================================================
-       LOGIN
-    ===================================================== */
-
-    loginForm.addEventListener(
-        "submit",
-        async function(event) {
-
-            event.preventDefault();
-
-            const email =
-                document
-                    .getElementById("email")
-                    .value
-                    .trim();
-
-            const password =
-                document
-                    .getElementById("password")
-                    .value;
-
-
-            if (!email || !password) {
-
-                showLoginMessage(
-                    "Please enter email and password.",
-                    "error"
-                );
-
-                return;
-
-            }
-
-
-            loginBtn.disabled = true;
-
-            loginBtn.textContent =
-                "Signing in...";
-
-            showLoginMessage(
-                "",
-                "success"
-            );
-
+        async function checkExistingSession() {
 
             try {
 
@@ -390,126 +662,178 @@
                     data,
                     error
                 } =
-                    await supabaseClient.auth
-                        .signInWithPassword({
-                            email: email,
-                            password: password
-                        });
+                    await supabaseClient
+                        .auth
+                        .getSession();
 
 
                 if (error) {
 
                     console.error(
-                        "Login error:",
+                        "Session check error:",
                         error
                     );
 
-                    showLoginMessage(
-                        error.message ||
-                        "Invalid email or password.",
-                        "error"
-                    );
-
-                    loginBtn.disabled =
-                        false;
-
-                    loginBtn.textContent =
-                        "Login to CRM";
-
                     return;
 
                 }
 
 
-                if (
-                    data &&
-                    data.session
-                ) {
+                if (data.session) {
 
-                    showLoginMessage(
-                        "Login successful. Opening CRM...",
-                        "success"
-                    );
-
-                    setTimeout(
-                        function() {
-
-                            window.location.href =
-                                "./dashboard.html";
-
-                        },
-                        300
-                    );
-
-                    return;
+                    window.location.href =
+                        "dashboard.html";
 
                 }
-
-
-                showLoginMessage(
-                    "Login failed. Please try again.",
-                    "error"
-                );
-
-                loginBtn.disabled =
-                    false;
-
-                loginBtn.textContent =
-                    "Login to CRM";
-
 
             } catch (error) {
 
                 console.error(
-                    "Unexpected login error:",
+                    "Session check failed:",
                     error
                 );
 
-                showLoginMessage(
-                    "Unable to connect to the CRM. Please try again.",
-                    "error"
-                );
+            }
 
-                loginBtn.disabled =
-                    false;
+        }
+
+
+        /*
+         * Login
+         */
+
+        loginForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const email =
+                    document
+                        .getElementById("email")
+                        .value
+                        .trim();
+
+                const password =
+                    document
+                        .getElementById("password")
+                        .value;
+
+
+                if (!email || !password) {
+
+                    showLoginMessage(
+                        "Please enter email and password.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                loginBtn.disabled = true;
 
                 loginBtn.textContent =
-                    "Login to CRM";
+                    "Signing in...";
+
+                showLoginMessage(
+                    "",
+                    "success"
+                );
+
+
+                try {
+
+                    const {
+                        data,
+                        error
+                    } =
+                        await supabaseClient
+                            .auth
+                            .signInWithPassword({
+                                email: email,
+                                password: password
+                            });
+
+
+                    if (error) {
+
+                        console.error(
+                            "Login error:",
+                            error
+                        );
+
+                        showLoginMessage(
+                            error.message ||
+                            "Invalid email or password.",
+                            "error"
+                        );
+
+                        loginBtn.disabled = false;
+
+                        loginBtn.textContent =
+                            "Login to CRM";
+
+                        return;
+
+                    }
+
+
+                    if (data.session) {
+
+                        showLoginMessage(
+                            "Login successful. Opening CRM...",
+                            "success"
+                        );
+
+
+                        setTimeout(
+                            function() {
+
+                                window.location.href =
+                                    "dashboard.html";
+
+                            },
+                            300
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Login failed:",
+                        error
+                    );
+
+                    showLoginMessage(
+                        "Unable to login. Please try again.",
+                        "error"
+                    );
+
+                    loginBtn.disabled = false;
+
+                    loginBtn.textContent =
+                        "Login to CRM";
+
+                }
 
             }
-
-        }
-    );
+        );
 
 
-    /* =====================================================
-       AUTH STATE
-    ===================================================== */
+        /*
+         * Start
+         */
 
-    supabaseClient.auth.onAuthStateChange(
-        function(event, session) {
+        checkExistingSession();
 
-            if (
-                event === "SIGNED_IN" &&
-                session
-            ) {
+    </script>
 
-                window.location.href =
-                    "./dashboard.html";
-
-            }
-
-        }
-    );
-
-
-    /* =====================================================
-       START
-    ===================================================== */
-
-    checkExistingSession();
-
-</script>
 
 </body>
+
 </html>
+```
