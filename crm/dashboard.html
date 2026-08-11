@@ -32,6 +32,7 @@
   <header class="crm-header">
 
     <!-- LEFT BRAND -->
+
     <div class="crm-brand">
 
       <img
@@ -48,6 +49,7 @@
 
 
     <!-- CENTER -->
+
     <div class="crm-header-center">
 
       <div class="crm-header-title">
@@ -58,6 +60,7 @@
 
 
     <!-- RIGHT -->
+
     <div class="header-actions">
 
       <span
@@ -172,7 +175,7 @@
         <div>
 
           <small>
-            NEW
+            NEW LEADS
           </small>
 
           <strong id="newLeads">
@@ -268,15 +271,35 @@
           </option>
 
           <option value="new">
-            New
+            New Lead
           </option>
 
-          <option value="contacted">
-            Contacted
+          <option value="not_picked">
+            Not Picked
           </option>
 
-          <option value="follow_up">
-            Follow-up
+          <option value="call_back">
+            Call Back
+          </option>
+
+          <option value="call_disconnected">
+            Call Disconnected
+          </option>
+
+          <option value="detail_shared">
+            Detail Shared
+          </option>
+
+          <option value="interested">
+            Interested
+          </option>
+
+          <option value="not_interested">
+            Not Interested
+          </option>
+
+          <option value="wrong_number">
+            Wrong Number
           </option>
 
           <option value="qualified">
@@ -426,7 +449,7 @@
 
 
   <!-- =====================================================
-       LEAD DETAILS MODAL
+       LEAD DETAILS / EDIT MODAL
   ====================================================== -->
 
   <div
@@ -458,7 +481,6 @@
           id="closeModalBtn"
           class="close-modal"
           type="button"
-          aria-label="Close"
         >
           ×
         </button>
@@ -467,20 +489,46 @@
 
 
       <!-- =================================================
-           CUSTOMER INFORMATION
+           CUSTOMER DETAILS
       ================================================== -->
 
-      <div class="lead-info-grid">
+      <div class="form-section-title">
+        Customer Details
+      </div>
 
-        <div class="info-card">
 
-          <small>
-            MOBILE
-          </small>
+      <div class="form-grid">
 
-          <strong id="modalMobile">
-            —
-          </strong>
+        <!-- CUSTOMER NAME -->
+
+        <div class="control-group">
+
+          <label for="modalCustomerNameInput">
+            CUSTOMER NAME
+          </label>
+
+          <input
+            id="modalCustomerNameInput"
+            type="text"
+            placeholder="Customer name"
+          >
+
+        </div>
+
+
+        <!-- MOBILE -->
+
+        <div class="control-group">
+
+          <label for="modalMobileInput">
+            MOBILE NUMBER
+          </label>
+
+          <input
+            id="modalMobileInput"
+            type="tel"
+            placeholder="Mobile number"
+          >
 
           <div class="info-actions">
 
@@ -507,93 +555,36 @@
         </div>
 
 
-        <div class="info-card">
+        <!-- EMAIL -->
 
-          <small>
+        <div class="control-group">
+
+          <label for="modalEmailInput">
             EMAIL
-          </small>
+          </label>
 
-          <strong id="modalEmail">
-            —
-          </strong>
+          <input
+            id="modalEmailInput"
+            type="email"
+            placeholder="customer@email.com"
+          >
 
         </div>
 
 
-        <div class="info-card">
+        <!-- LOCATION -->
 
-          <small>
+        <div class="control-group">
+
+          <label for="modalLocationInput">
             LOCATION
-          </small>
+          </label>
 
-          <strong id="modalLocation">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            OCCASION
-          </small>
-
-          <strong id="modalOccasion">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            EVENT DATE
-          </small>
-
-          <strong id="modalEventDate">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            GUESTS
-          </small>
-
-          <strong id="modalGuests">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            BUDGET / PERSON
-          </small>
-
-          <strong id="modalBudget">
-            —
-          </strong>
-
-        </div>
-
-
-        <div class="info-card">
-
-          <small>
-            FOOD PREFERENCE
-          </small>
-
-          <strong id="modalFood">
-            —
-          </strong>
+          <input
+            id="modalLocationInput"
+            type="text"
+            placeholder="Delhi, Gurgaon, Noida..."
+          >
 
         </div>
 
@@ -601,30 +592,183 @@
 
 
       <!-- =================================================
-           OTHER REQUIREMENTS
+           EVENT DETAILS
       ================================================== -->
 
-      <div class="detail-block">
+      <div class="form-section-title">
+        Event Details
+      </div>
 
-        <label>
+
+      <div class="form-grid">
+
+        <!-- OCCASION -->
+
+        <div class="control-group">
+
+          <label for="modalOccasionInput">
+            EVENT / OCCASION
+          </label>
+
+          <select id="modalOccasionInput">
+
+            <option value="">
+              Select occasion
+            </option>
+
+            <option value="Wedding">
+              Wedding
+            </option>
+
+            <option value="Engagement">
+              Engagement
+            </option>
+
+            <option value="Birthday">
+              Birthday
+            </option>
+
+            <option value="Anniversary">
+              Anniversary
+            </option>
+
+            <option value="Corporate Event">
+              Corporate Event
+            </option>
+
+            <option value="Party">
+              Party
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- EVENT DATE -->
+
+        <div class="control-group">
+
+          <label for="modalEventDateInput">
+            EVENT DATE
+          </label>
+
+          <input
+            id="modalEventDateInput"
+            type="date"
+          >
+
+        </div>
+
+
+        <!-- GUESTS -->
+
+        <div class="control-group">
+
+          <label for="modalGuestsInput">
+            GUESTS
+          </label>
+
+          <input
+            id="modalGuestsInput"
+            type="number"
+            min="1"
+            placeholder="Number of guests"
+          >
+
+        </div>
+
+
+        <!-- BUDGET -->
+
+        <div class="control-group">
+
+          <label for="modalBudgetInput">
+            BUDGET / PERSON
+          </label>
+
+          <input
+            id="modalBudgetInput"
+            type="number"
+            min="0"
+            placeholder="₹ per person"
+          >
+
+        </div>
+
+
+        <!-- FOOD -->
+
+        <div class="control-group">
+
+          <label for="modalFoodInput">
+            FOOD PREFERENCE
+          </label>
+
+          <select id="modalFoodInput">
+
+            <option value="">
+              Select preference
+            </option>
+
+            <option value="Veg">
+              Veg
+            </option>
+
+            <option value="Non-Veg">
+              Non-Veg
+            </option>
+
+            <option value="Both">
+              Both
+            </option>
+
+            <option value="Not Specified">
+              Not Specified
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
+      <!-- =================================================
+           REQUIREMENTS
+      ================================================== -->
+
+      <div class="control-group full-width">
+
+        <label for="modalRequirementsInput">
           OTHER REQUIREMENTS
         </label>
 
-        <div
-          id="modalRequirements"
-          class="detail-content"
-        >
-          —
-        </div>
+        <textarea
+          id="modalRequirementsInput"
+          rows="4"
+          placeholder="Venue requirements, special requests, etc."
+        ></textarea>
 
       </div>
 
 
       <!-- =================================================
-           CRM CONTROLS
+           CRM STATUS / PRIORITY / FOLLOW-UP
       ================================================== -->
 
+      <div class="form-section-title">
+        CRM Follow-up
+      </div>
+
+
       <div class="crm-controls">
+
+        <!-- STATUS -->
 
         <div class="control-group">
 
@@ -635,15 +779,35 @@
           <select id="modalStatus">
 
             <option value="new">
-              New
+              New Lead
             </option>
 
-            <option value="contacted">
-              Contacted
+            <option value="not_picked">
+              Not Picked
             </option>
 
-            <option value="follow_up">
-              Follow-up
+            <option value="call_back">
+              Call Back
+            </option>
+
+            <option value="call_disconnected">
+              Call Disconnected
+            </option>
+
+            <option value="detail_shared">
+              Detail Shared
+            </option>
+
+            <option value="interested">
+              Interested
+            </option>
+
+            <option value="not_interested">
+              Not Interested
+            </option>
+
+            <option value="wrong_number">
+              Wrong Number
             </option>
 
             <option value="qualified">
@@ -662,6 +826,8 @@
 
         </div>
 
+
+        <!-- PRIORITY -->
 
         <div class="control-group">
 
@@ -692,6 +858,8 @@
         </div>
 
 
+        <!-- FOLLOW UP -->
+
         <div class="control-group">
 
           <label for="modalFollowUp">
@@ -709,53 +877,60 @@
 
 
       <!-- =================================================
-           CUSTOMER CONTACT REMARK
+           CONTACT TRACKING
       ================================================== -->
 
-      <div class="detail-block contact-remark-block">
+      <div class="contact-tracking-grid">
 
-        <div class="remark-heading">
+        <div class="info-card">
 
-          <label for="modalContactRemark">
-            CUSTOMER CONTACT REMARK
-          </label>
+          <small>
+            CONTACT COUNT
+          </small>
 
-          <span class="remark-hint">
-            Latest call / WhatsApp update
-          </span>
+          <strong id="modalContactCount">
+            0
+          </strong>
 
         </div>
 
-        <textarea
-          id="modalContactRemark"
-          rows="4"
-          placeholder="Example: Called customer — interested in 500 guests, budget around ₹1,500/person. Will confirm tomorrow."
-        ></textarea>
+
+        <div class="info-card">
+
+          <small>
+            LAST CONTACTED
+          </small>
+
+          <strong id="modalLastContacted">
+            Never
+          </strong>
+
+        </div>
 
       </div>
 
 
       <!-- =================================================
-           INTERNAL NOTES
+           REMARK / INTERNAL NOTES
       ================================================== -->
 
       <div class="detail-block">
 
         <label for="modalNotes">
-          INTERNAL NOTES
+          REMARK / CALL NOTES
         </label>
 
         <textarea
           id="modalNotes"
           rows="5"
-          placeholder="Add internal notes about this lead..."
+          placeholder="Add remarks after speaking with the customer..."
         ></textarea>
 
       </div>
 
 
       <!-- =================================================
-           ACTIONS
+           SAVE / CANCEL
       ================================================== -->
 
       <div class="modal-actions">
@@ -765,7 +940,7 @@
           class="save-btn"
           type="button"
         >
-          Save Changes
+          Save Contact & Changes
         </button>
 
         <button
@@ -816,7 +991,6 @@
           id="closeAddEnquiryBtn"
           class="close-modal"
           type="button"
-          aria-label="Close"
         >
           ×
         </button>
@@ -1103,15 +1277,35 @@
             <select id="newStatus">
 
               <option value="new">
-                New
+                New Lead
               </option>
 
-              <option value="contacted">
-                Contacted
+              <option value="not_picked">
+                Not Picked
               </option>
 
-              <option value="follow_up">
-                Follow-up
+              <option value="call_back">
+                Call Back
+              </option>
+
+              <option value="call_disconnected">
+                Call Disconnected
+              </option>
+
+              <option value="detail_shared">
+                Detail Shared
+              </option>
+
+              <option value="interested">
+                Interested
+              </option>
+
+              <option value="not_interested">
+                Not Interested
+              </option>
+
+              <option value="wrong_number">
+                Wrong Number
               </option>
 
               <option value="qualified">
@@ -1196,38 +1390,19 @@
 
 
         <!-- =================================================
-             CUSTOMER CONTACT REMARK
-        ================================================== -->
-
-        <div class="control-group full-width">
-
-          <label for="newContactRemark">
-            CUSTOMER CONTACT REMARK
-          </label>
-
-          <textarea
-            id="newContactRemark"
-            rows="4"
-            placeholder="Add the latest customer call / WhatsApp remark..."
-          ></textarea>
-
-        </div>
-
-
-        <!-- =================================================
-             INTERNAL NOTES
+             REMARK
         ================================================== -->
 
         <div class="control-group full-width">
 
           <label for="newNotes">
-            INTERNAL NOTES
+            REMARK / INTERNAL NOTES
           </label>
 
           <textarea
             id="newNotes"
             rows="4"
-            placeholder="Internal CRM notes..."
+            placeholder="Add initial customer remarks..."
           ></textarea>
 
         </div>
