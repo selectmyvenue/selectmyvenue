@@ -12,14 +12,47 @@
 
 <title>Select My Venue CRM — Customer Enquiries</title>
 
+<!-- =========================================================
+     CRM CSS
+     dashboard.html is inside /crm/
+     so CSS is one level above.
+========================================================== -->
+
 <link rel="stylesheet" href="../crm.css">
 
-<!-- Supabase -->
+
+<!-- =========================================================
+     SUPABASE CONFIGURATION
+     IMPORTANT:
+     This MUST come BEFORE crm.js
+========================================================== -->
+
+<script>
+    window.SUPABASE_URL =
+        "https://uajqwyoqbbswkfiwosyw.supabase.co";
+
+    window.SUPABASE_ANON_KEY =
+        "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+</script>
+
+
+<!-- =========================================================
+     SUPABASE LIBRARY
+========================================================== -->
+
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    defer
 ></script>
 
-<!-- CRM JavaScript -->
+
+<!-- =========================================================
+     CRM JAVASCRIPT
+     crm.js is in the ROOT folder.
+     dashboard.html is inside /crm/
+     therefore use ../crm.js
+========================================================== -->
+
 <script
     src="../crm.js"
     defer
@@ -29,6 +62,10 @@
 </head>
 
 <body>
+
+<!-- =========================================================
+     CRM HEADER
+========================================================= -->
 
 <header class="crm-header">
 
@@ -47,6 +84,7 @@
 
 </div>
 
+
 <div class="crm-header-center">
 
     <div class="crm-header-title">
@@ -54,6 +92,7 @@
     </div>
 
 </div>
+
 
 <div class="header-actions">
 
@@ -77,9 +116,15 @@
 
 </header>
 
+<!-- =========================================================
+     MAIN CRM
+========================================================= -->
+
 <main class="crm-main">
 
 ```
+<!-- PAGE HEADING -->
+
 <section class="page-heading">
 
     <div>
@@ -98,6 +143,7 @@
         </p>
 
     </div>
+
 
     <div class="heading-actions">
 
@@ -121,6 +167,10 @@
 
 </section>
 
+
+<!-- =====================================================
+     STAT CARDS
+====================================================== -->
 
 <section
     class="stats-grid"
@@ -156,7 +206,7 @@
     <button
         type="button"
         class="stat-card"
-        data-status-filter="new"
+        data-status-filter="New"
         id="statNew"
     >
 
@@ -182,8 +232,8 @@
     <button
         type="button"
         class="stat-card"
-        data-status-filter="follow-up"
-        id="statFollowUp"
+        data-status-filter="Contacted"
+        id="statContacted"
     >
 
         <div class="stat-icon">
@@ -193,10 +243,10 @@
         <div>
 
             <small>
-                FOLLOW-UP
+                CONTACTED
             </small>
 
-            <strong id="followUpCount">
+            <strong id="contactedCount">
                 0
             </strong>
 
@@ -208,8 +258,8 @@
     <button
         type="button"
         class="stat-card"
-        data-status-filter="converted"
-        id="statConverted"
+        data-status-filter="Closed"
+        id="statClosed"
     >
 
         <div class="stat-icon">
@@ -219,10 +269,10 @@
         <div>
 
             <small>
-                CONVERTED
+                CLOSED
             </small>
 
-            <strong id="convertedCount">
+            <strong id="closedCount">
                 0
             </strong>
 
@@ -232,6 +282,10 @@
 
 </section>
 
+
+<!-- =====================================================
+     LEADS SECTION
+====================================================== -->
 
 <section class="leads-section">
 
@@ -306,10 +360,6 @@
                 High
             </option>
 
-            <option value="urgent">
-                Urgent
-            </option>
-
             <option value="medium">
                 Medium
             </option>
@@ -322,10 +372,18 @@
                 Low
             </option>
 
+            <option value="urgent">
+                Urgent
+            </option>
+
         </select>
 
     </div>
 
+
+    <!-- =================================================
+         TABLE
+    ================================================== -->
 
     <div class="table-wrapper">
 
@@ -396,6 +454,8 @@
     </div>
 
 
+    <!-- EMPTY STATE -->
+
     <div
         id="emptyState"
         class="empty-state"
@@ -454,6 +514,7 @@
 
         </div>
 
+
         <button
             type="button"
             class="close-modal"
@@ -466,6 +527,8 @@
     </div>
 
 
+    <!-- CUSTOMER INFORMATION -->
+
     <div class="lead-info-grid">
 
         <div class="info-card">
@@ -474,7 +537,7 @@
                 CUSTOMER
             </small>
 
-            <strong id="modalLeadName">
+            <strong id="detailCustomerName">
                 —
             </strong>
 
@@ -487,7 +550,7 @@
                 PHONE
             </small>
 
-            <strong id="modalPhone">
+            <strong id="detailPhone">
                 —
             </strong>
 
@@ -495,23 +558,6 @@
                 class="info-actions"
                 id="detailPhoneActions"
             >
-
-                <a
-                    id="modalCallBtn"
-                    class="contact-action"
-                    href="#"
-                >
-                    Call
-                </a>
-
-                <a
-                    id="modalWhatsappBtn"
-                    class="contact-action"
-                    href="#"
-                >
-                    WhatsApp
-                </a>
-
             </div>
 
         </div>
@@ -523,7 +569,7 @@
                 EMAIL
             </small>
 
-            <strong id="modalEmail">
+            <strong id="detailEmail">
                 —
             </strong>
 
@@ -531,15 +577,6 @@
                 class="info-actions"
                 id="detailEmailActions"
             >
-
-                <a
-                    id="modalEmailBtn"
-                    class="contact-action"
-                    href="#"
-                >
-                    Email
-                </a>
-
             </div>
 
         </div>
@@ -551,7 +588,7 @@
                 LEAD SOURCE
             </small>
 
-            <strong id="modalSource">
+            <strong id="detailSource">
                 —
             </strong>
 
@@ -559,6 +596,8 @@
 
     </div>
 
+
+    <!-- ENQUIRY INFORMATION -->
 
     <div class="detail-section-title">
         ENQUIRY INFORMATION
@@ -710,10 +749,6 @@
                     High
                 </option>
 
-                <option value="urgent">
-                    Urgent
-                </option>
-
                 <option value="medium">
                     Medium
                 </option>
@@ -724,6 +759,10 @@
 
                 <option value="low">
                     Low
+                </option>
+
+                <option value="urgent">
+                    Urgent
                 </option>
 
             </select>
@@ -762,6 +801,8 @@
     </div>
 
 
+    <!-- CUSTOMER MESSAGE -->
+
     <div class="detail-block">
 
         <label>
@@ -777,6 +818,8 @@
 
     </div>
 
+
+    <!-- REMARKS -->
 
     <div class="detail-block">
 
@@ -1148,16 +1191,16 @@
                         High
                     </option>
 
-                    <option value="urgent">
-                        Urgent
-                    </option>
-
                     <option value="medium">
                         Medium
                     </option>
 
                     <option value="low">
                         Low
+                    </option>
+
+                    <option value="urgent">
+                        Urgent
                     </option>
 
                 </select>
@@ -1285,11 +1328,19 @@
 
 </div>
 
+<!-- =========================================================
+     TOAST
+========================================================= -->
+
 <div
     id="toastMessage"
     role="status"
     aria-live="polite"
 ></div>
+
+<!-- =========================================================
+     INLINE EDIT TEMPLATES
+========================================================= -->
 
 <template id="inlineEditTextTemplate">
 
@@ -1327,9 +1378,7 @@
 ```
 <div class="inline-editor">
 
-    <select
-        class="inline-edit-select"
-    ></select>
+    <select class="inline-edit-select"></select>
 
     <button
         type="button"
