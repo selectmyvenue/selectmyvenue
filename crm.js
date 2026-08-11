@@ -36,6 +36,8 @@ let originalContactRemark = "";
 
 /* =========================================================
    STATUS OPTIONS
+   IMPORTANT:
+   These values MUST match dashboard.html
    ========================================================= */
 
 const STATUS_OPTIONS = [
@@ -44,8 +46,8 @@ const STATUS_OPTIONS = [
     label: "New Lead"
   },
   {
-    value: "not_picked",
-    label: "Not Picked"
+    value: "not_pick",
+    label: "Not Pick"
   },
   {
     value: "call_back",
@@ -72,6 +74,10 @@ const STATUS_OPTIONS = [
     label: "Wrong Number"
   },
   {
+    value: "qualified",
+    label: "Qualified"
+  },
+  {
     value: "converted",
     label: "Converted"
   },
@@ -94,15 +100,20 @@ document.addEventListener(
       document.getElementById("loginForm");
 
     if (loginForm) {
+
       setupLogin();
+
       return;
     }
+
 
     const logoutBtn =
       document.getElementById("logoutBtn");
 
     if (logoutBtn) {
+
       await setupCRM();
+
     }
 
   }
@@ -123,11 +134,13 @@ function setupLogin() {
 
   if (!loginForm) return;
 
+
   loginForm.addEventListener(
     "submit",
     async (event) => {
 
       event.preventDefault();
+
 
       const email =
         document
@@ -135,10 +148,12 @@ function setupLogin() {
           ?.value
           .trim();
 
+
       const password =
         document
           .getElementById("password")
           ?.value;
+
 
       if (!email || !password) {
 
@@ -155,6 +170,7 @@ function setupLogin() {
         return;
       }
 
+
       if (loginMessage) {
 
         loginMessage.textContent =
@@ -164,6 +180,7 @@ function setupLogin() {
           "block";
 
       }
+
 
       try {
 
@@ -177,12 +194,14 @@ function setupLogin() {
               password
             });
 
+
         if (error) {
 
           console.error(
             "LOGIN ERROR:",
             error
           );
+
 
           if (loginMessage) {
 
@@ -194,6 +213,7 @@ function setupLogin() {
 
           return;
         }
+
 
         if (!data?.session) {
 
@@ -207,6 +227,7 @@ function setupLogin() {
           return;
         }
 
+
         if (loginMessage) {
 
           loginMessage.textContent =
@@ -214,8 +235,10 @@ function setupLogin() {
 
         }
 
+
         window.location.href =
           "dashboard.html";
+
 
       } catch (error) {
 
@@ -223,6 +246,7 @@ function setupLogin() {
           "LOGIN EXCEPTION:",
           error
         );
+
 
         if (loginMessage) {
 
@@ -256,6 +280,7 @@ async function setupCRM() {
       await supabaseClient.auth
         .getSession();
 
+
     if (!session) {
 
       window.location.href =
@@ -263,6 +288,7 @@ async function setupCRM() {
 
       return;
     }
+
 
     setupLogout();
 
@@ -283,6 +309,7 @@ async function setupCRM() {
     );
 
     await loadEnquiries();
+
 
   } catch (error) {
 
@@ -309,7 +336,9 @@ function showStaffName(user) {
       "staffName"
     );
 
+
   if (!staffName) return;
+
 
   staffName.textContent =
     user?.email ||
@@ -324,6 +353,7 @@ function showStaffNameError() {
     document.getElementById(
       "staffName"
     );
+
 
   if (staffName) {
 
@@ -346,7 +376,9 @@ function setupLogout() {
       "logoutBtn"
     );
 
+
   if (!logoutBtn) return;
+
 
   logoutBtn.addEventListener(
     "click",
@@ -358,6 +390,7 @@ function setupLogout() {
       logoutBtn.textContent =
         "Logging out...";
 
+
       try {
 
         const {
@@ -365,6 +398,7 @@ function setupLogout() {
         } =
           await supabaseClient.auth
             .signOut();
+
 
         if (error) {
 
@@ -382,8 +416,10 @@ function setupLogout() {
           return;
         }
 
+
         window.location.href =
           "login.html";
+
 
       } catch (error) {
 
@@ -417,12 +453,13 @@ async function loadEnquiries() {
       "leadsTableBody"
     );
 
+
   if (tableBody) {
 
     tableBody.innerHTML = `
       <tr>
         <td
-          colspan="10"
+          colspan="12"
           class="loading-cell"
         >
           Loading enquiries...
@@ -431,6 +468,7 @@ async function loadEnquiries() {
     `;
 
   }
+
 
   try {
 
@@ -448,6 +486,7 @@ async function loadEnquiries() {
           }
         );
 
+
     if (error) {
 
       console.error(
@@ -455,15 +494,16 @@ async function loadEnquiries() {
         error
       );
 
-      currentEnquiries =
-        [];
+
+      currentEnquiries = [];
+
 
       if (tableBody) {
 
         tableBody.innerHTML = `
           <tr>
             <td
-              colspan="10"
+              colspan="12"
               class="loading-cell"
             >
               Unable to load enquiries.
@@ -476,16 +516,20 @@ async function loadEnquiries() {
       return;
     }
 
+
     currentEnquiries =
       Array.isArray(data)
         ? data
         : [];
 
+
     updateStats(
       currentEnquiries
     );
 
+
     applyFilters();
+
 
   } catch (error) {
 
@@ -494,12 +538,13 @@ async function loadEnquiries() {
       error
     );
 
+
     if (tableBody) {
 
       tableBody.innerHTML = `
         <tr>
           <td
-            colspan="10"
+            colspan="12"
             class="loading-cell"
           >
             Unable to load enquiries.
@@ -527,17 +572,21 @@ function renderEnquiries(
       "leadsTableBody"
     );
 
+
   const emptyState =
     document.getElementById(
       "emptyState"
     );
 
+
   if (!tableBody) return;
+
 
   if (!enquiries.length) {
 
     tableBody.innerHTML =
       "";
+
 
     if (emptyState) {
 
@@ -546,8 +595,10 @@ function renderEnquiries(
 
     }
 
+
     return;
   }
+
 
   if (emptyState) {
 
@@ -555,6 +606,7 @@ function renderEnquiries(
       true;
 
   }
+
 
   tableBody.innerHTML =
     enquiries
@@ -565,13 +617,28 @@ function renderEnquiries(
             lead.status ||
             "new";
 
+
           const priority =
             lead.priority ||
             "normal";
 
+
           const mobile =
             lead.mobile ||
             "";
+
+
+          const remark =
+            lead.contact_remark ||
+            "";
+
+
+          const contactCount =
+            Number(
+              lead.contact_count ||
+              0
+            );
+
 
           return `
             <tr>
@@ -762,6 +829,78 @@ function renderEnquiries(
 
                 <button
                   type="button"
+                  class="remark-table-btn"
+                  data-lead-id="${escapeHTML(
+                    String(lead.id)
+                  )}"
+                  title="View contact remark"
+                >
+                  ${
+                    remark
+                      ? escapeHTML(
+                          remark
+                        )
+                      : "Add Remark"
+                  }
+                </button>
+
+              </td>
+
+
+              <td>
+
+                <div class="contact-cell">
+
+                  ${
+                    mobile
+                      ? `
+                        <a
+                          href="tel:${escapeHTML(
+                            mobile
+                          )}"
+                          class="mini-contact"
+                          title="Call customer"
+                        >
+                          ☎
+                        </a>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    mobile
+                      ? `
+                        <a
+                          href="${buildWhatsAppURL(
+                            mobile
+                          )}"
+                          target="_blank"
+                          rel="noopener"
+                          class="mini-contact whatsapp-mini"
+                          title="WhatsApp customer"
+                        >
+                          ◉
+                        </a>
+                      `
+                      : ""
+                  }
+
+                  <span
+                    class="contact-count"
+                    title="Contact count"
+                  >
+                    ${contactCount}
+                  </span>
+
+                </div>
+
+              </td>
+
+
+              <td>
+
+                <button
+                  type="button"
                   class="view-lead-btn"
                   data-lead-id="${escapeHTML(
                     String(lead.id)
@@ -798,6 +937,7 @@ function renderEnquiries(
               button.dataset
                 .leadId;
 
+
             const lead =
               currentEnquiries.find(
                 (item) =>
@@ -809,9 +949,53 @@ function renderEnquiries(
                   )
               );
 
+
             if (lead) {
 
               openLeadModal(
+                lead
+              );
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+
+  document
+    .querySelectorAll(
+      ".remark-table-btn"
+    )
+    .forEach(
+      (button) => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const leadId =
+              button.dataset
+                .leadId;
+
+
+            const lead =
+              currentEnquiries.find(
+                (item) =>
+                  String(
+                    item.id
+                  ) ===
+                  String(
+                    leadId
+                  )
+              );
+
+
+            if (lead) {
+
+              openRemarkModal(
                 lead
               );
 
@@ -880,8 +1064,10 @@ function setupInlineLeadControls() {
               select.dataset
                 .leadId;
 
+
             const newStatus =
               select.value;
+
 
             await updateLeadInline(
               leadId,
@@ -914,8 +1100,10 @@ function setupInlineLeadControls() {
               select.dataset
                 .leadId;
 
+
             const newPriority =
               select.value;
+
 
             await updateLeadInline(
               leadId,
@@ -947,6 +1135,7 @@ async function updateLeadInline(
 
   if (!leadId) return;
 
+
   const lead =
     currentEnquiries.find(
       (item) =>
@@ -954,14 +1143,18 @@ async function updateLeadInline(
         String(leadId)
     );
 
+
   if (!lead) return;
+
 
   const previousValue =
     selectElement.dataset
       .currentValue;
 
+
   selectElement.disabled =
     true;
+
 
   try {
 
@@ -975,16 +1168,20 @@ async function updateLeadInline(
 
     };
 
+
     const {
       error
     } =
       await supabaseClient
         .from("customer_enquiries")
-        .update(updateData)
+        .update(
+          updateData
+        )
         .eq(
           "id",
           leadId
         );
+
 
     if (error) {
 
@@ -993,25 +1190,31 @@ async function updateLeadInline(
         error
       );
 
+
       selectElement.value =
         previousValue;
+
 
       showToast(
         "Unable to update lead: " +
         error.message
       );
 
+
       return;
     }
+
 
     Object.assign(
       lead,
       changes
     );
 
+
     selectElement.dataset
       .currentValue =
       selectElement.value;
+
 
     if (
       Object.prototype
@@ -1029,6 +1232,7 @@ async function updateLeadInline(
 
     }
 
+
     if (
       Object.prototype
         .hasOwnProperty.call(
@@ -1043,13 +1247,16 @@ async function updateLeadInline(
 
     }
 
+
     updateStats(
       currentEnquiries
     );
 
+
     showToast(
       "Lead updated successfully."
     );
+
 
   } catch (error) {
 
@@ -1058,12 +1265,15 @@ async function updateLeadInline(
       error
     );
 
+
     selectElement.value =
       previousValue;
+
 
     showToast(
       "Something went wrong."
     );
+
 
   } finally {
 
@@ -1088,20 +1298,24 @@ function updateStats(
       "totalLeads"
     );
 
+
   const newLeads =
     document.getElementById(
       "newLeads"
     );
+
 
   const followup =
     document.getElementById(
       "followupLeads"
     );
 
+
   const converted =
     document.getElementById(
       "convertedLeads"
     );
+
 
   if (total) {
 
@@ -1109,6 +1323,7 @@ function updateStats(
       enquiries.length;
 
   }
+
 
   if (newLeads) {
 
@@ -1124,6 +1339,7 @@ function updateStats(
 
   }
 
+
   if (followup) {
 
     followup.textContent =
@@ -1137,6 +1353,7 @@ function updateStats(
       ).length;
 
   }
+
 
   if (converted) {
 
@@ -1166,7 +1383,9 @@ function setupSearch() {
       "searchInput"
     );
 
+
   if (!searchInput) return;
+
 
   searchInput.addEventListener(
     "input",
@@ -1187,10 +1406,12 @@ function setupFilters() {
       "statusFilter"
     );
 
+
   const priorityFilter =
     document.getElementById(
       "priorityFilter"
     );
+
 
   if (statusFilter) {
 
@@ -1201,9 +1422,11 @@ function setupFilters() {
         activeLeadTab =
           "";
 
+
         setActiveLeadTab(
           null
         );
+
 
         applyFilters();
 
@@ -1211,6 +1434,7 @@ function setupFilters() {
     );
 
   }
+
 
   if (priorityFilter) {
 
@@ -1235,15 +1459,18 @@ function applyFilters() {
       "searchInput"
     );
 
+
   const statusFilter =
     document.getElementById(
       "statusFilter"
     );
 
+
   const priorityFilter =
     document.getElementById(
       "priorityFilter"
     );
+
 
   const search =
     (
@@ -1253,13 +1480,16 @@ function applyFilters() {
       .trim()
       .toLowerCase();
 
+
   const dropdownStatus =
     statusFilter?.value ||
     "";
 
+
   const priority =
     priorityFilter?.value ||
     "";
+
 
   const filtered =
     currentEnquiries.filter(
@@ -1290,25 +1520,30 @@ function applyFilters() {
           .join(" ")
           .toLowerCase();
 
+
         const matchesSearch =
           !search ||
           searchable.includes(
             search
           );
 
+
         const leadStatus =
           lead.status ||
           "new";
+
 
         const matchesTab =
           !activeLeadTab ||
           leadStatus ===
           activeLeadTab;
 
+
         const matchesStatus =
           !dropdownStatus ||
           leadStatus ===
           dropdownStatus;
+
 
         const matchesPriority =
           !priority ||
@@ -1317,6 +1552,7 @@ function applyFilters() {
             "normal"
           ) ===
           priority;
+
 
         return (
           matchesSearch &&
@@ -1327,6 +1563,7 @@ function applyFilters() {
 
       }
     );
+
 
   renderEnquiries(
     filtered
@@ -1346,7 +1583,9 @@ function setupRefresh() {
       "refreshBtn"
     );
 
+
   if (!refreshBtn) return;
+
 
   refreshBtn.addEventListener(
     "click",
@@ -1355,13 +1594,17 @@ function setupRefresh() {
       refreshBtn.disabled =
         true;
 
+
       refreshBtn.textContent =
         "Refreshing...";
 
+
       await loadEnquiries();
+
 
       refreshBtn.disabled =
         false;
+
 
       refreshBtn.textContent =
         "↻ Refresh";
@@ -1383,7 +1626,9 @@ function setupLeadTabs() {
       ".stat-tab"
     );
 
+
   if (!tabs.length) return;
+
 
   tabs.forEach(
     (tab) => {
@@ -1396,14 +1641,17 @@ function setupLeadTabs() {
             tab.dataset.status ||
             "";
 
+
           setActiveLeadTab(
             tab
           );
+
 
           const statusFilter =
             document.getElementById(
               "statusFilter"
             );
+
 
           if (statusFilter) {
 
@@ -1411,6 +1659,7 @@ function setupLeadTabs() {
               "";
 
           }
+
 
           applyFilters();
 
@@ -1445,6 +1694,7 @@ function setActiveLeadTab(
       }
     );
 
+
   if (selectedTab) {
 
     selectedTab.classList.add(
@@ -1467,15 +1717,18 @@ function setupLeadModal() {
       "closeModalBtn"
     );
 
+
   const cancelBtn =
     document.getElementById(
       "cancelModalBtn"
     );
 
+
   const saveBtn =
     document.getElementById(
       "saveLeadBtn"
     );
+
 
   if (closeBtn) {
 
@@ -1486,6 +1739,7 @@ function setupLeadModal() {
 
   }
 
+
   if (cancelBtn) {
 
     cancelBtn.addEventListener(
@@ -1494,6 +1748,7 @@ function setupLeadModal() {
     );
 
   }
+
 
   if (saveBtn) {
 
@@ -1504,10 +1759,12 @@ function setupLeadModal() {
 
   }
 
+
   const modal =
     document.getElementById(
       "leadModal"
     );
+
 
   if (modal) {
 
@@ -1529,6 +1786,9 @@ function setupLeadModal() {
 
   }
 
+
+  /* ESCAPE KEY */
+
   document.addEventListener(
     "keydown",
     (event) => {
@@ -1537,18 +1797,29 @@ function setupLeadModal() {
         event.key !==
         "Escape"
       ) {
+
         return;
+
       }
+
 
       const leadModal =
         document.getElementById(
           "leadModal"
         );
 
+
       const addModal =
         document.getElementById(
           "addEnquiryModal"
         );
+
+
+      const remarkModal =
+        document.getElementById(
+          "remarkModal"
+        );
+
 
       if (
         leadModal &&
@@ -1559,12 +1830,23 @@ function setupLeadModal() {
 
       }
 
+
       if (
         addModal &&
         !addModal.hidden
       ) {
 
         closeAddEnquiryModal();
+
+      }
+
+
+      if (
+        remarkModal &&
+        !remarkModal.hidden
+      ) {
+
+        closeRemarkModal();
 
       }
 
@@ -1585,50 +1867,61 @@ function openLeadModal(
   currentLead =
     lead;
 
+
   originalContactRemark =
     lead.contact_remark ||
     "";
 
-  /* CUSTOMER */
+
+  /* CUSTOMER NAME */
 
   setInputValue(
-    "modalCustomerName",
+    "modalCustomerNameInput",
     lead.customer_name ||
     ""
   );
 
+
+  /* MOBILE */
+
   setInputValue(
-    "modalMobile",
+    "modalMobileInput",
     lead.mobile ||
     ""
   );
 
+
+  /* EMAIL */
+
   setInputValue(
-    "modalEmail",
+    "modalEmailInput",
     lead.email ||
     ""
   );
 
+
   /* LOCATION */
 
   setInputValue(
-    "modalLocation",
+    "modalLocationInput",
     lead.location ||
     ""
   );
 
+
   /* OCCASION */
 
   setInputValue(
-    "modalOccasion",
+    "modalOccasionInput",
     lead.occasion ||
     ""
   );
 
+
   /* EVENT DATE */
 
   setInputValue(
-    "modalEventDate",
+    "modalEventDateInput",
     lead.event_date
       ? formatDateForInput(
           lead.event_date
@@ -1636,34 +1929,38 @@ function openLeadModal(
       : ""
   );
 
+
   /* GUESTS */
 
   setInputValue(
-    "modalGuests",
+    "modalGuestsInput",
     lead.guests ??
     ""
   );
 
+
   /* BUDGET */
 
   setInputValue(
-    "modalBudget",
+    "modalBudgetInput",
     lead.budget_per_person ??
     ""
   );
 
+
   /* FOOD */
 
   setInputValue(
-    "modalFood",
+    "modalFoodInput",
     lead.food_preference ||
     ""
   );
 
+
   /* REQUIREMENTS */
 
   setInputValue(
-    "modalRequirements",
+    "modalRequirementsInput",
     lead.requirements ||
     ""
   );
@@ -1708,6 +2005,7 @@ function openLeadModal(
       "modalStatus"
     );
 
+
   if (status) {
 
     status.innerHTML =
@@ -1747,12 +2045,13 @@ function openLeadModal(
   );
 
 
-  /* CALL */
+  /* CALL BUTTON */
 
   const callBtn =
     document.getElementById(
       "modalCallBtn"
     );
+
 
   if (callBtn) {
 
@@ -1765,52 +2064,37 @@ function openLeadModal(
   }
 
 
-  /* WHATSAPP */
+  /* WHATSAPP BUTTON */
 
   const whatsappBtn =
     document.getElementById(
       "modalWhatsappBtn"
     );
 
+
   if (whatsappBtn) {
 
-    const cleanMobile =
-      String(
-        lead.mobile ||
-        ""
-      )
-        .replace(
-          /\D/g,
-          ""
-        );
-
-    const whatsappNumber =
-      cleanMobile.length ===
-      10
-        ? "91" +
-          cleanMobile
-        : cleanMobile;
-
     whatsappBtn.href =
-      whatsappNumber
-        ? "https://wa.me/" +
-          whatsappNumber
-        : "#";
+      buildWhatsAppURL(
+        lead.mobile
+      );
 
   }
 
 
-  /* OPEN */
+  /* OPEN MODAL */
 
   const modal =
     document.getElementById(
       "leadModal"
     );
 
+
   if (modal) {
 
     modal.hidden =
       false;
+
 
     document.body.style.overflow =
       "hidden";
@@ -1831,6 +2115,7 @@ function closeLeadModal() {
       "leadModal"
     );
 
+
   if (modal) {
 
     modal.hidden =
@@ -1838,11 +2123,14 @@ function closeLeadModal() {
 
   }
 
+
   document.body.style.overflow =
     "";
 
+
   currentLead =
     null;
+
 
   originalContactRemark =
     "";
@@ -1869,65 +2157,69 @@ async function saveLeadChanges() {
   }
 
 
-  const saveBtn =
-    document.getElementById(
-      "saveLeadBtn"
-    );
-
-
   /* =======================================================
-     READ EDITABLE CUSTOMER FIELDS
+     READ CUSTOMER FIELDS
      ======================================================= */
 
   const customerName =
     getInputValue(
-      "modalCustomerName"
+      "modalCustomerNameInput"
     );
+
 
   const mobile =
     getInputValue(
-      "modalMobile"
+      "modalMobileInput"
     );
+
 
   const email =
     getInputValue(
-      "modalEmail"
+      "modalEmailInput"
     );
+
 
   const location =
     getInputValue(
-      "modalLocation"
+      "modalLocationInput"
     );
+
 
   const occasion =
     getInputValue(
-      "modalOccasion"
+      "modalOccasionInput"
     );
+
 
   const eventDate =
     getInputValue(
-      "modalEventDate"
+      "modalEventDateInput"
     );
+
 
   const guests =
     getInputValue(
-      "modalGuests"
+      "modalGuestsInput"
     );
+
 
   const budget =
     getInputValue(
-      "modalBudget"
+      "modalBudgetInput"
     );
+
 
   const foodPreference =
     getInputValue(
-      "modalFood"
+      "modalFoodInput"
     );
+
 
   const requirements =
     getInputValue(
-      "modalRequirements"
+      "modalRequirementsInput"
     );
+
 
   const contactRemark =
     getInputValue(
@@ -1935,7 +2227,9 @@ async function saveLeadChanges() {
     );
 
 
-  /* CRM */
+  /* =======================================================
+     CRM
+     ======================================================= */
 
   const status =
     document.getElementById(
@@ -1943,17 +2237,20 @@ async function saveLeadChanges() {
     )?.value ||
     "new";
 
+
   const priority =
     document.getElementById(
       "modalPriority"
     )?.value ||
     "normal";
 
+
   const followUp =
     document.getElementById(
       "modalFollowUp"
     )?.value ||
     "";
+
 
   const notes =
     getInputValue(
@@ -1970,10 +2267,17 @@ async function saveLeadChanges() {
     originalContactRemark;
 
 
-  if (saveBtn) {
+  if (saveBtnExists()) {
+
+    const saveBtn =
+      document.getElementById(
+        "saveLeadBtn"
+      );
+
 
     saveBtn.disabled =
       true;
+
 
     saveBtn.textContent =
       "Saving...";
@@ -2069,6 +2373,7 @@ async function saveLeadChanges() {
           0
         ) + 1;
 
+
       updateData.last_contacted_at =
         new Date()
           .toISOString();
@@ -2121,10 +2426,12 @@ async function saveLeadChanges() {
         error
       );
 
+
       showToast(
         "Unable to save: " +
         error.message
       );
+
 
       return;
     }
@@ -2153,6 +2460,7 @@ async function saveLeadChanges() {
 
     closeLeadModal();
 
+
     await loadEnquiries();
 
 
@@ -2163,17 +2471,26 @@ async function saveLeadChanges() {
       error
     );
 
+
     showToast(
       "Something went wrong: " +
       error.message
     );
 
+
   } finally {
+
+    const saveBtn =
+      document.getElementById(
+        "saveLeadBtn"
+      );
+
 
     if (saveBtn) {
 
       saveBtn.disabled =
         false;
+
 
       saveBtn.textContent =
         "Save Changes";
@@ -2196,15 +2513,18 @@ function setupAddEnquiry() {
       "addEnquiryBtn"
     );
 
+
   const closeBtn =
     document.getElementById(
       "closeAddEnquiryBtn"
     );
 
+
   const cancelBtn =
     document.getElementById(
       "cancelAddEnquiryBtn"
     );
+
 
   const saveBtn =
     document.getElementById(
@@ -2257,6 +2577,7 @@ function setupAddEnquiry() {
       "addEnquiryModal"
     );
 
+
   if (modal) {
 
     modal.addEventListener(
@@ -2291,17 +2612,21 @@ function openAddEnquiryModal() {
       "addEnquiryModal"
     );
 
+
   if (!modal) {
 
     console.error(
       "addEnquiryModal not found."
     );
 
+
     return;
   }
 
+
   modal.hidden =
     false;
+
 
   document.body.style.overflow =
     "hidden";
@@ -2320,6 +2645,7 @@ function closeAddEnquiryModal() {
       "addEnquiryModal"
     );
 
+
   if (modal) {
 
     modal.hidden =
@@ -2327,13 +2653,16 @@ function closeAddEnquiryModal() {
 
   }
 
+
   document.body.style.overflow =
     "";
+
 
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
+
 
   if (message) {
 
@@ -2356,20 +2685,24 @@ async function saveNewEnquiry() {
       "newCustomerName"
     );
 
+
   const mobile =
     getInputValue(
       "newMobile"
     );
+
 
   const email =
     getInputValue(
       "newEmail"
     );
 
+
   const location =
     getInputValue(
       "newLocation"
     );
+
 
   const occasion =
     document.getElementById(
@@ -2377,11 +2710,13 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
+
   const eventDate =
     document.getElementById(
       "newEventDate"
     )?.value ||
     "";
+
 
   const guests =
     document.getElementById(
@@ -2389,11 +2724,13 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
+
   const budget =
     document.getElementById(
       "newBudget"
     )?.value ||
     "";
+
 
   const food =
     document.getElementById(
@@ -2401,11 +2738,13 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
+
   const source =
     document.getElementById(
       "newSource"
     )?.value ||
     "Website";
+
 
   const status =
     document.getElementById(
@@ -2413,11 +2752,13 @@ async function saveNewEnquiry() {
     )?.value ||
     "new";
 
+
   const priority =
     document.getElementById(
       "newPriority"
     )?.value ||
     "normal";
+
 
   const followUp =
     document.getElementById(
@@ -2425,20 +2766,30 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
+
   const requirements =
     getInputValue(
       "newRequirements"
     );
+
+
+  const contactRemark =
+    getInputValue(
+      "newContactRemark"
+    );
+
 
   const notes =
     getInputValue(
       "newNotes"
     );
 
+
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
+
 
   const saveBtn =
     document.getElementById(
@@ -2458,6 +2809,7 @@ async function saveNewEnquiry() {
 
     }
 
+
     return;
   }
 
@@ -2466,6 +2818,7 @@ async function saveNewEnquiry() {
 
     saveBtn.disabled =
       true;
+
 
     saveBtn.textContent =
       "Saving...";
@@ -2538,13 +2891,19 @@ async function saveNewEnquiry() {
             null,
 
           contact_remark:
+            contactRemark ||
             null,
 
           contact_count:
-            0,
+            contactRemark
+              ? 1
+              : 0,
 
           last_contacted_at:
-            null,
+            contactRemark
+              ? new Date()
+                  .toISOString()
+              : null,
 
           source:
             source ||
@@ -2580,6 +2939,7 @@ async function saveNewEnquiry() {
         error
       );
 
+
       if (message) {
 
         message.textContent =
@@ -2587,6 +2947,7 @@ async function saveNewEnquiry() {
           error.message;
 
       }
+
 
       return;
     }
@@ -2608,6 +2969,7 @@ async function saveNewEnquiry() {
 
     clearAddEnquiryForm();
 
+
     await loadEnquiries();
 
 
@@ -2628,6 +2990,7 @@ async function saveNewEnquiry() {
       error
     );
 
+
     if (message) {
 
       message.textContent =
@@ -2642,6 +3005,7 @@ async function saveNewEnquiry() {
 
       saveBtn.disabled =
         false;
+
 
       saveBtn.textContent =
         "Save Enquiry";
@@ -2670,6 +3034,7 @@ function clearAddEnquiryForm() {
     "newBudget",
     "newFollowUp",
     "newRequirements",
+    "newContactRemark",
     "newNotes"
 
   ];
@@ -2682,6 +3047,7 @@ function clearAddEnquiryForm() {
         document.getElementById(
           id
         );
+
 
       if (element) {
 
@@ -2699,6 +3065,7 @@ function clearAddEnquiryForm() {
       "newOccasion"
     );
 
+
   if (occasion) {
 
     occasion.value =
@@ -2711,6 +3078,7 @@ function clearAddEnquiryForm() {
     document.getElementById(
       "newFood"
     );
+
 
   if (food) {
 
@@ -2725,6 +3093,7 @@ function clearAddEnquiryForm() {
       "newSource"
     );
 
+
   if (source) {
 
     source.value =
@@ -2737,6 +3106,7 @@ function clearAddEnquiryForm() {
     document.getElementById(
       "newStatus"
     );
+
 
   if (status) {
 
@@ -2751,10 +3121,382 @@ function clearAddEnquiryForm() {
       "newPriority"
     );
 
+
   if (priority) {
 
     priority.value =
       "normal";
+
+  }
+
+}
+
+
+/* =========================================================
+   QUICK REMARK MODAL
+   ========================================================= */
+
+function setupRemarkModal() {
+
+  const closeBtn =
+    document.getElementById(
+      "closeRemarkModalBtn"
+    );
+
+
+  const cancelBtn =
+    document.getElementById(
+      "cancelRemarkBtn"
+    );
+
+
+  const saveBtn =
+    document.getElementById(
+      "saveRemarkBtn"
+    );
+
+
+  if (closeBtn) {
+
+    closeBtn.addEventListener(
+      "click",
+      closeRemarkModal
+    );
+
+  }
+
+
+  if (cancelBtn) {
+
+    cancelBtn.addEventListener(
+      "click",
+      closeRemarkModal
+    );
+
+  }
+
+
+  if (saveBtn) {
+
+    saveBtn.addEventListener(
+      "click",
+      saveRemark
+    );
+
+  }
+
+
+  const modal =
+    document.getElementById(
+      "remarkModal"
+    );
+
+
+  if (modal) {
+
+    modal.addEventListener(
+      "click",
+      (event) => {
+
+        if (
+          event.target ===
+          modal
+        ) {
+
+          closeRemarkModal();
+
+        }
+
+      }
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   OPEN QUICK REMARK MODAL
+   ========================================================= */
+
+function openRemarkModal(
+  lead
+) {
+
+  currentLead =
+    lead;
+
+
+  const customerName =
+    document.getElementById(
+      "remarkCustomerName"
+    );
+
+
+  if (customerName) {
+
+    customerName.textContent =
+      lead.customer_name ||
+      "Customer";
+
+  }
+
+
+  const input =
+    document.getElementById(
+      "remarkInput"
+    );
+
+
+  if (input) {
+
+    input.value =
+      lead.contact_remark ||
+      "";
+
+  }
+
+
+  const message =
+    document.getElementById(
+      "remarkMessage"
+    );
+
+
+  if (message) {
+
+    message.textContent =
+      "";
+
+  }
+
+
+  const modal =
+    document.getElementById(
+      "remarkModal"
+    );
+
+
+  if (modal) {
+
+    modal.hidden =
+      false;
+
+
+    document.body.style.overflow =
+      "hidden";
+
+  }
+
+}
+
+
+/* =========================================================
+   CLOSE QUICK REMARK MODAL
+   ========================================================= */
+
+function closeRemarkModal() {
+
+  const modal =
+    document.getElementById(
+      "remarkModal"
+    );
+
+
+  if (modal) {
+
+    modal.hidden =
+      true;
+
+  }
+
+
+  document.body.style.overflow =
+    "";
+
+
+  currentLead =
+    null;
+
+}
+
+
+/* =========================================================
+   SAVE QUICK REMARK
+   ========================================================= */
+
+async function saveRemark() {
+
+  if (
+    !currentLead ||
+    !currentLead.id
+  ) {
+
+    return;
+  }
+
+
+  const input =
+    document.getElementById(
+      "remarkInput"
+    );
+
+
+  const message =
+    document.getElementById(
+      "remarkMessage"
+    );
+
+
+  const saveBtn =
+    document.getElementById(
+      "saveRemarkBtn"
+    );
+
+
+  const remark =
+    String(
+      input?.value ||
+      ""
+    ).trim();
+
+
+  if (!remark) {
+
+    if (message) {
+
+      message.textContent =
+        "Please enter a remark.";
+
+    }
+
+
+    return;
+  }
+
+
+  if (saveBtn) {
+
+    saveBtn.disabled =
+      true;
+
+
+    saveBtn.textContent =
+      "Saving...";
+
+  }
+
+
+  try {
+
+    const newCount =
+      Number(
+        currentLead.contact_count ||
+        0
+      ) + 1;
+
+
+    const updateData = {
+
+      contact_remark:
+        remark,
+
+      contact_count:
+        newCount,
+
+      last_contacted_at:
+        new Date()
+          .toISOString(),
+
+      updated_at:
+        new Date()
+          .toISOString()
+
+    };
+
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from(
+          "customer_enquiries"
+        )
+        .update(
+          updateData
+        )
+        .eq(
+          "id",
+          currentLead.id
+        );
+
+
+    if (error) {
+
+      console.error(
+        "SAVE REMARK ERROR:",
+        error
+      );
+
+
+      if (message) {
+
+        message.textContent =
+          "Unable to save remark: " +
+          error.message;
+
+      }
+
+
+      return;
+    }
+
+
+    Object.assign(
+      currentLead,
+      updateData
+    );
+
+
+    showToast(
+      "Contact remark saved."
+    );
+
+
+    closeRemarkModal();
+
+
+    await loadEnquiries();
+
+
+  } catch (error) {
+
+    console.error(
+      "SAVE REMARK EXCEPTION:",
+      error
+    );
+
+
+    if (message) {
+
+      message.textContent =
+        "Something went wrong: " +
+        error.message;
+
+    }
+
+  } finally {
+
+    if (saveBtn) {
+
+      saveBtn.disabled =
+        false;
+
+
+      saveBtn.textContent =
+        "Save Remark";
+
+    }
 
   }
 
@@ -2774,10 +3516,12 @@ function showToast(
       "toastMessage"
     );
 
+
   const toast =
     document.getElementById(
       "toast"
     );
+
 
   if (toastMessage) {
 
@@ -2786,14 +3530,17 @@ function showToast(
 
   }
 
+
   if (toast) {
 
     toast.hidden =
       false;
 
+
     toast.classList.add(
       "show"
     );
+
 
     setTimeout(
       () => {
@@ -2802,12 +3549,14 @@ function showToast(
           "show"
         );
 
+
         toast.hidden =
           true;
 
       },
       2500
     );
+
 
   } else {
 
@@ -2834,9 +3583,13 @@ function getInputValue(
       id
     );
 
+
   if (!element) {
+
     return "";
+
   }
+
 
   return String(
     element.value ??
@@ -2856,9 +3609,13 @@ function setInputValue(
       id
     );
 
+
   if (!element) {
+
     return;
+
   }
+
 
   element.value =
     value ??
@@ -2880,6 +3637,7 @@ function setText(
     document.getElementById(
       id
     );
+
 
   if (element) {
 
@@ -2906,10 +3664,12 @@ function formatDate(
 
   }
 
+
   const date =
     new Date(
       value
     );
+
 
   if (
     Number.isNaN(
@@ -2920,6 +3680,7 @@ function formatDate(
     return value;
 
   }
+
 
   return date.toLocaleDateString(
     "en-IN",
@@ -2947,10 +3708,12 @@ function formatDateTime(
 
   }
 
+
   const date =
     new Date(
       value
     );
+
 
   if (
     Number.isNaN(
@@ -2961,6 +3724,7 @@ function formatDateTime(
     return value;
 
   }
+
 
   return date.toLocaleString(
     "en-IN",
@@ -2990,10 +3754,12 @@ function formatDateForInput(
 
   }
 
+
   const date =
     new Date(
       value
     );
+
 
   if (
     Number.isNaN(
@@ -3005,8 +3771,10 @@ function formatDateForInput(
 
   }
 
+
   const year =
     date.getFullYear();
+
 
   const month =
     String(
@@ -3017,6 +3785,7 @@ function formatDateForInput(
         "0"
       );
 
+
   const day =
     String(
       date.getDate()
@@ -3025,6 +3794,7 @@ function formatDateForInput(
         2,
         "0"
       );
+
 
   return (
     year +
@@ -3051,10 +3821,12 @@ function toDateTimeLocal(
 
   }
 
+
   const date =
     new Date(
       value
     );
+
 
   if (
     Number.isNaN(
@@ -3066,6 +3838,7 @@ function toDateTimeLocal(
 
   }
 
+
   const pad =
     (number) =>
       String(
@@ -3075,6 +3848,7 @@ function toDateTimeLocal(
           2,
           "0"
         );
+
 
   return (
     date.getFullYear() +
@@ -3114,6 +3888,7 @@ function formatStatus(
         status
     );
 
+
   return (
     found?.label ||
     status ||
@@ -3132,7 +3907,7 @@ function getStatusClass(
     new:
       "status-new",
 
-    not_picked:
+    not_pick:
       "status-progress",
 
     call_back:
@@ -3153,6 +3928,9 @@ function getStatusClass(
     wrong_number:
       "status-closed",
 
+    qualified:
+      "status-contacted",
+
     converted:
       "status-contacted",
 
@@ -3160,6 +3938,7 @@ function getStatusClass(
       "status-closed"
 
   };
+
 
   return (
     classes[
@@ -3195,12 +3974,78 @@ function formatPriority(
 
   };
 
+
   return (
     values[
       priority
     ] ||
     priority ||
     "Normal"
+  );
+
+}
+
+
+/* =========================================================
+   WHATSAPP URL
+   ========================================================= */
+
+function buildWhatsAppURL(
+  mobile
+) {
+
+  const cleanMobile =
+    String(
+      mobile ||
+      ""
+    )
+      .replace(
+        /\D/g,
+        ""
+      );
+
+
+  let whatsappNumber =
+    cleanMobile;
+
+
+  if (
+    cleanMobile.length ===
+    10
+  ) {
+
+    whatsappNumber =
+      "91" +
+      cleanMobile;
+
+  }
+
+
+  if (!whatsappNumber) {
+
+    return "#";
+
+  }
+
+
+  return (
+    "https://wa.me/" +
+    whatsappNumber
+  );
+
+}
+
+
+/* =========================================================
+   SAVE BUTTON HELPER
+   ========================================================= */
+
+function saveBtnExists() {
+
+  return Boolean(
+    document.getElementById(
+      "saveLeadBtn"
+    )
   );
 
 }
