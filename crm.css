@@ -1,6 +1,7 @@
 /* =========================================================
    SELECT MY VENUE — CRM
-   PREMIUM CLEAN CRM
+   PREMIUM MASTER CSS
+   VERSION 2 — CLEAN / LARGE LOGO / STABLE MODALS
    ========================================================= */
 
 * {
@@ -28,14 +29,14 @@ body {
 
   background:
     radial-gradient(
-      circle at 10% 0%,
-      rgba(104, 114, 216, 0.07),
-      transparent 28%
+      circle at 8% 0%,
+      rgba(104, 114, 216, 0.08),
+      transparent 30%
     ),
     radial-gradient(
-      circle at 90% 10%,
-      rgba(14, 165, 233, 0.045),
-      transparent 25%
+      circle at 92% 8%,
+      rgba(14, 165, 233, 0.055),
+      transparent 26%
     ),
     #f5f7fb;
 }
@@ -57,7 +58,7 @@ a {
 
 
 /* =========================================================
-   CRM HEADER
+   HEADER
    ========================================================= */
 
 .crm-header {
@@ -65,17 +66,22 @@ a {
   top: 0;
   z-index: 50;
 
-  height: 72px;
-  min-height: 72px;
+  height: 76px;
+  min-height: 76px;
 
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+
   align-items: center;
 
-  padding: 6px 28px;
+  padding: 6px 30px;
 
-  background: rgba(255, 255, 255, 0.96);
+  background: rgba(255, 255, 255, 0.97);
 
   border-bottom: 1px solid #e3e7ef;
+
+  box-shadow:
+    0 4px 20px rgba(25, 34, 52, 0.035);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -83,42 +89,45 @@ a {
 
 
 /* =========================================================
-   LEFT BRAND AREA
+   LEFT BRAND
    ========================================================= */
 
 .crm-brand {
-  flex: 1 1 0;
-
   min-width: 0;
 
   display: flex;
   align-items: center;
 
-  gap: 14px;
+  gap: 16px;
+
+  justify-self: start;
 }
 
 
 /* =========================================================
-   LARGE LOGO
+   LOGO
    IMPORTANT:
-   Logo is horizontal, therefore WIDTH controls visual size.
+   DO NOT SHRINK ON DESKTOP
    ========================================================= */
 
 .crm-header-logo {
-  width: 220px !important;
-  height: auto !important;
+  width: 300px !important;
+  min-width: 300px !important;
+  max-width: 300px !important;
 
-  min-width: 220px !important;
-  max-width: 220px !important;
-
-  max-height: 48px !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
 
   display: block !important;
 
   object-fit: contain !important;
   object-position: left center !important;
 
+  border: 0 !important;
   border-radius: 0 !important;
+
+  flex-shrink: 0 !important;
 }
 
 
@@ -127,52 +136,60 @@ a {
    ========================================================= */
 
 .crm-brand-name {
+  display: block;
+
   white-space: nowrap;
 
-  color: #182033;
-
-  font-size: 17px;
+  font-size: 18px;
   line-height: 1;
 
-  font-weight: 900;
+  font-weight: 950;
 
-  letter-spacing: -0.45px;
+  letter-spacing: -0.5px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #171e31 0%,
+      #34405e 42%,
+      #5965d2 100%
+    );
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
 }
 
 
 /* =========================================================
-   CENTER — ONLY ONE LEAD MANAGEMENT
+   CENTER — ONLY LEAD MANAGEMENT
    ========================================================= */
 
 .crm-header-center {
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
-
-  transform: translate(-50%, -50%);
+  justify-self: center;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  pointer-events: none;
-
   white-space: nowrap;
+
+  pointer-events: none;
 }
 
 .crm-header-title {
-  font-size: 18px;
+  font-size: 21px;
   line-height: 1;
 
-  font-weight: 900;
+  font-weight: 950;
 
-  letter-spacing: 0.15px;
+  letter-spacing: -0.3px;
 
   background:
     linear-gradient(
       135deg,
-      #5662d2 0%,
+      #515dcc 0%,
       #6872d8 45%,
       #1597b8 100%
     );
@@ -189,51 +206,55 @@ a {
    ========================================================= */
 
 .header-actions {
-  flex: 1 1 0;
-
   min-width: 0;
 
   display: flex;
   align-items: center;
   justify-content: flex-end;
 
-  gap: 10px;
+  gap: 11px;
+
+  justify-self: end;
 }
 
 .staff-name {
-  max-width: 190px;
+  max-width: 210px;
 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  color: #626c7d;
+  color: #687286;
 
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 750;
 }
 
 .logout-btn {
-  height: 36px;
+  height: 37px;
 
-  padding: 0 14px;
+  padding: 0 15px;
 
   border: 1px solid #dce1e9;
+
   border-radius: 9px;
 
-  background: #ffffff;
+  background: #fff;
 
   color: #30394b;
 
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 850;
 
   transition: all 0.2s ease;
 }
 
 .logout-btn:hover {
   background: #f5f6f9;
+
   border-color: #cfd5df;
+
+  transform: translateY(-1px);
 }
 
 
@@ -246,7 +267,7 @@ a {
 
   margin: 0 auto;
 
-  padding: 30px 0 55px;
+  padding: 32px 0 60px;
 }
 
 
@@ -256,12 +277,14 @@ a {
 
 .page-heading {
   display: flex;
+
   align-items: flex-end;
+
   justify-content: space-between;
 
   gap: 25px;
 
-  margin-bottom: 25px;
+  margin-bottom: 26px;
 }
 
 .eyebrow {
@@ -270,9 +293,10 @@ a {
   color: #6872d8;
 
   font-size: 10px;
+
   font-weight: 900;
 
-  letter-spacing: 1.6px;
+  letter-spacing: 1.7px;
 }
 
 .page-heading h1 {
@@ -284,7 +308,7 @@ a {
 
   line-height: 1.05;
 
-  letter-spacing: -1.5px;
+  letter-spacing: -1.6px;
 }
 
 .page-heading h1 span {
@@ -297,19 +321,23 @@ a {
   color: #788296;
 
   font-size: 14px;
+
   line-height: 1.6;
 }
 
 
 /* =========================================================
-   HEADING BUTTONS
+   HEADING ACTIONS
    ========================================================= */
 
 .heading-actions {
   display: flex;
+
   align-items: center;
 
   gap: 9px;
+
+  flex-shrink: 0;
 }
 
 .add-enquiry-btn,
@@ -321,6 +349,7 @@ a {
   border-radius: 10px;
 
   font-size: 12px;
+
   font-weight: 800;
 
   transition: all 0.2s ease;
@@ -344,6 +373,9 @@ a {
 
 .add-enquiry-btn:hover {
   transform: translateY(-1px);
+
+  box-shadow:
+    0 12px 26px rgba(104, 114, 216, 0.26);
 }
 
 .refresh-btn {
@@ -356,11 +388,13 @@ a {
 
 .refresh-btn:hover {
   background: #f7f8fb;
+
+  border-color: #d2d8e2;
 }
 
 
 /* =========================================================
-   STATS
+   STATISTICS
    ========================================================= */
 
 .stats-grid {
@@ -371,7 +405,7 @@ a {
 
   gap: 14px;
 
-  margin-bottom: 22px;
+  margin-bottom: 23px;
 }
 
 .stat-card {
@@ -380,13 +414,14 @@ a {
   min-height: 112px;
 
   display: flex;
+
   align-items: center;
 
   gap: 14px;
 
   padding: 19px;
 
-  background: rgba(255, 255, 255, 0.97);
+  background: rgba(255, 255, 255, 0.98);
 
   border: 1px solid #e5e9f0;
 
@@ -426,6 +461,7 @@ a {
   flex-shrink: 0;
 
   display: grid;
+
   place-items: center;
 
   border-radius: 12px;
@@ -435,11 +471,13 @@ a {
   color: #626bd5;
 
   font-size: 17px;
+
   font-weight: 900;
 }
 
 .stat-card.active .stat-icon {
   background: #6872d8;
+
   color: #fff;
 }
 
@@ -451,6 +489,7 @@ a {
   color: #8b94a5;
 
   font-size: 9px;
+
   font-weight: 900;
 
   letter-spacing: 1px;
@@ -462,6 +501,7 @@ a {
   color: #171d2d;
 
   font-size: 27px;
+
   line-height: 1;
 
   letter-spacing: -0.6px;
@@ -511,6 +551,7 @@ a {
   height: 43px;
 
   display: flex;
+
   align-items: center;
 
   gap: 9px;
@@ -522,6 +563,15 @@ a {
   border: 1px solid #dfe4ed;
 
   border-radius: 10px;
+
+  transition: all 0.2s ease;
+}
+
+.search-box:focus-within {
+  border-color: #6872d8;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 .search-box span {
@@ -532,9 +582,11 @@ a {
 
 .search-box input {
   width: 100%;
+
   height: 100%;
 
   border: 0;
+
   outline: 0;
 
   background: transparent;
@@ -546,6 +598,7 @@ a {
 
 .filter-bar select {
   width: 100%;
+
   height: 43px;
 
   padding: 0 11px;
@@ -561,6 +614,13 @@ a {
   outline: none;
 
   font-size: 13px;
+}
+
+.filter-bar select:focus {
+  border-color: #6872d8;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 
@@ -592,6 +652,7 @@ a {
   color: #8a93a4;
 
   font-size: 9px;
+
   font-weight: 900;
 
   letter-spacing: 0.9px;
@@ -627,6 +688,7 @@ a {
   color: #20283a;
 
   font-size: 13px;
+
   font-weight: 800;
 }
 
@@ -650,32 +712,35 @@ a {
 
 
 /* =========================================================
-   VIEW DETAILS
+   VIEW DETAILS BUTTON
    ========================================================= */
 
 .view-lead-btn {
-  min-height: 32px;
+  min-height: 33px;
 
-  padding: 0 11px;
+  padding: 0 12px;
 
-  border: 1px solid #dfe4ed;
+  border: 1px solid #d8def0;
 
   border-radius: 8px;
 
-  background: #fff;
+  background: #f7f8ff;
 
   color: #5560c5;
 
   font-size: 11px;
-  font-weight: 800;
+
+  font-weight: 850;
 
   transition: all 0.2s ease;
 }
 
 .view-lead-btn:hover {
-  background: #f0f2ff;
+  background: #eef1ff;
 
-  border-color: #cfd4f7;
+  border-color: #c5cdf3;
+
+  transform: translateY(-1px);
 }
 
 
@@ -686,7 +751,10 @@ a {
 .status-badge,
 .priority-badge {
   display: inline-flex;
+
   align-items: center;
+
+  justify-content: center;
 
   min-height: 25px;
 
@@ -695,6 +763,7 @@ a {
   border-radius: 999px;
 
   font-size: 10px;
+
   font-weight: 850;
 
   white-space: nowrap;
@@ -702,11 +771,13 @@ a {
 
 .status-badge {
   background: #eef1ff;
+
   color: #5562c8;
 }
 
 .priority-badge {
   background: #f3f4f7;
+
   color: #697181;
 }
 
@@ -726,6 +797,7 @@ a {
   height: 48px;
 
   display: grid;
+
   place-items: center;
 
   margin: 0 auto 13px;
@@ -755,25 +827,30 @@ a {
 
 
 /* =========================================================
-   MODALS
+   MODAL OVERLAY
    ========================================================= */
 
 .lead-modal {
   position: fixed;
+
   inset: 0;
 
   z-index: 100;
 
   display: flex;
+
   align-items: center;
+
   justify-content: center;
 
-  padding: 20px;
+  padding: 22px;
 
-  background: rgba(14, 20, 33, 0.58);
+  background:
+    rgba(12, 18, 31, 0.62);
 
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(8px);
+
+  -webkit-backdrop-filter: blur(8px);
 
   overflow-y: auto;
 }
@@ -782,20 +859,27 @@ a {
   display: none;
 }
 
+
+/* =========================================================
+   MODAL CARD
+   ========================================================= */
+
 .lead-modal-card,
 .add-enquiry-card {
-  width: min(1000px, 100%);
+  width: min(1050px, 100%);
 
-  max-height: calc(100vh - 40px);
+  max-height: calc(100vh - 44px);
 
   overflow-y: auto;
 
   background: #fff;
 
-  border-radius: 20px;
+  border: 1px solid rgba(225, 229, 238, 0.95);
+
+  border-radius: 22px;
 
   box-shadow:
-    0 30px 90px rgba(10, 18, 35, 0.22);
+    0 35px 100px rgba(8, 15, 30, 0.25);
 }
 
 
@@ -804,6 +888,12 @@ a {
    ========================================================= */
 
 .modal-header {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 3;
+
   display: flex;
 
   align-items: flex-start;
@@ -812,9 +902,16 @@ a {
 
   gap: 20px;
 
-  padding: 24px 27px 18px;
+  padding: 24px 28px 18px;
 
-  background: #fff;
+  background:
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #fbfcff 100%
+    );
+
+  border-bottom: 1px solid #edf0f4;
 }
 
 .modal-header h2 {
@@ -822,18 +919,26 @@ a {
 
   color: #171d2d;
 
-  font-size: 24px;
+  font-size: 25px;
 
-  letter-spacing: -0.5px;
+  line-height: 1.15;
+
+  font-weight: 900;
+
+  letter-spacing: -0.6px;
 }
 
 .close-modal {
-  width: 36px;
-  height: 36px;
+  width: 37px;
+  height: 37px;
 
   flex-shrink: 0;
 
-  border: 1px solid #e1e5ec;
+  display: grid;
+
+  place-items: center;
+
+  border: 1px solid #e0e4ec;
 
   border-radius: 10px;
 
@@ -844,15 +949,21 @@ a {
   font-size: 23px;
 
   line-height: 1;
+
+  transition: all 0.2s ease;
 }
 
 .close-modal:hover {
   background: #f5f6f9;
+
+  border-color: #d3d8e2;
+
+  color: #20283a;
 }
 
 
 /* =========================================================
-   LEAD INFO
+   LEAD INFORMATION GRID
    ========================================================= */
 
 .lead-info-grid {
@@ -861,36 +972,57 @@ a {
   grid-template-columns:
     repeat(4, minmax(0, 1fr));
 
-  gap: 11px;
+  gap: 12px;
 
-  padding: 0 27px 18px;
+  padding: 20px 28px 20px;
 
   background: #fff;
 }
 
 .info-card {
-  min-height: 88px;
+  min-height: 96px;
 
-  padding: 13px;
+  display: flex;
 
-  border: 1px solid #e7eaf0;
+  flex-direction: column;
 
-  border-radius: 11px;
+  justify-content: flex-start;
 
-  background: #fafbfc;
+  padding: 14px;
+
+  border: 1px solid #e5e9f0;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fbfcfe,
+      #f8f9fc
+    );
+
+  transition: all 0.2s ease;
+}
+
+.info-card:hover {
+  border-color: #d9def0;
+
+  box-shadow:
+    0 6px 18px rgba(25, 34, 52, 0.045);
 }
 
 .info-card small {
   display: block;
 
-  margin-bottom: 6px;
+  margin-bottom: 7px;
 
   color: #929aaa;
 
   font-size: 9px;
+
   font-weight: 900;
 
-  letter-spacing: 0.8px;
+  letter-spacing: 0.85px;
 }
 
 .info-card strong {
@@ -900,24 +1032,36 @@ a {
 
   font-size: 13px;
 
-  line-height: 1.4;
+  line-height: 1.45;
 
   word-break: break-word;
 }
 
+
+/* =========================================================
+   CALL / WHATSAPP
+   ========================================================= */
+
 .info-actions {
   display: flex;
+
   flex-wrap: wrap;
 
   gap: 5px;
 
-  margin-top: 8px;
+  margin-top: 9px;
 }
 
 .mini-action {
   display: inline-flex;
 
-  padding: 5px 8px;
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 25px;
+
+  padding: 4px 8px;
 
   border-radius: 7px;
 
@@ -926,7 +1070,16 @@ a {
   color: #5662c8;
 
   font-size: 10px;
-  font-weight: 800;
+
+  font-weight: 850;
+
+  transition: all 0.2s ease;
+}
+
+.mini-action:hover {
+  transform: translateY(-1px);
+
+  filter: brightness(0.98);
 }
 
 .whatsapp-action {
@@ -941,7 +1094,7 @@ a {
    ========================================================= */
 
 .detail-block {
-  padding: 0 27px 18px;
+  padding: 0 28px 20px;
 
   background: #fff;
 }
@@ -950,24 +1103,25 @@ a {
 .control-group label {
   display: block;
 
-  margin-bottom: 7px;
+  margin-bottom: 8px;
 
   color: #737d8f;
 
   font-size: 10px;
+
   font-weight: 900;
 
-  letter-spacing: 0.8px;
+  letter-spacing: 0.85px;
 }
 
 .detail-content {
-  min-height: 68px;
+  min-height: 75px;
 
-  padding: 12px;
+  padding: 13px;
 
-  border: 1px solid #e7eaf0;
+  border: 1px solid #e5e9f0;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   background: #fafbfc;
 
@@ -975,7 +1129,7 @@ a {
 
   font-size: 13px;
 
-  line-height: 1.6;
+  line-height: 1.65;
 
   white-space: pre-wrap;
 }
@@ -991,19 +1145,24 @@ a {
   grid-template-columns:
     repeat(3, minmax(0, 1fr));
 
-  gap: 12px;
+  gap: 14px;
 
-  padding: 4px 27px 18px;
+  padding: 2px 28px 20px;
 
   background: #fff;
+}
+
+.control-group {
+  min-width: 0;
 }
 
 .crm-controls select,
 .crm-controls input {
   width: 100%;
-  height: 43px;
 
-  padding: 0 11px;
+  height: 44px;
+
+  padding: 0 12px;
 
   border: 1px solid #dfe4ed;
 
@@ -1016,25 +1175,35 @@ a {
   outline: none;
 
   font-size: 13px;
+
+  transition: all 0.2s ease;
+}
+
+.crm-controls select:focus,
+.crm-controls input:focus {
+  border-color: #6872d8;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 
 /* =========================================================
-   TEXTAREA
+   NOTES / TEXTAREA
    ========================================================= */
 
 .detail-block textarea {
   width: 100%;
 
-  min-height: 105px;
+  min-height: 115px;
 
-  padding: 12px;
+  padding: 13px;
 
   resize: vertical;
 
   border: 1px solid #dfe4ed;
 
-  border-radius: 10px;
+  border-radius: 11px;
 
   outline: none;
 
@@ -1043,6 +1212,17 @@ a {
   color: #354056;
 
   font-size: 13px;
+
+  line-height: 1.55;
+
+  transition: all 0.2s ease;
+}
+
+.detail-block textarea:focus {
+  border-color: #6872d8;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 
@@ -1055,23 +1235,30 @@ a {
 
   justify-content: flex-end;
 
-  gap: 9px;
+  align-items: center;
 
-  padding: 18px 27px 24px;
+  gap: 10px;
+
+  padding: 18px 28px 25px;
 
   background: #fff;
+
+  border-top: 1px solid #edf0f4;
 }
 
 .save-btn,
 .cancel-btn {
-  min-height: 42px;
+  min-height: 43px;
 
-  padding: 0 17px;
+  padding: 0 18px;
 
   border-radius: 9px;
 
   font-size: 13px;
-  font-weight: 800;
+
+  font-weight: 850;
+
+  transition: all 0.2s ease;
 }
 
 .save-btn {
@@ -1085,6 +1272,16 @@ a {
     );
 
   color: #fff;
+
+  box-shadow:
+    0 7px 18px rgba(23, 30, 49, 0.15);
+}
+
+.save-btn:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 10px 23px rgba(23, 30, 49, 0.20);
 }
 
 .cancel-btn {
@@ -1093,6 +1290,10 @@ a {
   background: #fff;
 
   color: #4b556a;
+}
+
+.cancel-btn:hover {
+  background: #f7f8fa;
 }
 
 
@@ -1105,13 +1306,14 @@ a {
 }
 
 .form-section-title {
-  padding: 15px 27px 9px;
+  padding: 16px 28px 9px;
 
   background: #fff;
 
   color: #6872d8;
 
   font-size: 10px;
+
   font-weight: 900;
 
   letter-spacing: 1.1px;
@@ -1125,9 +1327,9 @@ a {
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: 13px;
+  gap: 14px;
 
-  padding: 0 27px 16px;
+  padding: 0 28px 17px;
 
   background: #fff;
 }
@@ -1152,31 +1354,42 @@ a {
   color: #354056;
 
   font-size: 13px;
+
+  transition: all 0.2s ease;
 }
 
 #addEnquiryModal .control-group input,
 #addEnquiryModal .control-group select {
-  height: 43px;
+  height: 44px;
 
-  padding: 0 11px;
+  padding: 0 12px;
 }
 
 #addEnquiryModal .control-group textarea {
-  min-height: 95px;
+  min-height: 100px;
 
-  padding: 11px;
+  padding: 12px;
 
   resize: vertical;
 }
 
+#addEnquiryModal .control-group input:focus,
+#addEnquiryModal .control-group select:focus,
+#addEnquiryModal .control-group textarea:focus {
+  border-color: #6872d8;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.08);
+}
+
 #addEnquiryModal .full-width {
-  padding: 0 27px 15px;
+  padding: 0 28px 16px;
 }
 
 #addEnquiryModal .form-message {
   min-height: 20px;
 
-  padding: 0 27px 4px;
+  padding: 0 28px 5px;
 
   color: #d14343;
 
@@ -1210,6 +1423,7 @@ a {
     0 12px 35px rgba(18, 25, 40, 0.20);
 
   font-size: 13px;
+
   font-weight: 650;
 
   opacity: 0;
@@ -1229,107 +1443,150 @@ a {
 
 
 /* =========================================================
-   RESPONSIVE
+   LARGE DESKTOP
    ========================================================= */
 
-@media (max-width: 1150px) {
+@media (min-width: 1200px) {
 
   .crm-header-logo {
-    width: 185px !important;
-    min-width: 185px !important;
-    max-width: 185px !important;
-  }
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
 
-  .crm-brand-name {
-    font-size: 15px;
-  }
-
-  .crm-header-title {
-    font-size: 16px;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .lead-info-grid {
-    grid-template-columns: repeat(2, 1fr);
+    height: 58px !important;
+    max-height: 58px !important;
   }
 
 }
 
 
-@media (max-width: 900px) {
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+  .crm-header {
+    grid-template-columns: auto 1fr auto;
+
+    padding: 6px 20px;
+  }
+
+  .crm-header-logo {
+    width: 220px !important;
+    min-width: 220px !important;
+    max-width: 220px !important;
+
+    height: 52px !important;
+    max-height: 52px !important;
+  }
+
+  .crm-brand-name {
+    font-size: 16px;
+  }
+
+  .crm-header-title {
+    font-size: 19px;
+  }
+
+  .stats-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .lead-info-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+
+/* =========================================================
+   SMALL LAPTOP / TABLET
+   ========================================================= */
+
+@media (max-width: 950px) {
 
   .crm-header {
     height: 70px;
     min-height: 70px;
 
-    padding: 6px 16px;
+    padding: 5px 15px;
   }
 
   .crm-header-logo {
-    width: 160px !important;
-    min-width: 160px !important;
-    max-width: 160px !important;
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
+
+    height: 48px !important;
+    max-height: 48px !important;
+  }
+
+  .crm-brand {
+    gap: 10px;
   }
 
   .crm-brand-name {
-    display: none;
+    font-size: 14px;
   }
 
   .crm-header-title {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .staff-name {
-    max-width: 130px;
+    max-width: 145px;
   }
 
   .crm-main {
     width: min(100% - 30px, 1460px);
   }
 
-  .page-heading {
-    align-items: flex-start;
-
-    flex-direction: column;
-  }
-
-  .heading-actions {
-    width: 100%;
-  }
-
 }
 
 
-@media (max-width: 700px) {
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 760px) {
 
   .crm-header {
-    height: 66px;
-    min-height: 66px;
+    height: auto;
+    min-height: 68px;
 
-    padding: 5px 12px;
+    grid-template-columns: auto 1fr auto;
+
+    padding: 6px 10px;
+
+    gap: 8px;
   }
 
   .crm-header-logo {
-    width: 145px !important;
-    min-width: 145px !important;
-    max-width: 145px !important;
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
+
+    height: 43px !important;
+    max-height: 43px !important;
+  }
+
+  .crm-brand {
+    gap: 0;
+  }
+
+  .crm-brand-name {
+    display: none;
   }
 
   .crm-header-center {
-    position: static;
-
-    transform: none;
-
-    flex: 0 0 auto;
-
-    margin: 0 8px;
+    justify-self: center;
   }
 
   .crm-header-title {
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .staff-name {
@@ -1344,10 +1601,25 @@ a {
     font-size: 11px;
   }
 
-  .stats-grid {
-    grid-template-columns: 1fr 1fr;
+  .crm-main {
+    width: calc(100% - 24px);
 
-    gap: 10px;
+    padding-top: 24px;
+  }
+
+  .page-heading {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .heading-actions {
+    width: 100%;
+  }
+
+  .add-enquiry-btn,
+  .refresh-btn {
+    flex: 1;
   }
 
   .filter-bar {
@@ -1366,79 +1638,110 @@ a {
     grid-template-columns: 1fr;
   }
 
+  .lead-modal {
+    padding: 10px;
+  }
+
+  .lead-modal-card,
+  .add-enquiry-card {
+    max-height: calc(100vh - 20px);
+
+    border-radius: 18px;
+  }
+
 }
 
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
 
 @media (max-width: 520px) {
 
   .crm-header {
-    height: 62px;
     min-height: 62px;
 
-    padding: 4px 9px;
+    padding: 4px 8px;
   }
 
   .crm-header-logo {
     width: 125px !important;
     min-width: 125px !important;
     max-width: 125px !important;
+
+    height: 38px !important;
+    max-height: 38px !important;
   }
 
   .crm-header-title {
     font-size: 12px;
   }
 
+  .logout-btn {
+    padding: 0 9px;
+
+    font-size: 10px;
+  }
+
   .crm-main {
-    width: calc(100% - 20px);
-
-    padding-top: 23px;
+    width: calc(100% - 18px);
   }
 
-  .heading-actions {
-    flex-direction: column;
-  }
-
-  .add-enquiry-btn,
-  .refresh-btn {
-    width: 100%;
+  .page-heading h1 {
+    font-size: 31px;
   }
 
   .stats-grid {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .stat-card {
-    min-height: 100px;
-
-    padding: 13px;
 
     gap: 9px;
   }
 
+  .stat-card {
+    min-height: 96px;
+
+    padding: 12px;
+
+    gap: 8px;
+  }
+
   .stat-icon {
-    width: 36px;
-    height: 36px;
+    width: 35px;
+    height: 35px;
+
+    font-size: 14px;
   }
 
   .stat-card strong {
-    font-size: 22px;
+    font-size: 21px;
   }
 
   .modal-header {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding: 19px 17px 15px;
   }
 
-  .lead-info-grid,
-  .detail-block,
-  .crm-controls,
-  .modal-actions {
-    padding-left: 18px;
-    padding-right: 18px;
+  .modal-header h2 {
+    font-size: 21px;
+  }
+
+  .lead-info-grid {
+    padding: 15px 17px 17px;
+  }
+
+  .detail-block {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
+  .crm-controls {
+    padding-left: 17px;
+    padding-right: 17px;
   }
 
   .modal-actions {
     flex-direction: column;
+
+    padding: 16px 17px 20px;
   }
 
   .save-btn,
@@ -1446,16 +1749,20 @@ a {
     width: 100%;
   }
 
-  .form-section-title,
+  .form-section-title {
+    padding-left: 17px;
+    padding-right: 17px;
+  }
+
   .form-grid {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 17px;
+    padding-right: 17px;
   }
 
   #addEnquiryModal .full-width,
   #addEnquiryModal .form-message {
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 17px;
+    padding-right: 17px;
   }
 
 }
