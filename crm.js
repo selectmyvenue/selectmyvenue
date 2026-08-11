@@ -1,7 +1,7 @@
 /* =========================================================
    SELECT MY VENUE — CRM
    COMPLETE CRM JAVASCRIPT
-   PHASE 2 + CUSTOMER CONTACT REMARKS
+   PHASE 2 — CUSTOMER CONTACT + EDITABLE LEAD DETAILS
    ========================================================= */
 
 
@@ -28,32 +28,85 @@ const supabaseClient =
 
 let currentEnquiries = [];
 let currentLead = null;
+
 let activeLeadTab = "";
+
 let originalContactRemark = "";
+
+
+/* =========================================================
+   STATUS OPTIONS
+   ========================================================= */
+
+const STATUS_OPTIONS = [
+  {
+    value: "new",
+    label: "New Lead"
+  },
+  {
+    value: "not_picked",
+    label: "Not Picked"
+  },
+  {
+    value: "call_back",
+    label: "Call Back"
+  },
+  {
+    value: "call_disconnected",
+    label: "Call Disconnected"
+  },
+  {
+    value: "detail_shared",
+    label: "Detail Shared"
+  },
+  {
+    value: "interested",
+    label: "Interested"
+  },
+  {
+    value: "not_interested",
+    label: "Not Interested"
+  },
+  {
+    value: "wrong_number",
+    label: "Wrong Number"
+  },
+  {
+    value: "converted",
+    label: "Converted"
+  },
+  {
+    value: "closed",
+    label: "Closed"
+  }
+];
 
 
 /* =========================================================
    PAGE READY
    ========================================================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener(
+  "DOMContentLoaded",
+  async () => {
 
-  const loginForm =
-    document.getElementById("loginForm");
+    const loginForm =
+      document.getElementById("loginForm");
 
-  if (loginForm) {
-    setupLogin();
-    return;
+    if (loginForm) {
+      setupLogin();
+      return;
+    }
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+    if (logoutBtn) {
+      await setupCRM();
+    }
+
   }
-
-  const logoutBtn =
-    document.getElementById("logoutBtn");
-
-  if (logoutBtn) {
-    await setupCRM();
-  }
-
-});
+);
 
 
 /* =========================================================
@@ -70,81 +123,119 @@ function setupLogin() {
 
   if (!loginForm) return;
 
-  loginForm.addEventListener("submit", async (event) => {
+  loginForm.addEventListener(
+    "submit",
+    async (event) => {
 
-    event.preventDefault();
+      event.preventDefault();
 
-    const email =
-      document.getElementById("email")?.value.trim();
+      const email =
+        document
+          .getElementById("email")
+          ?.value
+          .trim();
 
-    const password =
-      document.getElementById("password")?.value;
+      const password =
+        document
+          .getElementById("password")
+          ?.value;
 
-    if (!email || !password) {
-
-      if (loginMessage) {
-        loginMessage.textContent =
-          "Please enter email and password.";
-        loginMessage.style.display = "block";
-      }
-
-      return;
-    }
-
-    if (loginMessage) {
-      loginMessage.textContent = "Signing in...";
-      loginMessage.style.display = "block";
-    }
-
-    try {
-
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        });
-
-      if (error) {
-
-        console.error("LOGIN ERROR:", error);
+      if (!email || !password) {
 
         if (loginMessage) {
+
           loginMessage.textContent =
-            "Login failed: " + error.message;
-        }
+            "Please enter email and password.";
 
-        return;
-      }
+          loginMessage.style.display =
+            "block";
 
-      if (!data?.session) {
-
-        if (loginMessage) {
-          loginMessage.textContent =
-            "Login failed. No session created.";
         }
 
         return;
       }
 
       if (loginMessage) {
+
         loginMessage.textContent =
-          "Login successful. Opening CRM...";
+          "Signing in...";
+
+        loginMessage.style.display =
+          "block";
+
       }
 
-      window.location.href = "dashboard.html";
+      try {
 
-    } catch (error) {
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth
+            .signInWithPassword({
+              email,
+              password
+            });
 
-      console.error("LOGIN EXCEPTION:", error);
+        if (error) {
 
-      if (loginMessage) {
-        loginMessage.textContent =
-          "Login error: " + error.message;
+          console.error(
+            "LOGIN ERROR:",
+            error
+          );
+
+          if (loginMessage) {
+
+            loginMessage.textContent =
+              "Login failed: " +
+              error.message;
+
+          }
+
+          return;
+        }
+
+        if (!data?.session) {
+
+          if (loginMessage) {
+
+            loginMessage.textContent =
+              "Login failed. No session created.";
+
+          }
+
+          return;
+        }
+
+        if (loginMessage) {
+
+          loginMessage.textContent =
+            "Login successful. Opening CRM...";
+
+        }
+
+        window.location.href =
+          "dashboard.html";
+
+      } catch (error) {
+
+        console.error(
+          "LOGIN EXCEPTION:",
+          error
+        );
+
+        if (loginMessage) {
+
+          loginMessage.textContent =
+            "Login error: " +
+            error.message;
+
+        }
+
       }
 
     }
-
-  });
+  );
 
 }
 
@@ -158,32 +249,47 @@ async function setupCRM() {
   try {
 
     const {
-      data: { session }
+      data: {
+        session
+      }
     } =
-      await supabaseClient.auth.getSession();
+      await supabaseClient.auth
+        .getSession();
 
     if (!session) {
 
-      window.location.href = "login.html";
-      return;
+      window.location.href =
+        "login.html";
 
+      return;
     }
 
     setupLogout();
+
     setupSearch();
+
     setupFilters();
+
     setupRefresh();
+
     setupLeadTabs();
+
     setupLeadModal();
+
     setupAddEnquiry();
 
-    showStaffName(session.user);
+    showStaffName(
+      session.user
+    );
 
     await loadEnquiries();
 
   } catch (error) {
 
-    console.error("CRM SETUP ERROR:", error);
+    console.error(
+      "CRM SETUP ERROR:",
+      error
+    );
 
     showStaffNameError();
 
@@ -199,12 +305,15 @@ async function setupCRM() {
 function showStaffName(user) {
 
   const staffName =
-    document.getElementById("staffName");
+    document.getElementById(
+      "staffName"
+    );
 
   if (!staffName) return;
 
   staffName.textContent =
-    user?.email || "Staff";
+    user?.email ||
+    "Staff";
 
 }
 
@@ -212,10 +321,15 @@ function showStaffName(user) {
 function showStaffNameError() {
 
   const staffName =
-    document.getElementById("staffName");
+    document.getElementById(
+      "staffName"
+    );
 
   if (staffName) {
-    staffName.textContent = "Staff";
+
+    staffName.textContent =
+      "Staff";
+
   }
 
 }
@@ -228,42 +342,66 @@ function showStaffNameError() {
 function setupLogout() {
 
   const logoutBtn =
-    document.getElementById("logoutBtn");
+    document.getElementById(
+      "logoutBtn"
+    );
 
   if (!logoutBtn) return;
 
-  logoutBtn.addEventListener("click", async () => {
+  logoutBtn.addEventListener(
+    "click",
+    async () => {
 
-    logoutBtn.disabled = true;
-    logoutBtn.textContent = "Logging out...";
+      logoutBtn.disabled =
+        true;
 
-    try {
+      logoutBtn.textContent =
+        "Logging out...";
 
-      const { error } =
-        await supabaseClient.auth.signOut();
+      try {
 
-      if (error) {
+        const {
+          error
+        } =
+          await supabaseClient.auth
+            .signOut();
 
-        console.error("LOGOUT ERROR:", error);
+        if (error) {
 
-        logoutBtn.disabled = false;
-        logoutBtn.textContent = "Logout";
+          console.error(
+            "LOGOUT ERROR:",
+            error
+          );
 
-        return;
+          logoutBtn.disabled =
+            false;
+
+          logoutBtn.textContent =
+            "Logout";
+
+          return;
+        }
+
+        window.location.href =
+          "login.html";
+
+      } catch (error) {
+
+        console.error(
+          "LOGOUT EXCEPTION:",
+          error
+        );
+
+        logoutBtn.disabled =
+          false;
+
+        logoutBtn.textContent =
+          "Logout";
+
       }
 
-      window.location.href = "login.html";
-
-    } catch (error) {
-
-      console.error("LOGOUT EXCEPTION:", error);
-
-      logoutBtn.disabled = false;
-      logoutBtn.textContent = "Logout";
-
     }
-
-  });
+  );
 
 }
 
@@ -275,13 +413,18 @@ function setupLogout() {
 async function loadEnquiries() {
 
   const tableBody =
-    document.getElementById("leadsTableBody");
+    document.getElementById(
+      "leadsTableBody"
+    );
 
   if (tableBody) {
 
     tableBody.innerHTML = `
       <tr>
-        <td colspan="10" class="loading-cell">
+        <td
+          colspan="10"
+          class="loading-cell"
+        >
           Loading enquiries...
         </td>
       </tr>
@@ -298,21 +441,31 @@ async function loadEnquiries() {
       await supabaseClient
         .from("customer_enquiries")
         .select("*")
-        .order("created_at", {
-          ascending: false
-        });
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
 
     if (error) {
 
-      console.error("LOAD ENQUIRIES ERROR:", error);
+      console.error(
+        "LOAD ENQUIRIES ERROR:",
+        error
+      );
 
-      currentEnquiries = [];
+      currentEnquiries =
+        [];
 
       if (tableBody) {
 
         tableBody.innerHTML = `
           <tr>
-            <td colspan="10" class="loading-cell">
+            <td
+              colspan="10"
+              class="loading-cell"
+            >
               Unable to load enquiries.
             </td>
           </tr>
@@ -324,9 +477,13 @@ async function loadEnquiries() {
     }
 
     currentEnquiries =
-      Array.isArray(data) ? data : [];
+      Array.isArray(data)
+        ? data
+        : [];
 
-    updateStats(currentEnquiries);
+    updateStats(
+      currentEnquiries
+    );
 
     applyFilters();
 
@@ -341,7 +498,10 @@ async function loadEnquiries() {
 
       tableBody.innerHTML = `
         <tr>
-          <td colspan="10" class="loading-cell">
+          <td
+            colspan="10"
+            class="loading-cell"
+          >
             Unable to load enquiries.
           </td>
         </tr>
@@ -358,288 +518,343 @@ async function loadEnquiries() {
    RENDER ENQUIRIES
    ========================================================= */
 
-function renderEnquiries(enquiries) {
+function renderEnquiries(
+  enquiries
+) {
 
   const tableBody =
-    document.getElementById("leadsTableBody");
+    document.getElementById(
+      "leadsTableBody"
+    );
 
   const emptyState =
-    document.getElementById("emptyState");
+    document.getElementById(
+      "emptyState"
+    );
 
   if (!tableBody) return;
 
   if (!enquiries.length) {
 
-    tableBody.innerHTML = "";
+    tableBody.innerHTML =
+      "";
 
     if (emptyState) {
-      emptyState.hidden = false;
+
+      emptyState.hidden =
+        false;
+
     }
 
     return;
   }
 
   if (emptyState) {
-    emptyState.hidden = true;
+
+    emptyState.hidden =
+      true;
+
   }
 
   tableBody.innerHTML =
-    enquiries.map((lead) => {
+    enquiries
+      .map(
+        (lead) => {
 
-      const status =
-        lead.status ||
-        lead.lead_status ||
-        "new";
+          const status =
+            lead.status ||
+            "new";
 
-      const priority =
-        lead.priority ||
-        "normal";
+          const priority =
+            lead.priority ||
+            "normal";
 
-      const mobile =
-        lead.mobile ||
-        lead.mobile_number ||
-        "";
+          const mobile =
+            lead.mobile ||
+            "";
 
-      return `
-        <tr>
+          return `
+            <tr>
 
-          <!-- CUSTOMER -->
+              <td>
 
-          <td>
+                <strong
+                  class="customer-name"
+                >
+                  ${escapeHTML(
+                    lead.customer_name ||
+                    "Unnamed"
+                  )}
+                </strong>
 
-            <strong class="customer-name">
-              ${escapeHTML(
-                lead.customer_name || "Unnamed"
-              )}
-            </strong>
+                <small>
+                  ${escapeHTML(
+                    lead.email ||
+                    ""
+                  )}
+                </small>
 
-            <small>
-              ${escapeHTML(
-                lead.email || ""
-              )}
-            </small>
-
-          </td>
+              </td>
 
 
-          <!-- PHONE -->
+              <td>
 
-          <td>
+                ${
+                  mobile
+                    ? `
+                      <a
+                        href="tel:${escapeHTML(
+                          mobile
+                        )}"
+                        class="phone-link"
+                      >
+                        ☎ ${escapeHTML(
+                          mobile
+                        )}
+                      </a>
+                    `
+                    : "—"
+                }
 
-            ${
-              mobile
-                ? `
-                  <a
-                    href="tel:${escapeHTML(mobile)}"
-                    class="phone-link"
+              </td>
+
+
+              <td>
+                ${escapeHTML(
+                  lead.occasion ||
+                  "—"
+                )}
+              </td>
+
+
+              <td>
+                ${escapeHTML(
+                  lead.location ||
+                  "—"
+                )}
+              </td>
+
+
+              <td>
+                ${formatDate(
+                  lead.event_date
+                )}
+              </td>
+
+
+              <td>
+                ${
+                  lead.guests ??
+                  "—"
+                }
+              </td>
+
+
+              <td>
+
+                ${
+                  lead.budget_per_person
+                    ? "₹" +
+                      Number(
+                        lead.budget_per_person
+                      ).toLocaleString(
+                        "en-IN"
+                      )
+                    : "—"
+                }
+
+              </td>
+
+
+              <td>
+
+                <select
+                  class="inline-status-select ${getStatusClass(
+                    status
+                  )}"
+                  data-lead-id="${escapeHTML(
+                    String(lead.id)
+                  )}"
+                  data-current-value="${escapeHTML(
+                    status
+                  )}"
+                  aria-label="Change lead status"
+                >
+
+                  ${buildStatusOptions(
+                    status
+                  )}
+
+                </select>
+
+              </td>
+
+
+              <td>
+
+                <select
+                  class="inline-priority-select priority-${escapeHTML(
+                    priority
+                  )}"
+                  data-lead-id="${escapeHTML(
+                    String(lead.id)
+                  )}"
+                  data-current-value="${escapeHTML(
+                    priority
+                  )}"
+                  aria-label="Change lead priority"
+                >
+
+                  <option
+                    value="urgent"
+                    ${
+                      priority ===
+                      "urgent"
+                        ? "selected"
+                        : ""
+                    }
                   >
-                    ☎ ${escapeHTML(mobile)}
-                  </a>
-                `
-                : "—"
-            }
+                    Urgent
+                  </option>
 
-          </td>
+                  <option
+                    value="high"
+                    ${
+                      priority ===
+                      "high"
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    High
+                  </option>
 
+                  <option
+                    value="normal"
+                    ${
+                      priority ===
+                      "normal"
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    Normal
+                  </option>
 
-          <!-- EVENT -->
+                  <option
+                    value="low"
+                    ${
+                      priority ===
+                      "low"
+                        ? "selected"
+                        : ""
+                    }
+                  >
+                    Low
+                  </option>
 
-          <td>
-            ${escapeHTML(
-              lead.occasion || "—"
-            )}
-          </td>
+                </select>
 
-
-          <!-- LOCATION -->
-
-          <td>
-            ${escapeHTML(
-              lead.location || "—"
-            )}
-          </td>
-
-
-          <!-- DATE -->
-
-          <td>
-            ${formatDate(
-              lead.event_date
-            )}
-          </td>
-
-
-          <!-- GUESTS -->
-
-          <td>
-            ${lead.guests || "—"}
-          </td>
-
-
-          <!-- BUDGET -->
-
-          <td>
-
-            ${
-              lead.budget_per_person
-                ? "₹" +
-                  Number(
-                    lead.budget_per_person
-                  ).toLocaleString("en-IN")
-                : "—"
-            }
-
-          </td>
+              </td>
 
 
-          <!-- STATUS -->
+              <td>
 
-          <td>
+                <button
+                  type="button"
+                  class="view-lead-btn"
+                  data-lead-id="${escapeHTML(
+                    String(lead.id)
+                  )}"
+                >
+                  View
+                </button>
 
-            <select
-              class="inline-status-select ${getStatusClass(status)}"
-              data-lead-id="${escapeHTML(String(lead.id))}"
-              data-current-value="${escapeHTML(status)}"
-              aria-label="Change lead status"
-            >
+              </td>
 
-              <option
-                value="new"
-                ${status === "new" ? "selected" : ""}
-              >
-                New
-              </option>
+            </tr>
+          `;
 
-              <option
-                value="contacted"
-                ${status === "contacted" ? "selected" : ""}
-              >
-                Contacted
-              </option>
-
-              <option
-                value="follow_up"
-                ${status === "follow_up" ? "selected" : ""}
-              >
-                Follow-up
-              </option>
-
-              <option
-                value="qualified"
-                ${status === "qualified" ? "selected" : ""}
-              >
-                Qualified
-              </option>
-
-              <option
-                value="converted"
-                ${status === "converted" ? "selected" : ""}
-              >
-                Converted
-              </option>
-
-              <option
-                value="closed"
-                ${status === "closed" ? "selected" : ""}
-              >
-                Closed
-              </option>
-
-            </select>
-
-          </td>
-
-
-          <!-- PRIORITY -->
-
-          <td>
-
-            <select
-              class="inline-priority-select priority-${escapeHTML(priority)}"
-              data-lead-id="${escapeHTML(String(lead.id))}"
-              data-current-value="${escapeHTML(priority)}"
-              aria-label="Change lead priority"
-            >
-
-              <option
-                value="urgent"
-                ${priority === "urgent" ? "selected" : ""}
-              >
-                Urgent
-              </option>
-
-              <option
-                value="high"
-                ${priority === "high" ? "selected" : ""}
-              >
-                High
-              </option>
-
-              <option
-                value="normal"
-                ${priority === "normal" ? "selected" : ""}
-              >
-                Normal
-              </option>
-
-              <option
-                value="low"
-                ${priority === "low" ? "selected" : ""}
-              >
-                Low
-              </option>
-
-            </select>
-
-          </td>
-
-
-          <!-- ACTION -->
-
-          <td>
-
-            <button
-              type="button"
-              class="view-lead-btn"
-              data-lead-id="${escapeHTML(String(lead.id))}"
-            >
-              View
-            </button>
-
-          </td>
-
-        </tr>
-      `;
-
-    }).join("");
+        }
+      )
+      .join("");
 
 
   setupInlineLeadControls();
 
 
   document
-    .querySelectorAll(".view-lead-btn")
-    .forEach((button) => {
+    .querySelectorAll(
+      ".view-lead-btn"
+    )
+    .forEach(
+      (button) => {
 
-      button.addEventListener("click", () => {
+        button.addEventListener(
+          "click",
+          () => {
 
-        const leadId =
-          button.dataset.leadId;
+            const leadId =
+              button.dataset
+                .leadId;
 
-        const lead =
-          currentEnquiries.find(
-            (item) =>
-              String(item.id) ===
-              String(leadId)
-          );
+            const lead =
+              currentEnquiries.find(
+                (item) =>
+                  String(
+                    item.id
+                  ) ===
+                  String(
+                    leadId
+                  )
+              );
 
-        if (lead) {
-          openLeadModal(lead);
-        }
+            if (lead) {
 
-      });
+              openLeadModal(
+                lead
+              );
 
-    });
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   BUILD STATUS OPTIONS
+   ========================================================= */
+
+function buildStatusOptions(
+  currentStatus
+) {
+
+  return STATUS_OPTIONS
+    .map(
+      (option) => `
+        <option
+          value="${escapeHTML(
+            option.value
+          )}"
+          ${
+            currentStatus ===
+            option.value
+              ? "selected"
+              : ""
+          }
+        >
+          ${escapeHTML(
+            option.label
+          )}
+        </option>
+      `
+    )
+    .join("");
 
 }
 
@@ -651,53 +866,71 @@ function renderEnquiries(enquiries) {
 function setupInlineLeadControls() {
 
   document
-    .querySelectorAll(".inline-status-select")
-    .forEach((select) => {
+    .querySelectorAll(
+      ".inline-status-select"
+    )
+    .forEach(
+      (select) => {
 
-      select.addEventListener("change", async () => {
+        select.addEventListener(
+          "change",
+          async () => {
 
-        const leadId =
-          select.dataset.leadId;
+            const leadId =
+              select.dataset
+                .leadId;
 
-        const newStatus =
-          select.value;
+            const newStatus =
+              select.value;
 
-        await updateLeadInline(
-          leadId,
-          {
-            status: newStatus
-          },
-          select
+            await updateLeadInline(
+              leadId,
+              {
+                status:
+                  newStatus
+              },
+              select
+            );
+
+          }
         );
 
-      });
-
-    });
+      }
+    );
 
 
   document
-    .querySelectorAll(".inline-priority-select")
-    .forEach((select) => {
+    .querySelectorAll(
+      ".inline-priority-select"
+    )
+    .forEach(
+      (select) => {
 
-      select.addEventListener("change", async () => {
+        select.addEventListener(
+          "change",
+          async () => {
 
-        const leadId =
-          select.dataset.leadId;
+            const leadId =
+              select.dataset
+                .leadId;
 
-        const newPriority =
-          select.value;
+            const newPriority =
+              select.value;
 
-        await updateLeadInline(
-          leadId,
-          {
-            priority: newPriority
-          },
-          select
+            await updateLeadInline(
+              leadId,
+              {
+                priority:
+                  newPriority
+              },
+              select
+            );
+
+          }
         );
 
-      });
-
-    });
+      }
+    );
 
 }
 
@@ -724,16 +957,22 @@ async function updateLeadInline(
   if (!lead) return;
 
   const previousValue =
-    selectElement.dataset.currentValue;
+    selectElement.dataset
+      .currentValue;
 
-  selectElement.disabled = true;
+  selectElement.disabled =
+    true;
 
   try {
 
     const updateData = {
+
       ...changes,
+
       updated_at:
-        new Date().toISOString()
+        new Date()
+          .toISOString()
+
     };
 
     const {
@@ -742,7 +981,10 @@ async function updateLeadInline(
       await supabaseClient
         .from("customer_enquiries")
         .update(updateData)
-        .eq("id", leadId);
+        .eq(
+          "id",
+          leadId
+        );
 
     if (error) {
 
@@ -767,14 +1009,16 @@ async function updateLeadInline(
       changes
     );
 
-    selectElement.dataset.currentValue =
+    selectElement.dataset
+      .currentValue =
       selectElement.value;
 
     if (
-      Object.prototype.hasOwnProperty.call(
-        changes,
-        "status"
-      )
+      Object.prototype
+        .hasOwnProperty.call(
+          changes,
+          "status"
+        )
     ) {
 
       selectElement.className =
@@ -786,10 +1030,11 @@ async function updateLeadInline(
     }
 
     if (
-      Object.prototype.hasOwnProperty.call(
-        changes,
-        "priority"
-      )
+      Object.prototype
+        .hasOwnProperty.call(
+          changes,
+          "priority"
+        )
     ) {
 
       selectElement.className =
@@ -798,7 +1043,9 @@ async function updateLeadInline(
 
     }
 
-    updateStats(currentEnquiries);
+    updateStats(
+      currentEnquiries
+    );
 
     showToast(
       "Lead updated successfully."
@@ -820,7 +1067,8 @@ async function updateLeadInline(
 
   } finally {
 
-    selectElement.disabled = false;
+    selectElement.disabled =
+      false;
 
   }
 
@@ -831,23 +1079,35 @@ async function updateLeadInline(
    STATS
    ========================================================= */
 
-function updateStats(enquiries) {
+function updateStats(
+  enquiries
+) {
 
   const total =
-    document.getElementById("totalLeads");
+    document.getElementById(
+      "totalLeads"
+    );
 
   const newLeads =
-    document.getElementById("newLeads");
+    document.getElementById(
+      "newLeads"
+    );
 
   const followup =
-    document.getElementById("followupLeads");
+    document.getElementById(
+      "followupLeads"
+    );
 
   const converted =
-    document.getElementById("convertedLeads");
+    document.getElementById(
+      "convertedLeads"
+    );
 
   if (total) {
+
     total.textContent =
       enquiries.length;
+
   }
 
   if (newLeads) {
@@ -855,8 +1115,10 @@ function updateStats(enquiries) {
     newLeads.textContent =
       enquiries.filter(
         (lead) =>
-          (lead.status ||
-            lead.lead_status) ===
+          (
+            lead.status ||
+            "new"
+          ) ===
           "new"
       ).length;
 
@@ -867,9 +1129,11 @@ function updateStats(enquiries) {
     followup.textContent =
       enquiries.filter(
         (lead) =>
-          (lead.status ||
-            lead.lead_status) ===
-          "follow_up"
+          (
+            lead.status ||
+            "new"
+          ) ===
+          "call_back"
       ).length;
 
   }
@@ -879,8 +1143,10 @@ function updateStats(enquiries) {
     converted.textContent =
       enquiries.filter(
         (lead) =>
-          (lead.status ||
-            lead.lead_status) ===
+          (
+            lead.status ||
+            "new"
+          ) ===
           "converted"
       ).length;
 
@@ -896,7 +1162,9 @@ function updateStats(enquiries) {
 function setupSearch() {
 
   const searchInput =
-    document.getElementById("searchInput");
+    document.getElementById(
+      "searchInput"
+    );
 
   if (!searchInput) return;
 
@@ -915,10 +1183,14 @@ function setupSearch() {
 function setupFilters() {
 
   const statusFilter =
-    document.getElementById("statusFilter");
+    document.getElementById(
+      "statusFilter"
+    );
 
   const priorityFilter =
-    document.getElementById("priorityFilter");
+    document.getElementById(
+      "priorityFilter"
+    );
 
   if (statusFilter) {
 
@@ -926,9 +1198,12 @@ function setupFilters() {
       "change",
       () => {
 
-        activeLeadTab = "";
+        activeLeadTab =
+          "";
 
-        setActiveLeadTab(null);
+        setActiveLeadTab(
+          null
+        );
 
         applyFilters();
 
@@ -956,13 +1231,19 @@ function setupFilters() {
 function applyFilters() {
 
   const searchInput =
-    document.getElementById("searchInput");
+    document.getElementById(
+      "searchInput"
+    );
 
   const statusFilter =
-    document.getElementById("statusFilter");
+    document.getElementById(
+      "statusFilter"
+    );
 
   const priorityFilter =
-    document.getElementById("priorityFilter");
+    document.getElementById(
+      "priorityFilter"
+    );
 
   const search =
     (
@@ -981,59 +1262,75 @@ function applyFilters() {
     "";
 
   const filtered =
-    currentEnquiries.filter((lead) => {
+    currentEnquiries.filter(
+      (lead) => {
 
-      const searchable = [
+        const searchable = [
 
-        lead.customer_name,
-        lead.mobile,
-        lead.mobile_number,
-        lead.email,
-        lead.location,
-        lead.occasion,
-        lead.source,
-        lead.contact_remark,
-        lead.internal_notes
+          lead.customer_name,
 
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+          lead.mobile,
 
-      const matchesSearch =
-        !search ||
-        searchable.includes(search);
+          lead.email,
 
-      const leadStatus =
-        lead.status ||
-        lead.lead_status ||
-        "new";
+          lead.location,
 
-      const matchesTab =
-        !activeLeadTab ||
-        leadStatus ===
-        activeLeadTab;
+          lead.occasion,
 
-      const matchesStatus =
-        !dropdownStatus ||
-        leadStatus ===
-        dropdownStatus;
+          lead.source,
 
-      const matchesPriority =
-        !priority ||
-        (lead.priority || "normal") ===
-        priority;
+          lead.contact_remark,
 
-      return (
-        matchesSearch &&
-        matchesTab &&
-        matchesStatus &&
-        matchesPriority
-      );
+          lead.internal_notes,
 
-    });
+          lead.requirements
 
-  renderEnquiries(filtered);
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        const matchesSearch =
+          !search ||
+          searchable.includes(
+            search
+          );
+
+        const leadStatus =
+          lead.status ||
+          "new";
+
+        const matchesTab =
+          !activeLeadTab ||
+          leadStatus ===
+          activeLeadTab;
+
+        const matchesStatus =
+          !dropdownStatus ||
+          leadStatus ===
+          dropdownStatus;
+
+        const matchesPriority =
+          !priority ||
+          (
+            lead.priority ||
+            "normal"
+          ) ===
+          priority;
+
+        return (
+          matchesSearch &&
+          matchesTab &&
+          matchesStatus &&
+          matchesPriority
+        );
+
+      }
+    );
+
+  renderEnquiries(
+    filtered
+  );
 
 }
 
@@ -1045,7 +1342,9 @@ function applyFilters() {
 function setupRefresh() {
 
   const refreshBtn =
-    document.getElementById("refreshBtn");
+    document.getElementById(
+      "refreshBtn"
+    );
 
   if (!refreshBtn) return;
 
@@ -1053,13 +1352,17 @@ function setupRefresh() {
     "click",
     async () => {
 
-      refreshBtn.disabled = true;
+      refreshBtn.disabled =
+        true;
+
       refreshBtn.textContent =
         "Refreshing...";
 
       await loadEnquiries();
 
-      refreshBtn.disabled = false;
+      refreshBtn.disabled =
+        false;
+
       refreshBtn.textContent =
         "↻ Refresh";
 
@@ -1082,33 +1385,40 @@ function setupLeadTabs() {
 
   if (!tabs.length) return;
 
-  tabs.forEach((tab) => {
+  tabs.forEach(
+    (tab) => {
 
-    tab.addEventListener(
-      "click",
-      () => {
+      tab.addEventListener(
+        "click",
+        () => {
 
-        activeLeadTab =
-          tab.dataset.status ||
-          "";
+          activeLeadTab =
+            tab.dataset.status ||
+            "";
 
-        setActiveLeadTab(tab);
-
-        const statusFilter =
-          document.getElementById(
-            "statusFilter"
+          setActiveLeadTab(
+            tab
           );
 
-        if (statusFilter) {
-          statusFilter.value = "";
+          const statusFilter =
+            document.getElementById(
+              "statusFilter"
+            );
+
+          if (statusFilter) {
+
+            statusFilter.value =
+              "";
+
+          }
+
+          applyFilters();
+
         }
+      );
 
-        applyFilters();
-
-      }
-    );
-
-  });
+    }
+  );
 
 }
 
@@ -1125,13 +1435,15 @@ function setActiveLeadTab(
     .querySelectorAll(
       ".stat-tab"
     )
-    .forEach((tab) => {
+    .forEach(
+      (tab) => {
 
-      tab.classList.remove(
-        "active"
-      );
+        tab.classList.remove(
+          "active"
+        );
 
-    });
+      }
+    );
 
   if (selectedTab) {
 
@@ -1166,24 +1478,30 @@ function setupLeadModal() {
     );
 
   if (closeBtn) {
+
     closeBtn.addEventListener(
       "click",
       closeLeadModal
     );
+
   }
 
   if (cancelBtn) {
+
     cancelBtn.addEventListener(
       "click",
       closeLeadModal
     );
+
   }
 
   if (saveBtn) {
+
     saveBtn.addEventListener(
       "click",
       saveLeadChanges
     );
+
   }
 
   const modal =
@@ -1201,7 +1519,9 @@ function setupLeadModal() {
           event.target ===
           modal
         ) {
+
           closeLeadModal();
+
         }
 
       }
@@ -1214,32 +1534,37 @@ function setupLeadModal() {
     (event) => {
 
       if (
-        event.key === "Escape"
+        event.key !==
+        "Escape"
+      ) {
+        return;
+      }
+
+      const leadModal =
+        document.getElementById(
+          "leadModal"
+        );
+
+      const addModal =
+        document.getElementById(
+          "addEnquiryModal"
+        );
+
+      if (
+        leadModal &&
+        !leadModal.hidden
       ) {
 
-        const leadModal =
-          document.getElementById(
-            "leadModal"
-          );
+        closeLeadModal();
 
-        const addModal =
-          document.getElementById(
-            "addEnquiryModal"
-          );
+      }
 
-        if (
-          leadModal &&
-          !leadModal.hidden
-        ) {
-          closeLeadModal();
-        }
+      if (
+        addModal &&
+        !addModal.hidden
+      ) {
 
-        if (
-          addModal &&
-          !addModal.hidden
-        ) {
-          closeAddEnquiryModal();
-        }
+        closeAddEnquiryModal();
 
       }
 
@@ -1253,137 +1578,130 @@ function setupLeadModal() {
    OPEN LEAD MODAL
    ========================================================= */
 
-function openLeadModal(lead) {
+function openLeadModal(
+  lead
+) {
 
-  currentLead = lead;
+  currentLead =
+    lead;
 
   originalContactRemark =
-    lead.contact_remark || "";
-
-  setText(
-    "modalCustomerName",
-    lead.customer_name ||
-    "Customer"
-  );
-
-  const mobile =
-    lead.mobile ||
-    lead.mobile_number ||
+    lead.contact_remark ||
     "";
 
-  setText(
+  /* CUSTOMER */
+
+  setInputValue(
+    "modalCustomerName",
+    lead.customer_name ||
+    ""
+  );
+
+  setInputValue(
     "modalMobile",
-    mobile || "—"
+    lead.mobile ||
+    ""
   );
 
-  setText(
+  setInputValue(
     "modalEmail",
-    lead.email || "—"
+    lead.email ||
+    ""
   );
 
-  setText(
+  /* LOCATION */
+
+  setInputValue(
     "modalLocation",
-    lead.location || "—"
+    lead.location ||
+    ""
   );
 
-  setText(
+  /* OCCASION */
+
+  setInputValue(
     "modalOccasion",
-    lead.occasion || "—"
+    lead.occasion ||
+    ""
   );
 
-  setText(
+  /* EVENT DATE */
+
+  setInputValue(
     "modalEventDate",
-    formatDate(
-      lead.event_date
+    lead.event_date
+      ? formatDateForInput(
+          lead.event_date
+        )
+      : ""
+  );
+
+  /* GUESTS */
+
+  setInputValue(
+    "modalGuests",
+    lead.guests ??
+    ""
+  );
+
+  /* BUDGET */
+
+  setInputValue(
+    "modalBudget",
+    lead.budget_per_person ??
+    ""
+  );
+
+  /* FOOD */
+
+  setInputValue(
+    "modalFood",
+    lead.food_preference ||
+    ""
+  );
+
+  /* REQUIREMENTS */
+
+  setInputValue(
+    "modalRequirements",
+    lead.requirements ||
+    ""
+  );
+
+
+  /* CONTACT REMARK */
+
+  setInputValue(
+    "modalContactRemark",
+    lead.contact_remark ||
+    ""
+  );
+
+
+  /* CONTACT COUNT */
+
+  setText(
+    "modalContactCount",
+    Number(
+      lead.contact_count ||
+      0
     )
   );
 
-  setText(
-    "modalGuests",
-    lead.guests || "—"
-  );
+
+  /* LAST CONTACT */
 
   setText(
-    "modalBudget",
-    lead.budget_per_person
-      ? "₹" +
-        Number(
-          lead.budget_per_person
-        ).toLocaleString("en-IN")
-      : "—"
-  );
-
-  setText(
-    "modalFood",
-    lead.food_preference ||
-    "—"
-  );
-
-  setText(
-    "modalRequirements",
-    lead.requirements ||
-    lead.other_requirements ||
-    "—"
+    "modalLastContacted",
+    lead.last_contacted_at
+      ? formatDateTime(
+          lead.last_contacted_at
+        )
+      : "Never"
   );
 
 
-  /* =======================================================
-     CONTACT REMARK
-     ======================================================= */
-
-  const contactRemark =
-    document.getElementById(
-      "modalContactRemark"
-    );
-
-  if (contactRemark) {
-
-    contactRemark.value =
-      lead.contact_remark ||
-      "";
-
-  }
-
-
-  /* =======================================================
-     CONTACT HISTORY
-     ======================================================= */
-
-  const contactCount =
-    document.getElementById(
-      "modalContactCount"
-    );
-
-  if (contactCount) {
-
-    contactCount.textContent =
-      Number(
-        lead.contact_count || 0
-      );
-
-  }
-
-
-  const lastContacted =
-    document.getElementById(
-      "modalLastContacted"
-    );
-
-  if (lastContacted) {
-
-    lastContacted.textContent =
-      lead.last_contacted_at
-        ? formatDateTime(
-            lead.last_contacted_at
-          )
-        : "Never";
-
-  }
-
-
-  /* =======================================================
-     STATUS
-     ======================================================= */
+  /* STATUS */
 
   const status =
     document.getElementById(
@@ -1392,72 +1710,44 @@ function openLeadModal(lead) {
 
   if (status) {
 
-    status.value =
-      lead.status ||
-      lead.lead_status ||
-      "new";
-
-  }
-
-
-  /* =======================================================
-     PRIORITY
-     ======================================================= */
-
-  const priority =
-    document.getElementById(
-      "modalPriority"
-    );
-
-  if (priority) {
-
-    priority.value =
-      lead.priority ||
-      "normal";
-
-  }
-
-
-  /* =======================================================
-     FOLLOW-UP
-     ======================================================= */
-
-  const followUp =
-    document.getElementById(
-      "modalFollowUp"
-    );
-
-  if (followUp) {
-
-    followUp.value =
-      toDateTimeLocal(
-        lead.follow_up_at
+    status.innerHTML =
+      buildStatusOptions(
+        lead.status ||
+        "new"
       );
 
   }
 
 
-  /* =======================================================
-     INTERNAL NOTES
-     ======================================================= */
+  /* PRIORITY */
 
-  const notes =
-    document.getElementById(
-      "modalNotes"
-    );
-
-  if (notes) {
-
-    notes.value =
-      lead.internal_notes ||
-      "";
-
-  }
+  setInputValue(
+    "modalPriority",
+    lead.priority ||
+    "normal"
+  );
 
 
-  /* =======================================================
-     CALL BUTTON
-     ======================================================= */
+  /* FOLLOW UP */
+
+  setInputValue(
+    "modalFollowUp",
+    toDateTimeLocal(
+      lead.follow_up_at
+    )
+  );
+
+
+  /* INTERNAL NOTES */
+
+  setInputValue(
+    "modalNotes",
+    lead.internal_notes ||
+    ""
+  );
+
+
+  /* CALL */
 
   const callBtn =
     document.getElementById(
@@ -1467,16 +1757,15 @@ function openLeadModal(lead) {
   if (callBtn) {
 
     callBtn.href =
-      mobile
-        ? "tel:" + mobile
+      lead.mobile
+        ? "tel:" +
+          lead.mobile
         : "#";
 
   }
 
 
-  /* =======================================================
-     WHATSAPP
-     ======================================================= */
+  /* WHATSAPP */
 
   const whatsappBtn =
     document.getElementById(
@@ -1486,12 +1775,20 @@ function openLeadModal(lead) {
   if (whatsappBtn) {
 
     const cleanMobile =
-      String(mobile)
-        .replace(/\D/g, "");
+      String(
+        lead.mobile ||
+        ""
+      )
+        .replace(
+          /\D/g,
+          ""
+        );
 
     const whatsappNumber =
-      cleanMobile.length === 10
-        ? "91" + cleanMobile
+      cleanMobile.length ===
+      10
+        ? "91" +
+          cleanMobile
         : cleanMobile;
 
     whatsappBtn.href =
@@ -1503,9 +1800,7 @@ function openLeadModal(lead) {
   }
 
 
-  /* =======================================================
-     OPEN MODAL
-     ======================================================= */
+  /* OPEN */
 
   const modal =
     document.getElementById(
@@ -1514,7 +1809,8 @@ function openLeadModal(lead) {
 
   if (modal) {
 
-    modal.hidden = false;
+    modal.hidden =
+      false;
 
     document.body.style.overflow =
       "hidden";
@@ -1536,15 +1832,20 @@ function closeLeadModal() {
     );
 
   if (modal) {
-    modal.hidden = true;
+
+    modal.hidden =
+      true;
+
   }
 
   document.body.style.overflow =
     "";
 
-  currentLead = null;
+  currentLead =
+    null;
 
-  originalContactRemark = "";
+  originalContactRemark =
+    "";
 
 }
 
@@ -1567,10 +1868,74 @@ async function saveLeadChanges() {
     return;
   }
 
+
   const saveBtn =
     document.getElementById(
       "saveLeadBtn"
     );
+
+
+  /* =======================================================
+     READ EDITABLE CUSTOMER FIELDS
+     ======================================================= */
+
+  const customerName =
+    getInputValue(
+      "modalCustomerName"
+    );
+
+  const mobile =
+    getInputValue(
+      "modalMobile"
+    );
+
+  const email =
+    getInputValue(
+      "modalEmail"
+    );
+
+  const location =
+    getInputValue(
+      "modalLocation"
+    );
+
+  const occasion =
+    getInputValue(
+      "modalOccasion"
+    );
+
+  const eventDate =
+    getInputValue(
+      "modalEventDate"
+    );
+
+  const guests =
+    getInputValue(
+      "modalGuests"
+    );
+
+  const budget =
+    getInputValue(
+      "modalBudget"
+    );
+
+  const foodPreference =
+    getInputValue(
+      "modalFood"
+    );
+
+  const requirements =
+    getInputValue(
+      "modalRequirements"
+    );
+
+  const contactRemark =
+    getInputValue(
+      "modalContactRemark"
+    );
+
+
+  /* CRM */
 
   const status =
     document.getElementById(
@@ -1591,20 +1956,13 @@ async function saveLeadChanges() {
     "";
 
   const notes =
-    document.getElementById(
+    getInputValue(
       "modalNotes"
-    )?.value.trim() ||
-    "";
-
-  const contactRemark =
-    document.getElementById(
-      "modalContactRemark"
-    )?.value.trim() ||
-    "";
+    );
 
 
   /* =======================================================
-     CHECK WHETHER A NEW CONTACT REMARK WAS ADDED
+     CONTACT TRACKING
      ======================================================= */
 
   const remarkChanged =
@@ -1614,7 +1972,9 @@ async function saveLeadChanges() {
 
   if (saveBtn) {
 
-    saveBtn.disabled = true;
+    saveBtn.disabled =
+      true;
+
     saveBtn.textContent =
       "Saving...";
 
@@ -1624,6 +1984,52 @@ async function saveLeadChanges() {
   try {
 
     const updateData = {
+
+      customer_name:
+        customerName ||
+        null,
+
+      mobile:
+        mobile ||
+        null,
+
+      email:
+        email ||
+        null,
+
+      location:
+        location ||
+        null,
+
+      occasion:
+        occasion ||
+        null,
+
+      event_date:
+        eventDate ||
+        null,
+
+      guests:
+        guests
+          ? Number(
+              guests
+            )
+          : null,
+
+      budget_per_person:
+        budget
+          ? Number(
+              budget
+            )
+          : null,
+
+      food_preference:
+        foodPreference ||
+        null,
+
+      requirements:
+        requirements ||
+        null,
 
       status,
 
@@ -1637,45 +2043,71 @@ async function saveLeadChanges() {
           : null,
 
       internal_notes:
-        notes || null,
+        notes ||
+        null,
 
       contact_remark:
-        contactRemark || null,
+        contactRemark ||
+        null,
 
       updated_at:
-        new Date().toISOString()
+        new Date()
+          .toISOString()
 
     };
 
 
     /* =====================================================
-       CONTACT TRACKING
-       Only update contact history when remark changes.
+       CONTACT HISTORY
        ===================================================== */
 
     if (remarkChanged) {
 
       updateData.contact_count =
         Number(
-          currentLead.contact_count || 0
+          currentLead.contact_count ||
+          0
         ) + 1;
 
       updateData.last_contacted_at =
-        new Date().toISOString();
+        new Date()
+          .toISOString();
 
     }
 
 
     /* =====================================================
-       SAVE TO SUPABASE
+       CONVERSION DATE
+       ===================================================== */
+
+    if (
+      status ===
+      "converted" &&
+      currentLead.status !==
+      "converted"
+    ) {
+
+      updateData.converted_at =
+        new Date()
+          .toISOString();
+
+    }
+
+
+    /* =====================================================
+       SAVE
        ===================================================== */
 
     const {
       error
     } =
       await supabaseClient
-        .from("customer_enquiries")
-        .update(updateData)
+        .from(
+          "customer_enquiries"
+        )
+        .update(
+          updateData
+        )
         .eq(
           "id",
           currentLead.id
@@ -1699,7 +2131,7 @@ async function saveLeadChanges() {
 
 
     /* =====================================================
-       UPDATE LOCAL OBJECT
+       LOCAL UPDATE
        ===================================================== */
 
     Object.assign(
@@ -1709,27 +2141,15 @@ async function saveLeadChanges() {
 
 
     /* =====================================================
-       SUCCESS MESSAGE
+       SUCCESS
        ===================================================== */
 
-    if (remarkChanged) {
+    showToast(
+      remarkChanged
+        ? "Lead + contact history saved."
+        : "Lead updated successfully."
+    );
 
-      showToast(
-        "Contact remark saved. Contact history updated."
-      );
-
-    } else {
-
-      showToast(
-        "Lead updated successfully."
-      );
-
-    }
-
-
-    /* =====================================================
-       CLOSE + REFRESH
-       ===================================================== */
 
     closeLeadModal();
 
@@ -1748,12 +2168,13 @@ async function saveLeadChanges() {
       error.message
     );
 
-
   } finally {
 
     if (saveBtn) {
 
-      saveBtn.disabled = false;
+      saveBtn.disabled =
+        false;
+
       saveBtn.textContent =
         "Save Changes";
 
@@ -1790,6 +2211,7 @@ function setupAddEnquiry() {
       "saveNewEnquiryBtn"
     );
 
+
   if (addBtn) {
 
     addBtn.addEventListener(
@@ -1798,6 +2220,7 @@ function setupAddEnquiry() {
     );
 
   }
+
 
   if (closeBtn) {
 
@@ -1808,6 +2231,7 @@ function setupAddEnquiry() {
 
   }
 
+
   if (cancelBtn) {
 
     cancelBtn.addEventListener(
@@ -1817,6 +2241,7 @@ function setupAddEnquiry() {
 
   }
 
+
   if (saveBtn) {
 
     saveBtn.addEventListener(
@@ -1825,6 +2250,7 @@ function setupAddEnquiry() {
     );
 
   }
+
 
   const modal =
     document.getElementById(
@@ -1841,7 +2267,9 @@ function setupAddEnquiry() {
           event.target ===
           modal
         ) {
+
           closeAddEnquiryModal();
+
         }
 
       }
@@ -1872,7 +2300,8 @@ function openAddEnquiryModal() {
     return;
   }
 
-  modal.hidden = false;
+  modal.hidden =
+    false;
 
   document.body.style.overflow =
     "hidden";
@@ -1892,7 +2321,10 @@ function closeAddEnquiryModal() {
     );
 
   if (modal) {
-    modal.hidden = true;
+
+    modal.hidden =
+      true;
+
   }
 
   document.body.style.overflow =
@@ -1904,7 +2336,10 @@ function closeAddEnquiryModal() {
     );
 
   if (message) {
-    message.textContent = "";
+
+    message.textContent =
+      "";
+
   }
 
 }
@@ -1917,24 +2352,24 @@ function closeAddEnquiryModal() {
 async function saveNewEnquiry() {
 
   const name =
-    document.getElementById(
+    getInputValue(
       "newCustomerName"
-    )?.value.trim();
+    );
 
   const mobile =
-    document.getElementById(
+    getInputValue(
       "newMobile"
-    )?.value.trim();
+    );
 
   const email =
-    document.getElementById(
+    getInputValue(
       "newEmail"
-    )?.value.trim();
+    );
 
   const location =
-    document.getElementById(
+    getInputValue(
       "newLocation"
-    )?.value.trim();
+    );
 
   const occasion =
     document.getElementById(
@@ -1991,16 +2426,14 @@ async function saveNewEnquiry() {
     "";
 
   const requirements =
-    document.getElementById(
+    getInputValue(
       "newRequirements"
-    )?.value.trim() ||
-    "";
+    );
 
   const notes =
-    document.getElementById(
+    getInputValue(
       "newNotes"
-    )?.value.trim() ||
-    "";
+    );
 
   const message =
     document.getElementById(
@@ -2012,7 +2445,11 @@ async function saveNewEnquiry() {
       "saveNewEnquiryBtn"
     );
 
-  if (!name || !mobile) {
+
+  if (
+    !name ||
+    !mobile
+  ) {
 
     if (message) {
 
@@ -2024,18 +2461,25 @@ async function saveNewEnquiry() {
     return;
   }
 
+
   if (saveBtn) {
 
-    saveBtn.disabled = true;
+    saveBtn.disabled =
+      true;
+
     saveBtn.textContent =
       "Saving...";
 
   }
 
+
   if (message) {
+
     message.textContent =
       "Saving enquiry...";
+
   }
+
 
   try {
 
@@ -2044,7 +2488,9 @@ async function saveNewEnquiry() {
       error
     } =
       await supabaseClient
-        .from("customer_enquiries")
+        .from(
+          "customer_enquiries"
+        )
         .insert({
 
           customer_name:
@@ -2054,32 +2500,42 @@ async function saveNewEnquiry() {
             mobile,
 
           email:
-            email || null,
+            email ||
+            null,
 
           location:
-            location || null,
+            location ||
+            null,
 
           occasion:
-            occasion || null,
+            occasion ||
+            null,
 
           guests:
             guests
-              ? Number(guests)
+              ? Number(
+                  guests
+                )
               : null,
 
           budget_per_person:
             budget
-              ? Number(budget)
+              ? Number(
+                  budget
+                )
               : null,
 
           food_preference:
-            food || null,
+            food ||
+            null,
 
           event_date:
-            eventDate || null,
+            eventDate ||
+            null,
 
           internal_notes:
-            notes || null,
+            notes ||
+            null,
 
           contact_remark:
             null,
@@ -2091,7 +2547,8 @@ async function saveNewEnquiry() {
             null,
 
           source:
-            source || "Other",
+            source ||
+            "Other",
 
           status,
 
@@ -2108,9 +2565,12 @@ async function saveNewEnquiry() {
           priority,
 
           requirements:
-            requirements || null
+            requirements ||
+            null
 
-        });
+        })
+        .select()
+        .single();
 
 
     if (error) {
@@ -2150,9 +2610,12 @@ async function saveNewEnquiry() {
 
     await loadEnquiries();
 
+
     setTimeout(
       () => {
+
         closeAddEnquiryModal();
+
       },
       500
     );
@@ -2177,7 +2640,8 @@ async function saveNewEnquiry() {
 
     if (saveBtn) {
 
-      saveBtn.disabled = false;
+      saveBtn.disabled =
+        false;
 
       saveBtn.textContent =
         "Save Enquiry";
@@ -2210,16 +2674,24 @@ function clearAddEnquiryForm() {
 
   ];
 
-  fields.forEach((id) => {
 
-    const element =
-      document.getElementById(id);
+  fields.forEach(
+    (id) => {
 
-    if (element) {
-      element.value = "";
+      const element =
+        document.getElementById(
+          id
+        );
+
+      if (element) {
+
+        element.value =
+          "";
+
+      }
+
     }
-
-  });
+  );
 
 
   const occasion =
@@ -2228,7 +2700,10 @@ function clearAddEnquiryForm() {
     );
 
   if (occasion) {
-    occasion.value = "";
+
+    occasion.value =
+      "";
+
   }
 
 
@@ -2238,7 +2713,10 @@ function clearAddEnquiryForm() {
     );
 
   if (food) {
-    food.value = "";
+
+    food.value =
+      "";
+
   }
 
 
@@ -2248,7 +2726,10 @@ function clearAddEnquiryForm() {
     );
 
   if (source) {
-    source.value = "Website";
+
+    source.value =
+      "Website";
+
   }
 
 
@@ -2258,7 +2739,10 @@ function clearAddEnquiryForm() {
     );
 
   if (status) {
-    status.value = "new";
+
+    status.value =
+      "new";
+
   }
 
 
@@ -2268,7 +2752,10 @@ function clearAddEnquiryForm() {
     );
 
   if (priority) {
-    priority.value = "normal";
+
+    priority.value =
+      "normal";
+
   }
 
 }
@@ -2278,40 +2765,104 @@ function clearAddEnquiryForm() {
    TOAST
    ========================================================= */
 
-function showToast(message) {
+function showToast(
+  message
+) {
 
-  const toast =
+  const toastMessage =
     document.getElementById(
       "toastMessage"
-    ) ||
+    );
+
+  const toast =
     document.getElementById(
       "toast"
     );
 
-  if (!toast) {
+  if (toastMessage) {
+
+    toastMessage.textContent =
+      message;
+
+  }
+
+  if (toast) {
+
+    toast.hidden =
+      false;
+
+    toast.classList.add(
+      "show"
+    );
+
+    setTimeout(
+      () => {
+
+        toast.classList.remove(
+          "show"
+        );
+
+        toast.hidden =
+          true;
+
+      },
+      2500
+    );
+
+  } else {
 
     console.log(
       "TOAST:",
       message
     );
 
+  }
+
+}
+
+
+/* =========================================================
+   INPUT HELPERS
+   ========================================================= */
+
+function getInputValue(
+  id
+) {
+
+  const element =
+    document.getElementById(
+      id
+    );
+
+  if (!element) {
+    return "";
+  }
+
+  return String(
+    element.value ??
+    ""
+  ).trim();
+
+}
+
+
+function setInputValue(
+  id,
+  value
+) {
+
+  const element =
+    document.getElementById(
+      id
+    );
+
+  if (!element) {
     return;
   }
 
-  toast.textContent =
-    message;
-
-  toast.classList.add(
-    "show"
-  );
-
-  setTimeout(() => {
-
-    toast.classList.remove(
-      "show"
-    );
-
-  }, 2500);
+  element.value =
+    value ??
+    "";
 
 }
 
@@ -2326,11 +2877,16 @@ function setText(
 ) {
 
   const element =
-    document.getElementById(id);
+    document.getElementById(
+      id
+    );
 
   if (element) {
+
     element.textContent =
-      value;
+      value ??
+      "";
+
   }
 
 }
@@ -2340,14 +2896,20 @@ function setText(
    DATE FORMAT
    ========================================================= */
 
-function formatDate(value) {
+function formatDate(
+  value
+) {
 
   if (!value) {
+
     return "—";
+
   }
 
   const date =
-    new Date(value);
+    new Date(
+      value
+    );
 
   if (
     Number.isNaN(
@@ -2375,14 +2937,20 @@ function formatDate(value) {
    DATE + TIME FORMAT
    ========================================================= */
 
-function formatDateTime(value) {
+function formatDateTime(
+  value
+) {
 
   if (!value) {
+
     return "—";
+
   }
 
   const date =
-    new Date(value);
+    new Date(
+      value
+    );
 
   if (
     Number.isNaN(
@@ -2409,17 +2977,84 @@ function formatDateTime(value) {
 
 
 /* =========================================================
-   DATETIME LOCAL
+   DATE INPUT FORMAT
    ========================================================= */
 
-function toDateTimeLocal(value) {
+function formatDateForInput(
+  value
+) {
 
   if (!value) {
+
     return "";
+
   }
 
   const date =
-    new Date(value);
+    new Date(
+      value
+    );
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+
+    return "";
+
+  }
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    )
+      .padStart(
+        2,
+        "0"
+      );
+
+  const day =
+    String(
+      date.getDate()
+    )
+      .padStart(
+        2,
+        "0"
+      );
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+/* =========================================================
+   DATETIME LOCAL
+   ========================================================= */
+
+function toDateTimeLocal(
+  value
+) {
+
+  if (!value) {
+
+    return "";
+
+  }
+
+  const date =
+    new Date(
+      value
+    );
 
   if (
     Number.isNaN(
@@ -2433,8 +3068,13 @@ function toDateTimeLocal(value) {
 
   const pad =
     (number) =>
-      String(number)
-        .padStart(2, "0");
+      String(
+        number
+      )
+        .padStart(
+          2,
+          "0"
+        );
 
   return (
     date.getFullYear() +
@@ -2463,54 +3103,55 @@ function toDateTimeLocal(value) {
    STATUS
    ========================================================= */
 
-function formatStatus(status) {
+function formatStatus(
+  status
+) {
 
-  const values = {
-
-    new:
-      "New",
-
-    contacted:
-      "Contacted",
-
-    follow_up:
-      "Follow-up",
-
-    qualified:
-      "Qualified",
-
-    converted:
-      "Converted",
-
-    closed:
-      "Closed"
-
-  };
+  const found =
+    STATUS_OPTIONS.find(
+      (item) =>
+        item.value ===
+        status
+    );
 
   return (
-    values[status] ||
+    found?.label ||
     status ||
-    "New"
+    "New Lead"
   );
 
 }
 
 
-function getStatusClass(status) {
+function getStatusClass(
+  status
+) {
 
   const classes = {
 
     new:
       "status-new",
 
-    contacted:
+    not_picked:
+      "status-progress",
+
+    call_back:
+      "status-progress",
+
+    call_disconnected:
+      "status-progress",
+
+    detail_shared:
+      "status-progress",
+
+    interested:
       "status-contacted",
 
-    follow_up:
-      "status-progress",
+    not_interested:
+      "status-closed",
 
-    qualified:
-      "status-progress",
+    wrong_number:
+      "status-closed",
 
     converted:
       "status-contacted",
@@ -2521,7 +3162,9 @@ function getStatusClass(status) {
   };
 
   return (
-    classes[status] ||
+    classes[
+      status
+    ] ||
     "status-new"
   );
 
@@ -2532,7 +3175,9 @@ function getStatusClass(status) {
    PRIORITY
    ========================================================= */
 
-function formatPriority(priority) {
+function formatPriority(
+  priority
+) {
 
   const values = {
 
@@ -2551,7 +3196,9 @@ function formatPriority(priority) {
   };
 
   return (
-    values[priority] ||
+    values[
+      priority
+    ] ||
     priority ||
     "Normal"
   );
@@ -2563,10 +3210,13 @@ function formatPriority(priority) {
    HTML ESCAPE
    ========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+  value
+) {
 
   return String(
-    value ?? ""
+    value ??
+    ""
   )
 
     .replace(
