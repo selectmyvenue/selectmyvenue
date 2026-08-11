@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta
@@ -36,17 +35,18 @@
       <img
         src="../logo.png"
         alt="Select My Venue"
+        class="crm-main-logo"
       >
 
-      <div class="crm-title">
+      <div class="crm-brand-text">
 
-        <strong>
+        <div class="brand-name">
           Select My Venue&nbsp;&nbsp;CRM
-        </strong>
+        </div>
 
-        <span>
+        <div class="brand-subtitle">
           Lead Management
-        </span>
+        </div>
 
       </div>
 
@@ -77,30 +77,37 @@
 
 
   <!-- =====================================================
-       MAIN CONTENT
+       MAIN CRM
   ====================================================== -->
 
-  <main class="crm-container crm-main">
+  <main class="crm-main">
 
 
-    <!-- PAGE HEADING -->
+    <!-- =================================================
+         PAGE HEADING
+    ================================================== -->
 
     <section class="page-heading">
 
       <div>
 
-        <h1 class="customer-enquiries-title">
+        <p class="eyebrow">
+          SELECT MY VENUE
+        </p>
+
+        <h1>
           Customer <span>Enquiries</span>
         </h1>
 
-        <p class="customer-enquiries-subtitle">
-          Manage venue enquiries, follow-ups and customer conversations from one place.
+        <p>
+          Manage customer enquiries, follow-ups and conversions
+          from one place.
         </p>
 
       </div>
 
 
-      <div class="page-heading-actions">
+      <div class="page-actions">
 
         <button
           id="addEnquiryBtn"
@@ -124,9 +131,9 @@
 
 
 
-    <!-- ===================================================
+    <!-- =================================================
          STATISTICS
-    ==================================================== -->
+    ================================================== -->
 
     <section class="stats-grid">
 
@@ -233,13 +240,14 @@
 
       </button>
 
+
     </section>
 
 
 
-    <!-- ===================================================
-         LEADS
-    ==================================================== -->
+    <!-- =================================================
+         LEADS SECTION
+    ================================================== -->
 
     <section class="leads-section">
 
@@ -329,12 +337,13 @@
 
 
       <!-- =================================================
-           TABLE
+           LEADS TABLE
       ================================================== -->
 
       <div class="table-wrapper">
 
         <table class="leads-table">
+
 
           <thead>
 
@@ -385,6 +394,7 @@
           </thead>
 
 
+
           <tbody id="leadsTableBody">
 
             <tr>
@@ -399,6 +409,7 @@
             </tr>
 
           </tbody>
+
 
         </table>
 
@@ -426,18 +437,17 @@
 
         </div>
 
+
       </div>
 
-
     </section>
-
 
   </main>
 
 
 
   <!-- =====================================================
-       LEAD DETAILS MODAL
+       VIEW LEAD DETAILS MODAL
   ====================================================== -->
 
   <div
@@ -490,24 +500,28 @@
         </strong>
 
 
-        <a
-          id="modalCallBtn"
-          href="#"
-          class="mini-action"
-        >
-          ☎ Call
-        </a>
+        <div class="info-actions">
+
+          <a
+            id="modalCallBtn"
+            href="#"
+            class="mini-action"
+          >
+            ☎ Call
+          </a>
 
 
-        <a
-          id="modalWhatsappBtn"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          class="mini-action whatsapp-action"
-        >
-          ◉ WhatsApp
-        </a>
+          <a
+            id="modalWhatsappBtn"
+            href="#"
+            target="_blank"
+            rel="noopener"
+            class="mini-action whatsapp-action"
+          >
+            ◉ WhatsApp
+          </a>
+
+        </div>
 
       </div>
 
@@ -780,6 +794,7 @@
     hidden
   >
 
+
     <div class="modal-header">
 
       <div>
@@ -793,6 +808,7 @@
         </h2>
 
       </div>
+
 
       <button
         id="closeAddEnquiryBtn"
@@ -1172,7 +1188,7 @@
 
 
 
-      <!-- OTHER REQUIREMENTS -->
+      <!-- REQUIREMENTS -->
 
       <div class="control-group full-width">
 
@@ -1228,6 +1244,7 @@
           Save Enquiry
         </button>
 
+
         <button
           id="cancelAddEnquiryBtn"
           class="cancel-btn"
@@ -1268,6 +1285,7 @@
   ====================================================== -->
 
   <script src="../crm.js"></script>
+
 
 </body>
 
