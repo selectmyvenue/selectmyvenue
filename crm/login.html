@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
 
   <meta
@@ -8,51 +10,533 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Select My Venue — CRM Login</title>
+  <title>Select My Venue | CRM Login</title>
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- CRM CSS -->
-  <link rel="stylesheet" href="crm.css">
+
+  <style>
+
+    /* =====================================================
+       SELECT MY VENUE — CRM LOGIN
+       SELF-CONTAINED LOGIN PAGE
+       ===================================================== */
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+    }
+
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 30px 20px;
+
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+      background:
+        radial-gradient(
+          circle at top left,
+          rgba(0, 220, 190, 0.12),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at bottom right,
+          rgba(0, 180, 255, 0.10),
+          transparent 35%
+        ),
+        #071314;
+
+      color: #f4ffff;
+    }
+
+
+    /* =====================================================
+       MAIN CONTAINER
+       ===================================================== */
+
+    .auth-container {
+      width: 100%;
+      max-width: 470px;
+    }
+
+
+    /* =====================================================
+       LOGIN CARD
+       ===================================================== */
+
+    .auth-card {
+
+      width: 100%;
+
+      padding: 42px 42px 34px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(15, 34, 36, 0.97),
+          rgba(7, 20, 21, 0.98)
+        );
+
+      border:
+        1px solid
+        rgba(57, 220, 204, 0.20);
+
+      border-radius: 24px;
+
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.50),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+      backdrop-filter: blur(18px);
+    }
+
+
+    /* =====================================================
+       LOGO
+       ===================================================== */
+
+    .crm-logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      margin-bottom: 28px;
+    }
+
+
+    .crm-logo img {
+      display: block;
+
+      width: min(100%, 330px);
+      height: auto;
+
+      max-height: 90px;
+
+      object-fit: contain;
+
+      border-radius: 8px;
+    }
+
+
+    /* =====================================================
+       STAFF BADGE
+       ===================================================== */
+
+    .auth-badge {
+
+      display: inline-flex;
+
+      align-items: center;
+      gap: 8px;
+
+      padding: 7px 12px;
+
+      margin-bottom: 18px;
+
+      border-radius: 999px;
+
+      background:
+        rgba(24, 220, 194, 0.09);
+
+      border:
+        1px solid
+        rgba(24, 220, 194, 0.22);
+
+      color: #54e8d5;
+
+      font-size: 11px;
+      font-weight: 700;
+
+      letter-spacing: 1.5px;
+
+      text-transform: uppercase;
+    }
+
+
+    .auth-badge span {
+
+      width: 7px;
+      height: 7px;
+
+      display: block;
+
+      border-radius: 50%;
+
+      background: #36e0c5;
+
+      box-shadow:
+        0 0 10px
+        rgba(54, 224, 197, 0.8);
+    }
+
+
+    /* =====================================================
+       HEADING
+       ===================================================== */
+
+    .auth-card h1 {
+
+      margin: 0 0 10px;
+
+      font-size: 34px;
+
+      line-height: 1.15;
+
+      font-weight: 700;
+
+      letter-spacing: -1px;
+
+      color: #f5ffff;
+    }
+
+
+    .auth-subtitle {
+
+      margin-bottom: 30px;
+
+      color: #91a9ab;
+
+      font-size: 14px;
+
+      line-height: 1.6;
+    }
+
+
+    /* =====================================================
+       FORM
+       ===================================================== */
+
+    .auth-form {
+      width: 100%;
+    }
+
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+
+    .field label {
+
+      display: block;
+
+      margin-bottom: 8px;
+
+      color: #c7d9da;
+
+      font-size: 13px;
+
+      font-weight: 600;
+    }
+
+
+    .field input {
+
+      width: 100%;
+
+      height: 50px;
+
+      padding: 0 15px;
+
+      border-radius: 12px;
+
+      border:
+        1px solid
+        rgba(120, 170, 173, 0.22);
+
+      outline: none;
+
+      background:
+        rgba(4, 14, 15, 0.72);
+
+      color: #f4ffff;
+
+      font-size: 14px;
+
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+
+
+    .field input::placeholder {
+      color: #607779;
+    }
+
+
+    .field input:focus {
+
+      border-color:
+        rgba(45, 224, 202, 0.65);
+
+      background:
+        rgba(4, 18, 19, 0.95);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(45, 224, 202, 0.08);
+    }
+
+
+    /* =====================================================
+       LOGIN BUTTON
+       ===================================================== */
+
+    .primary-btn {
+
+      width: 100%;
+
+      height: 52px;
+
+      margin-top: 8px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 12px;
+
+      border: none;
+
+      border-radius: 12px;
+
+      cursor: pointer;
+
+      background:
+        linear-gradient(
+          135deg,
+          #12cdb5,
+          #08a99c
+        );
+
+      color: #031312;
+
+      font-size: 15px;
+
+      font-weight: 800;
+
+      letter-spacing: 0.2px;
+
+      box-shadow:
+        0 10px 25px
+        rgba(18, 205, 181, 0.18);
+
+      transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        opacity 0.15s ease;
+    }
+
+
+    .primary-btn span:last-child {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+
+    .primary-btn:hover {
+
+      transform:
+        translateY(-1px);
+
+      box-shadow:
+        0 14px 30px
+        rgba(18, 205, 181, 0.25);
+    }
+
+
+    .primary-btn:active {
+
+      transform:
+        translateY(0);
+    }
+
+
+    .primary-btn:disabled {
+
+      cursor: not-allowed;
+
+      opacity: 0.65;
+
+      transform: none;
+    }
+
+
+    /* =====================================================
+       MESSAGE
+       ===================================================== */
+
+    .form-message {
+
+      min-height: 20px;
+
+      margin-top: 15px;
+
+      text-align: center;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+    }
+
+
+    .form-message.error {
+      color: #ff8e8e;
+    }
+
+
+    .form-message.success {
+      color: #55e0c9;
+    }
+
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .auth-footer {
+
+      margin-top: 30px;
+
+      padding-top: 20px;
+
+      border-top:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+
+      text-align: center;
+
+      color: #627b7d;
+
+      font-size: 11px;
+
+      letter-spacing: 0.2px;
+    }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 520px) {
+
+      body {
+        padding: 18px 14px;
+      }
+
+
+      .auth-card {
+
+        padding:
+          30px 22px 26px;
+
+        border-radius: 20px;
+      }
+
+
+      .crm-logo img {
+        width: 270px;
+        max-height: 75px;
+      }
+
+
+      .auth-card h1 {
+        font-size: 29px;
+      }
+
+    }
+
+  </style>
+
 </head>
 
-<body class="login-page">
+
+<body>
+
 
   <main class="auth-container">
 
+
     <section class="auth-card">
 
-      <!-- LOGO -->
+
+      <!-- =================================================
+           LOGO
+           ================================================= -->
+
       <div class="crm-logo">
+
         <img
           src="../logo.png"
           alt="Select My Venue"
         >
+
       </div>
 
-      <!-- BADGE -->
+
+      <!-- =================================================
+           STAFF BADGE
+           ================================================= -->
+
       <div class="auth-badge">
+
         <span></span>
+
         STAFF CRM
+
       </div>
 
-      <!-- TITLE -->
+
+      <!-- =================================================
+           TITLE
+           ================================================= -->
+
       <h1>
         Welcome back.
       </h1>
+
 
       <p class="auth-subtitle">
         Sign in to manage customer enquiries and follow-ups.
       </p>
 
-      <!-- LOGIN FORM -->
+
+      <!-- =================================================
+           LOGIN FORM
+           ================================================= -->
+
       <form
         id="loginForm"
         class="auth-form"
       >
 
+
         <!-- EMAIL -->
+
         <div class="field">
 
           <label for="email">
@@ -69,7 +553,9 @@
 
         </div>
 
+
         <!-- PASSWORD -->
+
         <div class="field">
 
           <label for="password">
@@ -86,12 +572,15 @@
 
         </div>
 
-        <!-- LOGIN BUTTON -->
+
+        <!-- BUTTON -->
+
         <button
           id="loginBtn"
           class="primary-btn"
           type="submit"
         >
+
           <span id="loginBtnText">
             Sign In
           </span>
@@ -99,29 +588,37 @@
           <span>
             →
           </span>
+
         </button>
 
+
         <!-- MESSAGE -->
+
         <p
           id="loginMessage"
           class="form-message"
           role="alert"
         ></p>
 
+
       </form>
 
+
       <!-- FOOTER -->
+
       <p class="auth-footer">
         Select My Venue • Smart Venue Discovery
       </p>
 
+
     </section>
+
 
   </main>
 
 
   <!-- =====================================================
-       LOGIN SCRIPT
+       SUPABASE LOGIN SCRIPT
        ===================================================== -->
 
   <script>
@@ -129,8 +626,10 @@
     const SUPABASE_URL =
       "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
+
     const SUPABASE_ANON_KEY =
       "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+
 
     const supabaseClient =
       window.supabase.createClient(
@@ -140,32 +639,49 @@
 
 
     const loginForm =
-      document.getElementById("loginForm");
+      document.getElementById(
+        "loginForm"
+      );
+
 
     const emailInput =
-      document.getElementById("email");
+      document.getElementById(
+        "email"
+      );
+
 
     const passwordInput =
-      document.getElementById("password");
+      document.getElementById(
+        "password"
+      );
+
 
     const loginBtn =
-      document.getElementById("loginBtn");
+      document.getElementById(
+        "loginBtn"
+      );
+
 
     const loginBtnText =
-      document.getElementById("loginBtnText");
+      document.getElementById(
+        "loginBtnText"
+      );
+
 
     const loginMessage =
-      document.getElementById("loginMessage");
+      document.getElementById(
+        "loginMessage"
+      );
 
+
+    /* =====================================================
+       MESSAGE
+       ===================================================== */
 
     function showLoginMessage(
       message,
       type = "error"
     ) {
-
-      if (!loginMessage) {
-        return;
-      }
 
       loginMessage.textContent =
         message;
@@ -175,20 +691,29 @@
     }
 
 
+    /* =====================================================
+       LOGIN
+       ===================================================== */
+
     loginForm.addEventListener(
       "submit",
       async function(event) {
 
         event.preventDefault();
 
+
         const email =
           emailInput.value.trim();
+
 
         const password =
           passwordInput.value;
 
 
-        if (!email || !password) {
+        if (
+          !email ||
+          !password
+        ) {
 
           showLoginMessage(
             "Please enter your email and password.",
@@ -199,10 +724,13 @@
         }
 
 
-        loginBtn.disabled = true;
+        loginBtn.disabled =
+          true;
+
 
         loginBtnText.textContent =
           "Signing in...";
+
 
         showLoginMessage(
           "",
@@ -219,8 +747,13 @@
             await supabaseClient
               .auth
               .signInWithPassword({
-                email: email,
-                password: password
+
+                email:
+                  email,
+
+                password:
+                  password
+
               });
 
 
@@ -229,7 +762,10 @@
           }
 
 
-          if (!data || !data.user) {
+          if (
+            !data ||
+            !data.user
+          ) {
 
             throw new Error(
               "Login was not completed."
@@ -244,13 +780,15 @@
           );
 
 
-          /*
-            IMPORTANT:
-            dashboard.html is inside /crm/
-          */
+          setTimeout(
+            function() {
 
-          window.location.href =
-            "dashboard.html";
+              window.location.href =
+                "dashboard.html";
+
+            },
+            300
+          );
 
 
         } catch (error) {
@@ -261,29 +799,16 @@
           );
 
 
-          let message =
-            "Unable to sign in.";
-
-
-          if (
-            error &&
-            error.message
-          ) {
-
-            message =
-              error.message;
-
-          }
-
-
           showLoginMessage(
-            message,
+            error.message ||
+            "Unable to sign in.",
             "error"
           );
 
 
           loginBtn.disabled =
             false;
+
 
           loginBtnText.textContent =
             "Sign In";
@@ -294,10 +819,9 @@
     );
 
 
-    /*
-      If the user is already logged in,
-      don't show the login page again.
-    */
+    /* =====================================================
+       EXISTING SESSION
+       ===================================================== */
 
     async function checkExistingSession() {
 
@@ -337,5 +861,7 @@
 
   </script>
 
+
 </body>
+
 </html>
