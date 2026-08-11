@@ -1,8 +1,13 @@
-```css
 /* =========================================================
    SELECT MY VENUE — CRM
-   CLEAN PROFESSIONAL CRM UI
+   PREMIUM CLEAN CRM UI
    DISPLAY FIRST → CLICK TO EDIT
+   VERSION: FINAL CLEAN REPLACEMENT
+========================================================= */
+
+
+/* =========================================================
+   GLOBAL RESET
 ========================================================= */
 
 * {
@@ -23,19 +28,23 @@ html {
 
   color: #172033;
   background: #f5f7fb;
+
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   min-height: 100vh;
+
   background:
     radial-gradient(
       circle at 10% 0%,
-      rgba(104, 114, 216, 0.06),
+      rgba(104, 114, 216, 0.055),
       transparent 30%
     ),
     radial-gradient(
       circle at 90% 10%,
-      rgba(14, 165, 233, 0.04),
+      rgba(14, 165, 233, 0.035),
       transparent 28%
     ),
     #f5f7fb;
@@ -59,7 +68,7 @@ a {
 
 
 /* =========================================================
-   HEADER
+   CRM HEADER
 ========================================================= */
 
 .crm-header {
@@ -69,6 +78,7 @@ a {
 
   width: 100%;
   height: 72px;
+  min-height: 72px;
 
   display: flex;
   align-items: center;
@@ -80,7 +90,7 @@ a {
   border-bottom: 1px solid #e5e9f0;
 
   box-shadow:
-    0 2px 12px rgba(25, 34, 52, 0.025);
+    0 2px 14px rgba(25, 34, 52, 0.025);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -122,19 +132,25 @@ a {
 }
 
 .crm-brand-name {
+  display: block;
+
   white-space: nowrap;
 
   color: #27315f;
 
   font-size: 15px;
+  line-height: 1;
+
   font-weight: 900;
 
   letter-spacing: -0.4px;
+
+  flex-shrink: 0;
 }
 
 
 /* =========================================================
-   CENTER HEADER TITLE
+   CENTER HEADER
 ========================================================= */
 
 .crm-header-center {
@@ -196,7 +212,7 @@ a {
 }
 
 .staff-name {
-  max-width: 200px;
+  max-width: 210px;
 
   overflow: hidden;
   text-overflow: ellipsis;
@@ -216,7 +232,7 @@ a {
   border: 1px solid #dce1e9;
   border-radius: 9px;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #30394b;
 
@@ -240,7 +256,7 @@ a {
 
 
 /* =========================================================
-   MAIN CONTAINER
+   MAIN
 ========================================================= */
 
 .crm-main {
@@ -284,7 +300,6 @@ a {
   color: #151c2d;
 
   font-size: 23px;
-
   line-height: 1.15;
 
   letter-spacing: -0.7px;
@@ -300,7 +315,6 @@ a {
   color: #7c8698;
 
   font-size: 13px;
-
   line-height: 1.55;
 }
 
@@ -311,7 +325,6 @@ a {
 
 .heading-actions {
   display: flex;
-
   align-items: center;
 
   gap: 9px;
@@ -343,7 +356,7 @@ a {
       #505bc9
     );
 
-  color: #fff;
+  color: #ffffff;
 
   box-shadow:
     0 7px 18px rgba(104, 114, 216, 0.18);
@@ -359,20 +372,19 @@ a {
 .refresh-btn {
   border: 1px solid #dfe4ec;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #384255;
 }
 
 .refresh-btn:hover {
   background: #f7f8fb;
-
   border-color: #cfd5df;
 }
 
 
 /* =========================================================
-   STAT CARDS
+   STATS
 ========================================================= */
 
 .stats-grid {
@@ -396,7 +408,7 @@ a {
 
   padding: 18px;
 
-  background: #fff;
+  background: #ffffff;
 
   border: 1px solid #e5e9f0;
 
@@ -451,8 +463,7 @@ a {
 
 .stat-card.active .stat-icon {
   background: #6872d8;
-
-  color: #fff;
+  color: #ffffff;
 }
 
 .stat-card small {
@@ -482,11 +493,11 @@ a {
 
 
 /* =========================================================
-   LEADS CONTAINER
+   LEADS SECTION
 ========================================================= */
 
 .leads-section {
-  background: #fff;
+  background: #ffffff;
 
   border: 1px solid #e4e8ef;
 
@@ -524,14 +535,13 @@ a {
   height: 42px;
 
   display: flex;
-
   align-items: center;
 
   gap: 9px;
 
   padding: 0 12px;
 
-  background: #fff;
+  background: #ffffff;
 
   border: 1px solid #dfe4ed;
 
@@ -568,7 +578,7 @@ a {
 
   border-radius: 9px;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #354056;
 
@@ -577,9 +587,17 @@ a {
   font-size: 13px;
 }
 
+.filter-bar select:focus,
+.search-box:focus-within {
+  border-color: #aeb6ed;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.07);
+}
+
 
 /* =========================================================
-   TABLE WRAPPER
+   TABLE
 ========================================================= */
 
 .table-wrapper {
@@ -589,11 +607,6 @@ a {
 
   scrollbar-width: thin;
 }
-
-
-/* =========================================================
-   CUSTOMER ENQUIRIES TABLE
-========================================================= */
 
 .leads-table {
   width: 100%;
@@ -634,11 +647,11 @@ a {
 
   color: #465066;
 
+  background: #ffffff;
+
   font-size: 13px;
 
   vertical-align: middle;
-
-  background: #fff;
 }
 
 .leads-table tbody tr {
@@ -649,10 +662,14 @@ a {
   background: #fafbff;
 }
 
+.leads-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 
 /* =========================================================
    CUSTOMER NAME
-   NON EDITABLE
+   ALWAYS DISPLAY ONLY
 ========================================================= */
 
 .leads-table td strong {
@@ -681,7 +698,8 @@ a {
 
 
 /* =========================================================
-   NON-EDITABLE PHONE
+   PHONE
+   ALWAYS DISPLAY ONLY
 ========================================================= */
 
 .leads-table .customer-phone,
@@ -698,22 +716,17 @@ a {
 
 
 /* =========================================================
-   INLINE EDITABLE DISPLAY CELLS
+   DISPLAY-FIRST EDITABLE CELLS
 ========================================================= */
-
-/*
-   JS can add:
-   .editable-cell
-
-   The cell remains a normal text value until clicked.
-*/
 
 .editable-cell {
   position: relative;
 
-  min-height: 36px;
+  min-height: 34px;
 
   cursor: pointer;
+
+  border-radius: 7px;
 
   transition:
     background 0.15s ease,
@@ -723,13 +736,13 @@ a {
 .editable-cell:hover {
   color: #4f5bc7;
 
-  background: #f8f9ff !important;
+  background: #f7f8ff !important;
 }
 
 
-/*
-   Small edit indicator shown only on hover.
-*/
+/* =========================================================
+   EDIT ICON
+========================================================= */
 
 .editable-cell::after {
   content: "✎";
@@ -747,9 +760,9 @@ a {
 
   opacity: 0;
 
-  transition: opacity 0.15s ease;
-
   pointer-events: none;
+
+  transition: opacity 0.15s ease;
 }
 
 .editable-cell:hover::after {
@@ -758,7 +771,7 @@ a {
 
 
 /* =========================================================
-   WHEN JS CONVERTS CELL INTO EDIT MODE
+   INLINE EDIT MODE
 ========================================================= */
 
 .editable-cell.editing {
@@ -786,7 +799,7 @@ a {
 
   outline: none;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #273044;
 
@@ -798,12 +811,14 @@ a {
     0 0 0 3px rgba(104, 114, 216, 0.06);
 }
 
-.editable-cell select {
+.editable-cell input {
   height: 34px;
 }
 
-.editable-cell input {
+.editable-cell select {
   height: 34px;
+
+  cursor: pointer;
 }
 
 .editable-cell textarea {
@@ -812,9 +827,18 @@ a {
   resize: vertical;
 }
 
+.editable-cell input:focus,
+.editable-cell select:focus,
+.editable-cell textarea:focus {
+  border-color: #9da7e8;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.09);
+}
+
 
 /* =========================================================
-   INLINE SAVE / CANCEL
+   INLINE ACTIONS
 ========================================================= */
 
 .inline-edit-actions {
@@ -845,20 +869,28 @@ a {
 
   background: #6872d8;
 
-  color: #fff;
+  color: #ffffff;
+}
+
+.inline-save-btn:hover {
+  background: #5662ca;
 }
 
 .inline-cancel-btn {
   border: 1px solid #dfe4ed;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #596376;
 }
 
+.inline-cancel-btn:hover {
+  background: #f6f7fa;
+}
+
 
 /* =========================================================
-   STATUS
+   STATUS / PRIORITY BADGES
 ========================================================= */
 
 .status-badge,
@@ -866,6 +898,7 @@ a {
   display: inline-flex;
 
   align-items: center;
+  justify-content: center;
 
   min-height: 25px;
 
@@ -894,7 +927,7 @@ a {
 
 
 /* =========================================================
-   VIEW DETAILS BUTTON
+   VIEW DETAILS
 ========================================================= */
 
 .view-lead-btn {
@@ -906,7 +939,7 @@ a {
 
   border-radius: 8px;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #5560c5;
 
@@ -914,9 +947,9 @@ a {
 
   font-weight: 800;
 
-  transition: all 0.2s ease;
-
   white-space: nowrap;
+
+  transition: all 0.2s ease;
 }
 
 .view-lead-btn:hover {
@@ -933,7 +966,7 @@ a {
 
 
 /* =========================================================
-   EMPTY / LOADING
+   LOADING
 ========================================================= */
 
 .loading-cell {
@@ -942,7 +975,14 @@ a {
   text-align: center !important;
 
   color: #8c95a5 !important;
+
+  background: #ffffff !important;
 }
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
 
 .empty-state {
   padding: 55px 20px;
@@ -1013,7 +1053,7 @@ a {
 }
 
 .lead-modal[hidden] {
-  display: none;
+  display: none !important;
 }
 
 
@@ -1029,9 +1069,9 @@ a {
 
   overflow-y: auto;
 
-  background: #fff;
+  background: #ffffff;
 
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.75);
 
   border-radius: 20px;
 
@@ -1044,12 +1084,18 @@ a {
 @keyframes crmModalIn {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.985);
+
+    transform:
+      translateY(8px)
+      scale(0.985);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+
+    transform:
+      translateY(0)
+      scale(1);
   }
 }
 
@@ -1069,7 +1115,7 @@ a {
 
   padding: 24px 27px 18px;
 
-  background: #fff;
+  background: #ffffff;
 }
 
 .modal-header h2 {
@@ -1098,7 +1144,7 @@ a {
 
   border-radius: 10px;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #687285;
 
@@ -1115,7 +1161,7 @@ a {
 
 
 /* =========================================================
-   MODAL INFORMATION GRID
+   MODAL CUSTOMER INFORMATION
 ========================================================= */
 
 .lead-info-grid {
@@ -1128,7 +1174,7 @@ a {
 
   padding: 0 27px 18px;
 
-  background: #fff;
+  background: #ffffff;
 }
 
 .info-card {
@@ -1211,7 +1257,7 @@ a {
 .detail-block {
   padding: 0 27px 18px;
 
-  background: #fff;
+  background: #ffffff;
 }
 
 .detail-block label,
@@ -1247,11 +1293,13 @@ a {
   line-height: 1.6;
 
   white-space: pre-wrap;
+
+  word-break: break-word;
 }
 
 
 /* =========================================================
-   MODAL EDIT CONTROLS
+   MODAL CRM CONTROLS
 ========================================================= */
 
 .crm-controls {
@@ -1264,7 +1312,7 @@ a {
 
   padding: 4px 27px 18px;
 
-  background: #fff;
+  background: #ffffff;
 }
 
 .crm-controls select,
@@ -1279,7 +1327,7 @@ a {
 
   border-radius: 10px;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #354056;
 
@@ -1289,8 +1337,7 @@ a {
 }
 
 .crm-controls select:focus,
-.crm-controls input:focus,
-.detail-block textarea:focus {
+.crm-controls input:focus {
   border-color: #aeb6ed;
 
   box-shadow:
@@ -1317,13 +1364,20 @@ a {
 
   outline: none;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #354056;
 
   font-size: 13px;
 
   line-height: 1.5;
+}
+
+.detail-block textarea:focus {
+  border-color: #aeb6ed;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 
@@ -1340,7 +1394,7 @@ a {
 
   padding: 18px 27px 24px;
 
-  background: #fff;
+  background: #ffffff;
 }
 
 .save-btn,
@@ -1366,7 +1420,7 @@ a {
       #171e31
     );
 
-  color: #fff;
+  color: #ffffff;
 
   box-shadow:
     0 6px 15px rgba(23, 30, 49, 0.12);
@@ -1384,7 +1438,7 @@ a {
 .cancel-btn {
   border: 1px solid #dfe4ed;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #4b556a;
 }
@@ -1395,17 +1449,17 @@ a {
 
 
 /* =========================================================
-   ADD ENQUIRY FORM
+   ADD ENQUIRY MODAL
 ========================================================= */
 
 .add-enquiry-form {
-  background: #fff;
+  background: #ffffff;
 }
 
 .form-section-title {
   padding: 15px 27px 9px;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #6872d8;
 
@@ -1428,7 +1482,7 @@ a {
 
   padding: 0 27px 16px;
 
-  background: #fff;
+  background: #ffffff;
 }
 
 #addEnquiryModal .control-group {
@@ -1446,7 +1500,7 @@ a {
 
   outline: none;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #354056;
 
@@ -1466,6 +1520,15 @@ a {
   padding: 11px;
 
   resize: vertical;
+}
+
+#addEnquiryModal .control-group input:focus,
+#addEnquiryModal .control-group select:focus,
+#addEnquiryModal .control-group textarea:focus {
+  border-color: #aeb6ed;
+
+  box-shadow:
+    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 #addEnquiryModal .full-width {
@@ -1503,7 +1566,7 @@ a {
 
   background: #20283d;
 
-  color: #fff;
+  color: #ffffff;
 
   box-shadow:
     0 12px 35px rgba(18, 25, 40, 0.20);
@@ -1529,16 +1592,54 @@ a {
 
 
 /* =========================================================
-   RESPONSIVE — 1150
+   ACCESSIBILITY
+========================================================= */
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(104, 114, 216, 0.35);
+
+  outline-offset: 2px;
+}
+
+
+/* =========================================================
+   SCROLLBARS
+========================================================= */
+
+.table-wrapper::-webkit-scrollbar,
+.lead-modal-card::-webkit-scrollbar,
+.add-enquiry-card::-webkit-scrollbar {
+  height: 7px;
+  width: 7px;
+}
+
+.table-wrapper::-webkit-scrollbar-track,
+.lead-modal-card::-webkit-scrollbar-track,
+.add-enquiry-card::-webkit-scrollbar-track {
+  background: #f3f5f8;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb,
+.lead-modal-card::-webkit-scrollbar-thumb,
+.add-enquiry-card::-webkit-scrollbar-thumb {
+  background: #cbd1dc;
+
+  border-radius: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — 1150px
 ========================================================= */
 
 @media (max-width: 1150px) {
 
   .crm-header-logo {
     width: 145px !important;
-
     min-width: 145px !important;
-
     max-width: 145px !important;
 
     height: 39px !important;
@@ -1553,17 +1654,19 @@ a {
   }
 
   .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 
   .lead-info-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }
 
 
 /* =========================================================
-   RESPONSIVE — 900
+   RESPONSIVE — 900px
 ========================================================= */
 
 @media (max-width: 900px) {
@@ -1574,9 +1677,7 @@ a {
 
   .crm-header-logo {
     width: 130px !important;
-
     min-width: 130px !important;
-
     max-width: 130px !important;
 
     height: 36px !important;
@@ -1611,22 +1712,21 @@ a {
 
 
 /* =========================================================
-   RESPONSIVE — 700
+   RESPONSIVE — 700px
 ========================================================= */
 
 @media (max-width: 700px) {
 
   .crm-header {
     height: 66px;
+    min-height: 66px;
 
     padding: 0 12px;
   }
 
   .crm-header-logo {
     width: 115px !important;
-
     min-width: 115px !important;
-
     max-width: 115px !important;
 
     height: 33px !important;
@@ -1671,7 +1771,8 @@ a {
   }
 
   .stats-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
 
     gap: 10px;
   }
@@ -1699,22 +1800,21 @@ a {
 
 
 /* =========================================================
-   RESPONSIVE — 520
+   RESPONSIVE — 520px
 ========================================================= */
 
 @media (max-width: 520px) {
 
   .crm-header {
     height: 62px;
+    min-height: 62px;
 
     padding: 0 9px;
   }
 
   .crm-header-logo {
     width: 100px !important;
-
     min-width: 100px !important;
-
     max-width: 100px !important;
 
     height: 30px !important;
@@ -1798,44 +1898,3 @@ a {
     padding-right: 18px;
   }
 }
-
-
-/* =========================================================
-   ACCESSIBILITY / FOCUS
-========================================================= */
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid rgba(104, 114, 216, 0.35);
-
-  outline-offset: 2px;
-}
-
-
-/* =========================================================
-   SCROLLBAR
-========================================================= */
-
-.table-wrapper::-webkit-scrollbar,
-.lead-modal-card::-webkit-scrollbar,
-.add-enquiry-card::-webkit-scrollbar {
-  height: 7px;
-  width: 7px;
-}
-
-.table-wrapper::-webkit-scrollbar-track,
-.lead-modal-card::-webkit-scrollbar-track,
-.add-enquiry-card::-webkit-scrollbar-track {
-  background: #f3f5f8;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb,
-.lead-modal-card::-webkit-scrollbar-thumb,
-.add-enquiry-card::-webkit-scrollbar-thumb {
-  background: #cbd1dc;
-
-  border-radius: 10px;
-}
-```
