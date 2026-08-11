@@ -1,3435 +1,1640 @@
-```javascript
+```css
 /* =========================================================
    SELECT MY VENUE — CRM
-   crm.js
-   PREMIUM EMPLOYEE CRM
-   SUPABASE + INLINE EDIT + LEAD MANAGEMENT
-========================================================= */
+   crm.css
+   PREMIUM EMPLOYEE CRM — COMPLETE REPLACEMENT
+   ========================================================= */
 
+:root {
+    --crm-bg: #07111f;
+    --crm-bg-2: #0b1728;
+    --crm-card: #101d30;
+    --crm-card-2: #132238;
+    --crm-border: rgba(255, 255, 255, 0.09);
+
+    --crm-text: #f5f7fb;
+    --crm-muted: #8e9bb0;
+    --crm-soft: #b7c2d3;
+
+    --crm-primary: #19b8a6;
+    --crm-primary-dark: #0c8f82;
+    --crm-primary-soft: rgba(25, 184, 166, 0.12);
+
+    --crm-success: #36d399;
+    --crm-warning: #f4b740;
+    --crm-danger: #ff6b6b;
+    --crm-info: #5ca9ff;
+
+    --crm-radius: 16px;
+    --crm-shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
+}
 
 /* =========================================================
-   SUPABASE CONFIGURATION
-========================================================= */
+   RESET
+   ========================================================= */
 
-const CRM_SUPABASE_URL =
-    "https://uajqwyoqbbswkfiwosyw.supabase.co";
+* {
+    box-sizing: border-box;
+}
 
-const CRM_SUPABASE_ANON_KEY =
-    "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
 
+body {
+    min-height: 100vh;
+    background:
+        radial-gradient(
+            circle at 15% 0%,
+            rgba(25, 184, 166, 0.08),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(92, 169, 255, 0.06),
+            transparent 25%
+        ),
+        var(--crm-bg);
+
+    color: var(--crm-text);
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    font-family: inherit;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
 
 /* =========================================================
-   SUPABASE CLIENT
-========================================================= */
+   SCROLLBAR
+   ========================================================= */
 
-let supabaseClient = null;
-
-function getSupabaseClient() {
-
-    if (supabaseClient) {
-        return supabaseClient;
-    }
-
-    if (
-        !window.supabase ||
-        !window.supabase.createClient
-    ) {
-        console.error(
-            "Supabase library not loaded."
-        );
-
-        showToast(
-            "Supabase library is not loaded.",
-            "error"
-        );
-
-        return null;
-    }
-
-    if (
-        !CRM_SUPABASE_URL ||
-        !CRM_SUPABASE_ANON_KEY
-    ) {
-        console.error(
-            "Supabase configuration is missing."
-        );
-
-        showToast(
-            "Supabase configuration is missing.",
-            "error"
-        );
-
-        return null;
-    }
-
-    try {
-
-        supabaseClient =
-            window.supabase.createClient(
-                CRM_SUPABASE_URL,
-                CRM_SUPABASE_ANON_KEY
-            );
-
-        console.log(
-            "Supabase client initialized successfully."
-        );
-
-        return supabaseClient;
-
-    } catch (error) {
-
-        console.error(
-            "Supabase initialization error:",
-            error
-        );
-
-        showToast(
-            "Unable to connect to Supabase.",
-            "error"
-        );
-
-        return null;
-    }
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
+::-webkit-scrollbar-track {
+    background: #081321;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #26384f;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #38516f;
+}
 
 /* =========================================================
-   GLOBAL STATE
-========================================================= */
+   LOGIN PAGE SUPPORT
+   ========================================================= */
 
-let allLeads = [];
-let filteredLeads = [];
-let currentLead = null;
+.login-page {
+    min-height: 100vh;
+    width: 100%;
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            rgba(25, 184, 166, 0.12),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #06101c,
+            #0a1727 50%,
+            #07111f
+        );
 
-let currentStatusFilter = "all";
-let currentPriorityFilter = "all";
-let currentSearch = "";
-
-let toastTimer = null;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 /* =========================================================
-   DOM HELPERS
-========================================================= */
+   MAIN CRM APP
+   ========================================================= */
 
-function $(selector, parent = document) {
-    return parent.querySelector(selector);
+.crm-app,
+.dashboard,
+.crm-page,
+.crm-container {
+    width: 100%;
+    min-height: 100vh;
 }
-
-function $all(selector, parent = document) {
-    return Array.from(
-        parent.querySelectorAll(selector)
-    );
-}
-
-function escapeHTML(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return "";
-    }
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-function safeValue(value) {
-
-    return (
-        value === null ||
-        value === undefined
-    )
-        ? ""
-        : String(value);
-}
-
 
 /* =========================================================
-   TOAST
-========================================================= */
+   TOP HEADER
+   ========================================================= */
 
-function showToast(
-    message,
-    type = "success"
-) {
-
-    let toast =
-        document.getElementById(
-            "toastMessage"
-        );
-
-    if (!toast) {
-
-        toast =
-            document.createElement("div");
-
-        toast.id =
-            "toastMessage";
-
-        document.body.appendChild(
-            toast
-        );
-    }
-
-    toast.textContent =
-        message;
-
-    toast.classList.remove(
-        "show"
-    );
-
-    if (type === "error") {
-
-        toast.style.background =
-            "#b42318";
-
-    } else if (type === "warning") {
-
-        toast.style.background =
-            "#9a6700";
-
-    } else {
-
-        toast.style.background =
-            "#20283d";
-    }
-
-    requestAnimationFrame(() => {
-
-        toast.classList.add(
-            "show"
-        );
-
-    });
-
-    clearTimeout(
-        toastTimer
-    );
-
-    toastTimer =
-        setTimeout(() => {
-
-            toast.classList.remove(
-                "show"
-            );
-
-        }, 2800);
+.crm-header,
+.topbar,
+.dashboard-header,
+header {
+    position: relative;
+    z-index: 20;
 }
 
+.crm-header {
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 14px 28px;
+
+    background: rgba(8, 18, 31, 0.88);
+
+    border-bottom: 1px solid var(--crm-border);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
 
 /* =========================================================
-   AUTHENTICATION
-========================================================= */
+   BRAND
+   ========================================================= */
 
-async function checkCRMAuth() {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) {
-        return null;
-    }
-
-    try {
-
-        const {
-            data: {
-                session
-            },
-            error
-        } =
-            await client.auth.getSession();
-
-        if (error) {
-
-            console.error(
-                "Auth error:",
-                error
-            );
-
-            showToast(
-                "Unable to check login.",
-                "error"
-            );
-
-            return null;
-        }
-
-        if (!session) {
-
-            console.log(
-                "No active session. Redirecting to login."
-            );
-
-            window.location.href =
-                "login.html";
-
-            return null;
-        }
-
-        updateStaffName(
-            session.user
-        );
-
-        return session;
-
-    } catch (error) {
-
-        console.error(
-            "Authentication check failed:",
-            error
-        );
-
-        showToast(
-            "Authentication failed.",
-            "error"
-        );
-
-        return null;
-    }
+.crm-brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
 }
 
+.crm-brand img,
+.brand-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.crm-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.crm-brand-text strong {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.crm-brand-text span {
+    margin-top: 4px;
+    color: var(--crm-muted);
+    font-size: 11px;
+}
 
 /* =========================================================
-   STAFF NAME
-========================================================= */
+   STAFF AREA
+   ========================================================= */
 
-function updateStaffName(user) {
-
-    if (!user) return;
-
-    const staffNameElement =
-        document.getElementById(
-            "staffName"
-        ) ||
-        document.querySelector(
-            ".staff-name"
-        );
-
-    if (!staffNameElement) {
-        return;
-    }
-
-    const metadata =
-        user.user_metadata || {};
-
-    const name =
-        metadata.full_name ||
-        metadata.name ||
-        metadata.display_name ||
-        user.email ||
-        "CRM User";
-
-    staffNameElement.textContent =
-        name;
+.staff-area,
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
+.staff-name {
+    color: var(--crm-soft);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.logout-btn {
+    border: 1px solid rgba(255, 255, 255, 0.10);
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: #dbe3ee;
+
+    padding: 9px 14px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.logout-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.17);
+    transform: translateY(-1px);
+}
 
 /* =========================================================
-   LOGOUT
-========================================================= */
+   MAIN CONTENT
+   ========================================================= */
 
-async function logoutCRM() {
+.crm-main,
+.dashboard-main,
+.main-content {
+    width: 100%;
+    max-width: 1700px;
 
-    const client =
-        getSupabaseClient();
+    margin: 0 auto;
 
-    if (!client) return;
-
-    try {
-
-        const {
-            error
-        } =
-            await client.auth.signOut();
-
-        if (error) {
-
-            console.error(
-                "Logout error:",
-                error
-            );
-
-            showToast(
-                "Unable to logout.",
-                "error"
-            );
-
-            return;
-        }
-
-        window.location.href =
-            "login.html";
-
-    } catch (error) {
-
-        console.error(error);
-
-        showToast(
-            "Unable to logout.",
-            "error"
-        );
-    }
+    padding: 30px;
 }
-
 
 /* =========================================================
-   LOAD ENQUIRIES
-========================================================= */
+   PAGE TITLE
+   ========================================================= */
 
-async function loadEnquiries() {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) return;
-
-    setTableLoading();
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
-
-        if (error) {
-
-            console.error(
-                "Supabase enquiries error:",
-                error
-            );
-
-            renderTableError(
-                error.message ||
-                "Unable to load enquiries."
-            );
-
-            showToast(
-                "Unable to load enquiries.",
-                "error"
-            );
-
-            return;
-        }
-
-        allLeads =
-            Array.isArray(data)
-                ? data
-                : [];
-
-        applyFilters();
-
-        updateStats();
-
-        console.log(
-            "CRM enquiries loaded:",
-            allLeads.length
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Load enquiries failed:",
-            error
-        );
-
-        renderTableError(
-            "Something went wrong while loading enquiries."
-        );
-
-        showToast(
-            "Unable to load enquiries.",
-            "error"
-        );
-    }
+.page-title,
+.dashboard-title {
+    margin-bottom: 24px;
 }
 
+.page-title h1,
+.dashboard-title h1 {
+    margin: 0;
+
+    font-size: clamp(24px, 3vw, 32px);
+
+    font-weight: 800;
+
+    letter-spacing: -0.03em;
+}
+
+.page-title p,
+.dashboard-title p {
+    margin: 7px 0 0;
+
+    color: var(--crm-muted);
+
+    font-size: 13px;
+}
 
 /* =========================================================
-   TABLE LOADING
-========================================================= */
+   STAT CARDS
+   ========================================================= */
 
-function setTableLoading() {
+.stats-grid,
+.stats,
+.stat-grid {
+    display: grid;
 
-    const tbody =
-        document.getElementById(
-            "leadsTableBody"
-        );
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
 
-    if (!tbody) return;
+    gap: 16px;
 
-    tbody.innerHTML = `
-        <tr>
-            <td colspan="11" class="loading-cell">
-                Loading customer enquiries...
-            </td>
-        </tr>
-    `;
+    margin-bottom: 24px;
 }
 
-function renderTableError(message) {
+.stat-card {
+    position: relative;
 
-    const tbody =
-        document.getElementById(
-            "leadsTableBody"
+    min-height: 118px;
+
+    padding: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(19, 34, 56, 0.98),
+            rgba(12, 25, 42, 0.98)
         );
 
-    if (!tbody) return;
+    border: 1px solid var(--crm-border);
 
-    tbody.innerHTML = `
-        <tr>
-            <td colspan="11" class="loading-cell">
-                ${escapeHTML(message)}
-            </td>
-        </tr>
-    `;
+    border-radius: var(--crm-radius);
+
+    box-shadow: var(--crm-shadow);
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
 }
 
+.stat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(25, 184, 166, 0.28);
+}
+
+.stat-card.active {
+    border-color: rgba(25, 184, 166, 0.48);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(20, 49, 64, 0.98),
+            rgba(12, 31, 46, 0.98)
+        );
+}
+
+.stat-card small,
+.stat-label {
+    display: block;
+
+    color: var(--crm-muted);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+}
+
+.stat-card strong,
+.stat-value {
+    display: block;
+
+    margin-top: 10px;
+
+    color: var(--crm-text);
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    line-height: 1;
+}
 
 /* =========================================================
-   FILTERS
-========================================================= */
+   TOOLBAR
+   ========================================================= */
 
-function applyFilters() {
+.crm-toolbar,
+.toolbar,
+.filter-bar {
+    display: flex;
 
-    const search =
-        currentSearch
-            .trim()
-            .toLowerCase();
+    align-items: center;
 
-    filteredLeads =
-        allLeads.filter(
-            (lead) => {
+    gap: 12px;
 
-                const searchable =
-                    [
-                        lead.name,
-                        lead.customer_name,
-                        lead.phone,
-                        lead.mobile,
-                        lead.email,
-                        lead.location,
-                        lead.city,
-                        lead.venue,
-                        lead.event_type,
-                        lead.message
-                    ]
-                        .filter(Boolean)
-                        .join(" ")
-                        .toLowerCase();
+    flex-wrap: wrap;
 
-                const matchesSearch =
-                    !search ||
-                    searchable.includes(
-                        search
-                    );
+    margin-bottom: 18px;
 
-                const leadStatus =
-                    safeValue(
-                        lead.status || "New"
-                    ).toLowerCase();
+    padding: 14px;
 
-                const leadPriority =
-                    safeValue(
-                        lead.priority || "Medium"
-                    ).toLowerCase();
+    background: rgba(16, 29, 48, 0.82);
 
-                const matchesStatus =
-                    currentStatusFilter ===
-                        "all" ||
-                    leadStatus ===
-                        currentStatusFilter
-                            .toLowerCase();
+    border: 1px solid var(--crm-border);
 
-                const matchesPriority =
-                    currentPriorityFilter ===
-                        "all" ||
-                    leadPriority ===
-                        currentPriorityFilter
-                            .toLowerCase();
-
-                return (
-                    matchesSearch &&
-                    matchesStatus &&
-                    matchesPriority
-                );
-            }
-        );
-
-    renderLeads();
+    border-radius: 14px;
 }
-
-
-/* =========================================================
-   RENDER LEADS
-========================================================= */
-
-function renderLeads() {
-
-    const tbody =
-        document.getElementById(
-            "leadsTableBody"
-        );
-
-    if (!tbody) {
-
-        console.warn(
-            "CRM table body not found."
-        );
-
-        return;
-    }
-
-    if (!filteredLeads.length) {
-
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="11">
-                    <div class="empty-state">
-                        <div class="empty-icon">⌕</div>
-
-                        <h3>
-                            No enquiries found
-                        </h3>
-
-                        <p>
-                            There are no customer enquiries
-                            matching your filters.
-                        </p>
-                    </div>
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    tbody.innerHTML =
-        filteredLeads
-            .map(
-                lead =>
-                    createLeadRow(lead)
-            )
-            .join("");
-}
-
-
-/* =========================================================
-   CREATE LEAD ROW
-========================================================= */
-
-function createLeadRow(lead) {
-
-    const id =
-        safeValue(lead.id);
-
-    const name =
-        lead.name ||
-        lead.customer_name ||
-        "Unknown Customer";
-
-    const phone =
-        lead.phone ||
-        lead.mobile ||
-        lead.contact_number ||
-        "—";
-
-    const eventType =
-        lead.event_type ||
-        lead.event ||
-        "—";
-
-    const venue =
-        lead.venue ||
-        "—";
-
-    const eventDate =
-        lead.event_date ||
-        lead.date ||
-        "";
-
-    const guests =
-        lead.guests ??
-        lead.guest_count ??
-        lead.number_of_guests ??
-        "";
-
-    const status =
-        lead.status ||
-        "New";
-
-    const priority =
-        lead.priority ||
-        "Medium";
-
-    const followUp =
-        lead.follow_up_at ||
-        lead.followup_at ||
-        "";
-
-    const remarks =
-        lead.internal_notes ||
-        lead.notes ||
-        lead.remarks ||
-        "—";
-
-    return `
-        <tr data-lead-id="${escapeHTML(id)}">
-
-            <td>
-                <strong>
-                    ${escapeHTML(name)}
-                </strong>
-            </td>
-
-            <td>
-                ${escapeHTML(phone)}
-            </td>
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "event_type",
-                    eventType,
-                    "select",
-                    getEventOptions()
-                )}
-            </td>
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "venue",
-                    venue,
-                    "text"
-                )}
-            </td>
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "event_date",
-                    formatDate(eventDate),
-                    "date",
-                    null,
-                    eventDate
-                )}
-            </td>
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "guests",
-                    guests || "—",
-                    "number"
-                )}
-            </td>
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "status",
-                    formatStatus(status),
-                    "select",
-                    getStatusOptions()
-                )}
-            </td>
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "priority",
-                    formatPriority(priority),
-                    "select",
-                    getPriorityOptions()
-                )}
-            </td>
-
-            <td>
-                ${followUp
-                    ? escapeHTML(
-                        formatDateTime(
-                            followUp
-                        )
-                    )
-                    : "—"
-                }
-            </td>
-
-            <td>
-                <span
-                    class="remarks-preview"
-                    title="${escapeHTML(remarks)}"
-                >
-                    ${escapeHTML(remarks)}
-                </span>
-            </td>
-
-            <td>
-                <button
-                    type="button"
-                    class="view-lead-btn"
-                    data-action="view"
-                    data-id="${escapeHTML(id)}"
-                >
-                    View Details
-                </button>
-            </td>
-
-        </tr>
-    `;
-}
-
-
-/* =========================================================
-   INLINE FIELD
-========================================================= */
-
-function createInlineField(
-    lead,
-    field,
-    displayValue,
-    type = "text",
-    options = null,
-    rawValue = null
-) {
-
-    const id =
-        safeValue(lead.id);
-
-    const value =
-        rawValue !== null &&
-        rawValue !== undefined
-            ? rawValue
-            : lead[field];
-
-    const shownValue =
-        displayValue === "" ||
-        displayValue === null ||
-        displayValue === undefined
-            ? "—"
-            : displayValue;
-
-    return `
-        <div
-            class="crm-inline-field"
-            data-inline-field="${escapeHTML(field)}"
-            data-lead-id="${escapeHTML(id)}"
-            data-value="${escapeHTML(
-                safeValue(value)
-            )}"
-            tabindex="0"
-            title="Click to edit"
-        >
-
-            <span class="inline-display">
-                ${escapeHTML(shownValue)}
-            </span>
-
-            <span class="inline-edit-icon">
-                ✎
-            </span>
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   START INLINE EDIT
-========================================================= */
-
-function startInlineEdit(element) {
-
-    if (
-        !element ||
-        element.classList.contains(
-            "editing"
-        )
-    ) {
-        return;
-    }
-
-    const field =
-        element.dataset.inlineField;
-
-    const leadId =
-        element.dataset.leadId;
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-
-        showToast(
-            "Enquiry not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    const originalValue =
-        lead[field] ?? "";
-
-    element.classList.add(
-        "editing"
-    );
-
-    const display =
-        element.querySelector(
-            ".inline-display"
-        );
-
-    if (!display) return;
-
-    let editor;
-
-    if (field === "status") {
-
-        editor =
-            createSelectEditor(
-                getStatusOptions(),
-                originalValue || "New"
-            );
-
-    } else if (field === "priority") {
-
-        editor =
-            createSelectEditor(
-                getPriorityOptions(),
-                originalValue || "Medium"
-            );
-
-    } else if (field === "event_type") {
-
-        editor =
-            createSelectEditor(
-                getEventOptions(),
-                originalValue || ""
-            );
-
-    } else {
-
-        editor =
-            document.createElement(
-                "input"
-            );
-
-        editor.type =
-            field === "event_date"
-                ? "date"
-                : field === "guests"
-                    ? "number"
-                    : "text";
-
-        editor.value =
-            safeValue(
-                originalValue
-            );
-
-        editor.className =
-            "crm-inline-editor";
-    }
-
-    display.replaceWith(
-        editor
-    );
-
-    const icon =
-        element.querySelector(
-            ".inline-edit-icon"
-        );
-
-    if (icon) {
-        icon.textContent = "✓";
-    }
-
-    editor.focus();
-
-    if (
-        editor.tagName === "INPUT" &&
-        editor.type !== "date" &&
-        editor.type !== "number"
-    ) {
-        editor.select();
-    }
-
-    let finished = false;
-
-    async function finish(save = true) {
-
-        if (finished) return;
-
-        finished = true;
-
-        if (save) {
-
-            const newValue =
-                editor.value;
-
-            if (
-                String(newValue) !==
-                String(originalValue)
-            ) {
-
-                await saveInlineField(
-                    leadId,
-                    field,
-                    newValue
-                );
-
-                return;
-            }
-        }
-
-        restoreInlineDisplay(
-            element,
-            lead,
-            field
-        );
-    }
-
-    editor.addEventListener(
-        "blur",
-        () => {
-
-            setTimeout(
-                () => finish(true),
-                120
-            );
-
-        }
-    );
-
-    editor.addEventListener(
-        "keydown",
-        (event) => {
-
-            if (
-                event.key ===
-                "Enter"
-            ) {
-
-                event.preventDefault();
-
-                editor.blur();
-            }
-
-            if (
-                event.key ===
-                "Escape"
-            ) {
-
-                event.preventDefault();
-
-                finish(false);
-            }
-        }
-    );
-}
-
-
-/* =========================================================
-   SELECT EDITOR
-========================================================= */
-
-function createSelectEditor(
-    options,
-    selectedValue
-) {
-
-    const select =
-        document.createElement(
-            "select"
-        );
-
-    select.className =
-        "crm-inline-editor";
-
-    options.forEach(
-        option => {
-
-            const opt =
-                document.createElement(
-                    "option"
-                );
-
-            opt.value =
-                option.value;
-
-            opt.textContent =
-                option.label;
-
-            if (
-                String(
-                    option.value
-                ).toLowerCase() ===
-                String(
-                    selectedValue
-                ).toLowerCase()
-            ) {
-                opt.selected = true;
-            }
-
-            select.appendChild(
-                opt
-            );
-        }
-    );
-
-    return select;
-}
-
-
-/* =========================================================
-   SAVE INLINE FIELD
-========================================================= */
-
-async function saveInlineField(
-    leadId,
-    field,
-    newValue
-) {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) return;
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-
-        showToast(
-            "Enquiry not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    const oldValue =
-        lead[field] ?? "";
-
-    try {
-
-        const updateData = {};
-
-        updateData[field] =
-            newValue === ""
-                ? null
-                : newValue;
-
-        const {
-            data,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
-                .update(
-                    updateData
-                )
-                .eq(
-                    "id",
-                    leadId
-                )
-                .select()
-                .single();
-
-        if (error) {
-
-            console.error(
-                "Inline update failed:",
-                error
-            );
-
-            showToast(
-                error.message ||
-                "Unable to save this change.",
-                "error"
-            );
-
-            lead[field] =
-                oldValue;
-
-            refreshLeadRow(
-                leadId
-            );
-
-            return;
-        }
-
-        Object.assign(
-            lead,
-            data || updateData
-        );
-
-        showToast(
-            "Updated successfully."
-        );
-
-        refreshLeadRow(
-            leadId
-        );
-
-        updateStats();
-
-        if (
-            currentLead &&
-            String(
-                currentLead.id
-            ) ===
-            String(leadId)
-        ) {
-
-            currentLead =
-                lead;
-
-            refreshModalData();
-        }
-
-    } catch (error) {
-
-        console.error(error);
-
-        lead[field] =
-            oldValue;
-
-        refreshLeadRow(
-            leadId
-        );
-
-        showToast(
-            "Unable to save this change.",
-            "error"
-        );
-    }
-}
-
-
-/* =========================================================
-   RESTORE INLINE DISPLAY
-========================================================= */
-
-function restoreInlineDisplay(
-    element,
-    lead,
-    field
-) {
-
-    if (!element) return;
-
-    const editor =
-        element.querySelector(
-            ".crm-inline-editor"
-        );
-
-    if (!editor) return;
-
-    const display =
-        document.createElement(
-            "span"
-        );
-
-    display.className =
-        "inline-display";
-
-    let value =
-        lead[field];
-
-    if (field === "status") {
-
-        value =
-            formatStatus(value);
-
-    } else if (
-        field === "priority"
-    ) {
-
-        value =
-            formatPriority(value);
-
-    } else if (
-        field === "event_date"
-    ) {
-
-        value =
-            formatDate(value);
-    }
-
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-        value = "—";
-    }
-
-    display.textContent =
-        value;
-
-    editor.replaceWith(
-        display
-    );
-
-    element.classList.remove(
-        "editing"
-    );
-
-    const icon =
-        element.querySelector(
-            ".inline-edit-icon"
-        );
-
-    if (icon) {
-        icon.textContent = "✎";
-    }
-}
-
-
-/* =========================================================
-   REFRESH ROW
-========================================================= */
-
-function refreshLeadRow(
-    leadId
-) {
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) return;
-
-    const rows =
-        document.querySelectorAll(
-            "#leadsTableBody tr"
-        );
-
-    let row = null;
-
-    rows.forEach(
-        currentRow => {
-
-            if (
-                String(
-                    currentRow.dataset.leadId
-                ) ===
-                String(leadId)
-            ) {
-                row = currentRow;
-            }
-        }
-    );
-
-    if (!row) {
-
-        renderLeads();
-
-        return;
-    }
-
-    const temp =
-        document.createElement(
-            "tbody"
-        );
-
-    temp.innerHTML =
-        createLeadRow(
-            lead
-        );
-
-    const newRow =
-        temp.firstElementChild;
-
-    if (newRow) {
-        row.replaceWith(
-            newRow
-        );
-    }
-}
-
-
-/* =========================================================
-   VIEW DETAILS MODAL
-========================================================= */
-
-function openLeadModal(
-    leadId
-) {
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-
-        showToast(
-            "Enquiry not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    currentLead =
-        lead;
-
-    const modal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (!modal) {
-
-        showToast(
-            "Lead details modal not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    populateLeadModal(
-        lead
-    );
-
-    modal.hidden =
-        false;
-
-    modal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-    document.body.style.overflow =
-        "hidden";
-}
-
-
-/* =========================================================
-   POPULATE LEAD MODAL
-========================================================= */
-
-function populateLeadModal(
-    lead
-) {
-
-    setModalText(
-        [
-            "#detailCustomerName",
-            "#modalLeadName",
-            "#leadName",
-            "[data-modal='name']"
-        ],
-        lead.name ||
-        lead.customer_name ||
-        "Customer"
-    );
-
-    setModalText(
-        [
-            "#detailPhone",
-            "#modalPhone",
-            "#leadPhone",
-            "[data-modal='phone']"
-        ],
-        lead.phone ||
-        lead.mobile ||
-        lead.contact_number ||
-        "—"
-    );
-
-    setModalText(
-        [
-            "#detailEmail",
-            "#modalEmail",
-            "#leadEmail",
-            "[data-modal='email']"
-        ],
-        lead.email ||
-        "—"
-    );
-
-    setModalText(
-        [
-            "#detailSource",
-            "#modalSource",
-            "[data-modal='source']"
-        ],
-        lead.source ||
-        "—"
-    );
-
-    setModalControl(
-        [
-            "#detailEventType",
-            "#modalEventType",
-            "#leadEventType",
-            "[data-control='event_type']"
-        ],
-        lead.event_type ||
-        lead.event ||
-        ""
-    );
-
-    setModalControl(
-        [
-            "#detailVenue",
-            "#modalVenue",
-            "#leadVenue",
-            "[data-control='venue']"
-        ],
-        lead.venue ||
-        ""
-    );
-
-    setModalControl(
-        [
-            "#detailEventDate",
-            "#modalEventDate",
-            "#leadEventDate",
-            "[data-control='event_date']"
-        ],
-        normalizeDateInput(
-            lead.event_date ||
-            lead.date
-        )
-    );
-
-    setModalControl(
-        [
-            "#detailGuests",
-            "#modalGuests",
-            "#leadGuests",
-            "[data-control='guests']"
-        ],
-        lead.guests ??
-        lead.guest_count ??
-        lead.number_of_guests ??
-        ""
-    );
-
-    setModalControl(
-        [
-            "#detailStatus",
-            "#modalStatus",
-            "#leadStatus",
-            "[data-control='status']"
-        ],
-        lead.status ||
-        "New"
-    );
-
-    setModalControl(
-        [
-            "#detailPriority",
-            "#modalPriority",
-            "#leadPriority",
-            "[data-control='priority']"
-        ],
-        lead.priority ||
-        "Medium"
-    );
-
-    setModalControl(
-        [
-            "#detailFollowUp",
-            "#modalFollowUp",
-            "#leadFollowUp",
-            "[data-control='follow_up_at']"
-        ],
-        normalizeDateTimeInput(
-            lead.follow_up_at ||
-            lead.followup_at
-        )
-    );
-
-    setModalControl(
-        [
-            "#detailAssignedTo",
-            "#modalAssignedTo",
-            "#leadAssignedTo",
-            "[data-control='assigned_to']"
-        ],
-        lead.assigned_to ||
-        ""
-    );
-
-    setModalText(
-        [
-            "#detailMessage",
-            "#modalMessage",
-            "#leadMessage",
-            "[data-modal='message']"
-        ],
-        lead.message ||
-        lead.enquiry ||
-        lead.requirements ||
-        "No customer message."
-    );
-
-    setModalControl(
-        [
-            "#detailRemarks",
-            "#modalNotes",
-            "#leadNotes",
-            "[data-control='internal_notes']"
-        ],
-        lead.internal_notes ||
-        lead.notes ||
-        lead.remarks ||
-        ""
-    );
-
-    setupContactActions(
-        lead
-    );
-}
-
-
-/* =========================================================
-   MODAL TEXT
-========================================================= */
-
-function setModalText(
-    selectors,
-    value
-) {
-
-    for (
-        const selector of selectors
-    ) {
-
-        const element =
-            document.querySelector(
-                selector
-            );
-
-        if (element) {
-
-            element.textContent =
-                safeValue(
-                    value
-                ) || "—";
-
-            return;
-        }
-    }
-}
-
-
-/* =========================================================
-   MODAL CONTROL
-========================================================= */
-
-function setModalControl(
-    selectors,
-    value
-) {
-
-    for (
-        const selector of selectors
-    ) {
-
-        const element =
-            document.querySelector(
-                selector
-            );
-
-        if (!element) {
-            continue;
-        }
-
-        if (
-            element.tagName ===
-                "INPUT" ||
-            element.tagName ===
-                "SELECT" ||
-            element.tagName ===
-                "TEXTAREA"
-        ) {
-
-            element.value =
-                safeValue(
-                    value
-                );
-        }
-
-        return;
-    }
-}
-
-
-/* =========================================================
-   NORMALIZE DATE
-========================================================= */
-
-function normalizeDateInput(
-    value
-) {
-
-    if (!value) {
-        return "";
-    }
-
-    const text =
-        String(value);
-
-    if (
-        /^\d{4}-\d{2}-\d{2}$/.test(
-            text
-        )
-    ) {
-        return text;
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return "";
-    }
-
-    return date
-        .toISOString()
-        .slice(
-            0,
-            10
-        );
-}
-
-
-/* =========================================================
-   NORMALIZE DATETIME
-========================================================= */
-
-function normalizeDateTimeInput(
-    value
-) {
-
-    if (!value) {
-        return "";
-    }
-
-    const text =
-        String(value);
-
-    if (
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(
-            text
-        )
-    ) {
-
-        return text.slice(
-            0,
-            16
-        );
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return "";
-    }
-
-    const local =
-        new Date(
-            date.getTime() -
-            date.getTimezoneOffset() *
-            60000
-        );
-
-    return local
-        .toISOString()
-        .slice(
-            0,
-            16
-        );
-}
-
-
-/* =========================================================
-   REFRESH MODAL
-========================================================= */
-
-function refreshModalData() {
-
-    if (!currentLead) {
-        return;
-    }
-
-    populateLeadModal(
-        currentLead
-    );
-}
-
-
-/* =========================================================
-   CLOSE LEAD MODAL
-========================================================= */
-
-function closeLeadModal() {
-
-    const modal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (!modal) return;
-
-    modal.hidden =
-        true;
-
-    modal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    document.body.style.overflow =
-        "";
-
-    currentLead =
-        null;
-}
-
-
-/* =========================================================
-   BACKDROP CLICK
-========================================================= */
-
-function handleModalBackdropClick(
-    event
-) {
-
-    const modal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (!modal) return;
-
-    if (
-        event.target === modal
-    ) {
-        closeLeadModal();
-    }
-}
-
-
-/* =========================================================
-   SAVE MODAL CHANGES
-========================================================= */
-
-async function saveModalChanges() {
-
-    if (!currentLead) {
-
-        showToast(
-            "No enquiry selected.",
-            "error"
-        );
-
-        return;
-    }
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) return;
-
-    const leadId =
-        currentLead.id;
-
-    const updateData = {};
-
-    const eventType =
-        getControlValue([
-            "#detailEventType",
-            "#modalEventType",
-            "#leadEventType",
-            "[data-control='event_type']"
-        ]);
-
-    const venue =
-        getControlValue([
-            "#detailVenue",
-            "#modalVenue",
-            "#leadVenue",
-            "[data-control='venue']"
-        ]);
-
-    const eventDate =
-        getControlValue([
-            "#detailEventDate",
-            "#modalEventDate",
-            "#leadEventDate",
-            "[data-control='event_date']"
-        ]);
-
-    const guests =
-        getControlValue([
-            "#detailGuests",
-            "#modalGuests",
-            "#leadGuests",
-            "[data-control='guests']"
-        ]);
-
-    const status =
-        getControlValue([
-            "#detailStatus",
-            "#modalStatus",
-            "#leadStatus",
-            "[data-control='status']"
-        ]);
-
-    const priority =
-        getControlValue([
-            "#detailPriority",
-            "#modalPriority",
-            "#leadPriority",
-            "[data-control='priority']"
-        ]);
-
-    const followUp =
-        getControlValue([
-            "#detailFollowUp",
-            "#modalFollowUp",
-            "#leadFollowUp",
-            "[data-control='follow_up_at']"
-        ]);
-
-    const assignedTo =
-        getControlValue([
-            "#detailAssignedTo",
-            "#modalAssignedTo",
-            "#leadAssignedTo",
-            "[data-control='assigned_to']"
-        ]);
-
-    const remarks =
-        getControlValue([
-            "#detailRemarks",
-            "#modalNotes",
-            "#leadNotes",
-            "[data-control='internal_notes']"
-        ]);
-
-    if (eventType !== undefined) {
-        updateData.event_type =
-            eventType || null;
-    }
-
-    if (venue !== undefined) {
-        updateData.venue =
-            venue || null;
-    }
-
-    if (eventDate !== undefined) {
-        updateData.event_date =
-            eventDate || null;
-    }
-
-    if (guests !== undefined) {
-        updateData.guests =
-            guests === ""
-                ? null
-                : Number(guests);
-    }
-
-    if (status !== undefined) {
-        updateData.status =
-            status || "New";
-    }
-
-    if (priority !== undefined) {
-        updateData.priority =
-            priority || "Medium";
-    }
-
-    if (followUp !== undefined) {
-        updateData.follow_up_at =
-            followUp || null;
-    }
-
-    if (assignedTo !== undefined) {
-        updateData.assigned_to =
-            assignedTo || null;
-    }
-
-    if (remarks !== undefined) {
-        updateData.internal_notes =
-            remarks || null;
-    }
-
-    if (
-        !Object.keys(
-            updateData
-        ).length
-    ) {
-
-        showToast(
-            "Nothing to save.",
-            "warning"
-        );
-
-        return;
-    }
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
-                .update(
-                    updateData
-                )
-                .eq(
-                    "id",
-                    leadId
-                )
-                .select()
-                .single();
-
-        if (error) {
-
-            console.error(
-                "Modal save error:",
-                error
-            );
-
-            showToast(
-                error.message ||
-                "Unable to save enquiry.",
-                "error"
-            );
-
-            return;
-        }
-
-        Object.assign(
-            currentLead,
-            data || updateData
-        );
-
-        const index =
-            allLeads.findIndex(
-                item =>
-                    String(
-                        item.id
-                    ) ===
-                    String(
-                        leadId
-                    )
-            );
-
-        if (index !== -1) {
-
-            Object.assign(
-                allLeads[index],
-                data || updateData
-            );
-
-            currentLead =
-                allLeads[index];
-        }
-
-        applyFilters();
-
-        updateStats();
-
-        populateLeadModal(
-            currentLead
-        );
-
-        showToast(
-            "Enquiry updated successfully."
-        );
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-        showToast(
-            "Unable to save enquiry.",
-            "error"
-        );
-    }
-}
-
-
-/* =========================================================
-   GET CONTROL VALUE
-========================================================= */
-
-function getControlValue(
-    selectors
-) {
-
-    for (
-        const selector of selectors
-    ) {
-
-        const element =
-            document.querySelector(
-                selector
-            );
-
-        if (element) {
-            return element.value;
-        }
-    }
-
-    return undefined;
-}
-
-
-/* =========================================================
-   CONTACT ACTIONS
-========================================================= */
-
-function setupContactActions(
-    lead
-) {
-
-    const phone =
-        lead.phone ||
-        lead.mobile ||
-        lead.contact_number;
-
-    const email =
-        lead.email;
-
-    const call =
-        document.querySelector(
-            "#modalCallBtn"
-        ) ||
-        document.querySelector(
-            "[data-action='call']"
-        );
-
-    const whatsapp =
-        document.querySelector(
-            "#modalWhatsappBtn"
-        ) ||
-        document.querySelector(
-            "[data-action='whatsapp']"
-        );
-
-    const emailButton =
-        document.querySelector(
-            "#modalEmailBtn"
-        ) ||
-        document.querySelector(
-            "[data-action='email']"
-        );
-
-    if (call) {
-
-        if (phone) {
-
-            call.href =
-                `tel:${phone}`;
-
-            call.style.pointerEvents =
-                "auto";
-
-            call.style.opacity =
-                "1";
-
-        } else {
-
-            call.removeAttribute(
-                "href"
-            );
-
-            call.style.pointerEvents =
-                "none";
-
-            call.style.opacity =
-                "0.5";
-        }
-    }
-
-    if (whatsapp) {
-
-        if (phone) {
-
-            const cleanPhone =
-                String(phone)
-                    .replace(
-                        /\D/g,
-                        ""
-                    );
-
-            whatsapp.href =
-                `https://wa.me/${cleanPhone}`;
-
-            whatsapp.target =
-                "_blank";
-
-            whatsapp.style.pointerEvents =
-                "auto";
-
-            whatsapp.style.opacity =
-                "1";
-
-        } else {
-
-            whatsapp.removeAttribute(
-                "href"
-            );
-
-            whatsapp.style.pointerEvents =
-                "none";
-
-            whatsapp.style.opacity =
-                "0.5";
-        }
-    }
-
-    if (emailButton) {
-
-        if (email) {
-
-            emailButton.href =
-                `mailto:${email}`;
-
-            emailButton.style.pointerEvents =
-                "auto";
-
-            emailButton.style.opacity =
-                "1";
-
-        } else {
-
-            emailButton.removeAttribute(
-                "href"
-            );
-
-            emailButton.style.pointerEvents =
-                "none";
-
-            emailButton.style.opacity =
-                "0.5";
-        }
-    }
-}
-
-
-/* =========================================================
-   ADD ENQUIRY MODAL
-========================================================= */
-
-function openAddEnquiryModal() {
-
-    const modal =
-        document.getElementById(
-            "addEnquiryModal"
-        );
-
-    if (!modal) {
-
-        showToast(
-            "Add enquiry form not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    modal.hidden =
-        false;
-
-    modal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-    document.body.style.overflow =
-        "hidden";
-
-    const form =
-        document.getElementById(
-            "addEnquiryForm"
-        );
-
-    if (form) {
-        form.reset();
-    }
-
-    const message =
-        document.getElementById(
-            "addEnquiryMessage"
-        );
-
-    if (message) {
-        message.textContent =
-            "";
-    }
-}
-
-
-/* =========================================================
-   CLOSE ADD ENQUIRY
-========================================================= */
-
-function closeAddEnquiryModal() {
-
-    const modal =
-        document.getElementById(
-            "addEnquiryModal"
-        );
-
-    if (!modal) return;
-
-    modal.hidden =
-        true;
-
-    modal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    document.body.style.overflow =
-        "";
-}
-
-
-/* =========================================================
-   CREATE ENQUIRY
-========================================================= */
-
-async function submitAddEnquiry(
-    event
-) {
-
-    if (event) {
-        event.preventDefault();
-    }
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) return;
-
-    const form =
-        event?.target ||
-        document.getElementById(
-            "addEnquiryForm"
-        );
-
-    if (!form) {
-
-        showToast(
-            "Enquiry form not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    const formData =
-        new FormData(form);
-
-    const data = {};
-
-    for (
-        const [key, value]
-        of formData.entries()
-    ) {
-
-        data[key] =
-            typeof value ===
-                "string"
-                ? value.trim()
-                : value;
-    }
-
-    if (!data.status) {
-        data.status =
-            "New";
-    }
-
-    if (!data.priority) {
-        data.priority =
-            "Medium";
-    }
-
-    if (
-        data.guests === ""
-    ) {
-        data.guests =
-            null;
-    } else if (
-        data.guests !== undefined
-    ) {
-        data.guests =
-            Number(
-                data.guests
-            );
-    }
-
-    try {
-
-        const {
-            data: created,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
-                .insert([
-                    data
-                ])
-                .select()
-                .single();
-
-        if (error) {
-
-            console.error(
-                "Create enquiry error:",
-                error
-            );
-
-            const message =
-                document.getElementById(
-                    "addEnquiryMessage"
-                );
-
-            if (message) {
-
-                message.textContent =
-                    error.message ||
-                    "Unable to create enquiry.";
-            }
-
-            showToast(
-                "Unable to create enquiry.",
-                "error"
-            );
-
-            return;
-        }
-
-        if (created) {
-
-            allLeads.unshift(
-                created
-            );
-        }
-
-        applyFilters();
-
-        updateStats();
-
-        closeAddEnquiryModal();
-
-        showToast(
-            "Customer enquiry added successfully."
-        );
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-        showToast(
-            "Unable to create enquiry.",
-            "error"
-        );
-    }
-}
-
-
-/* =========================================================
-   STATISTICS
-========================================================= */
-
-function updateStats() {
-
-    const total =
-        allLeads.length;
-
-    const newCount =
-        allLeads.filter(
-            lead =>
-                String(
-                    lead.status ||
-                    "New"
-                ).toLowerCase() ===
-                "new"
-        ).length;
-
-    const contactedCount =
-        allLeads.filter(
-            lead =>
-                String(
-                    lead.status ||
-                    ""
-                ).toLowerCase() ===
-                "contacted"
-        ).length;
-
-    const closedCount =
-        allLeads.filter(
-            lead => {
-
-                const status =
-                    String(
-                        lead.status ||
-                        ""
-                    ).toLowerCase();
-
-                return (
-                    status ===
-                        "closed" ||
-                    status ===
-                        "converted"
-                );
-            }
-        ).length;
-
-    const totalElement =
-        document.getElementById(
-            "totalCount"
-        );
-
-    const newElement =
-        document.getElementById(
-            "newCount"
-        );
-
-    const contactedElement =
-        document.getElementById(
-            "contactedCount"
-        );
-
-    const closedElement =
-        document.getElementById(
-            "closedCount"
-        );
-
-    if (totalElement) {
-        totalElement.textContent =
-            total;
-    }
-
-    if (newElement) {
-        newElement.textContent =
-            newCount;
-    }
-
-    if (contactedElement) {
-        contactedElement.textContent =
-            contactedCount;
-    }
-
-    if (closedElement) {
-        closedElement.textContent =
-            closedCount;
-    }
-}
-
-
-/* =========================================================
-   STAT FILTERS
-========================================================= */
-
-function setupStatFilters() {
-
-    const cards =
-        document.querySelectorAll(
-            ".stat-card"
-        );
-
-    cards.forEach(
-        card => {
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    cards.forEach(
-                        item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
-
-                    card.classList.add(
-                        "active"
-                    );
-
-                    const filter =
-                        card.dataset
-                            .statusFilter;
-
-                    currentStatusFilter =
-                        filter ||
-                        "all";
-
-                    const statusSelect =
-                        document.getElementById(
-                            "statusFilter"
-                        );
-
-                    if (statusSelect) {
-
-                        statusSelect.value =
-                            currentStatusFilter;
-                    }
-
-                    applyFilters();
-                }
-            );
-        }
-    );
-}
-
-
-/* =========================================================
-   FORMAT STATUS
-========================================================= */
-
-function formatStatus(
-    status
-) {
-
-    if (!status) {
-        return "New";
-    }
-
-    const value =
-        String(status)
-            .replace(
-                /[-_]/g,
-                " "
-            )
-            .trim();
-
-    return value.replace(
-        /\b\w/g,
-        char =>
-            char.toUpperCase()
-    );
-}
-
-
-/* =========================================================
-   FORMAT PRIORITY
-========================================================= */
-
-function formatPriority(
-    priority
-) {
-
-    if (!priority) {
-        return "Medium";
-    }
-
-    const value =
-        String(priority)
-            .replace(
-                /[-_]/g,
-                " "
-            )
-            .trim();
-
-    return value.replace(
-        /\b\w/g,
-        char =>
-            char.toUpperCase()
-    );
-}
-
-
-/* =========================================================
-   FORMAT DATE
-========================================================= */
-
-function formatDate(
-    value
-) {
-
-    if (!value) {
-        return "—";
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return String(value);
-    }
-
-    return date.toLocaleDateString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-        }
-    );
-}
-
-
-/* =========================================================
-   FORMAT DATETIME
-========================================================= */
-
-function formatDateTime(
-    value
-) {
-
-    if (!value) {
-        return "—";
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return String(value);
-    }
-
-    return date.toLocaleString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        }
-    );
-}
-
-
-/* =========================================================
-   STATUS OPTIONS
-========================================================= */
-
-function getStatusOptions() {
-
-    return [
-
-        {
-            value: "New",
-            label: "New"
-        },
-
-        {
-            value: "Contacted",
-            label: "Contacted"
-        },
-
-        {
-            value: "Follow-up",
-            label: "Follow-up"
-        },
-
-        {
-            value: "Qualified",
-            label: "Qualified"
-        },
-
-        {
-            value: "Converted",
-            label: "Converted"
-        },
-
-        {
-            value: "Closed",
-            label: "Closed"
-        },
-
-        {
-            value: "Lost",
-            label: "Lost"
-        }
-
-    ];
-}
-
-
-/* =========================================================
-   PRIORITY OPTIONS
-========================================================= */
-
-function getPriorityOptions() {
-
-    return [
-
-        {
-            value: "Low",
-            label: "Low"
-        },
-
-        {
-            value: "Medium",
-            label: "Medium"
-        },
-
-        {
-            value: "High",
-            label: "High"
-        }
-
-    ];
-}
-
-
-/* =========================================================
-   EVENT OPTIONS
-========================================================= */
-
-function getEventOptions() {
-
-    return [
-
-        {
-            value: "",
-            label: "Select Event"
-        },
-
-        {
-            value: "Wedding",
-            label: "Wedding"
-        },
-
-        {
-            value: "Engagement",
-            label: "Engagement"
-        },
-
-        {
-            value: "Birthday",
-            label: "Birthday"
-        },
-
-        {
-            value: "Corporate",
-            label: "Corporate"
-        },
-
-        {
-            value: "Anniversary",
-            label: "Anniversary"
-        },
-
-        {
-            value: "Party",
-            label: "Party"
-        },
-
-        {
-            value: "Other",
-            label: "Other"
-        }
-
-    ];
-}
-
 
 /* =========================================================
    SEARCH
-========================================================= */
+   ========================================================= */
 
-function setupSearch() {
+.search-box {
+    position: relative;
 
-    const searchInput =
-        document.getElementById(
-            "searchInput"
-        );
+    flex: 1 1 280px;
 
-    if (!searchInput) {
-        return;
-    }
-
-    searchInput.addEventListener(
-        "input",
-        event => {
-
-            currentSearch =
-                event.target.value;
-
-            applyFilters();
-        }
-    );
+    min-width: 220px;
 }
 
+.search-box input,
+#searchInput {
+    width: 100%;
+
+    min-height: 43px;
+
+    padding:
+        0 14px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.045);
+
+    color: var(--crm-text);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.search-box input::placeholder,
+#searchInput::placeholder {
+    color: #66758b;
+}
+
+.search-box input:focus,
+#searchInput:focus {
+    border-color: rgba(25, 184, 166, 0.55);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(25, 184, 166, 0.08);
+}
 
 /* =========================================================
-   FILTER DROPDOWNS
-========================================================= */
+   FILTER SELECTS
+   ========================================================= */
 
-function setupFilters() {
+.filter-bar select,
+.crm-toolbar select {
+    min-width: 145px;
 
-    const statusFilter =
-        document.getElementById(
-            "statusFilter"
-        );
+    min-height: 43px;
 
-    const priorityFilter =
-        document.getElementById(
-            "priorityFilter"
-        );
+    padding: 0 34px 0 12px;
 
-    if (statusFilter) {
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
 
-        statusFilter.addEventListener(
-            "change",
-            () => {
+    border-radius: 10px;
 
-                currentStatusFilter =
-                    statusFilter.value ||
-                    "all";
+    background:
+        #111f32;
 
-                applyFilters();
-            }
-        );
-    }
+    color: var(--crm-text);
 
-    if (priorityFilter) {
+    outline: none;
 
-        priorityFilter.addEventListener(
-            "change",
-            () => {
-
-                currentPriorityFilter =
-                    priorityFilter.value ||
-                    "all";
-
-                applyFilters();
-            }
-        );
-    }
+    cursor: pointer;
 }
 
+.filter-bar select:focus,
+.crm-toolbar select:focus {
+    border-color: rgba(25, 184, 166, 0.55);
+}
 
 /* =========================================================
-   REFRESH BUTTON
-========================================================= */
+   BUTTONS
+   ========================================================= */
 
-function setupRefreshButton() {
+.refresh-btn,
+.add-enquiry-btn,
+.primary-btn,
+.save-btn {
+    min-height: 43px;
 
-    const button =
-        document.getElementById(
-            "refreshBtn"
+    padding: 0 16px;
+
+    border: 0;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    color: #fff;
+
+    font-weight: 700;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--crm-primary),
+            var(--crm-primary-dark)
         );
 
-    if (!button) return;
+    box-shadow:
+        0 8px 24px
+        rgba(25, 184, 166, 0.14);
 
-    button.addEventListener(
-        "click",
-        async () => {
-
-            button.disabled =
-                true;
-
-            const original =
-                button.textContent;
-
-            button.textContent =
-                "Refreshing...";
-
-            await loadEnquiries();
-
-            button.disabled =
-                false;
-
-            button.textContent =
-                original ||
-                "↻ Refresh";
-        }
-    );
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease,
+        opacity 0.2s ease;
 }
 
+.refresh-btn:hover,
+.add-enquiry-btn:hover,
+.primary-btn:hover,
+.save-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.08);
+}
+
+.refresh-btn:disabled,
+.add-enquiry-btn:disabled,
+.primary-btn:disabled,
+.save-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+}
 
 /* =========================================================
-   ADD ENQUIRY BUTTON
-========================================================= */
+   LEADS CARD
+   ========================================================= */
 
-function setupAddButton() {
+.leads-card,
+.table-card,
+.crm-table-card {
+    width: 100%;
 
-    const button =
-        document.getElementById(
-            "addEnquiryBtn"
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 29, 48, 0.98),
+            rgba(10, 22, 37, 0.98)
         );
 
-    if (!button) return;
+    border: 1px solid var(--crm-border);
 
-    button.addEventListener(
-        "click",
-        openAddEnquiryModal
-    );
+    border-radius: 16px;
+
+    box-shadow: var(--crm-shadow);
+
+    overflow: hidden;
 }
-
 
 /* =========================================================
-   GLOBAL CLICK HANDLER
-========================================================= */
+   TABLE WRAPPER
+   ========================================================= */
 
-function setupGlobalClicks() {
+.table-wrapper,
+.table-responsive,
+.leads-table-wrapper {
+    width: 100%;
 
-    document.addEventListener(
-        "click",
-        event => {
+    overflow-x: auto;
 
-            const inlineField =
-                event.target.closest(
-                    ".crm-inline-field"
-                );
-
-            if (
-                inlineField &&
-                !inlineField.classList.contains(
-                    "editing"
-                )
-            ) {
-
-                startInlineEdit(
-                    inlineField
-                );
-
-                return;
-            }
-
-
-            const viewButton =
-                event.target.closest(
-                    "[data-action='view']"
-                );
-
-            if (viewButton) {
-
-                openLeadModal(
-                    viewButton.dataset.id
-                );
-
-                return;
-            }
-
-
-            const closeButton =
-                event.target.closest(
-                    ".close-modal"
-                );
-
-            if (
-                closeButton &&
-                closeButton.closest(
-                    "#leadModal"
-                )
-            ) {
-
-                closeLeadModal();
-
-                return;
-            }
-
-
-            if (
-                closeButton &&
-                closeButton.closest(
-                    "#addEnquiryModal"
-                )
-            ) {
-
-                closeAddEnquiryModal();
-
-                return;
-            }
-
-
-            const cancelButton =
-                event.target.closest(
-                    ".cancel-btn"
-                );
-
-            if (
-                cancelButton &&
-                cancelButton.closest(
-                    "#addEnquiryModal"
-                )
-            ) {
-
-                closeAddEnquiryModal();
-
-                return;
-            }
-
-
-            const saveButton =
-                event.target.closest(
-                    ".save-btn"
-                );
-
-            if (
-                saveButton &&
-                saveButton.closest(
-                    "#leadModal"
-                )
-            ) {
-
-                saveModalChanges();
-
-                return;
-            }
-
-        }
-    );
-
-
-    const leadModal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (leadModal) {
-
-        leadModal.addEventListener(
-            "click",
-            handleModalBackdropClick
-        );
-    }
-
-
-    const addModal =
-        document.getElementById(
-            "addEnquiryModal"
-        );
-
-    if (addModal) {
-
-        addModal.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target ===
-                    addModal
-                ) {
-
-                    closeAddEnquiryModal();
-                }
-            }
-        );
-    }
+    -webkit-overflow-scrolling: touch;
 }
-
 
 /* =========================================================
-   KEYBOARD
-========================================================= */
+   TABLE
+   ========================================================= */
 
-function setupKeyboard() {
+.leads-table {
+    width: 100%;
 
-    document.addEventListener(
-        "keydown",
-        event => {
+    min-width: 1120px;
 
-            if (
-                event.key !==
-                "Escape"
-            ) {
-                return;
-            }
+    border-collapse: separate;
 
-            const leadModal =
-                document.getElementById(
-                    "leadModal"
-                );
-
-            const addModal =
-                document.getElementById(
-                    "addEnquiryModal"
-                );
-
-            if (
-                leadModal &&
-                !leadModal.hidden
-            ) {
-
-                closeLeadModal();
-            }
-
-            if (
-                addModal &&
-                !addModal.hidden
-            ) {
-
-                closeAddEnquiryModal();
-            }
-        }
-    );
+    border-spacing: 0;
 }
 
+.leads-table thead th {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 5;
+
+    padding:
+        14px 16px;
+
+    background:
+        #0d1a2b;
+
+    border-bottom:
+        1px solid var(--crm-border);
+
+    color: #8fa0b6;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-align: left;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+
+    white-space: nowrap;
+}
+
+.leads-table tbody td {
+    padding:
+        14px 16px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.055);
+
+    color: #dce4ef;
+
+    vertical-align: middle;
+
+    background: transparent;
+}
+
+.leads-table tbody tr {
+    transition:
+        background 0.15s ease;
+}
+
+.leads-table tbody tr:hover {
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+.leads-table tbody tr:last-child td {
+    border-bottom: 0;
+}
 
 /* =========================================================
-   AUTH STATE LISTENER
-========================================================= */
+   CUSTOMER NAME + PHONE
+   ========================================================= */
 
-function setupAuthListener() {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) return;
-
-    client.auth.onAuthStateChange(
-        (
-            event,
-            session
-        ) => {
-
-            if (
-                event ===
-                "SIGNED_OUT"
-            ) {
-
-                window.location.href =
-                    "login.html";
-
-                return;
-            }
-
-            if (
-                session
-            ) {
-
-                updateStaffName(
-                    session.user
-                );
-            }
-        }
-    );
+.leads-table td:first-child {
+    min-width: 190px;
 }
 
+.leads-table td:first-child strong {
+    display: block;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+.leads-table td:first-child small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #7f90a6;
+
+    font-size: 12px;
+
+    white-space: nowrap;
+}
+
+/* =========================================================
+   PHONE / CONTACT
+   ========================================================= */
+
+.phone-number,
+.customer-phone,
+.lead-phone {
+    color: #cbd6e5;
+
+    white-space: nowrap;
+
+    font-size: 12px;
+}
+
+/* =========================================================
+   INLINE FIELD
+   ========================================================= */
+
+.crm-inline-field {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    min-height: 34px;
+
+    width: 100%;
+
+    padding: 6px 8px;
+
+    border: 1px solid transparent;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.16s ease,
+        border-color 0.16s ease;
+}
+
+.crm-inline-field:hover {
+    background:
+        rgba(255, 255, 255, 0.045);
+
+    border-color:
+        rgba(255, 255, 255, 0.07);
+}
+
+.crm-inline-field.editing {
+    background:
+        rgba(25, 184, 166, 0.055);
+
+    border-color:
+        rgba(25, 184, 166, 0.45);
+
+    cursor: default;
+}
+
+.inline-display {
+    display: block;
+
+    overflow: hidden;
+
+    color: #d7e0eb;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    max-width: 100%;
+}
+
+/* =========================================================
+   PENCIL — HIDDEN BY DEFAULT
+   ========================================================= */
+
+.inline-edit-icon {
+    display: none;
+
+    margin-left: 7px;
+
+    flex: 0 0 auto;
+
+    color: var(--crm-primary);
+
+    font-size: 12px;
+
+    opacity: 0.9;
+}
+
+.crm-inline-field:hover .inline-edit-icon {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+/* Never show pencil while editing */
+.crm-inline-field.editing .inline-edit-icon {
+    display: inline-flex;
+}
+
+/* =========================================================
+   INLINE EDITOR
+   ========================================================= */
+
+.crm-inline-editor {
+    width: 100%;
+
+    min-width: 90px;
+
+    min-height: 31px;
+
+    padding: 5px 8px;
+
+    border:
+        1px solid rgba(25, 184, 166, 0.55);
+
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #0b1829;
+
+    color: #ffffff;
+
+    font-size: 13px;
+}
+
+.crm-inline-editor:focus {
+    border-color:
+        var(--crm-primary);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(25, 184, 166, 0.10);
+}
+
+.crm-inline-editor option {
+    background: #0b1829;
+    color: #fff;
+}
+
+/* =========================================================
+   STATUS / PRIORITY
+   ========================================================= */
+
+.status-badge,
+.priority-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 27px;
+
+    padding:
+        4px 9px;
+
+    border-radius: 999px;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.status-new {
+    color: #67e8f9;
+    background: rgba(103, 232, 249, 0.10);
+}
+
+.status-contacted {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.10);
+}
+
+.status-follow-up {
+    color: #fbbf24;
+    background: rgba(251, 191, 36, 0.10);
+}
+
+.status-qualified {
+    color: #c084fc;
+    background: rgba(192, 132, 252, 0.10);
+}
+
+.status-converted,
+.status-booked {
+    color: #6ee7b7;
+    background: rgba(110, 231, 183, 0.10);
+}
+
+.status-closed,
+.status-lost {
+    color: #fb7185;
+    background: rgba(251, 113, 133, 0.10);
+}
+
+/* =========================================================
+   VIEW DETAILS BUTTON
+   ========================================================= */
+
+.view-lead-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 34px;
+
+    padding:
+        0 12px;
+
+    border:
+        1px solid rgba(25, 184, 166, 0.30);
+
+    border-radius: 8px;
+
+    background:
+        rgba(25, 184, 166, 0.08);
+
+    color:
+        #65e6d7;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.view-lead-btn:hover {
+    background:
+        rgba(25, 184, 166, 0.16);
+
+    border-color:
+        rgba(25, 184, 166, 0.55);
+
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   EMPTY / LOADING
+   ========================================================= */
+
+.loading-cell,
+.empty-state {
+    min-height: 220px;
+
+    padding: 55px 20px !important;
+
+    text-align: center !important;
+
+    color: var(--crm-muted);
+}
+
+.empty-state h3 {
+    margin: 10px 0 5px;
+
+    color: #dce5f0;
+
+    font-size: 16px;
+}
+
+.empty-state p {
+    margin: 0;
+
+    color: var(--crm-muted);
+
+    font-size: 12px;
+}
+
+.empty-icon {
+    font-size: 28px;
+
+    opacity: 0.55;
+}
+
+/* =========================================================
+   MODAL BACKDROP
+   ========================================================= */
+
+#leadModal,
+#addEnquiryModal {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9999;
+
+    width: 100%;
+    height: 100%;
+
+    padding: 24px;
+
+    background:
+        rgba(2, 8, 15, 0.78);
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    overflow-y: auto;
+}
+
+/* hidden attribute */
+#leadModal[hidden],
+#addEnquiryModal[hidden] {
+    display: none !important;
+}
+
+/* =========================================================
+   MODAL PANEL
+   ========================================================= */
+
+#leadModal > *,
+#addEnquiryModal > * {
+    max-width: 780px;
+
+    margin:
+        30px auto;
+}
+
+.modal-content,
+.modal-card,
+.lead-modal-content,
+.add-enquiry-modal {
+    width: min(780px, 100%);
+
+    margin: 30px auto;
+
+    background:
+        linear-gradient(
+            145deg,
+            #122137,
+            #0d192a
+        );
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 35px 100px
+        rgba(0, 0, 0, 0.55);
+
+    overflow: hidden;
+}
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+
+.modal-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 16px;
+
+    padding:
+        20px 22px;
+
+    border-bottom:
+        1px solid var(--crm-border);
+}
+
+.modal-header h2,
+.modal-header h3 {
+    margin: 0;
+
+    color: #fff;
+
+    font-size: 19px;
+
+    font-weight: 800;
+}
+
+.close-modal {
+    width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: #aebacc;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    line-height: 1;
+}
+
+.close-modal:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+/* =========================================================
+   MODAL BODY
+   ========================================================= */
+
+.modal-body {
+    padding: 22px;
+}
+
+.modal-grid,
+.lead-details-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+}
+
+.detail-item {
+    padding:
+        13px 14px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.065);
+
+    border-radius: 11px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+.detail-item label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #75869d;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+}
+
+.detail-item strong,
+.detail-item span {
+    display: block;
+
+    color: #e5ebf3;
+
+    font-size: 13px;
+
+    word-break: break-word;
+}
+
+/* =========================================================
+   MESSAGE / NOTES
+   ========================================================= */
+
+.message-box,
+.notes-box {
+    margin-top: 16px;
+
+    padding: 15px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.065);
+
+    border-radius: 11px;
+
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+.message-box label,
+.notes-box label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #75869d;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.08em;
+}
+
+.message-box p {
+    margin: 0;
+
+    color: #d6dfeb;
+
+    line-height: 1.65;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+/* =========================================================
+   MODAL FORM CONTROLS
+   ========================================================= */
+
+.modal-body input,
+.modal-body select,
+.modal-body textarea,
+#addEnquiryModal input,
+#addEnquiryModal select,
+#addEnquiryModal textarea {
+    width: 100%;
+
+    min-height: 42px;
+
+    padding:
+        10px 12px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 9px;
+
+    outline: none;
+
+    background:
+        rgba(4, 13, 24, 0.72);
+
+    color: #f5f7fb;
+}
+
+.modal-body textarea,
+#addEnquiryModal textarea {
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+.modal-body input:focus,
+.modal-body select:focus,
+.modal-body textarea:focus,
+#addEnquiryModal input:focus,
+#addEnquiryModal select:focus,
+#addEnquiryModal textarea:focus {
+    border-color:
+        rgba(25, 184, 166, 0.55);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(25, 184, 166, 0.08);
+}
+
+/* =========================================================
+   MODAL FOOTER
+   ========================================================= */
+
+.modal-footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    padding:
+        17px 22px;
+
+    border-top:
+        1px solid var(--crm-border);
+}
+
+.cancel-btn {
+    min-height: 42px;
+
+    padding:
+        0 15px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.10);
+
+    border-radius: 9px;
+
+    background:
+        rgba(255, 255, 255, 0.04);
+
+    color: #b9c5d5;
+
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background:
+        rgba(255, 255, 255, 0.08);
+
+    color: #fff;
+}
+
+/* =========================================================
+   CONTACT ACTIONS
+   ========================================================= */
+
+#modalCallBtn,
+#modalWhatsappBtn,
+#modalEmailBtn,
+.contact-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 38px;
+
+    padding:
+        0 13px;
+
+    border-radius: 9px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.09);
+
+    background:
+        rgba(255, 255, 255, 0.045);
+
+    color: #dce5ef;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    transition: 0.2s ease;
+}
+
+#modalCallBtn:hover,
+#modalWhatsappBtn:hover,
+#modalEmailBtn:hover,
+.contact-btn:hover {
+    background:
+        rgba(255, 255, 255, 0.09);
+
+    transform: translateY(-1px);
+}
 
 /* =========================================================
    ADD ENQUIRY FORM
-========================================================= */
+   ========================================================= */
 
-function setupAddForm() {
+#addEnquiryModal form {
+    display: grid;
 
-    const form =
-        document.getElementById(
-            "addEnquiryForm"
-        );
-
-    if (!form) return;
-
-    form.addEventListener(
-        "submit",
-        submitAddEnquiry
-    );
+    gap: 15px;
 }
 
+#addEnquiryModal .form-group,
+#addEnquiryModal .field,
+#addEnquiryModal label {
+    color: #aab8ca;
 
-/* =========================================================
-   LOGOUT
-========================================================= */
+    font-size: 12px;
 
-function setupLogout() {
-
-    const button =
-        document.getElementById(
-            "logoutBtn"
-        );
-
-    if (!button) return;
-
-    button.addEventListener(
-        "click",
-        logoutCRM
-    );
+    font-weight: 600;
 }
 
+#addEnquiryModal .form-group {
+    display: grid;
+
+    gap: 7px;
+}
+
+.form-message {
+    min-height: 20px;
+
+    color: #ff9c9c;
+
+    font-size: 12px;
+}
 
 /* =========================================================
-   INITIALIZE CRM
-========================================================= */
+   TOAST
+   ========================================================= */
 
-async function initializeCRM() {
+#toastMessage {
+    position: fixed;
 
-    console.log(
-        "================================"
-    );
+    left: 50%;
 
-    console.log(
-        "Select My Venue CRM initializing..."
-    );
+    bottom: 28px;
 
-    console.log(
-        "Supabase URL:",
-        CRM_SUPABASE_URL
-    );
+    z-index: 10000;
 
-    const session =
-        await checkCRMAuth();
+    transform:
+        translate(-50%, 20px);
 
-    if (!session) {
-        return;
+    opacity: 0;
+
+    pointer-events: none;
+
+    max-width:
+        min(420px, calc(100vw - 32px));
+
+    padding:
+        12px 17px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 10px;
+
+    color: #fff;
+
+    background: #20283d;
+
+    box-shadow:
+        0 15px 40px
+        rgba(0, 0, 0, 0.35);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+#toastMessage.show {
+    opacity: 1;
+
+    transform:
+        translate(-50%, 0);
+}
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .crm-main,
+    .dashboard-main,
+    .main-content {
+        padding: 22px;
     }
 
-    setupSearch();
+    .stats-grid,
+    .stats,
+    .stat-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
 
-    setupFilters();
-
-    setupRefreshButton();
-
-    setupAddButton();
-
-    setupGlobalClicks();
-
-    setupKeyboard();
-
-    setupAuthListener();
-
-    setupAddForm();
-
-    setupLogout();
-
-    setupStatFilters();
-
-    await loadEnquiries();
-
-    console.log(
-        "Select My Venue CRM ready."
-    );
-
-    console.log(
-        "================================"
-    );
+    .crm-header {
+        padding: 13px 20px;
+    }
 }
 
-
 /* =========================================================
-   DOM READY
-========================================================= */
+   RESPONSIVE — MOBILE
+   ========================================================= */
 
-if (
-    document.readyState ===
-    "loading"
-) {
+@media (max-width: 700px) {
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeCRM
-    );
+    body {
+        font-size: 13px;
+    }
 
-} else {
+    .crm-header {
+        min-height: auto;
 
-    initializeCRM();
+        padding: 14px 16px;
+
+        align-items: flex-start;
+    }
+
+    .staff-area,
+    .user-area {
+        gap: 7px;
+    }
+
+    .staff-name {
+        display: none;
+    }
+
+    .crm-main,
+    .dashboard-main,
+    .main-content {
+        padding: 16px;
+    }
+
+    .stats-grid,
+    .stats,
+    .stat-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+    .stat-card {
+        min-height: 100px;
+
+        padding: 15px;
+    }
+
+    .stat-card strong,
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .crm-toolbar,
+    .toolbar,
+    .filter-bar {
+        align-items: stretch;
+
+        flex-direction: column;
+    }
+
+    .search-box {
+        flex-basis: auto;
+        width: 100%;
+    }
+
+    .filter-bar select,
+    .crm-toolbar select,
+    .refresh-btn,
+    .add-enquiry-btn {
+        width: 100%;
+    }
+
+    .modal-grid,
+    .lead-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    #leadModal,
+    #addEnquiryModal {
+        padding: 12px;
+    }
+
+    .modal-content,
+    .modal-card,
+    .lead-modal-content,
+    .add-enquiry-modal {
+        margin: 12px auto;
+        border-radius: 14px;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .modal-footer button {
+        width: 100%;
+    }
 }
 
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+    outline:
+        2px solid
+        rgba(25, 184, 166, 0.75);
+
+    outline-offset: 2px;
+}
 
 /* =========================================================
-   GLOBAL CRM API
-========================================================= */
+   PRINT
+   ========================================================= */
 
-window.crm = {
+@media print {
 
-    loadEnquiries,
+    body {
+        background: #fff;
+        color: #000;
+    }
 
-    openLeadModal,
+    .crm-header,
+    .crm-toolbar,
+    .filter-bar,
+    .refresh-btn,
+    .add-enquiry-btn,
+    .view-lead-btn {
+        display: none !important;
+    }
 
-    closeLeadModal,
+    .leads-card,
+    .table-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
 
-    openAddEnquiryModal,
-
-    closeAddEnquiryModal,
-
-    saveModalChanges,
-
-    logoutCRM,
-
-    startInlineEdit
-
-};
-
-window.loadEnquiries =
-    loadEnquiries;
-
-window.openLeadModal =
-    openLeadModal;
-
-window.closeLeadModal =
-    closeLeadModal;
-
-window.openAddEnquiryModal =
-    openAddEnquiryModal;
-
-window.closeAddEnquiryModal =
-    closeAddEnquiryModal;
-
-window.saveModalChanges =
-    saveModalChanges;
-
-window.logoutCRM =
-    logoutCRM;
+    .leads-table {
+        min-width: 0;
+    }
+}
 ```
