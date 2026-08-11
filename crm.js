@@ -1,7 +1,7 @@
 /* =========================================================
    SELECT MY VENUE — CRM
    COMPLETE CRM JAVASCRIPT
-   PHASE 2 — CUSTOMER CONTACT + EDITABLE LEAD DETAILS
+   PHASE 2 — EDITABLE LEAD DETAILS + CONTACT TRACKING
    ========================================================= */
 
 
@@ -36,8 +36,6 @@ let originalContactRemark = "";
 
 /* =========================================================
    STATUS OPTIONS
-   IMPORTANT:
-   These values MUST match dashboard.html
    ========================================================= */
 
 const STATUS_OPTIONS = [
@@ -46,8 +44,8 @@ const STATUS_OPTIONS = [
     label: "New Lead"
   },
   {
-    value: "not_pick",
-    label: "Not Pick"
+    value: "not_picked",
+    label: "Not Picked"
   },
   {
     value: "call_back",
@@ -74,10 +72,6 @@ const STATUS_OPTIONS = [
     label: "Wrong Number"
   },
   {
-    value: "qualified",
-    label: "Qualified"
-  },
-  {
     value: "converted",
     label: "Converted"
   },
@@ -100,20 +94,15 @@ document.addEventListener(
       document.getElementById("loginForm");
 
     if (loginForm) {
-
       setupLogin();
-
       return;
     }
-
 
     const logoutBtn =
       document.getElementById("logoutBtn");
 
     if (logoutBtn) {
-
       await setupCRM();
-
     }
 
   }
@@ -134,13 +123,11 @@ function setupLogin() {
 
   if (!loginForm) return;
 
-
   loginForm.addEventListener(
     "submit",
     async (event) => {
 
       event.preventDefault();
-
 
       const email =
         document
@@ -148,39 +135,31 @@ function setupLogin() {
           ?.value
           .trim();
 
-
       const password =
         document
           .getElementById("password")
           ?.value;
 
-
       if (!email || !password) {
 
         if (loginMessage) {
-
           loginMessage.textContent =
             "Please enter email and password.";
 
           loginMessage.style.display =
             "block";
-
         }
 
         return;
       }
 
-
       if (loginMessage) {
-
         loginMessage.textContent =
           "Signing in...";
 
         loginMessage.style.display =
           "block";
-
       }
-
 
       try {
 
@@ -194,7 +173,6 @@ function setupLogin() {
               password
             });
 
-
         if (error) {
 
           console.error(
@@ -202,43 +180,32 @@ function setupLogin() {
             error
           );
 
-
           if (loginMessage) {
-
             loginMessage.textContent =
               "Login failed: " +
               error.message;
-
           }
 
           return;
         }
-
 
         if (!data?.session) {
 
           if (loginMessage) {
-
             loginMessage.textContent =
               "Login failed. No session created.";
-
           }
 
           return;
         }
 
-
         if (loginMessage) {
-
           loginMessage.textContent =
             "Login successful. Opening CRM...";
-
         }
-
 
         window.location.href =
           "dashboard.html";
-
 
       } catch (error) {
 
@@ -247,13 +214,10 @@ function setupLogin() {
           error
         );
 
-
         if (loginMessage) {
-
           loginMessage.textContent =
             "Login error: " +
             error.message;
-
         }
 
       }
@@ -280,7 +244,6 @@ async function setupCRM() {
       await supabaseClient.auth
         .getSession();
 
-
     if (!session) {
 
       window.location.href =
@@ -288,7 +251,6 @@ async function setupCRM() {
 
       return;
     }
-
 
     setupLogout();
 
@@ -309,7 +271,6 @@ async function setupCRM() {
     );
 
     await loadEnquiries();
-
 
   } catch (error) {
 
@@ -336,9 +297,7 @@ function showStaffName(user) {
       "staffName"
     );
 
-
   if (!staffName) return;
-
 
   staffName.textContent =
     user?.email ||
@@ -354,12 +313,9 @@ function showStaffNameError() {
       "staffName"
     );
 
-
   if (staffName) {
-
     staffName.textContent =
       "Staff";
-
   }
 
 }
@@ -376,9 +332,7 @@ function setupLogout() {
       "logoutBtn"
     );
 
-
   if (!logoutBtn) return;
-
 
   logoutBtn.addEventListener(
     "click",
@@ -390,7 +344,6 @@ function setupLogout() {
       logoutBtn.textContent =
         "Logging out...";
 
-
       try {
 
         const {
@@ -398,7 +351,6 @@ function setupLogout() {
         } =
           await supabaseClient.auth
             .signOut();
-
 
         if (error) {
 
@@ -416,10 +368,8 @@ function setupLogout() {
           return;
         }
 
-
         window.location.href =
           "login.html";
-
 
       } catch (error) {
 
@@ -453,7 +403,6 @@ async function loadEnquiries() {
       "leadsTableBody"
     );
 
-
   if (tableBody) {
 
     tableBody.innerHTML = `
@@ -468,7 +417,6 @@ async function loadEnquiries() {
     `;
 
   }
-
 
   try {
 
@@ -486,7 +434,6 @@ async function loadEnquiries() {
           }
         );
 
-
     if (error) {
 
       console.error(
@@ -494,9 +441,7 @@ async function loadEnquiries() {
         error
       );
 
-
       currentEnquiries = [];
-
 
       if (tableBody) {
 
@@ -516,20 +461,16 @@ async function loadEnquiries() {
       return;
     }
 
-
     currentEnquiries =
       Array.isArray(data)
         ? data
         : [];
 
-
     updateStats(
       currentEnquiries
     );
 
-
     applyFilters();
-
 
   } catch (error) {
 
@@ -538,6 +479,7 @@ async function loadEnquiries() {
       error
     );
 
+    currentEnquiries = [];
 
     if (tableBody) {
 
@@ -572,41 +514,30 @@ function renderEnquiries(
       "leadsTableBody"
     );
 
-
   const emptyState =
     document.getElementById(
       "emptyState"
     );
 
-
   if (!tableBody) return;
-
 
   if (!enquiries.length) {
 
     tableBody.innerHTML =
       "";
 
-
     if (emptyState) {
-
       emptyState.hidden =
         false;
-
     }
-
 
     return;
   }
 
-
   if (emptyState) {
-
     emptyState.hidden =
       true;
-
   }
-
 
   tableBody.innerHTML =
     enquiries
@@ -617,31 +548,22 @@ function renderEnquiries(
             lead.status ||
             "new";
 
-
           const priority =
             lead.priority ||
             "normal";
-
 
           const mobile =
             lead.mobile ||
             "";
 
-
           const remark =
             lead.contact_remark ||
             "";
 
-
-          const contactCount =
-            Number(
-              lead.contact_count ||
-              0
-            );
-
-
           return `
             <tr>
+
+              <!-- CUSTOMER -->
 
               <td>
 
@@ -663,6 +585,8 @@ function renderEnquiries(
 
               </td>
 
+
+              <!-- PHONE -->
 
               <td>
 
@@ -686,6 +610,8 @@ function renderEnquiries(
               </td>
 
 
+              <!-- EVENT -->
+
               <td>
                 ${escapeHTML(
                   lead.occasion ||
@@ -693,6 +619,8 @@ function renderEnquiries(
                 )}
               </td>
 
+
+              <!-- LOCATION -->
 
               <td>
                 ${escapeHTML(
@@ -702,12 +630,16 @@ function renderEnquiries(
               </td>
 
 
+              <!-- DATE -->
+
               <td>
                 ${formatDate(
                   lead.event_date
                 )}
               </td>
 
+
+              <!-- GUESTS -->
 
               <td>
                 ${
@@ -716,6 +648,8 @@ function renderEnquiries(
                 }
               </td>
 
+
+              <!-- BUDGET -->
 
               <td>
 
@@ -732,6 +666,8 @@ function renderEnquiries(
 
               </td>
 
+
+              <!-- STATUS -->
 
               <td>
 
@@ -757,6 +693,8 @@ function renderEnquiries(
               </td>
 
 
+              <!-- PRIORITY -->
+
               <td>
 
                 <select
@@ -775,8 +713,7 @@ function renderEnquiries(
                   <option
                     value="urgent"
                     ${
-                      priority ===
-                      "urgent"
+                      priority === "urgent"
                         ? "selected"
                         : ""
                     }
@@ -787,8 +724,7 @@ function renderEnquiries(
                   <option
                     value="high"
                     ${
-                      priority ===
-                      "high"
+                      priority === "high"
                         ? "selected"
                         : ""
                     }
@@ -799,8 +735,7 @@ function renderEnquiries(
                   <option
                     value="normal"
                     ${
-                      priority ===
-                      "normal"
+                      priority === "normal"
                         ? "selected"
                         : ""
                     }
@@ -811,8 +746,7 @@ function renderEnquiries(
                   <option
                     value="low"
                     ${
-                      priority ===
-                      "low"
+                      priority === "low"
                         ? "selected"
                         : ""
                     }
@@ -825,31 +759,38 @@ function renderEnquiries(
               </td>
 
 
+              <!-- REMARK -->
+
               <td>
 
-                <button
-                  type="button"
-                  class="remark-table-btn"
-                  data-lead-id="${escapeHTML(
-                    String(lead.id)
-                  )}"
-                  title="View contact remark"
-                >
-                  ${
-                    remark
-                      ? escapeHTML(
+                ${
+                  remark
+                    ? `
+                      <span
+                        class="table-remark"
+                        title="${escapeHTML(
                           remark
-                        )
-                      : "Add Remark"
-                  }
-                </button>
+                        )}"
+                      >
+                        ${escapeHTML(
+                          truncateText(
+                            remark,
+                            35
+                          )
+                        )}
+                      </span>
+                    `
+                    : "—"
+                }
 
               </td>
 
 
+              <!-- CONTACT -->
+
               <td>
 
-                <div class="contact-cell">
+                <div class="table-contact-actions">
 
                   ${
                     mobile
@@ -858,7 +799,7 @@ function renderEnquiries(
                           href="tel:${escapeHTML(
                             mobile
                           )}"
-                          class="mini-contact"
+                          class="table-contact-btn"
                           title="Call customer"
                         >
                           ☎
@@ -871,12 +812,12 @@ function renderEnquiries(
                     mobile
                       ? `
                         <a
-                          href="${buildWhatsAppURL(
+                          href="${getWhatsAppURL(
                             mobile
                           )}"
                           target="_blank"
                           rel="noopener"
-                          class="mini-contact whatsapp-mini"
+                          class="table-contact-btn whatsapp-action"
                           title="WhatsApp customer"
                         >
                           ◉
@@ -885,17 +826,12 @@ function renderEnquiries(
                       : ""
                   }
 
-                  <span
-                    class="contact-count"
-                    title="Contact count"
-                  >
-                    ${contactCount}
-                  </span>
-
                 </div>
 
               </td>
 
+
+              <!-- ACTION -->
 
               <td>
 
@@ -934,9 +870,7 @@ function renderEnquiries(
           () => {
 
             const leadId =
-              button.dataset
-                .leadId;
-
+              button.dataset.leadId;
 
             const lead =
               currentEnquiries.find(
@@ -949,56 +883,10 @@ function renderEnquiries(
                   )
               );
 
-
             if (lead) {
-
               openLeadModal(
                 lead
               );
-
-            }
-
-          }
-        );
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      ".remark-table-btn"
-    )
-    .forEach(
-      (button) => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const leadId =
-              button.dataset
-                .leadId;
-
-
-            const lead =
-              currentEnquiries.find(
-                (item) =>
-                  String(
-                    item.id
-                  ) ===
-                  String(
-                    leadId
-                  )
-              );
-
-
-            if (lead) {
-
-              openRemarkModal(
-                lead
-              );
-
             }
 
           }
@@ -1044,7 +932,7 @@ function buildStatusOptions(
 
 
 /* =========================================================
-   INLINE STATUS / PRIORITY
+   INLINE CONTROLS
    ========================================================= */
 
 function setupInlineLeadControls() {
@@ -1061,13 +949,10 @@ function setupInlineLeadControls() {
           async () => {
 
             const leadId =
-              select.dataset
-                .leadId;
-
+              select.dataset.leadId;
 
             const newStatus =
               select.value;
-
 
             await updateLeadInline(
               leadId,
@@ -1097,13 +982,10 @@ function setupInlineLeadControls() {
           async () => {
 
             const leadId =
-              select.dataset
-                .leadId;
-
+              select.dataset.leadId;
 
             const newPriority =
               select.value;
-
 
             await updateLeadInline(
               leadId,
@@ -1135,7 +1017,6 @@ async function updateLeadInline(
 
   if (!leadId) return;
 
-
   const lead =
     currentEnquiries.find(
       (item) =>
@@ -1143,45 +1024,32 @@ async function updateLeadInline(
         String(leadId)
     );
 
-
   if (!lead) return;
 
-
   const previousValue =
-    selectElement.dataset
-      .currentValue;
-
+    selectElement.dataset.currentValue;
 
   selectElement.disabled =
     true;
 
-
   try {
 
     const updateData = {
-
       ...changes,
-
       updated_at:
-        new Date()
-          .toISOString()
-
+        new Date().toISOString()
     };
-
 
     const {
       error
     } =
       await supabaseClient
         .from("customer_enquiries")
-        .update(
-          updateData
-        )
+        .update(updateData)
         .eq(
           "id",
           leadId
         );
-
 
     if (error) {
 
@@ -1190,38 +1058,30 @@ async function updateLeadInline(
         error
       );
 
-
       selectElement.value =
         previousValue;
-
 
       showToast(
         "Unable to update lead: " +
         error.message
       );
 
-
       return;
     }
-
 
     Object.assign(
       lead,
       changes
     );
 
-
-    selectElement.dataset
-      .currentValue =
+    selectElement.dataset.currentValue =
       selectElement.value;
 
-
     if (
-      Object.prototype
-        .hasOwnProperty.call(
-          changes,
-          "status"
-        )
+      Object.prototype.hasOwnProperty.call(
+        changes,
+        "status"
+      )
     ) {
 
       selectElement.className =
@@ -1232,13 +1092,11 @@ async function updateLeadInline(
 
     }
 
-
     if (
-      Object.prototype
-        .hasOwnProperty.call(
-          changes,
-          "priority"
-        )
+      Object.prototype.hasOwnProperty.call(
+        changes,
+        "priority"
+      )
     ) {
 
       selectElement.className =
@@ -1247,16 +1105,13 @@ async function updateLeadInline(
 
     }
 
-
     updateStats(
       currentEnquiries
     );
 
-
     showToast(
       "Lead updated successfully."
     );
-
 
   } catch (error) {
 
@@ -1265,15 +1120,12 @@ async function updateLeadInline(
       error
     );
 
-
     selectElement.value =
       previousValue;
-
 
     showToast(
       "Something went wrong."
     );
-
 
   } finally {
 
@@ -1298,18 +1150,15 @@ function updateStats(
       "totalLeads"
     );
 
-
   const newLeads =
     document.getElementById(
       "newLeads"
     );
 
-
   const followup =
     document.getElementById(
       "followupLeads"
     );
-
 
   const converted =
     document.getElementById(
@@ -1383,9 +1232,7 @@ function setupSearch() {
       "searchInput"
     );
 
-
   if (!searchInput) return;
-
 
   searchInput.addEventListener(
     "input",
@@ -1406,7 +1253,6 @@ function setupFilters() {
       "statusFilter"
     );
 
-
   const priorityFilter =
     document.getElementById(
       "priorityFilter"
@@ -1422,11 +1268,9 @@ function setupFilters() {
         activeLeadTab =
           "";
 
-
         setActiveLeadTab(
           null
         );
-
 
         applyFilters();
 
@@ -1459,12 +1303,10 @@ function applyFilters() {
       "searchInput"
     );
 
-
   const statusFilter =
     document.getElementById(
       "statusFilter"
     );
-
 
   const priorityFilter =
     document.getElementById(
@@ -1583,9 +1425,7 @@ function setupRefresh() {
       "refreshBtn"
     );
 
-
   if (!refreshBtn) return;
-
 
   refreshBtn.addEventListener(
     "click",
@@ -1594,17 +1434,13 @@ function setupRefresh() {
       refreshBtn.disabled =
         true;
 
-
       refreshBtn.textContent =
         "Refreshing...";
 
-
       await loadEnquiries();
-
 
       refreshBtn.disabled =
         false;
-
 
       refreshBtn.textContent =
         "↻ Refresh";
@@ -1626,9 +1462,7 @@ function setupLeadTabs() {
       ".stat-tab"
     );
 
-
   if (!tabs.length) return;
-
 
   tabs.forEach(
     (tab) => {
@@ -1641,7 +1475,6 @@ function setupLeadTabs() {
             tab.dataset.status ||
             "";
 
-
           setActiveLeadTab(
             tab
           );
@@ -1652,14 +1485,10 @@ function setupLeadTabs() {
               "statusFilter"
             );
 
-
           if (statusFilter) {
-
             statusFilter.value =
               "";
-
           }
-
 
           applyFilters();
 
@@ -1707,7 +1536,7 @@ function setActiveLeadTab(
 
 
 /* =========================================================
-   LEAD MODAL
+   LEAD MODAL SETUP
    ========================================================= */
 
 function setupLeadModal() {
@@ -1717,12 +1546,10 @@ function setupLeadModal() {
       "closeModalBtn"
     );
 
-
   const cancelBtn =
     document.getElementById(
       "cancelModalBtn"
     );
-
 
   const saveBtn =
     document.getElementById(
@@ -1787,8 +1614,6 @@ function setupLeadModal() {
   }
 
 
-  /* ESCAPE KEY */
-
   document.addEventListener(
     "keydown",
     (event) => {
@@ -1797,9 +1622,7 @@ function setupLeadModal() {
         event.key !==
         "Escape"
       ) {
-
         return;
-
       }
 
 
@@ -1812,12 +1635,6 @@ function setupLeadModal() {
       const addModal =
         document.getElementById(
           "addEnquiryModal"
-        );
-
-
-      const remarkModal =
-        document.getElementById(
-          "remarkModal"
         );
 
 
@@ -1837,16 +1654,6 @@ function setupLeadModal() {
       ) {
 
         closeAddEnquiryModal();
-
-      }
-
-
-      if (
-        remarkModal &&
-        !remarkModal.hidden
-      ) {
-
-        closeRemarkModal();
 
       }
 
@@ -1873,7 +1680,9 @@ function openLeadModal(
     "";
 
 
-  /* CUSTOMER NAME */
+  /* -------------------------------------------------------
+     CUSTOMER NAME
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalCustomerNameInput",
@@ -1882,7 +1691,27 @@ function openLeadModal(
   );
 
 
-  /* MOBILE */
+  /* -------------------------------------------------------
+     HEADER CUSTOMER NAME
+     ------------------------------------------------------- */
+
+  const headerName =
+    document.querySelector(
+      "#leadModal .modal-header h2"
+    );
+
+  if (headerName) {
+
+    headerName.textContent =
+      lead.customer_name ||
+      "Customer";
+
+  }
+
+
+  /* -------------------------------------------------------
+     MOBILE
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalMobileInput",
@@ -1891,7 +1720,9 @@ function openLeadModal(
   );
 
 
-  /* EMAIL */
+  /* -------------------------------------------------------
+     EMAIL
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalEmailInput",
@@ -1900,7 +1731,9 @@ function openLeadModal(
   );
 
 
-  /* LOCATION */
+  /* -------------------------------------------------------
+     LOCATION
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalLocationInput",
@@ -1909,7 +1742,9 @@ function openLeadModal(
   );
 
 
-  /* OCCASION */
+  /* -------------------------------------------------------
+     OCCASION / EVENT
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalOccasionInput",
@@ -1918,7 +1753,9 @@ function openLeadModal(
   );
 
 
-  /* EVENT DATE */
+  /* -------------------------------------------------------
+     EVENT DATE
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalEventDateInput",
@@ -1930,7 +1767,9 @@ function openLeadModal(
   );
 
 
-  /* GUESTS */
+  /* -------------------------------------------------------
+     GUESTS
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalGuestsInput",
@@ -1939,7 +1778,9 @@ function openLeadModal(
   );
 
 
-  /* BUDGET */
+  /* -------------------------------------------------------
+     BUDGET
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalBudgetInput",
@@ -1948,7 +1789,9 @@ function openLeadModal(
   );
 
 
-  /* FOOD */
+  /* -------------------------------------------------------
+     FOOD
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalFoodInput",
@@ -1957,7 +1800,9 @@ function openLeadModal(
   );
 
 
-  /* REQUIREMENTS */
+  /* -------------------------------------------------------
+     REQUIREMENTS
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalRequirementsInput",
@@ -1966,7 +1811,9 @@ function openLeadModal(
   );
 
 
-  /* CONTACT REMARK */
+  /* -------------------------------------------------------
+     CONTACT REMARK
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalContactRemark",
@@ -1975,7 +1822,9 @@ function openLeadModal(
   );
 
 
-  /* CONTACT COUNT */
+  /* -------------------------------------------------------
+     CONTACT COUNT
+     ------------------------------------------------------- */
 
   setText(
     "modalContactCount",
@@ -1986,7 +1835,9 @@ function openLeadModal(
   );
 
 
-  /* LAST CONTACT */
+  /* -------------------------------------------------------
+     LAST CONTACTED
+     ------------------------------------------------------- */
 
   setText(
     "modalLastContacted",
@@ -1998,26 +1849,35 @@ function openLeadModal(
   );
 
 
-  /* STATUS */
+  /* -------------------------------------------------------
+     STATUS
+     ------------------------------------------------------- */
 
   const status =
     document.getElementById(
       "modalStatus"
     );
 
-
   if (status) {
+
+    const currentStatus =
+      lead.status ||
+      "new";
 
     status.innerHTML =
       buildStatusOptions(
-        lead.status ||
-        "new"
+        currentStatus
       );
+
+    status.value =
+      currentStatus;
 
   }
 
 
-  /* PRIORITY */
+  /* -------------------------------------------------------
+     PRIORITY
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalPriority",
@@ -2026,7 +1886,9 @@ function openLeadModal(
   );
 
 
-  /* FOLLOW UP */
+  /* -------------------------------------------------------
+     FOLLOW UP
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalFollowUp",
@@ -2036,7 +1898,9 @@ function openLeadModal(
   );
 
 
-  /* INTERNAL NOTES */
+  /* -------------------------------------------------------
+     INTERNAL NOTES
+     ------------------------------------------------------- */
 
   setInputValue(
     "modalNotes",
@@ -2045,13 +1909,14 @@ function openLeadModal(
   );
 
 
-  /* CALL BUTTON */
+  /* -------------------------------------------------------
+     CALL BUTTON
+     ------------------------------------------------------- */
 
   const callBtn =
     document.getElementById(
       "modalCallBtn"
     );
-
 
   if (callBtn) {
 
@@ -2064,37 +1929,38 @@ function openLeadModal(
   }
 
 
-  /* WHATSAPP BUTTON */
+  /* -------------------------------------------------------
+     WHATSAPP BUTTON
+     ------------------------------------------------------- */
 
   const whatsappBtn =
     document.getElementById(
       "modalWhatsappBtn"
     );
 
-
   if (whatsappBtn) {
 
     whatsappBtn.href =
-      buildWhatsAppURL(
+      getWhatsAppURL(
         lead.mobile
       );
 
   }
 
 
-  /* OPEN MODAL */
+  /* -------------------------------------------------------
+     OPEN MODAL
+     ------------------------------------------------------- */
 
   const modal =
     document.getElementById(
       "leadModal"
     );
 
-
   if (modal) {
 
     modal.hidden =
       false;
-
 
     document.body.style.overflow =
       "hidden";
@@ -2115,7 +1981,6 @@ function closeLeadModal() {
       "leadModal"
     );
 
-
   if (modal) {
 
     modal.hidden =
@@ -2123,14 +1988,11 @@ function closeLeadModal() {
 
   }
 
-
   document.body.style.overflow =
     "";
 
-
   currentLead =
     null;
-
 
   originalContactRemark =
     "";
@@ -2155,6 +2017,12 @@ async function saveLeadChanges() {
 
     return;
   }
+
+
+  const saveBtn =
+    document.getElementById(
+      "saveLeadBtn"
+    );
 
 
   /* =======================================================
@@ -2228,7 +2096,7 @@ async function saveLeadChanges() {
 
 
   /* =======================================================
-     CRM
+     CRM FIELDS
      ======================================================= */
 
   const status =
@@ -2267,17 +2135,10 @@ async function saveLeadChanges() {
     originalContactRemark;
 
 
-  if (saveBtnExists()) {
-
-    const saveBtn =
-      document.getElementById(
-        "saveLeadBtn"
-      );
-
+  if (saveBtn) {
 
     saveBtn.disabled =
       true;
-
 
     saveBtn.textContent =
       "Saving...";
@@ -2355,8 +2216,7 @@ async function saveLeadChanges() {
         null,
 
       updated_at:
-        new Date()
-          .toISOString()
+        new Date().toISOString()
 
     };
 
@@ -2375,8 +2235,7 @@ async function saveLeadChanges() {
 
 
       updateData.last_contacted_at =
-        new Date()
-          .toISOString();
+        new Date().toISOString();
 
     }
 
@@ -2386,21 +2245,19 @@ async function saveLeadChanges() {
        ===================================================== */
 
     if (
-      status ===
-      "converted" &&
+      status === "converted" &&
       currentLead.status !==
-      "converted"
+        "converted"
     ) {
 
       updateData.converted_at =
-        new Date()
-          .toISOString();
+        new Date().toISOString();
 
     }
 
 
     /* =====================================================
-       SAVE
+       SAVE TO SUPABASE
        ===================================================== */
 
     const {
@@ -2426,12 +2283,10 @@ async function saveLeadChanges() {
         error
       );
 
-
       showToast(
         "Unable to save: " +
         error.message
       );
-
 
       return;
     }
@@ -2471,26 +2326,17 @@ async function saveLeadChanges() {
       error
     );
 
-
     showToast(
       "Something went wrong: " +
       error.message
     );
 
-
   } finally {
-
-    const saveBtn =
-      document.getElementById(
-        "saveLeadBtn"
-      );
-
 
     if (saveBtn) {
 
       saveBtn.disabled =
         false;
-
 
       saveBtn.textContent =
         "Save Changes";
@@ -2513,18 +2359,15 @@ function setupAddEnquiry() {
       "addEnquiryBtn"
     );
 
-
   const closeBtn =
     document.getElementById(
       "closeAddEnquiryBtn"
     );
 
-
   const cancelBtn =
     document.getElementById(
       "cancelAddEnquiryBtn"
     );
-
 
   const saveBtn =
     document.getElementById(
@@ -2612,21 +2455,17 @@ function openAddEnquiryModal() {
       "addEnquiryModal"
     );
 
-
   if (!modal) {
 
     console.error(
       "addEnquiryModal not found."
     );
 
-
     return;
   }
 
-
   modal.hidden =
     false;
-
 
   document.body.style.overflow =
     "hidden";
@@ -2645,14 +2484,12 @@ function closeAddEnquiryModal() {
       "addEnquiryModal"
     );
 
-
   if (modal) {
 
     modal.hidden =
       true;
 
   }
-
 
   document.body.style.overflow =
     "";
@@ -2662,7 +2499,6 @@ function closeAddEnquiryModal() {
     document.getElementById(
       "addEnquiryMessage"
     );
-
 
   if (message) {
 
@@ -2773,7 +2609,7 @@ async function saveNewEnquiry() {
     );
 
 
-  const contactRemark =
+  const newContactRemark =
     getInputValue(
       "newContactRemark"
     );
@@ -2809,7 +2645,6 @@ async function saveNewEnquiry() {
 
     }
 
-
     return;
   }
 
@@ -2818,7 +2653,6 @@ async function saveNewEnquiry() {
 
     saveBtn.disabled =
       true;
-
 
     saveBtn.textContent =
       "Saving...";
@@ -2891,18 +2725,17 @@ async function saveNewEnquiry() {
             null,
 
           contact_remark:
-            contactRemark ||
+            newContactRemark ||
             null,
 
           contact_count:
-            contactRemark
+            newContactRemark
               ? 1
               : 0,
 
           last_contacted_at:
-            contactRemark
-              ? new Date()
-                  .toISOString()
+            newContactRemark
+              ? new Date().toISOString()
               : null,
 
           source:
@@ -2939,7 +2772,6 @@ async function saveNewEnquiry() {
         error
       );
 
-
       if (message) {
 
         message.textContent =
@@ -2947,7 +2779,6 @@ async function saveNewEnquiry() {
           error.message;
 
       }
-
 
       return;
     }
@@ -2990,7 +2821,6 @@ async function saveNewEnquiry() {
       error
     );
 
-
     if (message) {
 
       message.textContent =
@@ -3005,7 +2835,6 @@ async function saveNewEnquiry() {
 
       saveBtn.disabled =
         false;
-
 
       saveBtn.textContent =
         "Save Enquiry";
@@ -3048,7 +2877,6 @@ function clearAddEnquiryForm() {
           id
         );
 
-
       if (element) {
 
         element.value =
@@ -3065,12 +2893,9 @@ function clearAddEnquiryForm() {
       "newOccasion"
     );
 
-
   if (occasion) {
-
     occasion.value =
       "";
-
   }
 
 
@@ -3079,12 +2904,9 @@ function clearAddEnquiryForm() {
       "newFood"
     );
 
-
   if (food) {
-
     food.value =
       "";
-
   }
 
 
@@ -3093,12 +2915,9 @@ function clearAddEnquiryForm() {
       "newSource"
     );
 
-
   if (source) {
-
     source.value =
       "Website";
-
   }
 
 
@@ -3107,12 +2926,9 @@ function clearAddEnquiryForm() {
       "newStatus"
     );
 
-
   if (status) {
-
     status.value =
       "new";
-
   }
 
 
@@ -3121,383 +2937,9 @@ function clearAddEnquiryForm() {
       "newPriority"
     );
 
-
   if (priority) {
-
     priority.value =
       "normal";
-
-  }
-
-}
-
-
-/* =========================================================
-   QUICK REMARK MODAL
-   ========================================================= */
-
-function setupRemarkModal() {
-
-  const closeBtn =
-    document.getElementById(
-      "closeRemarkModalBtn"
-    );
-
-
-  const cancelBtn =
-    document.getElementById(
-      "cancelRemarkBtn"
-    );
-
-
-  const saveBtn =
-    document.getElementById(
-      "saveRemarkBtn"
-    );
-
-
-  if (closeBtn) {
-
-    closeBtn.addEventListener(
-      "click",
-      closeRemarkModal
-    );
-
-  }
-
-
-  if (cancelBtn) {
-
-    cancelBtn.addEventListener(
-      "click",
-      closeRemarkModal
-    );
-
-  }
-
-
-  if (saveBtn) {
-
-    saveBtn.addEventListener(
-      "click",
-      saveRemark
-    );
-
-  }
-
-
-  const modal =
-    document.getElementById(
-      "remarkModal"
-    );
-
-
-  if (modal) {
-
-    modal.addEventListener(
-      "click",
-      (event) => {
-
-        if (
-          event.target ===
-          modal
-        ) {
-
-          closeRemarkModal();
-
-        }
-
-      }
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   OPEN QUICK REMARK MODAL
-   ========================================================= */
-
-function openRemarkModal(
-  lead
-) {
-
-  currentLead =
-    lead;
-
-
-  const customerName =
-    document.getElementById(
-      "remarkCustomerName"
-    );
-
-
-  if (customerName) {
-
-    customerName.textContent =
-      lead.customer_name ||
-      "Customer";
-
-  }
-
-
-  const input =
-    document.getElementById(
-      "remarkInput"
-    );
-
-
-  if (input) {
-
-    input.value =
-      lead.contact_remark ||
-      "";
-
-  }
-
-
-  const message =
-    document.getElementById(
-      "remarkMessage"
-    );
-
-
-  if (message) {
-
-    message.textContent =
-      "";
-
-  }
-
-
-  const modal =
-    document.getElementById(
-      "remarkModal"
-    );
-
-
-  if (modal) {
-
-    modal.hidden =
-      false;
-
-
-    document.body.style.overflow =
-      "hidden";
-
-  }
-
-}
-
-
-/* =========================================================
-   CLOSE QUICK REMARK MODAL
-   ========================================================= */
-
-function closeRemarkModal() {
-
-  const modal =
-    document.getElementById(
-      "remarkModal"
-    );
-
-
-  if (modal) {
-
-    modal.hidden =
-      true;
-
-  }
-
-
-  document.body.style.overflow =
-    "";
-
-
-  currentLead =
-    null;
-
-}
-
-
-/* =========================================================
-   SAVE QUICK REMARK
-   ========================================================= */
-
-async function saveRemark() {
-
-  if (
-    !currentLead ||
-    !currentLead.id
-  ) {
-
-    return;
-  }
-
-
-  const input =
-    document.getElementById(
-      "remarkInput"
-    );
-
-
-  const message =
-    document.getElementById(
-      "remarkMessage"
-    );
-
-
-  const saveBtn =
-    document.getElementById(
-      "saveRemarkBtn"
-    );
-
-
-  const remark =
-    String(
-      input?.value ||
-      ""
-    ).trim();
-
-
-  if (!remark) {
-
-    if (message) {
-
-      message.textContent =
-        "Please enter a remark.";
-
-    }
-
-
-    return;
-  }
-
-
-  if (saveBtn) {
-
-    saveBtn.disabled =
-      true;
-
-
-    saveBtn.textContent =
-      "Saving...";
-
-  }
-
-
-  try {
-
-    const newCount =
-      Number(
-        currentLead.contact_count ||
-        0
-      ) + 1;
-
-
-    const updateData = {
-
-      contact_remark:
-        remark,
-
-      contact_count:
-        newCount,
-
-      last_contacted_at:
-        new Date()
-          .toISOString(),
-
-      updated_at:
-        new Date()
-          .toISOString()
-
-    };
-
-
-    const {
-      error
-    } =
-      await supabaseClient
-        .from(
-          "customer_enquiries"
-        )
-        .update(
-          updateData
-        )
-        .eq(
-          "id",
-          currentLead.id
-        );
-
-
-    if (error) {
-
-      console.error(
-        "SAVE REMARK ERROR:",
-        error
-      );
-
-
-      if (message) {
-
-        message.textContent =
-          "Unable to save remark: " +
-          error.message;
-
-      }
-
-
-      return;
-    }
-
-
-    Object.assign(
-      currentLead,
-      updateData
-    );
-
-
-    showToast(
-      "Contact remark saved."
-    );
-
-
-    closeRemarkModal();
-
-
-    await loadEnquiries();
-
-
-  } catch (error) {
-
-    console.error(
-      "SAVE REMARK EXCEPTION:",
-      error
-    );
-
-
-    if (message) {
-
-      message.textContent =
-        "Something went wrong: " +
-        error.message;
-
-    }
-
-  } finally {
-
-    if (saveBtn) {
-
-      saveBtn.disabled =
-        false;
-
-
-      saveBtn.textContent =
-        "Save Remark";
-
-    }
-
   }
 
 }
@@ -3515,7 +2957,6 @@ function showToast(
     document.getElementById(
       "toastMessage"
     );
-
 
   const toast =
     document.getElementById(
@@ -3536,7 +2977,6 @@ function showToast(
     toast.hidden =
       false;
 
-
     toast.classList.add(
       "show"
     );
@@ -3548,7 +2988,6 @@ function showToast(
         toast.classList.remove(
           "show"
         );
-
 
         toast.hidden =
           true;
@@ -3585,9 +3024,7 @@ function getInputValue(
 
 
   if (!element) {
-
     return "";
-
   }
 
 
@@ -3611,9 +3048,7 @@ function setInputValue(
 
 
   if (!element) {
-
     return;
-
   }
 
 
@@ -3659,9 +3094,7 @@ function formatDate(
 ) {
 
   if (!value) {
-
     return "—";
-
   }
 
 
@@ -3703,9 +3136,7 @@ function formatDateTime(
 ) {
 
   if (!value) {
-
     return "—";
-
   }
 
 
@@ -3749,9 +3180,7 @@ function formatDateForInput(
 ) {
 
   if (!value) {
-
     return "";
-
   }
 
 
@@ -3816,9 +3245,7 @@ function toDateTimeLocal(
 ) {
 
   if (!value) {
-
     return "";
-
   }
 
 
@@ -3907,7 +3334,7 @@ function getStatusClass(
     new:
       "status-new",
 
-    not_pick:
+    not_picked:
       "status-progress",
 
     call_back:
@@ -3927,9 +3354,6 @@ function getStatusClass(
 
     wrong_number:
       "status-closed",
-
-    qualified:
-      "status-contacted",
 
     converted:
       "status-contacted",
@@ -3990,7 +3414,7 @@ function formatPriority(
    WHATSAPP URL
    ========================================================= */
 
-function buildWhatsAppURL(
+function getWhatsAppURL(
   mobile
 ) {
 
@@ -4005,27 +3429,16 @@ function buildWhatsAppURL(
       );
 
 
-  let whatsappNumber =
-    cleanMobile;
-
-
-  if (
-    cleanMobile.length ===
-    10
-  ) {
-
-    whatsappNumber =
-      "91" +
-      cleanMobile;
-
-  }
-
-
-  if (!whatsappNumber) {
-
+  if (!cleanMobile) {
     return "#";
-
   }
+
+
+  const whatsappNumber =
+    cleanMobile.length === 10
+      ? "91" +
+        cleanMobile
+      : cleanMobile;
 
 
   return (
@@ -4037,15 +3450,37 @@ function buildWhatsAppURL(
 
 
 /* =========================================================
-   SAVE BUTTON HELPER
+   TRUNCATE TEXT
    ========================================================= */
 
-function saveBtnExists() {
+function truncateText(
+  text,
+  maxLength
+) {
 
-  return Boolean(
-    document.getElementById(
-      "saveLeadBtn"
-    )
+  const value =
+    String(
+      text ||
+      ""
+    );
+
+
+  if (
+    value.length <=
+    maxLength
+  ) {
+
+    return value;
+
+  }
+
+
+  return (
+    value.substring(
+      0,
+      maxLength
+    ) +
+    "..."
   );
 
 }
