@@ -2,62 +2,69 @@
    SELECT MY VENUE — CRM
    crm.js
    PREMIUM EMPLOYEE CRM
-   INLINE CLICK-TO-EDIT + SUPABASE
-   ========================================================= */
+   SUPABASE + AUTH + INLINE EDIT + MODALS
+========================================================= */
 
 /* =========================================================
    SUPABASE CONFIG
-   =========================================================
-   IMPORTANT:
-   If your dashboard.html already defines:
-       window.SUPABASE_URL
-       window.SUPABASE_ANON_KEY
-
-   this file will automatically use them.
-
-   Otherwise replace the two values below with your existing
-   Supabase project values.
-   ========================================================= */
+========================================================= */
 
 const CRM_SUPABASE_URL =
-    window.SUPABASE_URL ||
-    "YOUR_SUPABASE_URL";
+    "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
 const CRM_SUPABASE_ANON_KEY =
-    window.SUPABASE_ANON_KEY ||
-    "YOUR_SUPABASE_ANON_KEY";
+    "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
 
 /* =========================================================
    SUPABASE CLIENT
-   ========================================================= */
+========================================================= */
 
 let supabaseClient = null;
 
 function getSupabaseClient() {
-    if (supabaseClient) return supabaseClient;
 
-    if (!window.supabase || !window.supabase.createClient) {
-        console.error("Supabase library not loaded.");
-        showToast("Supabase library is not loaded.", "error");
+    if (supabaseClient) {
+        return supabaseClient;
+    }
+
+    if (
+        !window.supabase ||
+        !window.supabase.createClient
+    ) {
+        console.error(
+            "Supabase library not loaded."
+        );
+
+        showToast(
+            "Supabase library is not loaded.",
+            "error"
+        );
+
         return null;
     }
 
     if (
         !CRM_SUPABASE_URL ||
-        CRM_SUPABASE_URL === "YOUR_SUPABASE_URL" ||
-        !CRM_SUPABASE_ANON_KEY ||
-        CRM_SUPABASE_ANON_KEY === "YOUR_SUPABASE_ANON_KEY"
+        !CRM_SUPABASE_ANON_KEY
     ) {
-        console.error("Supabase credentials are missing.");
-        showToast("Supabase configuration is missing.", "error");
+        console.error(
+            "Supabase configuration is missing."
+        );
+
+        showToast(
+            "Supabase configuration is missing.",
+            "error"
+        );
+
         return null;
     }
 
-    supabaseClient = window.supabase.createClient(
-        CRM_SUPABASE_URL,
-        CRM_SUPABASE_ANON_KEY
-    );
+    supabaseClient =
+        window.supabase.createClient(
+            CRM_SUPABASE_URL,
+            CRM_SUPABASE_ANON_KEY
+        );
 
     return supabaseClient;
 }
@@ -65,7 +72,7 @@ function getSupabaseClient() {
 
 /* =========================================================
    GLOBAL STATE
-   ========================================================= */
+========================================================= */
 
 let allLeads = [];
 let filteredLeads = [];
@@ -80,18 +87,26 @@ let toastTimer = null;
 
 /* =========================================================
    DOM HELPERS
-   ========================================================= */
+========================================================= */
 
 function $(selector, parent = document) {
     return parent.querySelector(selector);
 }
 
 function $all(selector, parent = document) {
-    return Array.from(parent.querySelectorAll(selector));
+    return Array.from(
+        parent.querySelectorAll(selector)
+    );
 }
 
 function escapeHTML(value) {
-    if (value === null || value === undefined) return "";
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
 
     return String(value)
         .replace(/&/g, "&amp;")
@@ -102,90 +117,178 @@ function escapeHTML(value) {
 }
 
 function safeValue(value) {
-    return value === null || value === undefined ? "" : String(value);
+
+    return (
+        value === null ||
+        value === undefined
+    )
+        ? ""
+        : String(value);
 }
 
 
 /* =========================================================
    TOAST
-   ========================================================= */
+========================================================= */
 
-function showToast(message, type = "success") {
-    let toast = document.getElementById("toastMessage");
+function showToast(
+    message,
+    type = "success"
+) {
+
+    let toast =
+        document.getElementById(
+            "toastMessage"
+        );
 
     if (!toast) {
-        toast = document.createElement("div");
-        toast.id = "toastMessage";
-        document.body.appendChild(toast);
+
+        toast =
+            document.createElement(
+                "div"
+            );
+
+        toast.id =
+            "toastMessage";
+
+        document.body.appendChild(
+            toast
+        );
     }
 
-    toast.textContent = message;
+    toast.textContent =
+        message;
 
-    toast.classList.remove("show");
+    toast.classList.remove(
+        "show"
+    );
 
     if (type === "error") {
-        toast.style.background = "#b42318";
+
+        toast.style.background =
+            "#b42318";
+
     } else if (type === "warning") {
-        toast.style.background = "#9a6700";
+
+        toast.style.background =
+            "#9a6700";
+
     } else {
-        toast.style.background = "#20283d";
+
+        toast.style.background =
+            "#20283d";
     }
 
     requestAnimationFrame(() => {
-        toast.classList.add("show");
+
+        toast.classList.add(
+            "show"
+        );
     });
 
-    clearTimeout(toastTimer);
+    clearTimeout(
+        toastTimer
+    );
 
-    toastTimer = setTimeout(() => {
-        toast.classList.remove("show");
-    }, 2800);
+    toastTimer =
+        setTimeout(() => {
+
+            toast.classList.remove(
+                "show"
+            );
+
+        }, 2800);
 }
 
 
 /* =========================================================
    AUTHENTICATION
-   ========================================================= */
+========================================================= */
 
 async function checkCRMAuth() {
-    const client = getSupabaseClient();
 
-    if (!client) return null;
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
+        return null;
+    }
 
     try {
+
         const {
-            data: { session },
+            data: {
+                session
+            },
             error
-        } = await client.auth.getSession();
+        } =
+            await client.auth.getSession();
 
         if (error) {
-            console.error("Auth error:", error);
+
+            console.error(
+                "Auth error:",
+                error
+            );
+
+            showToast(
+                "Unable to check login session.",
+                "error"
+            );
+
             return null;
         }
 
         if (!session) {
-            window.location.href = "login.html";
+
+            window.location.href =
+                "login.html";
+
             return null;
         }
 
-        updateStaffName(session.user);
+        updateStaffName(
+            session.user
+        );
 
         return session;
+
     } catch (error) {
-        console.error("Authentication check failed:", error);
+
+        console.error(
+            "Authentication check failed:",
+            error
+        );
+
         return null;
     }
 }
 
 
+/* =========================================================
+   STAFF NAME
+========================================================= */
+
 function updateStaffName(user) {
-    if (!user) return;
 
-    const staffNameElement = document.querySelector(".staff-name");
+    if (!user) {
+        return;
+    }
 
-    if (!staffNameElement) return;
+    const staffNameElement =
+        document.getElementById(
+            "staffName"
+        ) ||
+        document.querySelector(
+            ".staff-name"
+        );
 
-    const metadata = user.user_metadata || {};
+    if (!staffNameElement) {
+        return;
+    }
+
+    const metadata =
+        user.user_metadata || {};
 
     const name =
         metadata.full_name ||
@@ -194,98 +297,163 @@ function updateStaffName(user) {
         user.email ||
         "CRM User";
 
-    staffNameElement.textContent = name;
+    staffNameElement.textContent =
+        name;
 }
 
 
 /* =========================================================
    LOGOUT
-   ========================================================= */
+========================================================= */
 
 async function logoutCRM() {
-    const client = getSupabaseClient();
 
-    if (!client) return;
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
+        return;
+    }
 
     try {
-        const { error } = await client.auth.signOut();
+
+        const {
+            error
+        } =
+            await client.auth.signOut();
 
         if (error) {
-            console.error("Logout error:", error);
-            showToast("Unable to logout.", "error");
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+            showToast(
+                "Unable to logout.",
+                "error"
+            );
+
             return;
         }
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
+
     } catch (error) {
+
         console.error(error);
-        showToast("Unable to logout.", "error");
+
+        showToast(
+            "Unable to logout.",
+            "error"
+        );
     }
 }
 
 
 /* =========================================================
    LOAD ENQUIRIES
-   ========================================================= */
+========================================================= */
 
 async function loadEnquiries() {
-    const client = getSupabaseClient();
 
-    if (!client) return;
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
+        return;
+    }
 
     setTableLoading();
 
     try {
-        const { data, error } = await client
-            .from("customer_enquiries")
-            .select("*")
-            .order("created_at", {
-                ascending: false
-            });
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "customer_enquiries"
+                )
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
         if (error) {
-            console.error("Supabase enquiries error:", error);
 
-            renderTableError(
-                "Unable to load enquiries. Please check your Supabase connection."
+            console.error(
+                "Supabase enquiries error:",
+                error
             );
 
-            showToast("Unable to load enquiries.", "error");
+            renderTableError(
+                error.message ||
+                "Unable to load enquiries."
+            );
+
+            showToast(
+                "Unable to load enquiries.",
+                "error"
+            );
+
             return;
         }
 
-        allLeads = Array.isArray(data) ? data : [];
+        allLeads =
+            Array.isArray(data)
+                ? data
+                : [];
 
         applyFilters();
+
         updateStats();
 
     } catch (error) {
-        console.error("Load enquiries failed:", error);
+
+        console.error(
+            "Load enquiries failed:",
+            error
+        );
 
         renderTableError(
             "Something went wrong while loading enquiries."
         );
 
-        showToast("Unable to load enquiries.", "error");
+        showToast(
+            "Unable to load enquiries.",
+            "error"
+        );
     }
 }
 
 
 /* =========================================================
    TABLE LOADING
-   ========================================================= */
+========================================================= */
 
 function setTableLoading() {
-    const tbody =
-        document.querySelector(".leads-table tbody") ||
-        document.querySelector("#leadsTableBody") ||
-        document.querySelector("tbody");
 
-    if (!tbody) return;
+    const tbody =
+        document.getElementById(
+            "leadsTableBody"
+        );
+
+    if (!tbody) {
+        return;
+    }
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="20" class="loading-cell">
+            <td
+                colspan="11"
+                class="loading-cell"
+            >
                 Loading customer enquiries...
             </td>
         </tr>
@@ -294,16 +462,22 @@ function setTableLoading() {
 
 
 function renderTableError(message) {
-    const tbody =
-        document.querySelector(".leads-table tbody") ||
-        document.querySelector("#leadsTableBody") ||
-        document.querySelector("tbody");
 
-    if (!tbody) return;
+    const tbody =
+        document.getElementById(
+            "leadsTableBody"
+        );
+
+    if (!tbody) {
+        return;
+    }
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="20" class="loading-cell">
+            <td
+                colspan="11"
+                class="loading-cell"
+            >
                 ${escapeHTML(message)}
             </td>
         </tr>
@@ -313,52 +487,80 @@ function renderTableError(message) {
 
 /* =========================================================
    FILTERS
-   ========================================================= */
+========================================================= */
 
 function applyFilters() {
-    const search = currentSearch.trim().toLowerCase();
 
-    filteredLeads = allLeads.filter((lead) => {
+    const search =
+        currentSearch
+            .trim()
+            .toLowerCase();
 
-        const matchesSearch =
-            !search ||
-            [
-                lead.name,
-                lead.customer_name,
-                lead.phone,
-                lead.mobile,
-                lead.email,
-                lead.location,
-                lead.city,
-                lead.venue,
-                lead.event_type,
-                lead.message
-            ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase()
-                .includes(search);
+    filteredLeads =
+        allLeads.filter(
+            (lead) => {
 
-        const leadStatus =
-            safeValue(lead.status || "new").toLowerCase();
+                const searchableText = [
 
-        const leadPriority =
-            safeValue(lead.priority || "normal").toLowerCase();
+                    lead.name,
+                    lead.customer_name,
+                    lead.phone,
+                    lead.mobile,
+                    lead.email,
+                    lead.location,
+                    lead.city,
+                    lead.venue,
+                    lead.event_type,
+                    lead.event,
+                    lead.message,
+                    lead.remarks
 
-        const matchesStatus =
-            currentStatusFilter === "all" ||
-            leadStatus === currentStatusFilter;
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
 
-        const matchesPriority =
-            currentPriorityFilter === "all" ||
-            leadPriority === currentPriorityFilter;
+                const matchesSearch =
+                    !search ||
+                    searchableText.includes(
+                        search
+                    );
 
-        return (
-            matchesSearch &&
-            matchesStatus &&
-            matchesPriority
+                const leadStatus =
+                    String(
+                        lead.status ||
+                        "new"
+                    )
+                        .toLowerCase()
+                        .trim();
+
+                const leadPriority =
+                    String(
+                        lead.priority ||
+                        "medium"
+                    )
+                        .toLowerCase()
+                        .trim();
+
+                const matchesStatus =
+                    currentStatusFilter ===
+                        "all" ||
+                    leadStatus ===
+                        currentStatusFilter;
+
+                const matchesPriority =
+                    currentPriorityFilter ===
+                        "all" ||
+                    leadPriority ===
+                        currentPriorityFilter;
+
+                return (
+                    matchesSearch &&
+                    matchesStatus &&
+                    matchesPriority
+                );
+            }
         );
-    });
 
     renderLeads();
 }
@@ -366,30 +568,47 @@ function applyFilters() {
 
 /* =========================================================
    RENDER TABLE
-   ========================================================= */
+========================================================= */
 
 function renderLeads() {
+
     const tbody =
-        document.querySelector(".leads-table tbody") ||
-        document.querySelector("#leadsTableBody") ||
-        document.querySelector("tbody");
+        document.getElementById(
+            "leadsTableBody"
+        );
 
     if (!tbody) {
-        console.warn("CRM table body not found.");
+
+        console.warn(
+            "CRM table body not found."
+        );
+
         return;
     }
 
     if (!filteredLeads.length) {
+
         tbody.innerHTML = `
             <tr>
-                <td colspan="20">
+                <td colspan="11">
+
                     <div class="empty-state">
-                        <div class="empty-icon">⌕</div>
-                        <h3>No enquiries found</h3>
+
+                        <div class="empty-icon">
+                            ⌕
+                        </div>
+
+                        <h3>
+                            No enquiries found
+                        </h3>
+
                         <p>
-                            There are no customer enquiries matching your filters.
+                            There are no customer enquiries
+                            matching your filters.
                         </p>
+
                     </div>
+
                 </td>
             </tr>
         `;
@@ -397,18 +616,24 @@ function renderLeads() {
         return;
     }
 
-    tbody.innerHTML = filteredLeads
-        .map((lead) => createLeadRow(lead))
-        .join("");
+    tbody.innerHTML =
+        filteredLeads
+            .map(
+                lead =>
+                    createLeadRow(lead)
+            )
+            .join("");
 }
 
 
 /* =========================================================
-   LEAD ROW
-   ========================================================= */
+   CREATE LEAD ROW
+========================================================= */
 
 function createLeadRow(lead) {
-    const id = safeValue(lead.id);
+
+    const id =
+        safeValue(lead.id);
 
     const name =
         lead.name ||
@@ -421,30 +646,26 @@ function createLeadRow(lead) {
         lead.contact_number ||
         "—";
 
-    const email =
-        lead.email ||
-        "—";
-
     const eventType =
         lead.event_type ||
         lead.event ||
         "—";
 
+    const venue =
+        lead.venue ||
+        lead.venue_name ||
+        "—";
+
     const eventDate =
         lead.event_date ||
         lead.date ||
-        "—";
+        "";
 
     const guests =
-        lead.guests ||
-        lead.guest_count ||
-        lead.number_of_guests ||
-        "—";
-
-    const location =
-        lead.location ||
-        lead.city ||
-        "—";
+        lead.guests ??
+        lead.guest_count ??
+        lead.number_of_guests ??
+        "";
 
     const status =
         lead.status ||
@@ -452,26 +673,73 @@ function createLeadRow(lead) {
 
     const priority =
         lead.priority ||
-        "normal";
+        "medium";
+
+    const followUp =
+        lead.follow_up_at ||
+        lead.followup_at ||
+        "";
+
+    const remarks =
+        lead.remarks ||
+        lead.internal_notes ||
+        lead.notes ||
+        "—";
 
     return `
-        <tr data-lead-id="${escapeHTML(id)}">
+        <tr
+            data-lead-id="${escapeHTML(id)}"
+        >
+
+            <!-- CUSTOMER -->
 
             <td>
-                <strong>${escapeHTML(name)}</strong>
-                <small>${escapeHTML(phone)}</small>
+
+                <strong>
+                    ${escapeHTML(name)}
+                </strong>
+
+                ${
+                    lead.email
+                        ? `
+                            <small>
+                                ${escapeHTML(
+                                    lead.email
+                                )}
+                            </small>
+                          `
+                        : ""
+                }
+
             </td>
 
-            <td>
-                ${createInlineField(
-                    lead,
-                    "email",
-                    email,
-                    "text"
-                )}
-            </td>
+
+            <!-- PHONE -->
 
             <td>
+
+                ${
+                    phone !== "—"
+                        ? `
+                            <a
+                                href="tel:${escapeHTML(
+                                    phone
+                                )}"
+                                class="phone-link"
+                            >
+                                ${escapeHTML(phone)}
+                            </a>
+                          `
+                        : "—"
+                }
+
+            </td>
+
+
+            <!-- EVENT -->
+
+            <td>
+
                 ${createInlineField(
                     lead,
                     "event_type",
@@ -479,9 +747,28 @@ function createLeadRow(lead) {
                     "select",
                     getEventOptions()
                 )}
+
             </td>
 
+
+            <!-- VENUE -->
+
             <td>
+
+                ${createInlineField(
+                    lead,
+                    "venue",
+                    venue,
+                    "text"
+                )}
+
+            </td>
+
+
+            <!-- EVENT DATE -->
+
+            <td>
+
                 ${createInlineField(
                     lead,
                     "event_date",
@@ -490,27 +777,28 @@ function createLeadRow(lead) {
                     null,
                     eventDate
                 )}
+
             </td>
 
+
+            <!-- GUESTS -->
+
             <td>
+
                 ${createInlineField(
                     lead,
                     "guests",
-                    guests,
+                    guests || "—",
                     "number"
                 )}
+
             </td>
 
-            <td>
-                ${createInlineField(
-                    lead,
-                    "location",
-                    location,
-                    "text"
-                )}
-            </td>
+
+            <!-- STATUS -->
 
             <td>
+
                 ${createInlineField(
                     lead,
                     "status",
@@ -518,9 +806,14 @@ function createLeadRow(lead) {
                     "select",
                     getStatusOptions()
                 )}
+
             </td>
 
+
+            <!-- PRIORITY -->
+
             <td>
+
                 ${createInlineField(
                     lead,
                     "priority",
@@ -528,9 +821,57 @@ function createLeadRow(lead) {
                     "select",
                     getPriorityOptions()
                 )}
+
             </td>
 
+
+            <!-- FOLLOW-UP -->
+
             <td>
+
+                ${
+                    followUp
+                        ? `
+                            <span class="follow-up-date">
+                                ${escapeHTML(
+                                    formatDateTime(
+                                        followUp
+                                    )
+                                )}
+                            </span>
+                          `
+                        : `
+                            <span class="muted-value">
+                                —
+                            </span>
+                          `
+                }
+
+            </td>
+
+
+            <!-- REMARKS -->
+
+            <td>
+
+                <span
+                    class="remarks-cell"
+                    title="${escapeHTML(
+                        remarks
+                    )}"
+                >
+                    ${escapeHTML(
+                        remarks
+                    )}
+                </span>
+
+            </td>
+
+
+            <!-- ACTION -->
+
+            <td>
+
                 <button
                     type="button"
                     class="view-lead-btn"
@@ -539,6 +880,7 @@ function createLeadRow(lead) {
                 >
                     View Details
                 </button>
+
             </td>
 
         </tr>
@@ -548,12 +890,7 @@ function createLeadRow(lead) {
 
 /* =========================================================
    INLINE FIELD
-   =========================================================
-   DISPLAY FIRST.
-   Click field.
-   Field becomes editable.
-   Save automatically on blur / Enter.
-   ========================================================= */
+========================================================= */
 
 function createInlineField(
     lead,
@@ -563,7 +900,9 @@ function createInlineField(
     options = null,
     rawValue = null
 ) {
-    const id = safeValue(lead.id);
+
+    const id =
+        safeValue(lead.id);
 
     const value =
         rawValue !== null &&
@@ -583,17 +922,27 @@ function createInlineField(
             class="crm-inline-field"
             data-inline-field="${escapeHTML(field)}"
             data-lead-id="${escapeHTML(id)}"
-            data-value="${escapeHTML(safeValue(value))}"
+            data-value="${escapeHTML(
+                safeValue(value)
+            )}"
+            data-editor-type="${escapeHTML(type)}"
             tabindex="0"
             title="Click to edit"
         >
+
             <span class="inline-display">
-                ${escapeHTML(shownValue)}
+                ${escapeHTML(
+                    shownValue
+                )}
             </span>
 
-            <span class="inline-edit-icon">
+            <span
+                class="inline-edit-icon"
+                aria-hidden="true"
+            >
                 ✎
             </span>
+
         </div>
     `;
 }
@@ -601,10 +950,16 @@ function createInlineField(
 
 /* =========================================================
    INLINE EDIT
-   ========================================================= */
+========================================================= */
 
 function startInlineEdit(element) {
-    if (!element || element.classList.contains("editing")) {
+
+    if (
+        !element ||
+        element.classList.contains(
+            "editing"
+        )
+    ) {
         return;
     }
 
@@ -616,50 +971,76 @@ function startInlineEdit(element) {
 
     const lead =
         allLeads.find(
-            item => String(item.id) === String(leadId)
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
     if (!lead) {
-        showToast("Enquiry not found.", "error");
+
+        showToast(
+            "Enquiry not found.",
+            "error"
+        );
+
         return;
     }
 
     const originalValue =
-        lead[field] ??
-        "";
+        lead[field] ?? "";
 
-    element.classList.add("editing");
+    element.classList.add(
+        "editing"
+    );
 
     const display =
-        element.querySelector(".inline-display");
+        element.querySelector(
+            ".inline-display"
+        );
 
-    if (!display) return;
+    if (!display) {
+        return;
+    }
 
     let editor;
 
     if (field === "status") {
-        editor = createSelectEditor(
-            getStatusOptions(),
-            originalValue || "new"
-        );
-    }
 
-    else if (field === "priority") {
-        editor = createSelectEditor(
-            getPriorityOptions(),
-            originalValue || "normal"
-        );
-    }
+        editor =
+            createSelectEditor(
+                getStatusOptions(),
+                originalValue ||
+                    "new"
+            );
 
-    else if (field === "event_type") {
-        editor = createSelectEditor(
-            getEventOptions(),
-            originalValue || ""
-        );
-    }
+    } else if (
+        field === "priority"
+    ) {
 
-    else {
-        editor = document.createElement("input");
+        editor =
+            createSelectEditor(
+                getPriorityOptions(),
+                originalValue ||
+                    "medium"
+            );
+
+    } else if (
+        field === "event_type"
+    ) {
+
+        editor =
+            createSelectEditor(
+                getEventOptions(),
+                originalValue ||
+                    ""
+            );
+
+    } else {
+
+        editor =
+            document.createElement(
+                "input"
+            );
 
         editor.type =
             field === "event_date"
@@ -668,20 +1049,23 @@ function startInlineEdit(element) {
                     ? "number"
                     : "text";
 
-        editor.value = safeValue(originalValue);
+        editor.value =
+            safeValue(
+                originalValue
+            );
 
-        editor.className = "crm-inline-editor";
-
-        editor.setAttribute(
-            "aria-label",
-            `Edit ${field}`
-        );
+        editor.className =
+            "crm-inline-editor";
     }
 
-    display.replaceWith(editor);
+    display.replaceWith(
+        editor
+    );
 
     const icon =
-        element.querySelector(".inline-edit-icon");
+        element.querySelector(
+            ".inline-edit-icon"
+        );
 
     if (icon) {
         icon.textContent = "✓";
@@ -699,15 +1083,26 @@ function startInlineEdit(element) {
 
     let finished = false;
 
-    async function finish(save = true) {
-        if (finished) return;
+    async function finish(
+        save = true
+    ) {
+
+        if (finished) {
+            return;
+        }
 
         finished = true;
 
         if (save) {
-            const newValue = editor.value;
 
-            if (String(newValue) !== String(originalValue)) {
+            const newValue =
+                editor.value;
+
+            if (
+                String(newValue) !==
+                String(originalValue)
+            ) {
+
                 await saveInlineField(
                     leadId,
                     field,
@@ -728,9 +1123,13 @@ function startInlineEdit(element) {
     editor.addEventListener(
         "blur",
         () => {
-            setTimeout(() => {
-                finish(true);
-            }, 120);
+
+            setTimeout(
+                () => {
+                    finish(true);
+                },
+                120
+            );
         }
     );
 
@@ -738,13 +1137,21 @@ function startInlineEdit(element) {
         "keydown",
         (event) => {
 
-            if (event.key === "Enter") {
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
                 event.preventDefault();
 
                 editor.blur();
             }
 
-            if (event.key === "Escape") {
+            if (
+                event.key ===
+                "Escape"
+            ) {
+
                 event.preventDefault();
 
                 finish(false);
@@ -756,32 +1163,52 @@ function startInlineEdit(element) {
 
 /* =========================================================
    SELECT EDITOR
-   ========================================================= */
+========================================================= */
 
-function createSelectEditor(options, selectedValue) {
+function createSelectEditor(
+    options,
+    selectedValue
+) {
+
     const select =
-        document.createElement("select");
+        document.createElement(
+            "select"
+        );
 
     select.className =
         "crm-inline-editor";
 
-    options.forEach((option) => {
+    options.forEach(
+        option => {
 
-        const opt =
-            document.createElement("option");
+            const opt =
+                document.createElement(
+                    "option"
+                );
 
-        opt.value = option.value;
-        opt.textContent = option.label;
+            opt.value =
+                option.value;
 
-        if (
-            String(option.value) ===
-            String(selectedValue)
-        ) {
-            opt.selected = true;
+            opt.textContent =
+                option.label;
+
+            if (
+                String(
+                    option.value
+                ) ===
+                String(
+                    selectedValue
+                )
+            ) {
+                opt.selected =
+                    true;
+            }
+
+            select.appendChild(
+                opt
+            );
         }
-
-        select.appendChild(opt);
-    });
+    );
 
     return select;
 }
@@ -789,24 +1216,35 @@ function createSelectEditor(options, selectedValue) {
 
 /* =========================================================
    SAVE INLINE FIELD
-   ========================================================= */
+========================================================= */
 
 async function saveInlineField(
     leadId,
     field,
     newValue
 ) {
-    const client = getSupabaseClient();
 
-    if (!client) return;
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
+        return;
+    }
 
     const lead =
         allLeads.find(
-            item => String(item.id) === String(leadId)
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
     if (!lead) {
-        showToast("Enquiry not found.", "error");
+
+        showToast(
+            "Enquiry not found.",
+            "error"
+        );
+
         return;
     }
 
@@ -822,21 +1260,33 @@ async function saveInlineField(
                 ? null
                 : newValue;
 
-        const { data, error } =
+        const {
+            data,
+            error
+        } =
             await client
-                .from("customer_enquiries")
-                .update(updateData)
-                .eq("id", leadId)
+                .from(
+                    "customer_enquiries"
+                )
+                .update(
+                    updateData
+                )
+                .eq(
+                    "id",
+                    leadId
+                )
                 .select()
                 .single();
 
         if (error) {
+
             console.error(
                 "Inline update failed:",
                 error
             );
 
             showToast(
+                error.message ||
                 "Unable to save this change.",
                 "error"
             );
@@ -852,23 +1302,19 @@ async function saveInlineField(
 
         Object.assign(
             lead,
-            data || updateData
+            data ||
+            updateData
         );
 
-        showToast("Updated successfully.");
+        showToast(
+            "Updated successfully."
+        );
 
-        refreshLeadRow(leadId);
+        refreshLeadRow(
+            leadId
+        );
 
         updateStats();
-
-        if (
-            currentLead &&
-            String(currentLead.id) === String(leadId)
-        ) {
-            currentLead = lead;
-
-            refreshModalData();
-        }
 
     } catch (error) {
 
@@ -890,24 +1336,31 @@ async function saveInlineField(
 
 /* =========================================================
    RESTORE INLINE DISPLAY
-   ========================================================= */
+========================================================= */
 
 function restoreInlineDisplay(
     element,
     lead,
     field
 ) {
-    if (!element) return;
+
+    if (!element) {
+        return;
+    }
 
     const editor =
         element.querySelector(
             ".crm-inline-editor"
         );
 
-    if (!editor) return;
+    if (!editor) {
+        return;
+    }
 
     const display =
-        document.createElement("span");
+        document.createElement(
+            "span"
+        );
 
     display.className =
         "inline-display";
@@ -915,16 +1368,23 @@ function restoreInlineDisplay(
     let value =
         lead[field];
 
-    if (field === "status") {
-        value = formatStatus(value);
-    }
+    if (
+        field === "status"
+    ) {
+        value =
+            formatStatus(value);
 
-    else if (field === "priority") {
-        value = formatPriority(value);
-    }
+    } else if (
+        field === "priority"
+    ) {
+        value =
+            formatPriority(value);
 
-    else if (field === "event_date") {
-        value = formatDate(value);
+    } else if (
+        field === "event_date"
+    ) {
+        value =
+            formatDate(value);
     }
 
     if (
@@ -935,11 +1395,16 @@ function restoreInlineDisplay(
         value = "—";
     }
 
-    display.textContent = value;
+    display.textContent =
+        value;
 
-    editor.replaceWith(display);
+    editor.replaceWith(
+        display
+    );
 
-    element.classList.remove("editing");
+    element.classList.remove(
+        "editing"
+    );
 
     const icon =
         element.querySelector(
@@ -954,106 +1419,172 @@ function restoreInlineDisplay(
 
 /* =========================================================
    REFRESH ROW
-   ========================================================= */
+========================================================= */
 
-function refreshLeadRow(leadId) {
+function refreshLeadRow(
+    leadId
+) {
+
     const lead =
         allLeads.find(
-            item => String(item.id) === String(leadId)
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
-    if (!lead) return;
+    if (!lead) {
+        return;
+    }
 
-    const row =
-        document.querySelector(
-            `tr[data-lead-id="${CSS.escape(String(leadId))}"]`
+    const rows =
+        document.querySelectorAll(
+            "tr[data-lead-id]"
         );
+
+    let row = null;
+
+    rows.forEach(
+        item => {
+
+            if (
+                String(
+                    item.dataset.leadId
+                ) ===
+                String(leadId)
+            ) {
+                row = item;
+            }
+        }
+    );
 
     if (!row) {
+
         renderLeads();
+
         return;
     }
 
     const temp =
-        document.createElement("tbody");
+        document.createElement(
+            "tbody"
+        );
 
     temp.innerHTML =
-        createLeadRow(lead);
+        createLeadRow(
+            lead
+        );
 
     const newRow =
         temp.firstElementChild;
 
     if (newRow) {
-        row.replaceWith(newRow);
+        row.replaceWith(
+            newRow
+        );
     }
 }
 
 
 /* =========================================================
-   RESTORE ROW FIELD ON ERROR
-   ========================================================= */
+   RESTORE ROW FIELD
+========================================================= */
 
 function restoreRowField(
     leadId,
     field,
     oldValue
 ) {
+
     const lead =
         allLeads.find(
-            item => String(item.id) === String(leadId)
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
-    if (!lead) return;
+    if (!lead) {
+        return;
+    }
 
-    lead[field] = oldValue;
+    lead[field] =
+        oldValue;
 
-    refreshLeadRow(leadId);
+    refreshLeadRow(
+        leadId
+    );
 }
 
 
 /* =========================================================
    VIEW DETAILS MODAL
-   ========================================================= */
+========================================================= */
 
-function openLeadModal(leadId) {
+function openLeadModal(
+    leadId
+) {
+
     const lead =
         allLeads.find(
-            item => String(item.id) === String(leadId)
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
     if (!lead) {
-        showToast("Enquiry not found.", "error");
+
+        showToast(
+            "Enquiry not found.",
+            "error"
+        );
+
         return;
     }
 
-    currentLead = lead;
+    currentLead =
+        lead;
 
     const modal =
-        document.getElementById("leadModal");
+        document.getElementById(
+            "leadModal"
+        );
 
     if (!modal) {
+
         console.warn(
-            "leadModal not found in dashboard.html"
+            "leadModal not found."
         );
+
         return;
     }
 
-    populateLeadModal(lead);
+    populateLeadModal(
+        lead
+    );
 
-    modal.hidden = false;
+    modal.hidden =
+        false;
 
-    document.body.style.overflow = "hidden";
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.style.overflow =
+        "hidden";
 }
 
 
 /* =========================================================
    POPULATE LEAD MODAL
-   ========================================================= */
+========================================================= */
 
-function populateLeadModal(lead) {
+function populateLeadModal(
+    lead
+) {
 
     setModalText(
         [
+            "#detailCustomerName",
             "#modalLeadName",
             "#leadName",
             "[data-modal='name']"
@@ -1065,6 +1596,7 @@ function populateLeadModal(lead) {
 
     setModalText(
         [
+            "#detailPhone",
             "#modalPhone",
             "#leadPhone",
             "[data-modal='phone']"
@@ -1077,84 +1609,119 @@ function populateLeadModal(lead) {
 
     setModalText(
         [
+            "#detailEmail",
             "#modalEmail",
             "#leadEmail",
             "[data-modal='email']"
         ],
-        lead.email || "—"
-    );
-
-    setModalText(
-        [
-            "#modalEventType",
-            "#leadEventType",
-            "[data-modal='event_type']"
-        ],
-        lead.event_type ||
-        lead.event ||
+        lead.email ||
         "—"
     );
 
     setModalText(
         [
-            "#modalEventDate",
-            "#leadEventDate",
-            "[data-modal='event_date']"
+            "#detailSource",
+            "#modalSource",
+            "#leadSource",
+            "[data-modal='source']"
         ],
-        formatDate(
+        lead.source ||
+        "—"
+    );
+
+    setModalControl(
+        [
+            "#detailEventType",
+            "#modalEventType",
+            "#leadEventType"
+        ],
+        lead.event_type ||
+        lead.event ||
+        ""
+    );
+
+    setModalControl(
+        [
+            "#detailVenue",
+            "#modalVenue",
+            "#leadVenue"
+        ],
+        lead.venue ||
+        lead.venue_name ||
+        ""
+    );
+
+    setModalControl(
+        [
+            "#detailEventDate",
+            "#modalEventDate",
+            "#leadEventDate"
+        ],
+        normalizeDateInput(
             lead.event_date ||
             lead.date
         )
     );
 
-    setModalText(
+    setModalControl(
         [
+            "#detailGuests",
             "#modalGuests",
-            "#leadGuests",
-            "[data-modal='guests']"
+            "#leadGuests"
         ],
-        lead.guests ||
-        lead.guest_count ||
-        lead.number_of_guests ||
-        "—"
+        lead.guests ??
+        lead.guest_count ??
+        lead.number_of_guests ??
+        ""
     );
 
-    setModalText(
+    setModalControl(
         [
-            "#modalLocation",
-            "#leadLocation",
-            "[data-modal='location']"
+            "#detailStatus",
+            "#modalStatus",
+            "#leadStatus"
         ],
-        lead.location ||
-        lead.city ||
-        "—"
+        lead.status ||
+        "New"
     );
 
-    setModalText(
+    setModalControl(
         [
-            "#modalBudget",
-            "#leadBudget",
-            "[data-modal='budget']"
+            "#detailPriority",
+            "#modalPriority",
+            "#leadPriority"
         ],
-        lead.budget || "—"
+        lead.priority ||
+        "Medium"
     );
 
-    setModalText(
+    setModalControl(
         [
-            "#modalCreatedAt",
-            "#leadCreatedAt",
-            "[data-modal='created_at']"
+            "#detailFollowUp",
+            "#modalFollowUp",
+            "#leadFollowUp"
         ],
-        formatDateTime(
-            lead.created_at
+        normalizeDateTimeInput(
+            lead.follow_up_at ||
+            lead.followup_at
         )
     );
 
+    setModalControl(
+        [
+            "#detailAssignedTo",
+            "#modalAssignedTo",
+            "#leadAssignedTo"
+        ],
+        lead.assigned_to ||
+        ""
+    );
+
     setModalText(
         [
+            "#detailMessage",
             "#modalMessage",
             "#leadMessage",
-            "#detailMessage",
             "[data-modal='message']"
         ],
         lead.message ||
@@ -1165,62 +1732,47 @@ function populateLeadModal(lead) {
 
     setModalControl(
         [
-            "#modalStatus",
-            "#leadStatus",
-            "[data-control='status']"
-        ],
-        lead.status || "new"
-    );
-
-    setModalControl(
-        [
-            "#modalPriority",
-            "#leadPriority",
-            "[data-control='priority']"
-        ],
-        lead.priority || "normal"
-    );
-
-    setModalControl(
-        [
-            "#modalFollowUp",
-            "#leadFollowUp",
-            "[data-control='follow_up_at']"
-        ],
-        lead.follow_up_at ||
-        lead.followup_at ||
-        ""
-    );
-
-    setModalControl(
-        [
+            "#detailRemarks",
             "#modalNotes",
             "#leadNotes",
             "[data-control='internal_notes']"
         ],
+        lead.remarks ||
         lead.internal_notes ||
         lead.notes ||
-        lead.remarks ||
         ""
     );
 
-    setupContactActions(lead);
+    setupContactActions(
+        lead
+    );
 }
 
 
 /* =========================================================
-   MODAL TEXT HELPER
-   ========================================================= */
+   MODAL TEXT
+========================================================= */
 
-function setModalText(selectors, value) {
-    for (const selector of selectors) {
+function setModalText(
+    selectors,
+    value
+) {
+
+    for (
+        const selector of selectors
+    ) {
 
         const element =
-            document.querySelector(selector);
+            document.querySelector(
+                selector
+            );
 
         if (element) {
+
             element.textContent =
-                safeValue(value) || "—";
+                safeValue(
+                    value
+                ) || "—";
 
             return;
         }
@@ -1229,27 +1781,40 @@ function setModalText(selectors, value) {
 
 
 /* =========================================================
-   MODAL CONTROL HELPER
-   ========================================================= */
+   MODAL CONTROL
+========================================================= */
 
 function setModalControl(
     selectors,
     value
 ) {
-    for (const selector of selectors) {
+
+    for (
+        const selector of selectors
+    ) {
 
         const element =
-            document.querySelector(selector);
+            document.querySelector(
+                selector
+            );
 
-        if (!element) continue;
+        if (!element) {
+            continue;
+        }
 
         if (
-            element.tagName === "INPUT" ||
-            element.tagName === "SELECT" ||
-            element.tagName === "TEXTAREA"
+            element.tagName ===
+                "INPUT" ||
+            element.tagName ===
+                "SELECT" ||
+            element.tagName ===
+                "TEXTAREA"
         ) {
+
             element.value =
-                safeValue(value);
+                safeValue(
+                    value
+                );
         }
 
         return;
@@ -1258,45 +1823,57 @@ function setModalControl(
 
 
 /* =========================================================
-   REFRESH CURRENT MODAL
-   ========================================================= */
-
-function refreshModalData() {
-    if (!currentLead) return;
-
-    populateLeadModal(currentLead);
-}
-
-
-/* =========================================================
-   CLOSE MODAL
-   ========================================================= */
+   CLOSE LEAD MODAL
+========================================================= */
 
 function closeLeadModal() {
+
     const modal =
-        document.getElementById("leadModal");
+        document.getElementById(
+            "leadModal"
+        );
 
-    if (!modal) return;
+    if (!modal) {
+        return;
+    }
 
-    modal.hidden = true;
+    modal.hidden =
+        true;
 
-    document.body.style.overflow = "";
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
-    currentLead = null;
+    document.body.style.overflow =
+        "";
+
+    currentLead =
+        null;
 }
 
 
 /* =========================================================
-   MODAL CLICK OUTSIDE
-   ========================================================= */
+   MODAL BACKDROP
+========================================================= */
 
-function handleModalBackdropClick(event) {
+function handleModalBackdropClick(
+    event
+) {
+
     const modal =
-        document.getElementById("leadModal");
+        document.getElementById(
+            "leadModal"
+        );
 
-    if (!modal) return;
+    if (!modal) {
+        return;
+    }
 
-    if (event.target === modal) {
+    if (
+        event.target ===
+        modal
+    ) {
         closeLeadModal();
     }
 }
@@ -1304,97 +1881,214 @@ function handleModalBackdropClick(event) {
 
 /* =========================================================
    SAVE MODAL CHANGES
-   ========================================================= */
+========================================================= */
 
 async function saveModalChanges() {
 
     if (!currentLead) {
+
         showToast(
             "No enquiry selected.",
             "error"
         );
+
         return;
     }
 
-    const client = getSupabaseClient();
+    const client =
+        getSupabaseClient();
 
-    if (!client) return;
+    if (!client) {
+        return;
+    }
 
     const leadId =
         currentLead.id;
 
     const updateData = {};
 
+    const eventType =
+        getControlValue([
+            "#detailEventType",
+            "#modalEventType",
+            "#leadEventType"
+        ]);
+
+    const venue =
+        getControlValue([
+            "#detailVenue",
+            "#modalVenue",
+            "#leadVenue"
+        ]);
+
+    const eventDate =
+        getControlValue([
+            "#detailEventDate",
+            "#modalEventDate",
+            "#leadEventDate"
+        ]);
+
+    const guests =
+        getControlValue([
+            "#detailGuests",
+            "#modalGuests",
+            "#leadGuests"
+        ]);
+
     const status =
         getControlValue([
+            "#detailStatus",
             "#modalStatus",
-            "#leadStatus",
-            "[data-control='status']"
+            "#leadStatus"
         ]);
 
     const priority =
         getControlValue([
+            "#detailPriority",
             "#modalPriority",
-            "#leadPriority",
-            "[data-control='priority']"
+            "#leadPriority"
         ]);
 
     const followUp =
         getControlValue([
+            "#detailFollowUp",
             "#modalFollowUp",
-            "#leadFollowUp",
-            "[data-control='follow_up_at']"
+            "#leadFollowUp"
         ]);
 
-    const notes =
+    const assignedTo =
         getControlValue([
-            "#modalNotes",
-            "#leadNotes",
-            "[data-control='internal_notes']"
+            "#detailAssignedTo",
+            "#modalAssignedTo",
+            "#leadAssignedTo"
         ]);
 
-    if (status !== undefined) {
+    const remarks =
+        getControlValue([
+            "#detailRemarks",
+            "#modalNotes",
+            "#leadNotes"
+        ]);
+
+    if (
+        eventType !==
+        undefined
+    ) {
+        updateData.event_type =
+            eventType || null;
+    }
+
+    if (
+        venue !==
+        undefined
+    ) {
+        updateData.venue =
+            venue || null;
+    }
+
+    if (
+        eventDate !==
+        undefined
+    ) {
+        updateData.event_date =
+            eventDate || null;
+    }
+
+    if (
+        guests !==
+        undefined
+    ) {
+        updateData.guests =
+            guests === ""
+                ? null
+                : Number(guests);
+    }
+
+    if (
+        status !==
+        undefined
+    ) {
         updateData.status =
-            status || "new";
+            status ||
+            "New";
     }
 
-    if (priority !== undefined) {
+    if (
+        priority !==
+        undefined
+    ) {
         updateData.priority =
-            priority || "normal";
+            priority ||
+            "Medium";
     }
 
-    if (followUp !== undefined) {
+    if (
+        followUp !==
+        undefined
+    ) {
         updateData.follow_up_at =
             followUp || null;
     }
 
-    if (notes !== undefined) {
-        updateData.internal_notes =
-            notes || null;
+    if (
+        assignedTo !==
+        undefined
+    ) {
+        updateData.assigned_to =
+            assignedTo || null;
     }
 
-    if (!Object.keys(updateData).length) {
-        showToast("Nothing to save.", "warning");
+    if (
+        remarks !==
+        undefined
+    ) {
+        updateData.remarks =
+            remarks || null;
+    }
+
+    if (
+        !Object.keys(
+            updateData
+        ).length
+    ) {
+
+        showToast(
+            "Nothing to save.",
+            "warning"
+        );
+
         return;
     }
 
     try {
 
-        const { data, error } =
+        const {
+            data,
+            error
+        } =
             await client
-                .from("customer_enquiries")
-                .update(updateData)
-                .eq("id", leadId)
+                .from(
+                    "customer_enquiries"
+                )
+                .update(
+                    updateData
+                )
+                .eq(
+                    "id",
+                    leadId
+                )
                 .select()
                 .single();
 
         if (error) {
+
             console.error(
                 "Modal save error:",
                 error
             );
 
             showToast(
+                error.message ||
                 "Unable to save enquiry.",
                 "error"
             );
@@ -1404,7 +2098,8 @@ async function saveModalChanges() {
 
         Object.assign(
             currentLead,
-            data || updateData
+            data ||
+            updateData
         );
 
         const index =
@@ -1414,19 +2109,27 @@ async function saveModalChanges() {
                     String(leadId)
             );
 
-        if (index !== -1) {
+        if (
+            index !== -1
+        ) {
+
             Object.assign(
                 allLeads[index],
-                data || updateData
+                data ||
+                updateData
             );
 
             currentLead =
                 allLeads[index];
         }
 
-        renderLeads();
+        applyFilters();
+
         updateStats();
-        populateLeadModal(currentLead);
+
+        populateLeadModal(
+            currentLead
+        );
 
         showToast(
             "Enquiry updated successfully."
@@ -1434,7 +2137,9 @@ async function saveModalChanges() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         showToast(
             "Unable to save enquiry.",
@@ -1446,14 +2151,20 @@ async function saveModalChanges() {
 
 /* =========================================================
    GET CONTROL VALUE
-   ========================================================= */
+========================================================= */
 
-function getControlValue(selectors) {
+function getControlValue(
+    selectors
+) {
 
-    for (const selector of selectors) {
+    for (
+        const selector of selectors
+    ) {
 
         const element =
-            document.querySelector(selector);
+            document.querySelector(
+                selector
+            );
 
         if (element) {
             return element.value;
@@ -1466,9 +2177,11 @@ function getControlValue(selectors) {
 
 /* =========================================================
    CONTACT ACTIONS
-   ========================================================= */
+========================================================= */
 
-function setupContactActions(lead) {
+function setupContactActions(
+    lead
+) {
 
     const phone =
         lead.phone ||
@@ -1477,6 +2190,61 @@ function setupContactActions(lead) {
 
     const email =
         lead.email;
+
+    const phoneActions =
+        document.getElementById(
+            "detailPhoneActions"
+        );
+
+    const emailActions =
+        document.getElementById(
+            "detailEmailActions"
+        );
+
+    if (phoneActions) {
+
+        phoneActions.innerHTML =
+            phone
+                ? `
+                    <a
+                        href="tel:${escapeHTML(
+                            phone
+                        )}"
+                    >
+                        Call
+                    </a>
+
+                    <a
+                        href="https://wa.me/${String(
+                            phone
+                        ).replace(
+                            /\D/g,
+                            ""
+                        )}"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        WhatsApp
+                    </a>
+                  `
+                : "";
+    }
+
+    if (emailActions) {
+
+        emailActions.innerHTML =
+            email
+                ? `
+                    <a
+                        href="mailto:${escapeHTML(
+                            email
+                        )}"
+                    >
+                        Email
+                    </a>
+                  `
+                : "";
+    }
 
     const call =
         document.querySelector(
@@ -1505,18 +2273,27 @@ function setupContactActions(lead) {
     if (call) {
 
         if (phone) {
+
             call.href =
                 `tel:${phone}`;
 
             call.style.pointerEvents =
                 "auto";
 
-            call.style.opacity = "1";
+            call.style.opacity =
+                "1";
+
         } else {
-            call.removeAttribute("href");
+
+            call.removeAttribute(
+                "href"
+            );
+
             call.style.pointerEvents =
                 "none";
-            call.style.opacity = "0.5";
+
+            call.style.opacity =
+                "0.5";
         }
     }
 
@@ -1526,26 +2303,37 @@ function setupContactActions(lead) {
 
             const cleanPhone =
                 String(phone)
-                    .replace(/\D/g, "");
+                    .replace(
+                        /\D/g,
+                        ""
+                    );
 
             whatsapp.href =
                 `https://wa.me/${cleanPhone}`;
 
-            whatsapp.target = "_blank";
+            whatsapp.target =
+                "_blank";
+
+            whatsapp.rel =
+                "noopener";
 
             whatsapp.style.pointerEvents =
                 "auto";
 
-            whatsapp.style.opacity = "1";
+            whatsapp.style.opacity =
+                "1";
 
         } else {
 
-            whatsapp.removeAttribute("href");
+            whatsapp.removeAttribute(
+                "href"
+            );
 
             whatsapp.style.pointerEvents =
                 "none";
 
-            whatsapp.style.opacity = "0.5";
+            whatsapp.style.opacity =
+                "0.5";
         }
     }
 
@@ -1559,16 +2347,20 @@ function setupContactActions(lead) {
             emailButton.style.pointerEvents =
                 "auto";
 
-            emailButton.style.opacity = "1";
+            emailButton.style.opacity =
+                "1";
 
         } else {
 
-            emailButton.removeAttribute("href");
+            emailButton.removeAttribute(
+                "href"
+            );
 
             emailButton.style.pointerEvents =
                 "none";
 
-            emailButton.style.opacity = "0.5";
+            emailButton.style.opacity =
+                "0.5";
         }
     }
 }
@@ -1576,7 +2368,7 @@ function setupContactActions(lead) {
 
 /* =========================================================
    ADD ENQUIRY MODAL
-   ========================================================= */
+========================================================= */
 
 function openAddEnquiryModal() {
 
@@ -1586,14 +2378,22 @@ function openAddEnquiryModal() {
         );
 
     if (!modal) {
+
         showToast(
             "Add enquiry form not found.",
             "error"
         );
+
         return;
     }
 
-    modal.hidden = false;
+    modal.hidden =
+        false;
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
     document.body.style.overflow =
         "hidden";
@@ -1613,14 +2413,15 @@ function openAddEnquiryModal() {
         );
 
     if (message) {
-        message.textContent = "";
+        message.textContent =
+            "";
     }
 }
 
 
 /* =========================================================
    CLOSE ADD ENQUIRY
-   ========================================================= */
+========================================================= */
 
 function closeAddEnquiryModal() {
 
@@ -1629,39 +2430,55 @@ function closeAddEnquiryModal() {
             "addEnquiryModal"
         );
 
-    if (!modal) return;
+    if (!modal) {
+        return;
+    }
 
-    modal.hidden = true;
+    modal.hidden =
+        true;
 
-    document.body.style.overflow = "";
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    document.body.style.overflow =
+        "";
 }
 
 
 /* =========================================================
    CREATE ENQUIRY
-   ========================================================= */
+========================================================= */
 
-async function submitAddEnquiry(event) {
+async function submitAddEnquiry(
+    event
+) {
 
     if (event) {
         event.preventDefault();
     }
 
-    const client = getSupabaseClient();
+    const client =
+        getSupabaseClient();
 
-    if (!client) return;
+    if (!client) {
+        return;
+    }
 
     const form =
         event?.target ||
         document.querySelector(
-            "#addEnquiryModal form"
+            "#addEnquiryForm"
         );
 
     if (!form) {
+
         showToast(
             "Enquiry form not found.",
             "error"
         );
+
         return;
     }
 
@@ -1670,32 +2487,89 @@ async function submitAddEnquiry(event) {
 
     const data = {};
 
-    for (const [key, value] of formData.entries()) {
+    for (
+        const [
+            key,
+            value
+        ]
+        of formData.entries()
+    ) {
+
         data[key] =
-            typeof value === "string"
+            typeof value ===
+                "string"
                 ? value.trim()
                 : value;
     }
 
-    /*
-      Set sensible CRM defaults.
-      Existing customer data is untouched.
-    */
+    if (!data.customer_name) {
+
+        showToast(
+            "Customer name is required.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (!data.phone) {
+
+        showToast(
+            "Phone number is required.",
+            "error"
+        );
+
+        return;
+    }
 
     if (!data.status) {
-        data.status = "new";
+        data.status =
+            "New";
     }
 
     if (!data.priority) {
-        data.priority = "normal";
+        data.priority =
+            "Medium";
+    }
+
+    if (
+        data.guests !==
+        undefined &&
+        data.guests !== ""
+    ) {
+        data.guests =
+            Number(
+                data.guests
+            );
+    }
+
+    if (
+        data.event_date === ""
+    ) {
+        data.event_date =
+            null;
+    }
+
+    if (
+        data.follow_up_at === ""
+    ) {
+        data.follow_up_at =
+            null;
     }
 
     try {
 
-        const { data: created, error } =
+        const {
+            data: created,
+            error
+        } =
             await client
-                .from("customer_enquiries")
-                .insert([data])
+                .from(
+                    "customer_enquiries"
+                )
+                .insert([
+                    data
+                ])
                 .select()
                 .single();
 
@@ -1712,12 +2586,14 @@ async function submitAddEnquiry(event) {
                 );
 
             if (message) {
+
                 message.textContent =
                     error.message ||
                     "Unable to create enquiry.";
             }
 
             showToast(
+                error.message ||
                 "Unable to create enquiry.",
                 "error"
             );
@@ -1726,10 +2602,14 @@ async function submitAddEnquiry(event) {
         }
 
         if (created) {
-            allLeads.unshift(created);
+
+            allLeads.unshift(
+                created
+            );
         }
 
         applyFilters();
+
         updateStats();
 
         closeAddEnquiryModal();
@@ -1740,7 +2620,9 @@ async function submitAddEnquiry(event) {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         showToast(
             "Unable to create enquiry.",
@@ -1752,7 +2634,7 @@ async function submitAddEnquiry(event) {
 
 /* =========================================================
    STATS
-   ========================================================= */
+========================================================= */
 
 function updateStats() {
 
@@ -1763,69 +2645,83 @@ function updateStats() {
         allLeads.filter(
             lead =>
                 String(
-                    lead.status || "new"
-                ).toLowerCase() === "new"
+                    lead.status ||
+                    "new"
+                ).toLowerCase() ===
+                "new"
         ).length;
 
-    const followUpCount =
+    const contactedCount =
         allLeads.filter(
             lead =>
                 String(
-                    lead.status || ""
+                    lead.status ||
+                    ""
                 ).toLowerCase() ===
-                "follow-up"
+                "contacted"
         ).length;
 
-    const convertedCount =
+    const closedCount =
         allLeads.filter(
             lead => {
 
                 const status =
                     String(
-                        lead.status || ""
+                        lead.status ||
+                        ""
                     ).toLowerCase();
 
                 return (
-                    status === "converted" ||
-                    status === "closed" ||
-                    status === "booked"
+                    status ===
+                        "closed" ||
+                    status ===
+                        "converted"
                 );
             }
         ).length;
 
-    const stats =
-        document.querySelectorAll(
-            ".stat-card"
+
+    const totalElement =
+        document.getElementById(
+            "totalCount"
         );
 
-    if (!stats.length) return;
+    const newElement =
+        document.getElementById(
+            "newCount"
+        );
 
-    /*
-      We intentionally support the existing
-      four-card dashboard structure.
-    */
+    const contactedElement =
+        document.getElementById(
+            "contactedCount"
+        );
 
-    const values = [
-        total,
-        newCount,
-        followUpCount,
-        convertedCount
-    ];
+    const closedElement =
+        document.getElementById(
+            "closedCount"
+        );
 
-    stats.forEach((card, index) => {
 
-        const strong =
-            card.querySelector("strong");
+    if (totalElement) {
+        totalElement.textContent =
+            total;
+    }
 
-        if (strong && values[index] !== undefined) {
-            strong.textContent =
-                values[index];
-        }
-    });
+    if (newElement) {
+        newElement.textContent =
+            newCount;
+    }
 
-    /*
-      Also support explicit stat IDs if present.
-    */
+    if (contactedElement) {
+        contactedElement.textContent =
+            contactedCount;
+    }
+
+    if (closedElement) {
+        closedElement.textContent =
+            closedCount;
+    }
+
 
     setStatValue(
         [
@@ -1847,32 +2743,40 @@ function updateStats() {
 
     setStatValue(
         [
-            "#followUpLeads",
-            "#followUpEnquiries",
-            "[data-stat='follow-up']"
+            "#contactedLeads",
+            "#contactedEnquiries",
+            "[data-stat='contacted']"
         ],
-        followUpCount
+        contactedCount
     );
 
     setStatValue(
         [
-            "#convertedLeads",
-            "#convertedEnquiries",
-            "[data-stat='converted']"
+            "#closedLeads",
+            "#closedEnquiries",
+            "[data-stat='closed']"
         ],
-        convertedCount
+        closedCount
     );
 }
 
 
-function setStatValue(selectors, value) {
+function setStatValue(
+    selectors,
+    value
+) {
 
-    for (const selector of selectors) {
+    for (
+        const selector of selectors
+    ) {
 
         const element =
-            document.querySelector(selector);
+            document.querySelector(
+                selector
+            );
 
         if (element) {
+
             element.textContent =
                 value;
 
@@ -1883,8 +2787,8 @@ function setStatValue(selectors, value) {
 
 
 /* =========================================================
-   FILTER BUTTON / STAT CARD CLICK
-   ========================================================= */
+   STAT CARD FILTERS
+========================================================= */
 
 function setupStatFilters() {
 
@@ -1893,107 +2797,133 @@ function setupStatFilters() {
             ".stat-card"
         );
 
-    cards.forEach((card, index) => {
+    cards.forEach(
+        card => {
 
-        card.addEventListener(
-            "click",
-            () => {
+            card.addEventListener(
+                "click",
+                () => {
 
-                cards.forEach(
-                    item =>
-                        item.classList.remove(
-                            "active"
-                        )
-                );
-
-                card.classList.add(
-                    "active"
-                );
-
-                if (index === 0) {
-                    currentStatusFilter =
-                        "all";
-                }
-
-                else if (index === 1) {
-                    currentStatusFilter =
-                        "new";
-                }
-
-                else if (index === 2) {
-                    currentStatusFilter =
-                        "follow-up";
-                }
-
-                else if (index === 3) {
-                    currentStatusFilter =
-                        "converted";
-                }
-
-                const statusSelect =
-                    document.querySelector(
-                        "#statusFilter"
-                    ) ||
-                    document.querySelector(
-                        ".filter-bar select:nth-child(2)"
+                    cards.forEach(
+                        item =>
+                            item.classList.remove(
+                                "active"
+                            )
                     );
 
-                if (statusSelect) {
-                    statusSelect.value =
-                        currentStatusFilter;
-                }
+                    card.classList.add(
+                        "active"
+                    );
 
-                applyFilters();
-            }
-        );
-    });
+                    const status =
+                        card.dataset
+                            .statusFilter;
+
+                    currentStatusFilter =
+                        status
+                            ? status.toLowerCase()
+                            : "all";
+
+                    const statusSelect =
+                        document.getElementById(
+                            "statusFilter"
+                        );
+
+                    if (
+                        statusSelect
+                    ) {
+
+                        statusSelect.value =
+                            status ===
+                                "all"
+                                ? "all"
+                                : status;
+                    }
+
+                    applyFilters();
+                }
+            );
+        }
+    );
 }
 
 
 /* =========================================================
-   FORMATTERS
-   ========================================================= */
+   FORMAT STATUS
+========================================================= */
 
-function formatStatus(status) {
+function formatStatus(
+    status
+) {
 
-    if (!status) return "New";
+    if (!status) {
+        return "New";
+    }
 
     const value =
         String(status)
-            .replace(/[-_]/g, " ")
+            .replace(
+                /[-_]/g,
+                " "
+            )
             .trim();
 
-    return value
-        .replace(/\b\w/g, char =>
+    return value.replace(
+        /\b\w/g,
+        char =>
             char.toUpperCase()
-        );
+    );
 }
 
 
-function formatPriority(priority) {
+/* =========================================================
+   FORMAT PRIORITY
+========================================================= */
 
-    if (!priority) return "Normal";
+function formatPriority(
+    priority
+) {
+
+    if (!priority) {
+        return "Medium";
+    }
 
     const value =
         String(priority)
-            .replace(/[-_]/g, " ")
+            .replace(
+                /[-_]/g,
+                " "
+            )
             .trim();
 
-    return value
-        .replace(/\b\w/g, char =>
+    return value.replace(
+        /\b\w/g,
+        char =>
             char.toUpperCase()
-        );
+    );
 }
 
 
-function formatDate(value) {
+/* =========================================================
+   FORMAT DATE
+========================================================= */
 
-    if (!value) return "—";
+function formatDate(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
 
     const date =
         new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
         return String(value);
     }
 
@@ -2008,14 +2938,26 @@ function formatDate(value) {
 }
 
 
-function formatDateTime(value) {
+/* =========================================================
+   FORMAT DATE/TIME
+========================================================= */
 
-    if (!value) return "—";
+function formatDateTime(
+    value
+) {
+
+    if (!value) {
+        return "—";
+    }
 
     const date =
         new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
         return String(value);
     }
 
@@ -2033,70 +2975,197 @@ function formatDateTime(value) {
 
 
 /* =========================================================
-   DROPDOWN OPTIONS
-   ========================================================= */
+   DATE INPUT NORMALIZATION
+========================================================= */
+
+function normalizeDateInput(
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+    const stringValue =
+        String(value);
+
+    if (
+        /^\d{4}-\d{2}-\d{2}$/.test(
+            stringValue
+        )
+    ) {
+        return stringValue;
+    }
+
+    const date =
+        new Date(
+            stringValue
+        );
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    return [
+        date.getFullYear(),
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0"),
+        String(
+            date.getDate()
+        ).padStart(2, "0")
+    ].join("-");
+}
+
+
+/* =========================================================
+   DATETIME INPUT NORMALIZATION
+========================================================= */
+
+function normalizeDateTimeInput(
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+    const stringValue =
+        String(value);
+
+    if (
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(
+            stringValue
+        )
+    ) {
+        return stringValue;
+    }
+
+    const date =
+        new Date(
+            stringValue
+        );
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const hours =
+        String(
+            date.getHours()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const minutes =
+        String(
+            date.getMinutes()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+
+/* =========================================================
+   STATUS OPTIONS
+========================================================= */
 
 function getStatusOptions() {
 
     return [
         {
-            value: "new",
+            value: "New",
             label: "New"
         },
         {
-            value: "contacted",
+            value: "Contacted",
             label: "Contacted"
         },
         {
-            value: "follow-up",
+            value: "Follow-up",
             label: "Follow-up"
         },
         {
-            value: "qualified",
+            value: "Qualified",
             label: "Qualified"
         },
         {
-            value: "converted",
+            value: "Converted",
             label: "Converted"
         },
         {
-            value: "closed",
+            value: "Closed",
             label: "Closed"
         },
         {
-            value: "lost",
+            value: "Lost",
             label: "Lost"
         }
     ];
 }
 
 
+/* =========================================================
+   PRIORITY OPTIONS
+========================================================= */
+
 function getPriorityOptions() {
 
     return [
         {
-            value: "low",
+            value: "Low",
             label: "Low"
         },
         {
-            value: "normal",
-            label: "Normal"
-        },
-        {
-            value: "medium",
+            value: "Medium",
             label: "Medium"
         },
         {
-            value: "high",
+            value: "High",
             label: "High"
         },
         {
-            value: "urgent",
+            value: "Urgent",
             label: "Urgent"
         }
     ];
 }
 
+
+/* =========================================================
+   EVENT OPTIONS
+========================================================= */
 
 function getEventOptions() {
 
@@ -2139,26 +3208,22 @@ function getEventOptions() {
 
 /* =========================================================
    SEARCH
-   ========================================================= */
+========================================================= */
 
 function setupSearch() {
 
     const searchInput =
-        document.querySelector(
-            "#searchInput"
-        ) ||
-        document.querySelector(
-            ".search-box input"
-        ) ||
-        document.querySelector(
-            "input[type='search']"
+        document.getElementById(
+            "searchInput"
         );
 
-    if (!searchInput) return;
+    if (!searchInput) {
+        return;
+    }
 
     searchInput.addEventListener(
         "input",
-        (event) => {
+        event => {
 
             currentSearch =
                 event.target.value;
@@ -2171,73 +3236,84 @@ function setupSearch() {
 
 /* =========================================================
    FILTER DROPDOWNS
-   ========================================================= */
+========================================================= */
 
 function setupFilters() {
 
-    const selects =
-        document.querySelectorAll(
-            ".filter-bar select"
+    const statusFilter =
+        document.getElementById(
+            "statusFilter"
         );
 
-    selects.forEach(
-        (select, index) => {
+    const priorityFilter =
+        document.getElementById(
+            "priorityFilter"
+        );
 
-            select.addEventListener(
-                "change",
-                () => {
+    if (statusFilter) {
 
-                    const value =
-                        select.value;
+        statusFilter.addEventListener(
+            "change",
+            () => {
 
-                    /*
-                      First select = status
-                      Second select = priority
-                    */
+                currentStatusFilter =
+                    statusFilter.value ||
+                    "all";
 
-                    if (
-                        select.id ===
-                        "statusFilter" ||
-                        index === 0
-                    ) {
-                        currentStatusFilter =
-                            value || "all";
-                    }
+                document
+                    .querySelectorAll(
+                        ".stat-card"
+                    )
+                    .forEach(
+                        card =>
+                            card.classList.remove(
+                                "active"
+                            )
+                    );
 
-                    else {
-                        currentPriorityFilter =
-                            value || "all";
-                    }
+                applyFilters();
+            }
+        );
+    }
 
-                    applyFilters();
-                }
-            );
-        }
-    );
+    if (priorityFilter) {
+
+        priorityFilter.addEventListener(
+            "change",
+            () => {
+
+                currentPriorityFilter =
+                    priorityFilter.value ||
+                    "all";
+
+                applyFilters();
+            }
+        );
+    }
 }
 
 
 /* =========================================================
    REFRESH BUTTON
-   ========================================================= */
+========================================================= */
 
 function setupRefreshButton() {
 
     const button =
-        document.querySelector(
-            "#refreshBtn"
-        ) ||
-        document.querySelector(
-            ".refresh-btn"
+        document.getElementById(
+            "refreshBtn"
         );
 
-    if (!button) return;
+    if (!button) {
+        return;
+    }
 
     button.addEventListener(
         "click",
         async () => {
 
-            button.disabled = true;
+            button.disabled =
+                true;
 
             const original =
                 button.textContent;
@@ -2247,10 +3323,12 @@ function setupRefreshButton() {
 
             await loadEnquiries();
 
-            button.disabled = false;
+            button.disabled =
+                false;
 
             button.textContent =
-                original || "Refresh";
+                original ||
+                "↻ Refresh";
         }
     );
 }
@@ -2258,19 +3336,18 @@ function setupRefreshButton() {
 
 /* =========================================================
    ADD ENQUIRY BUTTON
-   ========================================================= */
+========================================================= */
 
 function setupAddButton() {
 
     const button =
-        document.querySelector(
-            "#addEnquiryBtn"
-        ) ||
-        document.querySelector(
-            ".add-enquiry-btn"
+        document.getElementById(
+            "addEnquiryBtn"
         );
 
-    if (!button) return;
+    if (!button) {
+        return;
+    }
 
     button.addEventListener(
         "click",
@@ -2281,13 +3358,13 @@ function setupAddButton() {
 
 /* =========================================================
    GLOBAL CLICK HANDLER
-   ========================================================= */
+========================================================= */
 
 function setupGlobalClicks() {
 
     document.addEventListener(
         "click",
-        (event) => {
+        event => {
 
             /*
               INLINE EDIT
@@ -2304,6 +3381,7 @@ function setupGlobalClicks() {
                     "editing"
                 )
             ) {
+
                 startInlineEdit(
                     inlineField
                 );
@@ -2326,7 +3404,9 @@ function setupGlobalClicks() {
                 const id =
                     viewButton.dataset.id;
 
-                openLeadModal(id);
+                openLeadModal(
+                    id
+                );
 
                 return;
             }
@@ -2347,6 +3427,7 @@ function setupGlobalClicks() {
                     "#leadModal"
                 )
             ) {
+
                 closeLeadModal();
 
                 return;
@@ -2354,7 +3435,7 @@ function setupGlobalClicks() {
 
 
             /*
-              CLOSE ADD ENQUIRY
+              CLOSE ADD MODAL
             */
 
             const cancelButton =
@@ -2368,6 +3449,7 @@ function setupGlobalClicks() {
                     "#addEnquiryModal"
                 )
             ) {
+
                 closeAddEnquiryModal();
 
                 return;
@@ -2375,12 +3457,12 @@ function setupGlobalClicks() {
 
 
             /*
-              SAVE MODAL
+              SAVE LEAD MODAL
             */
 
             const saveButton =
                 event.target.closest(
-                    ".save-btn"
+                    "#saveLeadBtn"
                 );
 
             if (
@@ -2399,7 +3481,7 @@ function setupGlobalClicks() {
 
 
     /*
-      Backdrop click
+      Lead modal backdrop
     */
 
     const leadModal =
@@ -2408,12 +3490,17 @@ function setupGlobalClicks() {
         );
 
     if (leadModal) {
+
         leadModal.addEventListener(
             "click",
             handleModalBackdropClick
         );
     }
 
+
+    /*
+      Add enquiry backdrop
+    */
 
     const addModal =
         document.getElementById(
@@ -2424,7 +3511,7 @@ function setupGlobalClicks() {
 
         addModal.addEventListener(
             "click",
-            (event) => {
+            event => {
 
                 if (
                     event.target ===
@@ -2439,40 +3526,44 @@ function setupGlobalClicks() {
 
 
 /* =========================================================
-   KEYBOARD SHORTCUTS
-   ========================================================= */
+   KEYBOARD
+========================================================= */
 
 function setupKeyboard() {
 
     document.addEventListener(
         "keydown",
-        (event) => {
+        event => {
 
-            if (event.key === "Escape") {
+            if (
+                event.key !==
+                "Escape"
+            ) {
+                return;
+            }
 
-                const leadModal =
-                    document.getElementById(
-                        "leadModal"
-                    );
+            const leadModal =
+                document.getElementById(
+                    "leadModal"
+                );
 
-                const addModal =
-                    document.getElementById(
-                        "addEnquiryModal"
-                    );
+            const addModal =
+                document.getElementById(
+                    "addEnquiryModal"
+                );
 
-                if (
-                    leadModal &&
-                    !leadModal.hidden
-                ) {
-                    closeLeadModal();
-                }
+            if (
+                leadModal &&
+                !leadModal.hidden
+            ) {
+                closeLeadModal();
+            }
 
-                if (
-                    addModal &&
-                    !addModal.hidden
-                ) {
-                    closeAddEnquiryModal();
-                }
+            if (
+                addModal &&
+                !addModal.hidden
+            ) {
+                closeAddEnquiryModal();
             }
         }
     );
@@ -2481,29 +3572,36 @@ function setupKeyboard() {
 
 /* =========================================================
    AUTH STATE LISTENER
-   ========================================================= */
+========================================================= */
 
 function setupAuthListener() {
 
     const client =
         getSupabaseClient();
 
-    if (!client) return;
+    if (!client) {
+        return;
+    }
 
     client.auth.onAuthStateChange(
-        (event, session) => {
+        (
+            event,
+            session
+        ) => {
 
             if (
-                event === "SIGNED_OUT"
+                event ===
+                "SIGNED_OUT"
             ) {
+
                 window.location.href =
                     "login.html";
+
+                return;
             }
 
-            if (
-                session &&
-                event === "SIGNED_IN"
-            ) {
+            if (session) {
+
                 updateStaffName(
                     session.user
                 );
@@ -2514,17 +3612,19 @@ function setupAuthListener() {
 
 
 /* =========================================================
-   ADD ENQUIRY FORM LISTENER
-   ========================================================= */
+   ADD ENQUIRY FORM
+========================================================= */
 
 function setupAddForm() {
 
     const form =
-        document.querySelector(
-            "#addEnquiryModal form"
+        document.getElementById(
+            "addEnquiryForm"
         );
 
-    if (!form) return;
+    if (!form) {
+        return;
+    }
 
     form.addEventListener(
         "submit",
@@ -2535,30 +3635,29 @@ function setupAddForm() {
 
 /* =========================================================
    LOGOUT LISTENER
-   ========================================================= */
+========================================================= */
 
 function setupLogout() {
 
-    const buttons =
-        document.querySelectorAll(
-            ".logout-btn"
+    const button =
+        document.getElementById(
+            "logoutBtn"
         );
 
-    buttons.forEach(
-        button => {
+    if (!button) {
+        return;
+    }
 
-            button.addEventListener(
-                "click",
-                logoutCRM
-            );
-        }
+    button.addEventListener(
+        "click",
+        logoutCRM
     );
 }
 
 
 /* =========================================================
    INITIALIZE CRM
-   ========================================================= */
+========================================================= */
 
 async function initializeCRM() {
 
@@ -2566,10 +3665,29 @@ async function initializeCRM() {
         "Select My Venue CRM initializing..."
     );
 
+    /*
+      Wait until Supabase CDN script
+      is available.
+    */
+
+    if (
+        !window.supabase
+    ) {
+
+        setTimeout(
+            initializeCRM,
+            150
+        );
+
+        return;
+    }
+
     const session =
         await checkCRMAuth();
 
-    if (!session) return;
+    if (!session) {
+        return;
+    }
 
     setupSearch();
 
@@ -2601,37 +3719,46 @@ async function initializeCRM() {
 
 /* =========================================================
    DOM READY
-   ========================================================= */
+========================================================= */
 
 if (
     document.readyState ===
     "loading"
 ) {
+
     document.addEventListener(
         "DOMContentLoaded",
         initializeCRM
     );
+
 } else {
+
     initializeCRM();
 }
 
 
 /* =========================================================
-   GLOBAL FUNCTIONS
-   =========================================================
-   These are intentionally exposed so dashboard.html
-   inline buttons can also use them if necessary.
-   ========================================================= */
+   GLOBAL API
+========================================================= */
 
 window.crm = {
+
     loadEnquiries,
+
     openLeadModal,
+
     closeLeadModal,
+
     openAddEnquiryModal,
+
     closeAddEnquiryModal,
+
     saveModalChanges,
+
     logoutCRM,
+
     startInlineEdit
+
 };
 
 window.loadEnquiries =
