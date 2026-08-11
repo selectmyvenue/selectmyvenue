@@ -1,8 +1,7 @@
 /* =========================================================
    SELECT MY VENUE — CRM
-   PREMIUM CLEAN CRM UI
-   COMPLETE REPLACEMENT CSS
-========================================================= */
+   PREMIUM CRM STYLES
+   ========================================================= */
 
 * {
   box-sizing: border-box;
@@ -11,33 +10,17 @@
 }
 
 html {
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Arial,
-    sans-serif;
-
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Arial, sans-serif;
   color: #172033;
   background: #f6f7fb;
 }
 
 body {
   min-height: 100vh;
-
   background:
-    radial-gradient(
-      circle at 10% 0%,
-      rgba(104, 114, 216, 0.07),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 90% 15%,
-      rgba(14, 165, 233, 0.05),
-      transparent 25%
-    ),
+    radial-gradient(circle at 10% 0%, rgba(104, 114, 216, 0.07), transparent 28%),
+    radial-gradient(circle at 90% 15%, rgba(14, 165, 233, 0.05), transparent 25%),
     #f6f7fb;
 }
 
@@ -52,39 +35,24 @@ button {
   cursor: pointer;
 }
 
-button,
-a {
-  -webkit-tap-highlight-color: transparent;
-}
-
 a {
   text-decoration: none;
 }
 
 /* =========================================================
-   LOGIN PAGE
-========================================================= */
+   LOGIN
+   ========================================================= */
 
 .crm-auth-page {
   min-height: 100vh;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 30px 20px;
 
   background:
-    radial-gradient(
-      circle at 10% 10%,
-      rgba(104, 114, 216, 0.16),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 90% 90%,
-      rgba(14, 165, 233, 0.10),
-      transparent 30%
-    ),
+    radial-gradient(circle at 10% 10%, rgba(104, 114, 216, 0.16), transparent 32%),
+    radial-gradient(circle at 90% 90%, rgba(14, 165, 233, 0.10), transparent 30%),
     #f6f7fb;
 }
 
@@ -95,17 +63,13 @@ a {
 
 .auth-card {
   background: rgba(255, 255, 255, 0.97);
-
   border: 1px solid #e1e5ed;
-  border-radius: 25px;
-
+  border-radius: 26px;
   padding: 42px;
 
   box-shadow:
     0 30px 80px rgba(24, 32, 52, 0.10),
     0 4px 16px rgba(24, 32, 52, 0.04);
-
-  backdrop-filter: blur(20px);
 }
 
 .crm-logo {
@@ -114,9 +78,8 @@ a {
 
 .crm-logo img {
   width: 185px;
-  max-width: 80%;
+  max-width: 78%;
   height: auto;
-
   display: block;
   object-fit: contain;
 }
@@ -127,7 +90,6 @@ a {
   gap: 8px;
 
   padding: 7px 12px;
-
   border-radius: 999px;
 
   background: #f0f2ff;
@@ -143,32 +105,22 @@ a {
 .auth-badge span {
   width: 7px;
   height: 7px;
-
   border-radius: 50%;
-
   background: #6670dc;
-
-  box-shadow:
-    0 0 0 4px rgba(102, 112, 220, 0.10);
 }
 
 .auth-card h1 {
   font-size: 38px;
   line-height: 1.08;
-
   letter-spacing: -1.5px;
-
   color: #151b2b;
-
   margin-bottom: 11px;
 }
 
 .auth-subtitle {
   color: #747e91;
-
   font-size: 14px;
   line-height: 1.65;
-
   margin-bottom: 30px;
 }
 
@@ -186,7 +138,6 @@ a {
 
 .field label {
   color: #30394c;
-
   font-size: 12px;
   font-weight: 750;
 }
@@ -201,22 +152,13 @@ a {
   padding: 0 15px;
 
   outline: none;
-
   background: #fff;
   color: #172033;
-
-  transition: 0.2s ease;
-}
-
-.field input::placeholder {
-  color: #a5adbb;
 }
 
 .field input:focus {
   border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 4px rgba(104, 114, 216, 0.10);
+  box-shadow: 0 0 0 4px rgba(104, 114, 216, 0.10);
 }
 
 .primary-btn {
@@ -226,13 +168,7 @@ a {
   border: 0;
   border-radius: 12px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #252d43,
-      #171e31
-    );
-
+  background: linear-gradient(135deg, #252d43, #171e31);
   color: #fff;
 
   font-size: 14px;
@@ -242,64 +178,42 @@ a {
   align-items: center;
   justify-content: center;
 
-  gap: 10px;
-
   transition: 0.2s ease;
-
-  box-shadow:
-    0 8px 20px rgba(25, 32, 50, 0.14);
 }
 
 .primary-btn:hover {
   transform: translateY(-1px);
-
-  box-shadow:
-    0 12px 26px rgba(25, 32, 50, 0.18);
-}
-
-.primary-btn:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-  transform: none;
 }
 
 .form-message {
   min-height: 20px;
-
   color: #d14343;
-
   font-size: 13px;
-  line-height: 1.5;
 }
 
 .auth-footer {
   margin-top: 28px;
-
   text-align: center;
-
   color: #9aa2b1;
-
   font-size: 12px;
 }
 
 /* =========================================================
    CRM DASHBOARD
-========================================================= */
+   ========================================================= */
 
 .crm-dashboard {
   min-height: 100vh;
-  background: transparent;
 }
 
 /* =========================================================
-   CRM HEADER
-========================================================= */
+   HEADER
+   ========================================================= */
 
 .crm-header {
   position: sticky;
   top: 0;
-
-  z-index: 20;
+  z-index: 100;
 
   min-height: 88px;
 
@@ -307,140 +221,126 @@ a {
   align-items: center;
   justify-content: space-between;
 
-  gap: 25px;
+  gap: 20px;
 
-  padding: 10px 34px;
+  padding: 10px 30px;
 
   background: rgba(255, 255, 255, 0.96);
 
-  border-bottom:
-    1px solid rgba(225, 229, 238, 0.9);
+  border-bottom: 1px solid #e1e5ed;
 
   backdrop-filter: blur(18px);
 }
 
-/* =========================================================
+/* ---------------------------------------------------------
    BRAND
-========================================================= */
+   --------------------------------------------------------- */
 
 .crm-brand {
   display: flex;
   align-items: center;
-
   gap: 18px;
 
   min-width: 0;
 }
 
 /*
-   BIGGER LOGO
-   Previous ~43px
-   New ~170px
+   IMPORTANT:
+   LOGO FORCEFULLY LARGE
 */
 
-.crm-brand img {
-  width: 170px;
-  height: 58px;
+.crm-header .crm-brand img {
+  width: 180px !important;
+  height: 62px !important;
 
-  max-width: none;
+  max-width: none !important;
 
   object-fit: contain;
-  object-position: left center;
 
   display: block;
 
   flex-shrink: 0;
 }
 
-/* =========================================================
+/* ---------------------------------------------------------
    CRM TITLE
-
-   HTML currently contains:
-
-   <strong>CRM</strong>
-   <span>Lead Management</span>
-
-   We hide "CRM" and create:
-   Select My Venue • CRM
-========================================================= */
+   --------------------------------------------------------- */
 
 .crm-title {
   display: flex;
   flex-direction: column;
 
-  gap: 5px;
+  justify-content: center;
+
+  gap: 4px;
 
   min-width: 0;
 }
 
-/* Hide original CRM text */
+/*
+   Existing HTML contains:
+
+   <strong>CRM</strong>
+
+   We add Select My Venue through CSS so HTML
+   does not need to be changed.
+*/
+
 .crm-title strong {
-  display: block;
+  color: #6872d8 !important;
 
-  font-size: 0;
-
-  line-height: 1;
-}
-
-/* Create premium colored title */
-.crm-title strong::before {
-  content: "Select My Venue • CRM";
-
-  display: block;
-
-  font-size: 20px;
+  font-size: 20px !important;
   line-height: 1.05;
 
   font-weight: 850;
 
-  letter-spacing: -0.45px;
-
-  background:
-    linear-gradient(
-      90deg,
-      #00a99d 0%,
-      #6872d8 48%,
-      #7657d9 100%
-    );
-
-  -webkit-background-clip: text;
-  background-clip: text;
-
-  -webkit-text-fill-color: transparent;
-
-  color: #6872d8;
+  letter-spacing: -0.4px;
 
   white-space: nowrap;
 }
 
-/* Lead Management */
+/*
+   Creates:
+
+   Select My Venue • CRM
+*/
+
+.crm-title strong::before {
+  content: "Select My Venue • ";
+
+  color: #10a7a2 !important;
+
+  font-weight: 850;
+}
+
+/*
+   Lead Management
+*/
+
 .crm-title span {
-  display: block;
+  display: block !important;
 
-  color: #7f899d;
+  color: #6872d8 !important;
 
-  font-size: 11px;
+  font-size: 12px !important;
 
-  line-height: 1;
+  font-weight: 750 !important;
 
-  font-weight: 700;
+  letter-spacing: 0.5px;
 
-  letter-spacing: 0.45px;
+  line-height: 1.1;
 
   white-space: nowrap;
 }
 
-/* =========================================================
+/* ---------------------------------------------------------
    HEADER ACTIONS
-========================================================= */
+   --------------------------------------------------------- */
 
 .header-actions {
   display: flex;
   align-items: center;
-
   gap: 12px;
-
-  flex-shrink: 0;
 }
 
 .staff-name {
@@ -451,7 +351,6 @@ a {
   white-space: nowrap;
 
   color: #5e687b;
-
   font-size: 12px;
   font-weight: 650;
 }
@@ -474,89 +373,66 @@ a {
 
 .logout-btn:hover {
   background: #f5f6f9;
-  border-color: #d4d9e3;
 }
 
 /* =========================================================
    MAIN
-========================================================= */
+   ========================================================= */
 
 .crm-main,
 .crm-container {
-  width: min(
-    1460px,
-    calc(100% - 56px)
-  );
+  width: min(1460px, calc(100% - 56px));
 
   margin: 0 auto;
 
-  padding: 30px 0 55px;
+  padding: 32px 0 55px;
 }
 
 /* =========================================================
    PAGE HEADING
-========================================================= */
+   ========================================================= */
+
+/*
+   Remove duplicate:
+
+   SELECT MY VENUE • CRM
+
+   from above Customer Enquiries
+*/
+
+.page-heading .eyebrow {
+  display: none !important;
+}
 
 .page-heading {
   display: flex;
 
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
 
-  gap: 25px;
+  gap: 20px;
 
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
-
-/*
-   REMOVE THE DUPLICATE:
-   SELECT MY VENUE • CRM
-
-   This is the eyebrow above Customer Enquiries.
-*/
-
-.page-heading .eyebrow {
-  display: none;
-}
-
-.eyebrow {
-  color: #6872d8;
-
-  font-size: 10px;
-  font-weight: 850;
-
-  letter-spacing: 1.7px;
-
-  margin-bottom: 8px;
-}
-
-/* =========================================================
-   CUSTOMER ENQUIRIES — SMALLER
-========================================================= */
 
 .page-heading h1 {
   color: #171d2d;
 
   /*
-     Previously around 45px.
-     Now around 28px.
+     CUSTOMER ENQUIRIES MADE MUCH SMALLER
   */
 
-  font-size: clamp(
-    25px,
-    2.5vw,
-    30px
-  );
+  font-size: 32px !important;
 
   line-height: 1.08;
 
-  letter-spacing: -0.8px;
+  letter-spacing: -1px;
 
   margin-bottom: 8px;
 }
 
 .page-heading h1 span {
-  color: #6872d8;
+  color: #6872d8 !important;
 }
 
 .page-heading p:not(.eyebrow) {
@@ -570,8 +446,8 @@ a {
 }
 
 /* =========================================================
-   ADD + REFRESH BUTTONS
-========================================================= */
+   PAGE BUTTONS
+   ========================================================= */
 
 .add-enquiry-btn,
 .refresh-btn {
@@ -586,66 +462,49 @@ a {
   font-size: 12px;
   font-weight: 750;
 
-  transition: all 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .add-enquiry-btn {
   border: 0;
 
-  background:
-    linear-gradient(
-      135deg,
-      #6872d8,
-      #515bc7
-    );
+  background: linear-gradient(
+    135deg,
+    #6872d8,
+    #515bc7
+  );
 
   color: #fff;
 
   box-shadow:
-    0 8px 20px rgba(
-      104,
-      114,
-      216,
-      0.20
-    );
+    0 8px 20px rgba(104, 114, 216, 0.20);
 }
 
 .add-enquiry-btn:hover {
   transform: translateY(-1px);
-
-  box-shadow:
-    0 12px 25px rgba(
-      104,
-      114,
-      216,
-      0.27
-    );
 }
 
 .refresh-btn {
   border: 1px solid #dfe4ed;
 
   background: #fff;
+
   color: #343d51;
 }
 
 .refresh-btn:hover {
   background: #f7f8fb;
-  border-color: #d4dae4;
 }
 
 /* =========================================================
-   STAT CARDS
-========================================================= */
+   STATS
+   ========================================================= */
 
 .stats-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      4,
-      minmax(0, 1fr)
-    );
+    repeat(4, minmax(0, 1fr));
 
   gap: 15px;
 
@@ -655,32 +514,27 @@ a {
 .stat-card {
   position: relative;
 
-  min-height: 112px;
+  min-height: 110px;
 
   display: flex;
   align-items: center;
 
   gap: 14px;
 
-  padding: 19px;
+  padding: 20px;
 
-  background:
-    rgba(255, 255, 255, 0.97);
+  background: #fff;
 
-  border:
-    1px solid #e5e9f0;
+  border: 1px solid #e5e9f0;
 
   border-radius: 16px;
 
   box-shadow:
-    0 9px 30px rgba(
-      25,
-      34,
-      52,
-      0.035
-    );
+    0 9px 30px rgba(25, 34, 52, 0.035);
 
   overflow: hidden;
+
+  text-align: left;
 }
 
 .stat-card::after {
@@ -696,18 +550,12 @@ a {
 
   border-radius: 50%;
 
-  background:
-    rgba(
-      104,
-      114,
-      216,
-      0.035
-    );
+  background: rgba(104, 114, 216, 0.035);
 }
 
 .stat-icon {
-  width: 43px;
-  height: 43px;
+  width: 44px;
+  height: 44px;
 
   flex-shrink: 0;
 
@@ -720,7 +568,7 @@ a {
 
   color: #626bd5;
 
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 850;
 }
 
@@ -730,6 +578,7 @@ a {
   color: #8b94a5;
 
   font-size: 9px;
+
   font-weight: 850;
 
   letter-spacing: 1.1px;
@@ -745,13 +594,9 @@ a {
   font-size: 27px;
 
   line-height: 1;
-
-  letter-spacing: -0.7px;
 }
 
-/* =========================================================
-   CLICKABLE STAT TABS
-========================================================= */
+/* clickable tabs */
 
 .stat-tab {
   width: 100%;
@@ -760,45 +605,24 @@ a {
 
   font: inherit;
 
-  text-align: left;
-
   cursor: pointer;
 
-  transition: all 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .stat-tab:hover {
   transform: translateY(-2px);
 
-  border-color: #cfd4f5;
-
   box-shadow:
-    0 10px 30px rgba(
-      25,
-      34,
-      52,
-      0.08
-    );
+    0 10px 30px rgba(25, 34, 52, 0.08);
 }
 
 .stat-tab.active {
   border-color: #6872d8;
 
   box-shadow:
-    0 0 0 3px
-      rgba(
-        104,
-        114,
-        216,
-        0.10
-      ),
-    0 10px 30px
-      rgba(
-        25,
-        34,
-        52,
-        0.06
-      );
+    0 0 0 3px rgba(104, 114, 216, 0.10),
+    0 10px 30px rgba(25, 34, 52, 0.06);
 }
 
 .stat-tab.active .stat-icon {
@@ -808,31 +632,24 @@ a {
 
 /* =========================================================
    LEADS SECTION
-========================================================= */
+   ========================================================= */
 
 .leads-section {
-  background:
-    rgba(255, 255, 255, 0.97);
+  background: #fff;
 
-  border:
-    1px solid #e5e9f0;
+  border: 1px solid #e5e9f0;
 
   border-radius: 18px;
 
   overflow: hidden;
 
   box-shadow:
-    0 10px 32px rgba(
-      25,
-      34,
-      52,
-      0.04
-    );
+    0 10px 32px rgba(25, 34, 52, 0.04);
 }
 
 /* =========================================================
    FILTER BAR
-========================================================= */
+   ========================================================= */
 
 .filter-bar {
   display: grid;
@@ -846,8 +663,7 @@ a {
 
   padding: 17px;
 
-  border-bottom:
-    1px solid #edf0f4;
+  border-bottom: 1px solid #edf0f4;
 
   background: #fbfcfe;
 }
@@ -860,29 +676,13 @@ a {
 
   gap: 10px;
 
-  border:
-    1px solid #dfe4ed;
+  border: 1px solid #dfe4ed;
 
   background: #fff;
 
   border-radius: 10px;
 
   padding: 0 13px;
-
-  transition: 0.2s ease;
-}
-
-.search-box:focus-within {
-  border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 3px
-      rgba(
-        104,
-        114,
-        216,
-        0.08
-      );
 }
 
 .search-box span {
@@ -898,6 +698,7 @@ a {
   outline: 0;
 
   background: transparent;
+
   color: #20283a;
 
   font-size: 13px;
@@ -907,23 +708,22 @@ a {
 .crm-controls select,
 .crm-controls input {
   width: 100%;
+
   height: 43px;
 
-  border:
-    1px solid #dfe4ed;
+  border: 1px solid #dfe4ed;
 
   border-radius: 10px;
 
   padding: 0 12px;
 
   background: #fff;
+
   color: #354056;
 
   outline: none;
 
   font-size: 13px;
-
-  transition: 0.2s ease;
 }
 
 .filter-bar select:focus,
@@ -932,18 +732,12 @@ a {
   border-color: #6872d8;
 
   box-shadow:
-    0 0 0 3px
-      rgba(
-        104,
-        114,
-        216,
-        0.08
-      );
+    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 /* =========================================================
    TABLE
-========================================================= */
+   ========================================================= */
 
 .table-wrapper {
   width: 100%;
@@ -960,18 +754,18 @@ a {
 }
 
 .leads-table th {
-  padding: 13px 15px;
+  padding: 14px 16px;
 
   text-align: left;
 
   background: #fafbfc;
 
-  border-bottom:
-    1px solid #e8ebf0;
+  border-bottom: 1px solid #e8ebf0;
 
   color: #8a93a4;
 
   font-size: 9px;
+
   font-weight: 850;
 
   letter-spacing: 0.9px;
@@ -980,21 +774,15 @@ a {
 }
 
 .leads-table td {
-  padding: 15px;
+  padding: 15px 16px;
 
-  border-bottom:
-    1px solid #edf0f4;
+  border-bottom: 1px solid #edf0f4;
 
   color: #465066;
 
   font-size: 13px;
 
   vertical-align: middle;
-}
-
-.leads-table tbody tr {
-  transition:
-    background 0.15s ease;
 }
 
 .leads-table tbody tr:hover {
@@ -1007,6 +795,7 @@ a {
   color: #20283a;
 
   font-size: 13px;
+
   font-weight: 750;
 }
 
@@ -1033,8 +822,7 @@ a {
 
   padding: 0 11px;
 
-  border:
-    1px solid #dfe4ed;
+  border: 1px solid #dfe4ed;
 
   border-radius: 8px;
 
@@ -1043,20 +831,13 @@ a {
   color: #5560c5;
 
   font-size: 11px;
+
   font-weight: 750;
-
-  transition: 0.2s ease;
-}
-
-.view-lead-btn:hover {
-  background: #f0f2ff;
-
-  border-color: #cfd4f7;
 }
 
 /* =========================================================
    STATUS / PRIORITY
-========================================================= */
+   ========================================================= */
 
 .status-badge,
 .priority-badge {
@@ -1071,6 +852,7 @@ a {
   border-radius: 999px;
 
   font-size: 10px;
+
   font-weight: 800;
 
   white-space: nowrap;
@@ -1087,8 +869,8 @@ a {
 }
 
 /* =========================================================
-   EMPTY STATE
-========================================================= */
+   EMPTY
+   ========================================================= */
 
 .empty-state {
   padding: 60px 20px;
@@ -1129,10 +911,11 @@ a {
 }
 
 /* =========================================================
-   MODALS
-========================================================= */
+   MODAL
+   ========================================================= */
 
-.lead-modal {
+.lead-modal,
+#addEnquiryModal {
   position: fixed;
 
   inset: 0;
@@ -1141,25 +924,21 @@ a {
 
   display: flex;
 
-  align-items: center;
+  align-items: flex-start;
+
   justify-content: center;
 
-  padding: 25px;
+  padding: 25px 20px;
 
-  background:
-    rgba(
-      14,
-      20,
-      33,
-      0.58
-    );
+  background: rgba(14, 20, 33, 0.58);
 
   backdrop-filter: blur(7px);
 
   overflow-y: auto;
 }
 
-.lead-modal[hidden] {
+.lead-modal[hidden],
+#addEnquiryModal[hidden] {
   display: none;
 }
 
@@ -1168,27 +947,19 @@ a {
 .lead-modal > .detail-block,
 .lead-modal > .crm-controls,
 .lead-modal > .modal-actions {
-  width: min(
-    1000px,
-    100%
-  );
-}
-
-.lead-modal > .modal-header {
-  background: #fff;
-
-  border-radius:
-    20px 20px 0 0;
+  width: min(1000px, 100%);
 }
 
 .modal-header {
   display: flex;
 
   align-items: flex-start;
+
   justify-content: space-between;
 
-  padding:
-    25px 27px 18px;
+  padding: 25px 27px 18px;
+
+  background: #fff;
 }
 
 .modal-header h2 {
@@ -1197,16 +968,13 @@ a {
   font-size: 25px;
 
   letter-spacing: -0.5px;
-
-  margin-top: 2px;
 }
 
 .close-modal {
   width: 36px;
   height: 36px;
 
-  border:
-    1px solid #e1e5ec;
+  border: 1px solid #e1e5ec;
 
   border-radius: 10px;
 
@@ -1215,34 +983,21 @@ a {
   color: #687285;
 
   font-size: 23px;
-
-  line-height: 1;
-
-  transition: 0.2s ease;
-}
-
-.close-modal:hover {
-  background: #f5f6f9;
-  color: #20283a;
 }
 
 /* =========================================================
    LEAD INFO
-========================================================= */
+   ========================================================= */
 
 .lead-info-grid {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      4,
-      1fr
-    );
+    repeat(4, 1fr);
 
   gap: 12px;
 
-  padding:
-    0 27px 18px;
+  padding: 0 27px 18px;
 
   background: #fff;
 }
@@ -1252,8 +1007,7 @@ a {
 
   padding: 14px;
 
-  border:
-    1px solid #e7eaf0;
+  border: 1px solid #e7eaf0;
 
   border-radius: 12px;
 
@@ -1266,6 +1020,7 @@ a {
   color: #929aaa;
 
   font-size: 9px;
+
   font-weight: 850;
 
   letter-spacing: 0.8px;
@@ -1289,6 +1044,7 @@ a {
   display: inline-flex;
 
   margin-top: 9px;
+
   margin-right: 5px;
 
   padding: 5px 8px;
@@ -1300,21 +1056,22 @@ a {
   color: #5662c8;
 
   font-size: 10px;
+
   font-weight: 750;
 }
 
 .whatsapp-action {
   background: #edf8f4;
+
   color: #27835e;
 }
 
 /* =========================================================
-   DETAIL BLOCKS
-========================================================= */
+   DETAIL BLOCK
+   ========================================================= */
 
 .detail-block {
-  padding:
-    0 27px 18px;
+  padding: 0 27px 18px;
 
   background: #fff;
 }
@@ -1326,6 +1083,7 @@ a {
   color: #737d8f;
 
   font-size: 10px;
+
   font-weight: 850;
 
   letter-spacing: 0.8px;
@@ -1338,8 +1096,7 @@ a {
 
   padding: 13px;
 
-  border:
-    1px solid #e7eaf0;
+  border: 1px solid #e7eaf0;
 
   border-radius: 10px;
 
@@ -1356,27 +1113,19 @@ a {
 
 /* =========================================================
    CRM CONTROLS
-========================================================= */
+   ========================================================= */
 
 .crm-controls {
   display: grid;
 
   grid-template-columns:
-    repeat(
-      3,
-      1fr
-    );
+    repeat(3, 1fr);
 
   gap: 12px;
 
-  padding:
-    4px 27px 18px;
+  padding: 4px 27px 18px;
 
   background: #fff;
-}
-
-.control-group {
-  min-width: 0;
 }
 
 .detail-block textarea {
@@ -1386,8 +1135,7 @@ a {
 
   min-height: 110px;
 
-  border:
-    1px solid #dfe4ed;
+  border: 1px solid #dfe4ed;
 
   border-radius: 10px;
 
@@ -1398,26 +1146,11 @@ a {
   color: #354056;
 
   background: #fff;
-
-  transition: 0.2s ease;
-}
-
-.detail-block textarea:focus {
-  border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 3px
-      rgba(
-        104,
-        114,
-        216,
-        0.08
-      );
 }
 
 /* =========================================================
    MODAL ACTIONS
-========================================================= */
+   ========================================================= */
 
 .modal-actions {
   display: flex;
@@ -1426,13 +1159,11 @@ a {
 
   gap: 10px;
 
-  padding:
-    18px 27px 25px;
+  padding: 18px 27px 25px;
 
   background: #fff;
 
-  border-radius:
-    0 0 20px 20px;
+  border-radius: 0 0 20px 20px;
 }
 
 .save-btn,
@@ -1444,96 +1175,44 @@ a {
   border-radius: 9px;
 
   font-size: 13px;
-  font-weight: 750;
 
-  transition: 0.2s ease;
+  font-weight: 750;
 }
 
 .save-btn {
   border: 0;
 
-  background:
-    linear-gradient(
-      135deg,
-      #252d43,
-      #171e31
-    );
+  background: linear-gradient(
+    135deg,
+    #252d43,
+    #171e31
+  );
 
   color: #fff;
 }
 
-.save-btn:hover {
-  transform: translateY(-1px);
-}
-
 .cancel-btn {
-  border:
-    1px solid #dfe4ed;
+  border: 1px solid #dfe4ed;
 
   background: #fff;
 
   color: #4b556a;
 }
 
-.cancel-btn:hover {
-  background: #f7f8fa;
-}
-
 /* =========================================================
-   ADD ENQUIRY MODAL
-========================================================= */
+   ADD ENQUIRY
+   ========================================================= */
 
 #addEnquiryModal {
-  position: fixed;
-
-  inset: 0;
-
   z-index: 110;
-
-  display: flex;
-
-  align-items: flex-start;
-  justify-content: center;
-
-  padding:
-    30px 20px;
-
-  background:
-    rgba(
-      14,
-      20,
-      33,
-      0.58
-    );
-
-  backdrop-filter: blur(7px);
-
-  overflow-y: auto;
-
-  min-height: 100vh;
-}
-
-#addEnquiryModal[hidden] {
-  display: none;
 }
 
 #addEnquiryModal > * {
-  width: min(
-    1000px,
-    100%
-  );
+  width: min(1000px, 100%);
 }
 
 #addEnquiryModal .modal-header {
-  background: #fff;
-
-  border-radius:
-    18px 18px 0 0;
-}
-
-#addEnquiryModal .add-enquiry-form,
-#addEnquiryModal .modal-body {
-  background: #fff;
+  border-radius: 18px 18px 0 0;
 }
 
 #addEnquiryModal .form-section-title,
@@ -1545,17 +1224,14 @@ a {
 }
 
 #addEnquiryModal .form-section-title {
-  width: min(
-    1000px,
-    100%
-  );
+  width: min(1000px, 100%);
 
-  padding:
-    17px 27px 10px;
+  padding: 17px 27px 10px;
 
   color: #6872d8;
 
   font-size: 10px;
+
   font-weight: 850;
 
   letter-spacing: 1.1px;
@@ -1564,95 +1240,65 @@ a {
 }
 
 #addEnquiryModal .form-grid {
-  width: min(
-    1000px,
-    100%
-  );
+  width: min(1000px, 100%);
 
   display: grid;
 
   grid-template-columns:
-    repeat(
-      2,
-      minmax(0, 1fr)
-    );
+    repeat(2, minmax(0, 1fr));
 
   gap: 14px;
 
-  padding:
-    0 27px 16px;
+  padding: 0 27px 16px;
 }
 
 #addEnquiryModal > .control-group {
-  width: min(
-    1000px,
-    100%
-  );
+  width: min(1000px, 100%);
 
-  padding:
-    0 27px 16px;
+  padding: 0 27px 16px;
 }
 
 #addEnquiryModal .control-group input,
-#addEnquiryModal .control-group select,
-#addEnquiryModal .control-group textarea {
+#addEnquiryModal .control-group select {
   width: 100%;
 
-  border:
-    1px solid #dfe4ed;
+  height: 44px;
+
+  border: 1px solid #dfe4ed;
 
   border-radius: 10px;
+
+  padding: 0 12px;
 
   outline: none;
 
   background: #fff;
 
   color: #354056;
-
-  transition: 0.2s ease;
-}
-
-#addEnquiryModal .control-group input,
-#addEnquiryModal .control-group select {
-  height: 44px;
-
-  padding:
-    0 12px;
 }
 
 #addEnquiryModal .control-group textarea {
+  width: 100%;
+
   min-height: 100px;
 
   padding: 12px;
 
   resize: vertical;
-}
 
-#addEnquiryModal .control-group input:focus,
-#addEnquiryModal .control-group select:focus,
-#addEnquiryModal .control-group textarea:focus {
-  border-color: #6872d8;
+  border: 1px solid #dfe4ed;
 
-  box-shadow:
-    0 0 0 3px
-      rgba(
-        104,
-        114,
-        216,
-        0.08
-      );
+  border-radius: 10px;
+
+  outline: none;
 }
 
 #addEnquiryModal .form-message {
-  width: min(
-    1000px,
-    100%
-  );
+  width: min(1000px, 100%);
 
   min-height: 20px;
 
-  padding:
-    0 27px 5px;
+  padding: 0 27px 5px;
 
   color: #d14343;
 
@@ -1660,15 +1306,12 @@ a {
 }
 
 #addEnquiryModal .modal-actions {
-  width: min(
-    1000px,
-    100%
-  );
+  width: min(1000px, 100%);
 }
 
 /* =========================================================
    TOAST
-========================================================= */
+   ========================================================= */
 
 #toastMessage {
   position: fixed;
@@ -1680,8 +1323,7 @@ a {
 
   max-width: 360px;
 
-  padding:
-    13px 17px;
+  padding: 13px 17px;
 
   border-radius: 11px;
 
@@ -1690,96 +1332,62 @@ a {
   color: #fff;
 
   box-shadow:
-    0 12px 35px
-      rgba(
-        18,
-        25,
-        40,
-        0.20
-      );
+    0 12px 35px rgba(18, 25, 40, 0.20);
 
   font-size: 13px;
+
   font-weight: 650;
-
-  opacity: 0;
-
-  transform:
-    translateY(12px);
-
-  pointer-events: none;
-
-  transition: 0.25s ease;
-}
-
-#toastMessage.show {
-  opacity: 1;
-
-  transform:
-    translateY(0);
 }
 
 /* =========================================================
-   RESPONSIVE — TABLET
-========================================================= */
+   RESPONSIVE
+   ========================================================= */
 
 @media (max-width: 1100px) {
 
   .stats-grid {
-    grid-template-columns:
-      repeat(
-        2,
-        1fr
-      );
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .lead-info-grid {
-    grid-template-columns:
-      repeat(
-        2,
-        1fr
-      );
+    grid-template-columns: repeat(2, 1fr);
   }
 
+  .crm-header .crm-brand img {
+    width: 155px !important;
+    height: 55px !important;
+  }
 }
-
-/* =========================================================
-   RESPONSIVE — 800px
-========================================================= */
 
 @media (max-width: 800px) {
 
   .crm-header {
     min-height: 76px;
+    padding: 8px 16px;
+  }
 
-    padding:
-      9px 18px;
-
-    gap: 12px;
+  .crm-header .crm-brand img {
+    width: 135px !important;
+    height: 50px !important;
   }
 
   .crm-brand {
     gap: 12px;
   }
 
-  .crm-brand img {
-    width: 130px;
-    height: 48px;
-  }
-
-  .crm-title strong::before {
-    font-size: 17px;
+  .crm-title strong {
+    font-size: 16px !important;
   }
 
   .crm-title span {
-    font-size: 10px;
+    font-size: 10px !important;
   }
 
   .crm-main,
   .crm-container {
-    width:
-      calc(100% - 28px);
+    width: calc(100% - 28px);
 
-    padding-top: 26px;
+    padding-top: 25px;
   }
 
   .page-heading {
@@ -1789,7 +1397,7 @@ a {
   }
 
   .page-heading h1 {
-    font-size: 27px;
+    font-size: 29px !important;
   }
 
   .filter-bar {
@@ -1803,98 +1411,46 @@ a {
   #addEnquiryModal .form-grid {
     grid-template-columns: 1fr;
   }
-
-  .lead-modal {
-    padding: 10px;
-
-    align-items: flex-start;
-  }
-
 }
-
-/* =========================================================
-   RESPONSIVE — MOBILE
-========================================================= */
 
 @media (max-width: 560px) {
 
-  .auth-card {
-    padding:
-      30px 22px;
-
-    border-radius: 21px;
-  }
-
-  .auth-card h1 {
-    font-size: 32px;
-  }
-
-  .crm-logo img {
-    width: 160px;
-  }
-
-  /* Header */
-
   .crm-header {
-    min-height: 70px;
+    padding: 8px 12px;
+  }
 
-    padding:
-      8px 12px;
+  .crm-header .crm-brand img {
+    width: 115px !important;
+    height: 45px !important;
   }
 
   .crm-brand {
-    gap: 8px;
+    gap: 9px;
   }
 
-  .crm-brand img {
-    width: 105px;
-    height: 40px;
-  }
-
-  .crm-title strong::before {
-    font-size: 14px;
-
-    letter-spacing: -0.2px;
+  .crm-title strong {
+    font-size: 14px !important;
   }
 
   .crm-title span {
-    font-size: 9px;
+    font-size: 9px !important;
   }
 
   .staff-name {
     display: none;
   }
 
-  .logout-btn {
-    padding:
-      8px 10px;
-
-    font-size: 11px;
-  }
-
-  /* Main */
-
   .crm-main,
   .crm-container {
-    width:
-      calc(100% - 20px);
+    width: calc(100% - 20px);
   }
 
   .page-heading h1 {
-    font-size: 24px;
-
-    letter-spacing: -0.5px;
+    font-size: 27px !important;
   }
-
-  .page-heading p:not(.eyebrow) {
-    font-size: 12px;
-  }
-
-  /* Stats */
 
   .stats-grid {
-    grid-template-columns:
-      1fr 1fr;
+    grid-template-columns: 1fr 1fr;
 
     gap: 10px;
   }
@@ -1903,8 +1459,6 @@ a {
     min-height: 100px;
 
     padding: 14px;
-
-    gap: 9px;
   }
 
   .stat-icon {
@@ -1915,8 +1469,6 @@ a {
   .stat-card strong {
     font-size: 22px;
   }
-
-  /* Lead modal */
 
   .lead-info-grid {
     grid-template-columns: 1fr;
@@ -1946,12 +1498,6 @@ a {
     width: 100%;
   }
 
-  /* Add enquiry */
-
-  #addEnquiryModal {
-    padding: 12px;
-  }
-
   #addEnquiryModal .form-grid,
   #addEnquiryModal .form-section-title,
   #addEnquiryModal > .control-group,
@@ -1968,5 +1514,4 @@ a {
   .add-enquiry-btn {
     width: 100%;
   }
-
 }
