@@ -10,6 +10,7 @@ const supabaseClient =
     SUPABASE_ANON_KEY
   );
 
+
 // =====================================================
 // GLOBAL CRM STATE
 // =====================================================
@@ -18,30 +19,29 @@ let currentEnquiries = [];
 let currentLead = null;
 let activeLeadTab = "";
 
+
 // =====================================================
 // PAGE READY
 // =====================================================
 
-document.addEventListener(
-  "DOMContentLoaded",
-  async () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    const loginForm =
-      document.getElementById("loginForm");
+  const loginForm =
+    document.getElementById("loginForm");
 
-    if (loginForm) {
-      setupLogin();
-      return;
-    }
-
-    const logoutBtn =
-      document.getElementById("logoutBtn");
-
-    if (logoutBtn) {
-      await setupCRM();
-    }
+  if (loginForm) {
+    setupLogin();
+    return;
   }
-);
+
+  const logoutBtn =
+    document.getElementById("logoutBtn");
+
+  if (logoutBtn) {
+    await setupCRM();
+  }
+});
+
 
 // =====================================================
 // LOGIN
@@ -55,36 +55,63 @@ function setupLogin() {
   const loginMessage =
     document.getElementById("loginMessage");
 
-  if (!loginForm) {
-    return;
-  }
+  if (!loginForm) return;
 
-  loginForm.addEventListener(
-    "submit",
-    async (event) => {
+  loginForm.addEventListener("submit", async (event) => {
 
-      event.preventDefault();
-      event.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
 
-      const email =
-        document
-          .getElementById("email")
-          ?.value
-          .trim();
+    const email =
+      document.getElementById("email")?.value.trim();
 
-      const password =
-        document
-          .getElementById("password")
-          ?.value;
+    const password =
+      document.getElementById("password")?.value;
 
-      if (!email || !password) {
+    if (!email || !password) {
+
+      if (loginMessage) {
+        loginMessage.textContent =
+          "Please enter email and password.";
+        loginMessage.style.display = "block";
+      }
+
+      return;
+    }
+
+    if (loginMessage) {
+      loginMessage.textContent = "Signing in...";
+      loginMessage.style.display = "block";
+    }
+
+    try {
+
+      const { data, error } =
+        await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if (error) {
+
+        console.error(
+          "SUPABASE LOGIN ERROR:",
+          error
+        );
 
         if (loginMessage) {
           loginMessage.textContent =
-            "Please enter email and password.";
+            "Login failed: " + error.message;
+        }
 
-          loginMessage.style.display =
-            "block";
+        return;
+      }
+
+      if (!data || !data.session) {
+
+        if (loginMessage) {
+          loginMessage.textContent =
+            "Login failed. No session created.";
         }
 
         return;
@@ -92,77 +119,23 @@ function setupLogin() {
 
       if (loginMessage) {
         loginMessage.textContent =
-          "Signing in...";
-
-        loginMessage.style.display =
-          "block";
+          "Login successful. Opening CRM...";
       }
 
-      try {
+      window.location.href = "dashboard.html";
 
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth
-            .signInWithPassword({
-              email,
-              password
-            });
+    } catch (error) {
 
-        if (error) {
+      console.error("LOGIN ERROR:", error);
 
-          console.error(
-            "SUPABASE LOGIN ERROR:",
-            error
-          );
-
-          if (loginMessage) {
-            loginMessage.textContent =
-              "Login failed: " +
-              error.message;
-          }
-
-          return;
-        }
-
-        if (
-          !data ||
-          !data.session
-        ) {
-
-          if (loginMessage) {
-            loginMessage.textContent =
-              "Login failed. No session created.";
-          }
-
-          return;
-        }
-
-        if (loginMessage) {
-          loginMessage.textContent =
-            "Login successful. Opening CRM...";
-        }
-
-        window.location.href =
-          "dashboard.html";
-
-      } catch (error) {
-
-        console.error(
-          "LOGIN ERROR:",
-          error
-        );
-
-        if (loginMessage) {
-          loginMessage.textContent =
-            "Login error: " +
-            error.message;
-        }
+      if (loginMessage) {
+        loginMessage.textContent =
+          "Login error: " + error.message;
       }
     }
-  );
+  });
 }
+
 
 // =====================================================
 // CRM SETUP
@@ -173,18 +146,13 @@ async function setupCRM() {
   try {
 
     const {
-      data: {
-        session
-      }
+      data: { session }
     } =
-      await supabaseClient.auth
-        .getSession();
+      await supabaseClient.auth.getSession();
 
     if (!session) {
 
-      window.location.href =
-        "login.html";
-
+      window.location.href = "login.html";
       return;
     }
 
@@ -196,9 +164,9 @@ async function setupCRM() {
     setupAddEnquiry();
     setupLeadTabs();
 
-    showStaffName(
-      session.user
-    );
+    showStaffName(session.user);
+
+    injectLeadDetailsStyles();
 
     await loadEnquiries();
 
@@ -213,6 +181,7 @@ async function setupCRM() {
   }
 }
 
+
 // =====================================================
 // STAFF NAME
 // =====================================================
@@ -220,30 +189,25 @@ async function setupCRM() {
 function showStaffName(user) {
 
   const staffName =
-    document.getElementById(
-      "staffName"
-    );
+    document.getElementById("staffName");
 
-  if (!staffName) {
-    return;
-  }
+  if (!staffName) return;
 
   staffName.textContent =
     user?.email || "Staff";
 }
 
+
 function showStaffNameError() {
 
   const staffName =
-    document.getElementById(
-      "staffName"
-    );
+    document.getElementById("staffName");
 
   if (staffName) {
-    staffName.textContent =
-      "Staff";
+    staffName.textContent = "Staff";
   }
 }
+
 
 // =====================================================
 // LOGOUT
@@ -252,66 +216,48 @@ function showStaffNameError() {
 function setupLogout() {
 
   const logoutBtn =
-    document.getElementById(
-      "logoutBtn"
-    );
+    document.getElementById("logoutBtn");
 
-  if (!logoutBtn) {
-    return;
-  }
+  if (!logoutBtn) return;
 
-  logoutBtn.addEventListener(
-    "click",
-    async () => {
+  logoutBtn.addEventListener("click", async () => {
 
-      logoutBtn.disabled = true;
+    logoutBtn.disabled = true;
+    logoutBtn.textContent = "Logging out...";
 
-      logoutBtn.textContent =
-        "Logging out...";
+    try {
 
-      try {
+      const { error } =
+        await supabaseClient.auth.signOut();
 
-        const {
-          error
-        } =
-          await supabaseClient.auth
-            .signOut();
-
-        if (error) {
-
-          console.error(
-            "LOGOUT ERROR:",
-            error
-          );
-
-          logoutBtn.disabled =
-            false;
-
-          logoutBtn.textContent =
-            "Logout";
-
-          return;
-        }
-
-        window.location.href =
-          "login.html";
-
-      } catch (error) {
+      if (error) {
 
         console.error(
           "LOGOUT ERROR:",
           error
         );
 
-        logoutBtn.disabled =
-          false;
+        logoutBtn.disabled = false;
+        logoutBtn.textContent = "Logout";
 
-        logoutBtn.textContent =
-          "Logout";
+        return;
       }
+
+      window.location.href = "login.html";
+
+    } catch (error) {
+
+      console.error(
+        "LOGOUT ERROR:",
+        error
+      );
+
+      logoutBtn.disabled = false;
+      logoutBtn.textContent = "Logout";
     }
-  );
+  });
 }
+
 
 // =====================================================
 // LOAD ENQUIRIES
@@ -320,9 +266,7 @@ function setupLogout() {
 async function loadEnquiries() {
 
   const tableBody =
-    document.getElementById(
-      "leadsTableBody"
-    );
+    document.getElementById("leadsTableBody");
 
   if (tableBody) {
 
@@ -375,13 +319,9 @@ async function loadEnquiries() {
     }
 
     currentEnquiries =
-      Array.isArray(data)
-        ? data
-        : [];
+      Array.isArray(data) ? data : [];
 
-    updateStats(
-      currentEnquiries
-    );
+    updateStats(currentEnquiries);
 
     applyFilters();
 
@@ -405,13 +345,12 @@ async function loadEnquiries() {
   }
 }
 
+
 // =====================================================
 // RENDER ENQUIRIES
 // =====================================================
 
-function renderEnquiries(
-  enquiries
-) {
+function renderEnquiries(enquiries) {
 
   const tableBody =
     document.getElementById(
@@ -423,9 +362,7 @@ function renderEnquiries(
       "emptyState"
     );
 
-  if (!tableBody) {
-    return;
-  }
+  if (!tableBody) return;
 
   if (!enquiries.length) {
 
@@ -444,150 +381,151 @@ function renderEnquiries(
 
   tableBody.innerHTML =
     enquiries
-      .map(
-        (lead) => {
+      .map((lead) => {
 
-          return `
-            <tr>
+        return `
+          <tr>
 
-              <td>
-                <strong class="customer-name">
-                  ${escapeHTML(
-                    lead.customer_name ||
-                    "Unnamed"
-                  )}
-                </strong>
+            <td>
 
-                <small style="
-                  display:block;
-                  margin-top:4px;
-                  color:#8b94a5;
-                ">
-                  ${escapeHTML(
-                    lead.mobile || ""
-                  )}
-                </small>
-              </td>
-
-              <td>
+              <strong class="customer-name">
                 ${escapeHTML(
-                  lead.occasion || "—"
+                  lead.customer_name ||
+                  "Unnamed"
                 )}
-              </td>
+              </strong>
 
-              <td>
+              <small style="
+                display:block;
+                margin-top:4px;
+                color:#8b94a5;
+              ">
                 ${escapeHTML(
-                  lead.location || "—"
+                  lead.mobile ||
+                  lead.mobile_number ||
+                  ""
                 )}
-              </td>
+              </small>
 
-              <td>
-                ${formatDate(
-                  lead.event_date
+            </td>
+
+            <td>
+              ${escapeHTML(
+                lead.occasion ||
+                "—"
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                lead.location ||
+                "—"
+              )}
+            </td>
+
+            <td>
+              ${formatDate(
+                lead.event_date
+              )}
+            </td>
+
+            <td>
+              ${lead.guests || "—"}
+            </td>
+
+            <td>
+              ${
+                lead.budget_per_person
+                  ? "₹" +
+                    Number(
+                      lead.budget_per_person
+                    ).toLocaleString("en-IN")
+                  : "—"
+              }
+            </td>
+
+            <td>
+
+              <span class="
+                status-badge
+                ${getStatusClass(
+                  lead.status ||
+                  lead.lead_status
                 )}
-              </td>
+              ">
+                ${formatStatus(
+                  lead.status ||
+                  lead.lead_status
+                )}
+              </span>
 
-              <td>
-                ${lead.guests || "—"}
-              </td>
+            </td>
 
-              <td>
-                ${
-                  lead.budget_per_person
-                    ? "₹" +
-                      Number(
-                        lead.budget_per_person
-                      ).toLocaleString(
-                        "en-IN"
-                      )
-                    : "—"
-                }
-              </td>
+            <td>
 
-              <td>
-                <span class="
-                  status-badge
-                  ${getStatusClass(
-                    lead.status
-                  )}
-                ">
-                  ${formatStatus(
-                    lead.status
-                  )}
-                </span>
-              </td>
+              <span class="
+                priority-badge
+                priority-${escapeHTML(
+                  lead.priority ||
+                  "normal"
+                )}
+              ">
+                ${formatPriority(
+                  lead.priority
+                )}
+              </span>
 
-              <td>
-                <span class="
-                  priority-badge
-                  priority-${escapeHTML(
-                    lead.priority ||
-                    "normal"
-                  )}
-                ">
-                  ${formatPriority(
-                    lead.priority
-                  )}
-                </span>
-              </td>
+            </td>
 
-              <td>
+            <td>
 
-                <button
-                  type="button"
-                  class="view-lead-btn"
-                  data-lead-id="${lead.id}"
-                >
-                  View
-                </button>
+              <button
+                type="button"
+                class="view-lead-btn"
+                data-lead-id="${lead.id}"
+              >
+                View
+              </button>
 
-              </td>
+            </td>
 
-            </tr>
-          `;
-        }
-      )
+          </tr>
+        `;
+      })
       .join("");
 
   document
-    .querySelectorAll(
-      ".view-lead-btn"
-    )
-    .forEach(
-      (button) => {
+    .querySelectorAll(".view-lead-btn")
+    .forEach((button) => {
 
-        button.addEventListener(
-          "click",
-          () => {
+      button.addEventListener(
+        "click",
+        () => {
 
-            const leadId =
-              button.dataset.leadId;
+          const leadId =
+            button.dataset.leadId;
 
-            const lead =
-              currentEnquiries.find(
-                (item) =>
-                  String(item.id) ===
-                  String(leadId)
-              );
+          const lead =
+            currentEnquiries.find(
+              (item) =>
+                String(item.id) ===
+                String(leadId)
+            );
 
-            if (lead) {
-              openLeadModal(
-                lead
-              );
-            }
+          if (lead) {
+            openLeadModal(lead);
           }
-        );
-      }
-    );
+        }
+      );
+    });
 }
+
 
 // =====================================================
 // STATS
 // =====================================================
 
-function updateStats(
-  enquiries
-) {
+function updateStats(enquiries) {
 
   const total =
     document.getElementById(
@@ -619,7 +557,9 @@ function updateStats(
     newLeads.textContent =
       enquiries.filter(
         (lead) =>
-          lead.status === "new"
+          (lead.status ||
+            lead.lead_status) ===
+          "new"
       ).length;
   }
 
@@ -628,7 +568,9 @@ function updateStats(
     followup.textContent =
       enquiries.filter(
         (lead) =>
-          lead.status === "follow_up"
+          (lead.status ||
+            lead.lead_status) ===
+          "follow_up"
       ).length;
   }
 
@@ -637,10 +579,13 @@ function updateStats(
     converted.textContent =
       enquiries.filter(
         (lead) =>
-          lead.status === "converted"
+          (lead.status ||
+            lead.lead_status) ===
+          "converted"
       ).length;
   }
 }
+
 
 // =====================================================
 // SEARCH
@@ -653,9 +598,7 @@ function setupSearch() {
       "searchInput"
     );
 
-  if (!searchInput) {
-    return;
-  }
+  if (!searchInput) return;
 
   searchInput.addEventListener(
     "input",
@@ -663,8 +606,9 @@ function setupSearch() {
   );
 }
 
+
 // =====================================================
-// NORMAL FILTERS
+// FILTERS
 // =====================================================
 
 function setupFilters() {
@@ -696,8 +640,9 @@ function setupFilters() {
   }
 }
 
+
 // =====================================================
-// APPLY ALL FILTERS
+// APPLY FILTERS
 // =====================================================
 
 function applyFilters() {
@@ -741,36 +686,39 @@ function applyFilters() {
 
           lead.customer_name,
           lead.mobile,
+          lead.mobile_number,
           lead.email,
           lead.location,
           lead.occasion,
-          lead.source
+          lead.source,
+          lead.requirements,
+          lead.other_requirements
 
         ]
           .filter(Boolean)
           .join(" ")
           .toLowerCase();
 
+        const status =
+          lead.status ||
+          lead.lead_status ||
+          "";
+
         const matchesSearch =
           !search ||
-          searchable.includes(
-            search
-          );
+          searchable.includes(search);
 
         const matchesTab =
           !activeLeadTab ||
-          lead.status ===
-            activeLeadTab;
+          status === activeLeadTab;
 
         const matchesStatus =
           !dropdownStatus ||
-          lead.status ===
-            dropdownStatus;
+          status === dropdownStatus;
 
         const matchesPriority =
           !priority ||
-          lead.priority ===
-            priority;
+          lead.priority === priority;
 
         return (
           matchesSearch &&
@@ -781,10 +729,9 @@ function applyFilters() {
       }
     );
 
-  renderEnquiries(
-    filtered
-  );
+  renderEnquiries(filtered);
 }
+
 
 // =====================================================
 // REFRESH
@@ -797,34 +744,28 @@ function setupRefresh() {
       "refreshBtn"
     );
 
-  if (!refreshBtn) {
-    return;
-  }
+  if (!refreshBtn) return;
 
   refreshBtn.addEventListener(
     "click",
     async () => {
 
-      refreshBtn.disabled =
-        true;
-
+      refreshBtn.disabled = true;
       refreshBtn.textContent =
         "Refreshing...";
 
       await loadEnquiries();
 
-      refreshBtn.disabled =
-        false;
-
+      refreshBtn.disabled = false;
       refreshBtn.textContent =
         "↻ Refresh";
     }
   );
 }
 
+
 // =====================================================
-// FOUR LEAD TABS
-// TOTAL | NEW | FOLLOW-UP | CONVERTED
+// LEAD TABS
 // =====================================================
 
 function setupLeadTabs() {
@@ -834,108 +775,83 @@ function setupLeadTabs() {
       ".stat-tab"
     );
 
-  /*
-    If HTML has .stat-tab classes,
-    use them directly.
-  */
-
   if (tabs.length) {
 
-    tabs.forEach(
-      (tab) => {
+    tabs.forEach((tab) => {
 
-        tab.addEventListener(
-          "click",
-          () => {
-
-            activeLeadTab =
-              tab.dataset.status ||
-              "";
-
-            setActiveLeadTab(
-              tab
-            );
-
-            clearDropdownStatus();
-
-            applyFilters();
-          }
-        );
-      }
-    );
-
-    return;
-  }
-
-  /*
-    Compatibility:
-    If current HTML uses .stat-card
-    instead of .stat-tab, automatically
-    make the four cards clickable.
-  */
-
-  const cards =
-    document.querySelectorAll(
-      ".stats-grid .stat-card"
-    );
-
-  if (!cards.length) {
-    return;
-  }
-
-  cards.forEach(
-    (card, index) => {
-
-      let status = "";
-
-      if (index === 0) {
-        status = "";
-      }
-
-      if (index === 1) {
-        status = "new";
-      }
-
-      if (index === 2) {
-        status = "follow_up";
-      }
-
-      if (index === 3) {
-        status = "converted";
-      }
-
-      card.dataset.status =
-        status;
-
-      card.classList.add(
-        "stat-tab"
-      );
-
-      card.style.cursor =
-        "pointer";
-
-      card.addEventListener(
+      tab.addEventListener(
         "click",
         () => {
 
           activeLeadTab =
-            status;
+            tab.dataset.status ||
+            "";
 
-          setActiveLeadTab(
-            card
-          );
+          setActiveLeadTab(tab);
 
           clearDropdownStatus();
 
           applyFilters();
         }
       );
+    });
+
+    return;
+  }
+
+  const cards =
+    document.querySelectorAll(
+      ".stats-grid .stat-card"
+    );
+
+  if (!cards.length) return;
+
+  cards.forEach((card, index) => {
+
+    let status = "";
+
+    if (index === 1) {
+      status = "new";
     }
-  );
+
+    if (index === 2) {
+      status = "follow_up";
+    }
+
+    if (index === 3) {
+      status = "converted";
+    }
+
+    card.dataset.status =
+      status;
+
+    card.classList.add(
+      "stat-tab"
+    );
+
+    card.style.cursor =
+      "pointer";
+
+    card.addEventListener(
+      "click",
+      () => {
+
+        activeLeadTab =
+          status;
+
+        setActiveLeadTab(card);
+
+        clearDropdownStatus();
+
+        applyFilters();
+      }
+    );
+  });
 }
 
+
 // =====================================================
-// ACTIVE TAB STYLE
+// ACTIVE TAB
 // =====================================================
 
 function setActiveLeadTab(
@@ -946,14 +862,12 @@ function setActiveLeadTab(
     .querySelectorAll(
       ".stat-tab"
     )
-    .forEach(
-      (tab) => {
+    .forEach((tab) => {
 
-        tab.classList.remove(
-          "active"
-        );
-      }
-    );
+      tab.classList.remove(
+        "active"
+      );
+    });
 
   if (selectedTab) {
 
@@ -963,9 +877,6 @@ function setActiveLeadTab(
   }
 }
 
-// =====================================================
-// CLEAR STATUS DROPDOWN WHEN TAB USED
-// =====================================================
 
 function clearDropdownStatus() {
 
@@ -979,296 +890,677 @@ function clearDropdownStatus() {
   }
 }
 
+
 // =====================================================
 // LEAD MODAL SETUP
 // =====================================================
 
 function setupLeadModal() {
 
-  const closeBtn =
-    document.getElementById(
-      "closeModalBtn"
-    );
+  document.addEventListener(
+    "keydown",
+    (event) => {
 
-  const cancelBtn =
-    document.getElementById(
-      "cancelModalBtn"
-    );
+      if (
+        event.key === "Escape" &&
+        document.getElementById(
+          "smvLeadDetailsModal"
+        )
+      ) {
+        closeLeadModal();
+      }
+    }
+  );
 
-  const saveBtn =
-    document.getElementById(
-      "saveLeadBtn"
-    );
+  document.addEventListener(
+    "click",
+    (event) => {
 
-  if (closeBtn) {
+      const closeButton =
+        event.target.closest(
+          "[data-smv-close-lead]"
+        );
 
-    closeBtn.addEventListener(
-      "click",
-      closeLeadModal
-    );
-  }
+      if (closeButton) {
+        closeLeadModal();
+      }
 
-  if (cancelBtn) {
+      const saveButton =
+        event.target.closest(
+          "[data-smv-save-lead]"
+        );
 
-    cancelBtn.addEventListener(
-      "click",
-      closeLeadModal
-    );
-  }
+      if (saveButton) {
+        saveLeadChanges();
+      }
 
-  if (saveBtn) {
+      const callButton =
+        event.target.closest(
+          "[data-smv-call]"
+        );
 
-    saveBtn.addEventListener(
-      "click",
-      saveLeadChanges
-    );
-  }
+      if (
+        callButton &&
+        currentLead
+      ) {
 
-  const modal =
-    document.getElementById(
-      "leadModal"
-    );
+        const mobile =
+          currentLead.mobile ||
+          currentLead.mobile_number ||
+          "";
 
-  if (modal) {
+        if (mobile) {
 
-    modal.addEventListener(
-      "click",
-      (event) => {
-
-        if (
-          event.target === modal
-        ) {
-          closeLeadModal();
+          window.location.href =
+            "tel:" + mobile;
         }
       }
-    );
-  }
 
-  const callBtn =
-    document.getElementById(
-      "modalCallBtn"
-    );
+      const whatsappButton =
+        event.target.closest(
+          "[data-smv-whatsapp]"
+        );
 
-  if (callBtn) {
+      if (
+        whatsappButton &&
+        currentLead
+      ) {
 
-    callBtn.addEventListener(
-      "click",
-      (event) => {
+        const mobile =
+          currentLead.mobile ||
+          currentLead.mobile_number ||
+          "";
 
-        if (
-          !currentLead ||
-          !currentLead.mobile
-        ) {
-          event.preventDefault();
+        const cleanMobile =
+          String(mobile)
+            .replace(/\D/g, "");
+
+        const whatsappNumber =
+          cleanMobile.length === 10
+            ? "91" + cleanMobile
+            : cleanMobile;
+
+        if (whatsappNumber) {
+
+          window.open(
+            "https://wa.me/" +
+              whatsappNumber,
+            "_blank"
+          );
         }
       }
-    );
-  }
 
-  const whatsappBtn =
-    document.getElementById(
-      "modalWhatsappBtn"
-    );
+      const overlay =
+        event.target.closest(
+          "#smvLeadDetailsModal"
+        );
 
-  if (whatsappBtn) {
-
-    whatsappBtn.addEventListener(
-      "click",
-      (event) => {
-
-        if (
-          !currentLead ||
-          !currentLead.mobile
-        ) {
-          event.preventDefault();
-        }
+      if (
+        overlay &&
+        event.target === overlay
+      ) {
+        closeLeadModal();
       }
-    );
-  }
+    }
+  );
 }
 
+
 // =====================================================
-// OPEN LEAD MODAL
+// OPEN NEW PROFESSIONAL LEAD MODAL
 // =====================================================
 
-function openLeadModal(
-  lead
-) {
+function openLeadModal(lead) {
 
-  currentLead =
-    lead;
+  currentLead = lead;
 
-  setText(
-    "modalCustomerName",
-    lead.customer_name ||
-      "Customer"
-  );
+  const oldModal =
+    document.getElementById(
+      "smvLeadDetailsModal"
+    );
 
-  setText(
-    "modalMobile",
+  if (oldModal) {
+    oldModal.remove();
+  }
+
+  const mobile =
     lead.mobile ||
-      "—"
-  );
+    lead.mobile_number ||
+    "";
 
-  setText(
-    "modalEmail",
-    lead.email ||
-      "—"
-  );
-
-  setText(
-    "modalLocation",
-    lead.location ||
-      "—"
-  );
-
-  setText(
-    "modalOccasion",
-    lead.occasion ||
-      "—"
-  );
-
-  setText(
-    "modalEventDate",
-    formatDate(
-      lead.event_date
-    )
-  );
-
-  setText(
-    "modalGuests",
-    lead.guests ||
-      "—"
-  );
-
-  setText(
-    "modalBudget",
-    lead.budget_per_person
-      ? "₹" +
-        Number(
-          lead.budget_per_person
-        ).toLocaleString(
-          "en-IN"
-        )
-      : "—"
-  );
-
-  setText(
-    "modalFood",
-    lead.food_preference ||
-      "—"
-  );
-
-  setText(
-    "modalRequirements",
+  const requirements =
     lead.requirements ||
-      "—"
-  );
+    lead.other_requirements ||
+    "No additional requirements provided.";
 
   const status =
-    document.getElementById(
-      "modalStatus"
-    );
-
-  if (status) {
-    status.value =
-      lead.status ||
-      "new";
-  }
-
-  const priority =
-    document.getElementById(
-      "modalPriority"
-    );
-
-  if (priority) {
-    priority.value =
-      lead.priority ||
-      "normal";
-  }
-
-  const followUp =
-    document.getElementById(
-      "modalFollowUp"
-    );
-
-  if (followUp) {
-
-    followUp.value =
-      toDateTimeLocal(
-        lead.follow_up_at
-      );
-  }
-
-  const notes =
-    document.getElementById(
-      "modalNotes"
-    );
-
-  if (notes) {
-
-    notes.value =
-      lead.internal_notes ||
-      "";
-  }
-
-  const callBtn =
-    document.getElementById(
-      "modalCallBtn"
-    );
-
-  if (callBtn) {
-
-    callBtn.href =
-      lead.mobile
-        ? "tel:" +
-          lead.mobile
-        : "#";
-  }
-
-  const whatsappBtn =
-    document.getElementById(
-      "modalWhatsappBtn"
-    );
-
-  if (whatsappBtn) {
-
-    const cleanMobile =
-      String(
-        lead.mobile ||
-          ""
-      ).replace(
-        /\D/g,
-        ""
-      );
-
-    const whatsappNumber =
-      cleanMobile.length === 10
-        ? "91" +
-          cleanMobile
-        : cleanMobile;
-
-    whatsappBtn.href =
-      whatsappNumber
-        ? "https://wa.me/" +
-          whatsappNumber
-        : "#";
-  }
+    lead.status ||
+    lead.lead_status ||
+    "new";
 
   const modal =
-    document.getElementById(
-      "leadModal"
-    );
+    document.createElement("div");
 
-  if (modal) {
+  modal.id =
+    "smvLeadDetailsModal";
 
-    modal.hidden =
-      false;
+  modal.className =
+    "smv-lead-modal-overlay";
 
-    document.body.style.overflow =
-      "hidden";
-  }
+  modal.innerHTML = `
+
+    <div class="smv-lead-modal">
+
+      <!-- HEADER -->
+
+      <div class="smv-lead-modal-header">
+
+        <div class="smv-lead-title-area">
+
+          <div class="smv-lead-avatar">
+            ${escapeHTML(
+              getInitials(
+                lead.customer_name ||
+                "Customer"
+              )
+            )}
+          </div>
+
+          <div>
+
+            <div class="smv-modal-kicker">
+              CUSTOMER ENQUIRY
+            </div>
+
+            <h2>
+              ${escapeHTML(
+                lead.customer_name ||
+                "Unnamed Customer"
+              )}
+            </h2>
+
+            <span class="smv-lead-id">
+              Lead ID: ${escapeHTML(
+                String(
+                  lead.id ||
+                  "—"
+                )
+              )}
+            </span>
+
+          </div>
+
+        </div>
+
+        <button
+          type="button"
+          class="smv-modal-close"
+          data-smv-close-lead
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <!-- QUICK ACTIONS -->
+
+      <div class="smv-lead-actions">
+
+        <button
+          type="button"
+          class="smv-action-call"
+          data-smv-call
+          ${mobile ? "" : "disabled"}
+        >
+          ☎ Call Customer
+        </button>
+
+        <button
+          type="button"
+          class="smv-action-whatsapp"
+          data-smv-whatsapp
+          ${mobile ? "" : "disabled"}
+        >
+          ◉ WhatsApp
+        </button>
+
+      </div>
+
+
+      <!-- BODY -->
+
+      <div class="smv-lead-modal-body">
+
+
+        <!-- CUSTOMER INFORMATION -->
+
+        <section class="smv-detail-section">
+
+          <div class="smv-section-heading">
+
+            <div class="smv-section-icon">
+              👤
+            </div>
+
+            <div>
+
+              <strong>
+                Customer Information
+              </strong>
+
+              <span>
+                Contact details
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="smv-info-grid">
+
+            ${detailCard(
+              "Mobile Number",
+              mobile || "—",
+              "smv-phone"
+            )}
+
+            ${detailCard(
+              "Email Address",
+              lead.email || "—",
+              "smv-email"
+            )}
+
+            ${detailCard(
+              "City / Location",
+              lead.location || "—",
+              "smv-location"
+            )}
+
+            ${detailCard(
+              "Lead Source",
+              lead.source || "Website",
+              "smv-source"
+            )}
+
+          </div>
+
+        </section>
+
+
+        <!-- EVENT INFORMATION -->
+
+        <section class="smv-detail-section">
+
+          <div class="smv-section-heading">
+
+            <div class="smv-section-icon">
+              ✦
+            </div>
+
+            <div>
+
+              <strong>
+                Event Requirements
+              </strong>
+
+              <span>
+                Customer's event details
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="smv-info-grid smv-event-grid">
+
+            ${detailCard(
+              "Event Type",
+              lead.occasion || "—",
+              "smv-event"
+            )}
+
+            ${detailCard(
+              "Event Date",
+              formatDate(
+                lead.event_date
+              ),
+              "smv-date"
+            )}
+
+            ${detailCard(
+              "Number of Guests",
+              lead.guests
+                ? Number(
+                    lead.guests
+                  ).toLocaleString("en-IN")
+                : "—",
+              "smv-guests"
+            )}
+
+            ${detailCard(
+              "Budget / Person",
+              lead.budget_per_person
+                ? "₹" +
+                  Number(
+                    lead.budget_per_person
+                  ).toLocaleString("en-IN")
+                : "—",
+              "smv-budget"
+            )}
+
+            ${detailCard(
+              "Food Preference",
+              lead.food_preference || "—",
+              "smv-food"
+            )}
+
+          </div>
+
+        </section>
+
+
+        <!-- OTHER REQUIREMENTS -->
+
+        <section class="smv-detail-section">
+
+          <div class="smv-section-heading">
+
+            <div class="smv-section-icon">
+              📝
+            </div>
+
+            <div>
+
+              <strong>
+                Other Requirements
+              </strong>
+
+              <span>
+                Additional customer requests
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="smv-requirements-box">
+
+            <div class="smv-requirements-label">
+              CUSTOMER REQUEST
+            </div>
+
+            <div class="smv-requirements-text">
+              ${escapeHTML(
+                requirements
+              ).replace(
+                /\n/g,
+                "<br>"
+              )}
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- CRM MANAGEMENT -->
+
+        <section class="smv-detail-section smv-crm-section">
+
+          <div class="smv-section-heading">
+
+            <div class="smv-section-icon">
+              ⚙
+            </div>
+
+            <div>
+
+              <strong>
+                CRM Management
+              </strong>
+
+              <span>
+                Update lead progress
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <div class="smv-crm-grid">
+
+
+            <div class="smv-control">
+
+              <label>
+                LEAD STATUS
+              </label>
+
+              <select id="smvModalStatus">
+
+                <option
+                  value="new"
+                  ${status === "new" ? "selected" : ""}
+                >
+                  New
+                </option>
+
+                <option
+                  value="contacted"
+                  ${status === "contacted" ? "selected" : ""}
+                >
+                  Contacted
+                </option>
+
+                <option
+                  value="follow_up"
+                  ${status === "follow_up" ? "selected" : ""}
+                >
+                  Follow-up
+                </option>
+
+                <option
+                  value="qualified"
+                  ${status === "qualified" ? "selected" : ""}
+                >
+                  Qualified
+                </option>
+
+                <option
+                  value="converted"
+                  ${status === "converted" ? "selected" : ""}
+                >
+                  Converted
+                </option>
+
+                <option
+                  value="closed"
+                  ${status === "closed" ? "selected" : ""}
+                >
+                  Closed
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="smv-control">
+
+              <label>
+                PRIORITY
+              </label>
+
+              <select id="smvModalPriority">
+
+                <option
+                  value="urgent"
+                  ${lead.priority === "urgent" ? "selected" : ""}
+                >
+                  Urgent
+                </option>
+
+                <option
+                  value="high"
+                  ${lead.priority === "high" ? "selected" : ""}
+                >
+                  High
+                </option>
+
+                <option
+                  value="normal"
+                  ${(!lead.priority ||
+                    lead.priority === "normal")
+                    ? "selected"
+                    : ""}
+                >
+                  Normal
+                </option>
+
+                <option
+                  value="low"
+                  ${lead.priority === "low" ? "selected" : ""}
+                >
+                  Low
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="smv-control">
+
+              <label>
+                FOLLOW-UP DATE & TIME
+              </label>
+
+              <input
+                type="datetime-local"
+                id="smvModalFollowUp"
+                value="${escapeHTML(
+                  toDateTimeLocal(
+                    lead.follow_up_at
+                  )
+                )}"
+              >
+
+            </div>
+
+          </div>
+
+
+          <!-- INTERNAL NOTES -->
+
+          <div class="smv-notes-control">
+
+            <label>
+              INTERNAL NOTES
+            </label>
+
+            <textarea
+              id="smvModalNotes"
+              rows="4"
+              placeholder="Add internal notes about this lead..."
+            >${escapeHTML(
+              lead.internal_notes || ""
+            )}</textarea>
+
+            <small>
+              Notes are visible to CRM staff only.
+            </small>
+
+          </div>
+
+        </section>
+
+
+      </div>
+
+
+      <!-- FOOTER -->
+
+      <div class="smv-lead-modal-footer">
+
+        <div class="smv-footer-hint">
+          Changes are saved to the CRM.
+        </div>
+
+        <div class="smv-footer-buttons">
+
+          <button
+            type="button"
+            class="smv-cancel-btn"
+            data-smv-close-lead
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="smv-save-btn"
+            data-smv-save-lead
+          >
+            ✓ Save Changes
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.body.style.overflow =
+    "hidden";
+
+  requestAnimationFrame(() => {
+
+    modal.classList.add("show");
+  });
 }
+
+
+// =====================================================
+// DETAIL CARD
+// =====================================================
+
+function detailCard(
+  label,
+  value,
+  iconClass
+) {
+
+  return `
+
+    <div class="smv-info-card">
+
+      <div class="smv-info-card-label">
+        ${escapeHTML(label)}
+      </div>
+
+      <div class="
+        smv-info-card-value
+        ${iconClass || ""}
+      ">
+        ${escapeHTML(
+          value
+        )}
+      </div>
+
+    </div>
+
+  `;
+}
+
 
 // =====================================================
 // CLOSE LEAD MODAL
@@ -1278,13 +1570,20 @@ function closeLeadModal() {
 
   const modal =
     document.getElementById(
-      "leadModal"
+      "smvLeadDetailsModal"
     );
 
   if (modal) {
 
-    modal.hidden =
-      true;
+    modal.classList.remove(
+      "show"
+    );
+
+    setTimeout(() => {
+
+      modal.remove();
+
+    }, 180);
   }
 
   document.body.style.overflow =
@@ -1293,6 +1592,7 @@ function closeLeadModal() {
   currentLead =
     null;
 }
+
 
 // =====================================================
 // SAVE LEAD CHANGES
@@ -1313,42 +1613,38 @@ async function saveLeadChanges() {
   }
 
   const saveBtn =
-    document.getElementById(
-      "saveLeadBtn"
+    document.querySelector(
+      "[data-smv-save-lead]"
     );
 
   const status =
     document.getElementById(
-      "modalStatus"
+      "smvModalStatus"
     )?.value ||
     "new";
 
   const priority =
     document.getElementById(
-      "modalPriority"
+      "smvModalPriority"
     )?.value ||
     "normal";
 
   const followUp =
     document.getElementById(
-      "modalFollowUp"
+      "smvModalFollowUp"
     )?.value ||
     "";
 
   const notes =
     document.getElementById(
-      "modalNotes"
-    )?.value
-      .trim() ||
+      "smvModalNotes"
+    )?.value.trim() ||
     "";
 
   if (saveBtn) {
 
-    saveBtn.disabled =
-      true;
-
-    saveBtn.textContent =
-      "Saving...";
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
   }
 
   try {
@@ -1375,34 +1671,12 @@ async function saveLeadChanges() {
         new Date().toISOString()
     };
 
-    console.log(
-      "UPDATING LEAD:",
-      currentLead.id
-    );
-
-    console.log(
-      "UPDATE DATA:",
-      updateData
-    );
-
-    /*
-      IMPORTANT:
-      Do NOT use .single() here.
-      Supabase/PostgREST can return 406
-      when a singular response is expected
-      but the response is empty.
-    */
-
     const {
       error
     } =
       await supabaseClient
-        .from(
-          "customer_enquiries"
-        )
-        .update(
-          updateData
-        )
+        .from("customer_enquiries")
+        .update(updateData)
         .eq(
           "id",
           currentLead.id
@@ -1421,41 +1695,6 @@ async function saveLeadChanges() {
       );
 
       return;
-    }
-
-    /*
-      Verify the updated record separately.
-    */
-
-    const {
-      data: verifyData,
-      error: verifyError
-    } =
-      await supabaseClient
-        .from(
-          "customer_enquiries"
-        )
-        .select("*")
-        .eq(
-          "id",
-          currentLead.id
-        )
-        .maybeSingle();
-
-    if (verifyError) {
-
-      console.warn(
-        "UPDATE VERIFY ERROR:",
-        verifyError
-      );
-    }
-
-    if (verifyData) {
-
-      console.log(
-        "UPDATED LEAD:",
-        verifyData
-      );
     }
 
     showToast(
@@ -1482,14 +1721,13 @@ async function saveLeadChanges() {
 
     if (saveBtn) {
 
-      saveBtn.disabled =
-        false;
-
+      saveBtn.disabled = false;
       saveBtn.textContent =
-        "Save Changes";
+        "✓ Save Changes";
     }
   }
 }
+
 
 // =====================================================
 // ADD ENQUIRY SETUP
@@ -1570,6 +1808,7 @@ function setupAddEnquiry() {
   }
 }
 
+
 // =====================================================
 // OPEN ADD ENQUIRY
 // =====================================================
@@ -1590,12 +1829,12 @@ function openAddEnquiryModal() {
     return;
   }
 
-  modal.hidden =
-    false;
+  modal.hidden = false;
 
   document.body.style.overflow =
     "hidden";
 }
+
 
 // =====================================================
 // CLOSE ADD ENQUIRY
@@ -1609,13 +1848,10 @@ function closeAddEnquiryModal() {
     );
 
   if (modal) {
-
-    modal.hidden =
-      true;
+    modal.hidden = true;
   }
 
-  document.body.style.overflow =
-    "";
+  document.body.style.overflow = "";
 
   const message =
     document.getElementById(
@@ -1623,11 +1859,10 @@ function closeAddEnquiryModal() {
     );
 
   if (message) {
-
-    message.textContent =
-      "";
+    message.textContent = "";
   }
 }
+
 
 // =====================================================
 // SAVE NEW ENQUIRY
@@ -1658,32 +1893,27 @@ async function saveNewEnquiry() {
   const occasion =
     document.getElementById(
       "newOccasion"
-    )?.value ||
-    "";
+    )?.value || "";
 
   const eventDate =
     document.getElementById(
       "newEventDate"
-    )?.value ||
-    "";
+    )?.value || "";
 
   const guests =
     document.getElementById(
       "newGuests"
-    )?.value ||
-    "";
+    )?.value || "";
 
   const budget =
     document.getElementById(
       "newBudget"
-    )?.value ||
-    "";
+    )?.value || "";
 
   const food =
     document.getElementById(
       "newFood"
-    )?.value ||
-    "";
+    )?.value || "";
 
   const source =
     document.getElementById(
@@ -1706,8 +1936,7 @@ async function saveNewEnquiry() {
   const followUp =
     document.getElementById(
       "newFollowUp"
-    )?.value ||
-    "";
+    )?.value || "";
 
   const requirements =
     document.getElementById(
@@ -1744,15 +1973,11 @@ async function saveNewEnquiry() {
 
   if (saveBtn) {
 
-    saveBtn.disabled =
-      true;
-
-    saveBtn.textContent =
-      "Saving...";
+    saveBtn.disabled = true;
+    saveBtn.textContent = "Saving...";
   }
 
   if (message) {
-
     message.textContent =
       "Saving enquiry...";
   }
@@ -1764,9 +1989,7 @@ async function saveNewEnquiry() {
       error
     } =
       await supabaseClient
-        .from(
-          "customer_enquiries"
-        )
+        .from("customer_enquiries")
         .insert({
 
           customer_name:
@@ -1776,46 +1999,35 @@ async function saveNewEnquiry() {
             mobile,
 
           email:
-            email ||
-            null,
+            email || null,
 
           location:
-            location ||
-            null,
+            location || null,
 
           occasion:
-            occasion ||
-            null,
+            occasion || null,
 
           guests:
             guests
-              ? Number(
-                  guests
-                )
+              ? Number(guests)
               : null,
 
           budget_per_person:
             budget
-              ? Number(
-                  budget
-                )
+              ? Number(budget)
               : null,
 
           food_preference:
-            food ||
-            null,
+            food || null,
 
           event_date:
-            eventDate ||
-            null,
+            eventDate || null,
 
           internal_notes:
-            notes ||
-            null,
+            notes || null,
 
           source:
-            source ||
-            "Other",
+            source || "Other",
 
           status:
             status,
@@ -1834,12 +2046,10 @@ async function saveNewEnquiry() {
             priority,
 
           requirements:
-            requirements ||
-            null,
+            requirements || null,
 
           last_contacted_at:
             null
-
         });
 
     if (error) {
@@ -1899,14 +2109,13 @@ async function saveNewEnquiry() {
 
     if (saveBtn) {
 
-      saveBtn.disabled =
-        false;
-
+      saveBtn.disabled = false;
       saveBtn.textContent =
         "Save Enquiry";
     }
   }
 }
+
 
 // =====================================================
 // CLEAR ADD ENQUIRY FORM
@@ -1929,20 +2138,15 @@ function clearAddEnquiryForm() {
 
   ];
 
-  fields.forEach(
-    (id) => {
+  fields.forEach((id) => {
 
-      const element =
-        document.getElementById(
-          id
-        );
+    const element =
+      document.getElementById(id);
 
-      if (element) {
-        element.value =
-          "";
-      }
+    if (element) {
+      element.value = "";
     }
-  );
+  });
 
   const occasion =
     document.getElementById(
@@ -1950,8 +2154,7 @@ function clearAddEnquiryForm() {
     );
 
   if (occasion) {
-    occasion.value =
-      "";
+    occasion.value = "";
   }
 
   const food =
@@ -1960,8 +2163,7 @@ function clearAddEnquiryForm() {
     );
 
   if (food) {
-    food.value =
-      "";
+    food.value = "";
   }
 
   const source =
@@ -1970,8 +2172,7 @@ function clearAddEnquiryForm() {
     );
 
   if (source) {
-    source.value =
-      "Website";
+    source.value = "Website";
   }
 
   const status =
@@ -1980,8 +2181,7 @@ function clearAddEnquiryForm() {
     );
 
   if (status) {
-    status.value =
-      "new";
+    status.value = "new";
   }
 
   const priority =
@@ -1990,24 +2190,16 @@ function clearAddEnquiryForm() {
     );
 
   if (priority) {
-    priority.value =
-      "normal";
+    priority.value = "normal";
   }
 }
+
 
 // =====================================================
 // TOAST
 // =====================================================
 
-function showToast(
-  message
-) {
-
-  /*
-    Supports both:
-    #toastMessage
-    and #toast
-  */
+function showToast(message) {
 
   const toast =
     document.getElementById(
@@ -2018,6 +2210,7 @@ function showToast(
     );
 
   if (!toast) {
+
     console.log(
       "TOAST:",
       message
@@ -2029,59 +2222,29 @@ function showToast(
   toast.textContent =
     message;
 
-  toast.classList.add(
-    "show"
-  );
+  toast.classList.add("show");
 
   setTimeout(
     () => {
-
-      toast.classList.remove(
-        "show"
-      );
-
+      toast.classList.remove("show");
     },
     2500
   );
 }
 
-// =====================================================
-// HELPERS
-// =====================================================
-
-function setText(
-  id,
-  value
-) {
-
-  const element =
-    document.getElementById(
-      id
-    );
-
-  if (element) {
-
-    element.textContent =
-      value;
-  }
-}
 
 // =====================================================
 // DATE FORMAT
 // =====================================================
 
-function formatDate(
-  value
-) {
+function formatDate(value) {
 
   if (!value) {
     return "—";
   }
 
   const date =
-    new Date(
-      value
-    );
+    new Date(value);
 
   if (
     Number.isNaN(
@@ -2094,34 +2257,26 @@ function formatDate(
   return date.toLocaleDateString(
     "en-IN",
     {
-      day:
-        "2-digit",
-
-      month:
-        "short",
-
-      year:
-        "numeric"
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
     }
   );
 }
+
 
 // =====================================================
 // DATETIME LOCAL
 // =====================================================
 
-function toDateTimeLocal(
-  value
-) {
+function toDateTimeLocal(value) {
 
   if (!value) {
     return "";
   }
 
   const date =
-    new Date(
-      value
-    );
+    new Date(value);
 
   if (
     Number.isNaN(
@@ -2133,9 +2288,7 @@ function toDateTimeLocal(
 
   const pad =
     (number) =>
-      String(
-        number
-      ).padStart(
+      String(number).padStart(
         2,
         "0"
       );
@@ -2161,13 +2314,12 @@ function toDateTimeLocal(
   );
 }
 
+
 // =====================================================
 // STATUS
 // =====================================================
 
-function formatStatus(
-  status
-) {
+function formatStatus(status) {
 
   const values = {
 
@@ -2197,9 +2349,8 @@ function formatStatus(
   );
 }
 
-function getStatusClass(
-  status
-) {
+
+function getStatusClass(status) {
 
   const classes = {
 
@@ -2228,13 +2379,12 @@ function getStatusClass(
   );
 }
 
+
 // =====================================================
 // PRIORITY
 // =====================================================
 
-function formatPriority(
-  priority
-) {
+function formatPriority(priority) {
 
   const values = {
 
@@ -2258,13 +2408,30 @@ function formatPriority(
   );
 }
 
+
+// =====================================================
+// INITIALS
+// =====================================================
+
+function getInitials(name) {
+
+  return String(name || "C")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map(
+      (word) =>
+        word.charAt(0).toUpperCase()
+    )
+    .join("");
+}
+
+
 // =====================================================
 // HTML ESCAPE
 // =====================================================
 
-function escapeHTML(
-  value
-) {
+function escapeHTML(value) {
 
   return String(
     value ?? ""
@@ -2289,4 +2456,616 @@ function escapeHTML(
       /'/g,
       "&#039;"
     );
+}
+
+
+// =====================================================
+// PROFESSIONAL LEAD MODAL CSS
+// =====================================================
+
+function injectLeadDetailsStyles() {
+
+  if (
+    document.getElementById(
+      "smvLeadDetailsStyles"
+    )
+  ) {
+    return;
+  }
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "smvLeadDetailsStyles";
+
+  style.textContent = `
+
+    /* =========================================
+       LEAD DETAILS MODAL
+       ========================================= */
+
+    .smv-lead-modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(9, 14, 24, 0.72);
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      transition: opacity .18s ease;
+    }
+
+    .smv-lead-modal-overlay.show {
+      opacity: 1;
+    }
+
+
+    .smv-lead-modal {
+      width: min(1120px, 100%);
+      max-height: calc(100vh - 48px);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid #e5e9f1;
+      border-radius: 22px;
+      box-shadow:
+        0 30px 80px rgba(0,0,0,.28);
+      transform: translateY(12px) scale(.985);
+      transition:
+        transform .18s ease;
+    }
+
+    .smv-lead-modal-overlay.show
+    .smv-lead-modal {
+      transform: translateY(0) scale(1);
+    }
+
+
+    /* HEADER */
+
+    .smv-lead-modal-header {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 22px 26px;
+      border-bottom: 1px solid #edf0f5;
+      background:
+        linear-gradient(
+          135deg,
+          #ffffff 0%,
+          #f8fbff 100%
+        );
+    }
+
+
+    .smv-lead-title-area {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      min-width: 0;
+    }
+
+
+    .smv-lead-avatar {
+      width: 54px;
+      height: 54px;
+      flex: 0 0 54px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      background:
+        linear-gradient(
+          135deg,
+          #16233f,
+          #314f89
+        );
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: .5px;
+    }
+
+
+    .smv-modal-kicker {
+      margin-bottom: 3px;
+      color: #6b7da0;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+    }
+
+
+    .smv-lead-title-area h2 {
+      margin: 0;
+      color: #172033;
+      font-size: 24px;
+      line-height: 1.15;
+      font-weight: 800;
+    }
+
+
+    .smv-lead-id {
+      display: block;
+      margin-top: 5px;
+      color: #98a2b3;
+      font-size: 11px;
+    }
+
+
+    .smv-modal-close {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      border: 1px solid #dfe4ec;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #68748a;
+      font-size: 25px;
+      line-height: 1;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+
+    .smv-modal-close:hover {
+      background: #f3f5f8;
+      color: #172033;
+      transform: rotate(4deg);
+    }
+
+
+    /* ACTION BAR */
+
+    .smv-lead-actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 26px;
+      border-bottom: 1px solid #edf0f5;
+      background: #fbfcfe;
+    }
+
+
+    .smv-lead-actions button {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 9px;
+      border: 1px solid #dfe5ee;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+
+    .smv-action-call {
+      background: #eef2ff;
+      color: #4354c8;
+    }
+
+
+    .smv-action-whatsapp {
+      background: #ecfbf3;
+      color: #17804b;
+    }
+
+
+    .smv-lead-actions button:hover {
+      transform: translateY(-1px);
+    }
+
+
+    .smv-lead-actions button:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+
+    /* BODY */
+
+    .smv-lead-modal-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 24px 26px 28px;
+      background: #f7f9fc;
+    }
+
+
+    .smv-detail-section {
+      margin-bottom: 22px;
+      padding: 20px;
+      border: 1px solid #e6eaf1;
+      border-radius: 16px;
+      background: #ffffff;
+    }
+
+
+    .smv-detail-section:last-child {
+      margin-bottom: 0;
+    }
+
+
+    .smv-section-heading {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 17px;
+    }
+
+
+    .smv-section-icon {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9px;
+      background: #eef3ff;
+      color: #5369cf;
+      font-size: 15px;
+    }
+
+
+    .smv-section-heading strong {
+      display: block;
+      color: #202a3d;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+
+    .smv-section-heading span {
+      display: block;
+      margin-top: 2px;
+      color: #8b96a8;
+      font-size: 11px;
+    }
+
+
+    /* INFO GRID */
+
+    .smv-info-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+
+    .smv-event-grid {
+      grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+    }
+
+
+    .smv-info-card {
+      min-width: 0;
+      min-height: 76px;
+      padding: 13px 14px;
+      border: 1px solid #e7ebf2;
+      border-radius: 12px;
+      background: #fbfcfe;
+    }
+
+
+    .smv-info-card-label {
+      margin-bottom: 8px;
+      color: #8994a7;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+    }
+
+
+    .smv-info-card-value {
+      color: #273249;
+      font-size: 14px;
+      line-height: 1.35;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+
+    /* REQUIREMENTS */
+
+    .smv-requirements-box {
+      padding: 17px 18px;
+      border: 1px solid #dfe6f0;
+      border-radius: 13px;
+      background:
+        linear-gradient(
+          135deg,
+          #f9fbff,
+          #f5f8fc
+        );
+    }
+
+
+    .smv-requirements-label {
+      margin-bottom: 9px;
+      color: #77859b;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+    }
+
+
+    .smv-requirements-text {
+      color: #2b3548;
+      font-size: 14px;
+      line-height: 1.65;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+
+
+    /* CRM CONTROLS */
+
+    .smv-crm-section {
+      background: #fbfcff;
+    }
+
+
+    .smv-crm-grid {
+      display: grid;
+      grid-template-columns:
+        1fr 1fr 1.35fr;
+      gap: 13px;
+      margin-bottom: 17px;
+    }
+
+
+    .smv-control label,
+    .smv-notes-control label {
+      display: block;
+      margin-bottom: 7px;
+      color: #778398;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+
+    .smv-control select,
+    .smv-control input,
+    .smv-notes-control textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #dce2eb;
+      border-radius: 10px;
+      outline: none;
+      background: #ffffff;
+      color: #253046;
+      font-family: inherit;
+      font-size: 13px;
+      transition: border-color .15s ease,
+                  box-shadow .15s ease;
+    }
+
+
+    .smv-control select,
+    .smv-control input {
+      height: 44px;
+      padding: 0 12px;
+    }
+
+
+    .smv-notes-control textarea {
+      min-height: 94px;
+      padding: 12px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+
+    .smv-control select:focus,
+    .smv-control input:focus,
+    .smv-notes-control textarea:focus {
+      border-color: #7488dd;
+      box-shadow:
+        0 0 0 3px rgba(
+          91,
+          112,
+          207,
+          .10
+        );
+    }
+
+
+    .smv-notes-control small {
+      display: block;
+      margin-top: 6px;
+      color: #9aa4b4;
+      font-size: 10px;
+    }
+
+
+    /* FOOTER */
+
+    .smv-lead-modal-footer {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 26px;
+      border-top: 1px solid #e8ebf1;
+      background: #ffffff;
+    }
+
+
+    .smv-footer-hint {
+      color: #8d98a9;
+      font-size: 11px;
+    }
+
+
+    .smv-footer-buttons {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+
+    .smv-cancel-btn,
+    .smv-save-btn {
+      height: 42px;
+      padding: 0 18px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+
+    .smv-cancel-btn {
+      border: 1px solid #dce2ea;
+      background: #ffffff;
+      color: #536075;
+    }
+
+
+    .smv-save-btn {
+      border: 1px solid #182642;
+      background: #182642;
+      color: #ffffff;
+      box-shadow:
+        0 6px 15px rgba(
+          24,
+          38,
+          66,
+          .18
+        );
+    }
+
+
+    .smv-cancel-btn:hover,
+    .smv-save-btn:hover {
+      transform: translateY(-1px);
+    }
+
+
+    .smv-save-btn:disabled {
+      opacity: .6;
+      cursor: wait;
+      transform: none;
+    }
+
+
+    /* SCROLLBAR */
+
+    .smv-lead-modal-body::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    .smv-lead-modal-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .smv-lead-modal-body::-webkit-scrollbar-thumb {
+      background: #cbd3df;
+      border-radius: 20px;
+    }
+
+
+    /* =========================================
+       MOBILE
+       ========================================= */
+
+    @media (max-width: 900px) {
+
+      .smv-info-grid,
+      .smv-event-grid {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .smv-crm-grid {
+        grid-template-columns:
+          1fr 1fr;
+      }
+
+      .smv-control:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+
+    @media (max-width: 620px) {
+
+      .smv-lead-modal-overlay {
+        padding: 0;
+        align-items: flex-end;
+      }
+
+      .smv-lead-modal {
+        width: 100%;
+        max-height: 94vh;
+        border-radius:
+          20px 20px 0 0;
+      }
+
+      .smv-lead-modal-header {
+        padding: 17px;
+      }
+
+      .smv-lead-modal-body {
+        padding: 17px;
+      }
+
+      .smv-lead-actions {
+        padding: 10px 17px;
+      }
+
+      .smv-detail-section {
+        padding: 15px;
+      }
+
+      .smv-info-grid,
+      .smv-event-grid,
+      .smv-crm-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .smv-control:last-child {
+        grid-column: auto;
+      }
+
+      .smv-lead-modal-footer {
+        padding: 13px 17px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .smv-footer-buttons {
+        width: 100%;
+      }
+
+      .smv-cancel-btn,
+      .smv-save-btn {
+        flex: 1;
+      }
+
+      .smv-lead-title-area h2 {
+        font-size: 20px;
+      }
+    }
+
+  `;
+
+  document.head.appendChild(style);
 }
