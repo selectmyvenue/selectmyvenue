@@ -186,10 +186,12 @@
 
 
 
+      <!-- FIXED: follow_up → call_back -->
+
       <button
         type="button"
         class="stat-card stat-tab"
-        data-status="follow_up"
+        data-status="call_back"
       >
 
         <div class="stat-icon">
@@ -273,11 +275,13 @@
           </option>
 
           <option value="new">
-            New lead
+            New Lead
           </option>
 
-          <option value="not_pick">
-            Not Pick
+          <!-- FIXED: not_pick → not_picked -->
+
+          <option value="not_picked">
+            Not Picked
           </option>
 
           <option value="call_back">
@@ -463,7 +467,7 @@
 
   <!-- =====================================================
        LEAD MODAL
-       Detailed editing / backup editing
+       Detailed editing
   ====================================================== -->
 
   <div
@@ -485,7 +489,9 @@
             CUSTOMER ENQUIRY
           </p>
 
-          <h2 id="modalCustomerName">
+          <!-- FIXED: heading no longer uses modalCustomerName -->
+
+          <h2 id="modalCustomerTitle">
             Customer
           </h2>
 
@@ -515,12 +521,14 @@
 
         <div class="control-group">
 
-          <label for="modalCustomerNameInput">
+          <label for="modalCustomerName">
             CUSTOMER NAME
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalCustomerNameInput"
+            id="modalCustomerName"
             type="text"
             placeholder="Customer name"
           >
@@ -532,12 +540,14 @@
 
         <div class="control-group">
 
-          <label for="modalMobileInput">
+          <label for="modalMobile">
             MOBILE
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalMobileInput"
+            id="modalMobile"
             type="tel"
             placeholder="Mobile number"
           >
@@ -549,12 +559,14 @@
 
         <div class="control-group">
 
-          <label for="modalEmailInput">
+          <label for="modalEmail">
             EMAIL
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalEmailInput"
+            id="modalEmail"
             type="email"
             placeholder="Email"
           >
@@ -566,12 +578,14 @@
 
         <div class="control-group">
 
-          <label for="modalLocationInput">
+          <label for="modalLocation">
             LOCATION
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalLocationInput"
+            id="modalLocation"
             type="text"
             placeholder="Location"
           >
@@ -583,12 +597,14 @@
 
         <div class="control-group">
 
-          <label for="modalOccasionInput">
+          <label for="modalOccasion">
             OCCASION / EVENT
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalOccasionInput"
+            id="modalOccasion"
             type="text"
             placeholder="Wedding, Birthday..."
           >
@@ -600,12 +616,14 @@
 
         <div class="control-group">
 
-          <label for="modalEventDateInput">
+          <label for="modalEventDate">
             EVENT DATE
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalEventDateInput"
+            id="modalEventDate"
             type="date"
           >
 
@@ -616,12 +634,14 @@
 
         <div class="control-group">
 
-          <label for="modalGuestsInput">
+          <label for="modalGuests">
             GUESTS
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalGuestsInput"
+            id="modalGuests"
             type="number"
             min="1"
             placeholder="Number of guests"
@@ -634,12 +654,14 @@
 
         <div class="control-group">
 
-          <label for="modalBudgetInput">
+          <label for="modalBudget">
             BUDGET / PERSON
           </label>
 
+          <!-- FIXED ID -->
+
           <input
-            id="modalBudgetInput"
+            id="modalBudget"
             type="number"
             min="0"
             placeholder="₹ per person"
@@ -652,11 +674,13 @@
 
         <div class="control-group">
 
-          <label for="modalFoodInput">
+          <label for="modalFood">
             FOOD PREFERENCE
           </label>
 
-          <select id="modalFoodInput">
+          <!-- FIXED ID -->
+
+          <select id="modalFood">
 
             <option value="">
               Select preference
@@ -729,12 +753,14 @@
 
       <div class="detail-block">
 
-        <label for="modalRequirementsInput">
+        <label for="modalRequirements">
           OTHER REQUIREMENTS
         </label>
 
+        <!-- FIXED ID -->
+
         <textarea
-          id="modalRequirementsInput"
+          id="modalRequirements"
           rows="4"
           placeholder="Venue requirements, special requests..."
         ></textarea>
@@ -761,11 +787,13 @@
           <select id="modalStatus">
 
             <option value="new">
-              New lead
+              New Lead
             </option>
 
-            <option value="not_pick">
-              Not Pick
+            <!-- FIXED: not_pick → not_picked -->
+
+            <option value="not_picked">
+              Not Picked
             </option>
 
             <option value="call_back">
@@ -1359,11 +1387,13 @@
             <select id="newStatus">
 
               <option value="new">
-                New lead
+                New Lead
               </option>
 
-              <option value="not_pick">
-                Not Pick
+              <!-- FIXED: not_pick → not_picked -->
+
+              <option value="not_picked">
+                Not Picked
               </option>
 
               <option value="call_back">
