@@ -29,60 +29,66 @@
        CRM HEADER
   ====================================================== -->
 
-<header class="crm-header">
+  <header class="crm-header">
 
-  <div class="crm-brand">
+    <div class="crm-brand">
 
-    <img
-      src="../logo.png"
-      alt="Select My Venue"
-      class="crm-header-logo"
-    >
+      <img
+        src="../logo.png"
+        alt="Select My Venue"
+        class="crm-header-logo"
+      >
 
-    <div class="crm-title">
-      <strong>CRM</strong>
-      <span>Lead Management</span>
+      <div class="crm-title">
+
+        <strong>
+          Select My Venue <span>•</span> CRM
+        </strong>
+
+        <small>
+          Lead Management
+        </small>
+
+      </div>
+
     </div>
 
-  </div>
 
-  <div class="header-actions">
+    <div class="header-actions">
 
-    <span id="staffName" class="staff-name">
-      Loading...
-    </span>
+      <span
+        id="staffName"
+        class="staff-name"
+      >
+        Loading...
+      </span>
 
-    <button
-      id="logoutBtn"
-      class="logout-btn"
-      type="button"
-    >
-      Logout
-    </button>
+      <button
+        id="logoutBtn"
+        class="logout-btn"
+        type="button"
+      >
+        Logout
+      </button>
 
-  </div>
+    </div>
 
-</header>
+  </header>
+
 
 
   <!-- =====================================================
-       MAIN CRM CONTENT
+       MAIN CONTENT
   ====================================================== -->
 
-  <main class="crm-main">
+  <main class="crm-main crm-container">
 
 
-    <!-- ===================================================
-         PAGE INTRO
-    ==================================================== -->
+    <!-- PAGE HEADING -->
 
     <section class="page-heading">
 
-      <div>
-
-        <p class="eyebrow">
-          SELECT MY VENUE • CRM
-        </p>
+      <div class="page-heading-content">
 
         <h1>
           Customer
@@ -97,7 +103,7 @@
       </div>
 
 
-      <div class="header-actions">
+      <div class="page-heading-actions">
 
         <button
           id="addEnquiryBtn"
@@ -122,13 +128,10 @@
 
 
     <!-- ===================================================
-         CRM STATISTICS
+         STATISTICS
     ==================================================== -->
 
     <section class="stats-grid">
-
-
-      <!-- TOTAL -->
 
       <button
         type="button"
@@ -141,22 +144,13 @@
         </div>
 
         <div>
-
-          <small>
-            TOTAL LEADS
-          </small>
-
-          <strong id="totalLeads">
-            0
-          </strong>
-
+          <small>TOTAL LEADS</small>
+          <strong id="totalLeads">0</strong>
         </div>
 
       </button>
 
 
-
-      <!-- NEW -->
 
       <button
         type="button"
@@ -169,22 +163,13 @@
         </div>
 
         <div>
-
-          <small>
-            NEW
-          </small>
-
-          <strong id="newLeads">
-            0
-          </strong>
-
+          <small>NEW</small>
+          <strong id="newLeads">0</strong>
         </div>
 
       </button>
 
 
-
-      <!-- FOLLOW UP -->
 
       <button
         type="button"
@@ -197,22 +182,13 @@
         </div>
 
         <div>
-
-          <small>
-            FOLLOW-UP
-          </small>
-
-          <strong id="followupLeads">
-            0
-          </strong>
-
+          <small>FOLLOW-UP</small>
+          <strong id="followupLeads">0</strong>
         </div>
 
       </button>
 
 
-
-      <!-- CONVERTED -->
 
       <button
         type="button"
@@ -225,39 +201,26 @@
         </div>
 
         <div>
-
-          <small>
-            CONVERTED
-          </small>
-
-          <strong id="convertedLeads">
-            0
-          </strong>
-
+          <small>CONVERTED</small>
+          <strong id="convertedLeads">0</strong>
         </div>
 
       </button>
-
 
     </section>
 
 
 
     <!-- ===================================================
-         LEADS AREA
+         LEADS
     ==================================================== -->
 
     <section class="leads-section">
 
 
-      <!-- =================================================
-           FILTER BAR
-      ================================================== -->
+      <!-- FILTER BAR -->
 
       <div class="filter-bar">
-
-
-        <!-- SEARCH -->
 
         <div class="search-box">
 
@@ -269,14 +232,10 @@
             type="search"
             id="searchInput"
             placeholder="Search customer, mobile or location..."
-            autocomplete="off"
           >
 
         </div>
 
-
-
-        <!-- STATUS -->
 
         <select id="statusFilter">
 
@@ -312,8 +271,6 @@
 
 
 
-        <!-- PRIORITY -->
-
         <select id="priorityFilter">
 
           <option value="">
@@ -338,64 +295,43 @@
 
         </select>
 
-
       </div>
 
 
 
       <!-- =================================================
-           LEADS TABLE
+           TABLE
       ================================================== -->
 
       <div class="table-wrapper">
 
         <table class="leads-table">
 
-
           <thead>
 
             <tr>
 
-              <th>
-                CUSTOMER
-              </th>
+              <th>CUSTOMER</th>
 
-              <th>
-                EVENT
-              </th>
+              <th>EVENT</th>
 
-              <th>
-                LOCATION
-              </th>
+              <th>LOCATION</th>
 
-              <th>
-                DATE
-              </th>
+              <th>DATE</th>
 
-              <th>
-                GUESTS
-              </th>
+              <th>GUESTS</th>
 
-              <th>
-                BUDGET
-              </th>
+              <th>BUDGET</th>
 
-              <th>
-                STATUS
-              </th>
+              <th>STATUS</th>
 
-              <th>
-                PRIORITY
-              </th>
+              <th>PRIORITY</th>
 
-              <th>
-                ACTION
-              </th>
+              <th>ACTION</th>
 
             </tr>
 
           </thead>
-
 
 
           <tbody id="leadsTableBody">
@@ -413,14 +349,11 @@
 
           </tbody>
 
-
         </table>
 
 
 
-        <!-- =================================================
-             EMPTY STATE
-        ================================================== -->
+        <!-- EMPTY STATE -->
 
         <div
           id="emptyState"
@@ -442,18 +375,16 @@
 
         </div>
 
-
       </div>
 
     </section>
-
 
   </main>
 
 
 
   <!-- =====================================================
-       VIEW / EDIT LEAD MODAL
+       LEAD DETAILS MODAL
   ====================================================== -->
 
   <div
@@ -461,9 +392,6 @@
     class="lead-modal"
     hidden
   >
-
-
-    <!-- MODAL HEADER -->
 
     <div class="modal-header">
 
@@ -484,7 +412,6 @@
         id="closeModalBtn"
         class="close-modal"
         type="button"
-        aria-label="Close"
       >
         ×
       </button>
@@ -493,25 +420,17 @@
 
 
 
-    <!-- =================================================
-         CUSTOMER INFORMATION
-    ================================================== -->
+    <!-- CUSTOMER INFORMATION -->
 
     <div class="lead-info-grid">
 
-
-      <!-- MOBILE -->
-
       <div class="info-card">
 
-        <small>
-          MOBILE
-        </small>
+        <small>MOBILE</small>
 
         <strong id="modalMobile">
           —
         </strong>
-
 
         <a
           id="modalCallBtn"
@@ -520,7 +439,6 @@
         >
           ☎ Call
         </a>
-
 
         <a
           id="modalWhatsappBtn"
@@ -536,13 +454,9 @@
 
 
 
-      <!-- EMAIL -->
-
       <div class="info-card">
 
-        <small>
-          EMAIL
-        </small>
+        <small>EMAIL</small>
 
         <strong id="modalEmail">
           —
@@ -552,13 +466,9 @@
 
 
 
-      <!-- LOCATION -->
-
       <div class="info-card">
 
-        <small>
-          LOCATION
-        </small>
+        <small>LOCATION</small>
 
         <strong id="modalLocation">
           —
@@ -568,13 +478,9 @@
 
 
 
-      <!-- OCCASION -->
-
       <div class="info-card">
 
-        <small>
-          OCCASION
-        </small>
+        <small>OCCASION</small>
 
         <strong id="modalOccasion">
           —
@@ -584,13 +490,9 @@
 
 
 
-      <!-- EVENT DATE -->
-
       <div class="info-card">
 
-        <small>
-          EVENT DATE
-        </small>
+        <small>EVENT DATE</small>
 
         <strong id="modalEventDate">
           —
@@ -600,13 +502,9 @@
 
 
 
-      <!-- GUESTS -->
-
       <div class="info-card">
 
-        <small>
-          GUESTS
-        </small>
+        <small>GUESTS</small>
 
         <strong id="modalGuests">
           —
@@ -616,13 +514,9 @@
 
 
 
-      <!-- BUDGET -->
-
       <div class="info-card">
 
-        <small>
-          BUDGET / PERSON
-        </small>
+        <small>BUDGET / PERSON</small>
 
         <strong id="modalBudget">
           —
@@ -632,13 +526,9 @@
 
 
 
-      <!-- FOOD -->
-
       <div class="info-card">
 
-        <small>
-          FOOD PREFERENCE
-        </small>
+        <small>FOOD PREFERENCE</small>
 
         <strong id="modalFood">
           —
@@ -646,14 +536,11 @@
 
       </div>
 
-
     </div>
 
 
 
-    <!-- =================================================
-         REQUIREMENTS
-    ================================================== -->
+    <!-- REQUIREMENTS -->
 
     <div class="detail-block">
 
@@ -672,14 +559,9 @@
 
 
 
-    <!-- =================================================
-         CRM CONTROLS
-    ================================================== -->
+    <!-- CRM CONTROLS -->
 
     <div class="crm-controls">
-
-
-      <!-- STATUS -->
 
       <div class="control-group">
 
@@ -689,37 +571,23 @@
 
         <select id="modalStatus">
 
-          <option value="new">
-            New
-          </option>
+          <option value="new">New</option>
 
-          <option value="contacted">
-            Contacted
-          </option>
+          <option value="contacted">Contacted</option>
 
-          <option value="follow_up">
-            Follow-up
-          </option>
+          <option value="follow_up">Follow-up</option>
 
-          <option value="qualified">
-            Qualified
-          </option>
+          <option value="qualified">Qualified</option>
 
-          <option value="converted">
-            Converted
-          </option>
+          <option value="converted">Converted</option>
 
-          <option value="closed">
-            Closed
-          </option>
+          <option value="closed">Closed</option>
 
         </select>
 
       </div>
 
 
-
-      <!-- PRIORITY -->
 
       <div class="control-group">
 
@@ -729,29 +597,19 @@
 
         <select id="modalPriority">
 
-          <option value="urgent">
-            Urgent
-          </option>
+          <option value="urgent">Urgent</option>
 
-          <option value="high">
-            High
-          </option>
+          <option value="high">High</option>
 
-          <option value="normal">
-            Normal
-          </option>
+          <option value="normal">Normal</option>
 
-          <option value="low">
-            Low
-          </option>
+          <option value="low">Low</option>
 
         </select>
 
       </div>
 
 
-
-      <!-- FOLLOW UP -->
 
       <div class="control-group">
 
@@ -766,14 +624,11 @@
 
       </div>
 
-
     </div>
 
 
 
-    <!-- =================================================
-         INTERNAL NOTES
-    ================================================== -->
+    <!-- INTERNAL NOTES -->
 
     <div class="detail-block">
 
@@ -803,7 +658,6 @@
         Save Changes
       </button>
 
-
       <button
         id="cancelModalBtn"
         class="cancel-btn"
@@ -814,23 +668,19 @@
 
     </div>
 
-
   </div>
 
 
 
   <!-- =====================================================
-       ADD NEW ENQUIRY MODAL
+       ADD ENQUIRY MODAL
   ====================================================== -->
 
   <div
     id="addEnquiryModal"
-    class="lead-modal"
+    class="lead-modal add-enquiry-modal"
     hidden
   >
-
-
-    <!-- MODAL HEADER -->
 
     <div class="modal-header">
 
@@ -846,12 +696,10 @@
 
       </div>
 
-
       <button
         id="closeAddEnquiryBtn"
         class="close-modal"
         type="button"
-        aria-label="Close"
       >
         ×
       </button>
@@ -860,14 +708,8 @@
 
 
 
-    <!-- =================================================
-         FORM BODY
-    ================================================== -->
-
     <div class="add-enquiry-form">
 
-
-      <!-- CUSTOMER DETAILS -->
 
       <div class="form-section-title">
         Customer Details
@@ -875,9 +717,6 @@
 
 
       <div class="form-grid">
-
-
-        <!-- CUSTOMER NAME -->
 
         <div class="control-group">
 
@@ -896,8 +735,6 @@
 
 
 
-        <!-- MOBILE -->
-
         <div class="control-group">
 
           <label for="newMobile">
@@ -915,8 +752,6 @@
 
 
 
-        <!-- EMAIL -->
-
         <div class="control-group">
 
           <label for="newEmail">
@@ -933,8 +768,6 @@
 
 
 
-        <!-- LOCATION -->
-
         <div class="control-group">
 
           <label for="newLocation">
@@ -949,14 +782,9 @@
 
         </div>
 
-
       </div>
 
 
-
-      <!-- =================================================
-           EVENT DETAILS
-      ================================================== -->
 
       <div class="form-section-title">
         Event Details
@@ -964,9 +792,6 @@
 
 
       <div class="form-grid">
-
-
-        <!-- OCCASION -->
 
         <div class="control-group">
 
@@ -1014,8 +839,6 @@
 
 
 
-        <!-- EVENT DATE -->
-
         <div class="control-group">
 
           <label for="newEventDate">
@@ -1030,8 +853,6 @@
         </div>
 
 
-
-        <!-- GUESTS -->
 
         <div class="control-group">
 
@@ -1050,8 +871,6 @@
 
 
 
-        <!-- BUDGET -->
-
         <div class="control-group">
 
           <label for="newBudget">
@@ -1068,8 +887,6 @@
         </div>
 
 
-
-        <!-- FOOD -->
 
         <div class="control-group">
 
@@ -1103,24 +920,17 @@
 
         </div>
 
-
       </div>
 
 
-
-      <!-- =================================================
-           LEAD SOURCE & CRM
-      ================================================== -->
 
       <div class="form-section-title">
         Lead Source & CRM
       </div>
 
 
+
       <div class="form-grid">
-
-
-        <!-- SOURCE -->
 
         <div class="control-group">
 
@@ -1168,8 +978,6 @@
 
 
 
-        <!-- STATUS -->
-
         <div class="control-group">
 
           <label for="newStatus">
@@ -1208,8 +1016,6 @@
 
 
 
-        <!-- PRIORITY -->
-
         <div class="control-group">
 
           <label for="newPriority">
@@ -1240,8 +1046,6 @@
 
 
 
-        <!-- FOLLOW UP -->
-
         <div class="control-group">
 
           <label for="newFollowUp">
@@ -1255,14 +1059,9 @@
 
         </div>
 
-
       </div>
 
 
-
-      <!-- =================================================
-           REQUIREMENTS
-      ================================================== -->
 
       <div class="control-group full-width">
 
@@ -1280,10 +1079,6 @@
 
 
 
-      <!-- =================================================
-           INTERNAL NOTES
-      ================================================== -->
-
       <div class="control-group full-width">
 
         <label for="newNotes">
@@ -1300,8 +1095,6 @@
 
 
 
-      <!-- FORM MESSAGE -->
-
       <p
         id="addEnquiryMessage"
         class="form-message"
@@ -1309,8 +1102,6 @@
       ></p>
 
 
-
-      <!-- FORM ACTIONS -->
 
       <div class="modal-actions">
 
@@ -1322,7 +1113,6 @@
           Save Enquiry
         </button>
 
-
         <button
           id="cancelAddEnquiryBtn"
           class="cancel-btn"
@@ -1332,7 +1122,6 @@
         </button>
 
       </div>
-
 
     </div>
 
@@ -1358,9 +1147,7 @@
 
 
 
-  <!-- =====================================================
-       CRM JAVASCRIPT
-  ====================================================== -->
+  <!-- CRM JAVASCRIPT -->
 
   <script src="../crm.js"></script>
 
