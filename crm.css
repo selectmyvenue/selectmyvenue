@@ -2307,3 +2307,74 @@ a {
   }
 
 }
+/* =========================================================
+   CUSTOMER ENQUIRIES — CLEAN PAGE HEADER
+   Remove extra CUSTOMER CRM spacing
+========================================================= */
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  padding-top: 4px;
+}
+
+/* Customer Enquiries heading */
+.customer-enquiries-title {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: clamp(26px, 3vw, 34px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: -1px !important;
+  font-weight: 750 !important;
+  color: #172033 !important;
+}
+
+.customer-enquiries-title span {
+  color: #6872d8 !important;
+}
+
+/* Description directly below heading */
+.customer-enquiries-subtitle {
+  margin: 7px 0 0 !important;
+  padding: 0 !important;
+  max-width: 620px;
+  color: #7b8496;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* If old eyebrow still exists anywhere above heading */
+.page-heading > div > .eyebrow {
+  display: none !important;
+}
+
+/* Remove accidental top spacing */
+.page-heading > div {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Keep buttons compact */
+.page-heading .add-enquiry-btn,
+.page-heading .refresh-btn {
+  min-height: 40px;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+  .page-heading {
+    align-items: flex-start;
+    margin-bottom: 18px;
+  }
+
+  .customer-enquiries-title {
+    font-size: 27px !important;
+  }
+
+  .customer-enquiries-subtitle {
+    font-size: 12px;
+  }
+}
