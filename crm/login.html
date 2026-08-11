@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
 
@@ -11,152 +10,127 @@
 
   <title>Select My Venue — CRM Login</title>
 
-  <!-- CRM CSS -->
-  <link
-    rel="stylesheet"
-    href="../crm.css"
-  >
-
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- CRM CSS -->
+  <link rel="stylesheet" href="crm.css">
 </head>
 
+<body class="login-page">
 
-<body class="auth-page">
+  <main class="auth-container">
 
-  <section class="auth-card">
+    <section class="auth-card">
 
-    <!-- LOGO -->
-    <div class="crm-logo">
-
-      <img
-        src="../logo.png"
-        alt="Select My Venue"
-      >
-
-    </div>
-
-
-    <!-- BADGE -->
-    <div class="auth-badge">
-
-      <span></span>
-
-      STAFF CRM
-
-    </div>
-
-
-    <!-- TITLE -->
-    <h1>
-      Welcome back.
-    </h1>
-
-
-    <p class="auth-subtitle">
-      Sign in to manage customer enquiries and follow-ups.
-    </p>
-
-
-    <!-- LOGIN FORM -->
-    <form
-      id="loginForm"
-      class="auth-form"
-    >
-
-      <!-- EMAIL -->
-      <div class="field">
-
-        <label for="email">
-          Email
-        </label>
-
-        <input
-          id="email"
-          type="email"
-          autocomplete="username"
-          placeholder="staff@selectmyvenue.com"
-          required
+      <!-- LOGO -->
+      <div class="crm-logo">
+        <img
+          src="../logo.png"
+          alt="Select My Venue"
         >
-
       </div>
 
-
-      <!-- PASSWORD -->
-      <div class="field">
-
-        <label for="password">
-          Password
-        </label>
-
-        <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Enter password"
-          required
-        >
-
+      <!-- BADGE -->
+      <div class="auth-badge">
+        <span></span>
+        STAFF CRM
       </div>
 
+      <!-- TITLE -->
+      <h1>
+        Welcome back.
+      </h1>
 
-      <!-- LOGIN BUTTON -->
-      <button
-        id="loginBtn"
-        class="primary-btn"
-        type="submit"
+      <p class="auth-subtitle">
+        Sign in to manage customer enquiries and follow-ups.
+      </p>
+
+      <!-- LOGIN FORM -->
+      <form
+        id="loginForm"
+        class="auth-form"
       >
 
-        <span class="btn-text">
-          Sign In
-        </span>
+        <!-- EMAIL -->
+        <div class="field">
 
-        <span class="btn-arrow">
-          →
-        </span>
+          <label for="email">
+            Email
+          </label>
 
-      </button>
+          <input
+            id="email"
+            type="email"
+            autocomplete="username"
+            placeholder="staff@selectmyvenue.com"
+            required
+          >
 
+        </div>
 
-      <!-- MESSAGE -->
-      <p
-        id="loginMessage"
-        class="form-message"
-        role="alert"
-      ></p>
+        <!-- PASSWORD -->
+        <div class="field">
 
-    </form>
+          <label for="password">
+            Password
+          </label>
 
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Enter password"
+            required
+          >
 
-    <!-- FOOTER -->
-    <p class="auth-footer">
-      Select My Venue • Smart Venue Discovery
-    </p>
+        </div>
 
-  </section>
+        <!-- LOGIN BUTTON -->
+        <button
+          id="loginBtn"
+          class="primary-btn"
+          type="submit"
+        >
+          <span id="loginBtnText">
+            Sign In
+          </span>
+
+          <span>
+            →
+          </span>
+        </button>
+
+        <!-- MESSAGE -->
+        <p
+          id="loginMessage"
+          class="form-message"
+          role="alert"
+        ></p>
+
+      </form>
+
+      <!-- FOOTER -->
+      <p class="auth-footer">
+        Select My Venue • Smart Venue Discovery
+      </p>
+
+    </section>
+
+  </main>
 
 
   <!-- =====================================================
-       SUPABASE LOGIN SCRIPT
-  ====================================================== -->
+       LOGIN SCRIPT
+       ===================================================== -->
 
   <script>
-
-    /* =====================================================
-       SUPABASE CONFIG
-    ===================================================== */
 
     const SUPABASE_URL =
       "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
     const SUPABASE_ANON_KEY =
       "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-
-
-    /* =====================================================
-       CREATE SUPABASE CLIENT
-    ===================================================== */
 
     const supabaseClient =
       window.supabase.createClient(
@@ -165,18 +139,8 @@
       );
 
 
-    /* =====================================================
-       DOM
-    ===================================================== */
-
     const loginForm =
       document.getElementById("loginForm");
-
-    const loginBtn =
-      document.getElementById("loginBtn");
-
-    const loginMessage =
-      document.getElementById("loginMessage");
 
     const emailInput =
       document.getElementById("email");
@@ -184,29 +148,167 @@
     const passwordInput =
       document.getElementById("password");
 
+    const loginBtn =
+      document.getElementById("loginBtn");
 
-    /* =====================================================
-       CHECK EXISTING SESSION
-    ===================================================== */
+    const loginBtnText =
+      document.getElementById("loginBtnText");
+
+    const loginMessage =
+      document.getElementById("loginMessage");
+
+
+    function showLoginMessage(
+      message,
+      type = "error"
+    ) {
+
+      if (!loginMessage) {
+        return;
+      }
+
+      loginMessage.textContent =
+        message;
+
+      loginMessage.className =
+        "form-message " + type;
+    }
+
+
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const email =
+          emailInput.value.trim();
+
+        const password =
+          passwordInput.value;
+
+
+        if (!email || !password) {
+
+          showLoginMessage(
+            "Please enter your email and password.",
+            "error"
+          );
+
+          return;
+        }
+
+
+        loginBtn.disabled = true;
+
+        loginBtnText.textContent =
+          "Signing in...";
+
+        showLoginMessage(
+          "",
+          "success"
+        );
+
+
+        try {
+
+          const {
+            data,
+            error
+          } =
+            await supabaseClient
+              .auth
+              .signInWithPassword({
+                email: email,
+                password: password
+              });
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          if (!data || !data.user) {
+
+            throw new Error(
+              "Login was not completed."
+            );
+
+          }
+
+
+          showLoginMessage(
+            "Login successful. Opening CRM...",
+            "success"
+          );
+
+
+          /*
+            IMPORTANT:
+            dashboard.html is inside /crm/
+          */
+
+          window.location.href =
+            "dashboard.html";
+
+
+        } catch (error) {
+
+          console.error(
+            "Login error:",
+            error
+          );
+
+
+          let message =
+            "Unable to sign in.";
+
+
+          if (
+            error &&
+            error.message
+          ) {
+
+            message =
+              error.message;
+
+          }
+
+
+          showLoginMessage(
+            message,
+            "error"
+          );
+
+
+          loginBtn.disabled =
+            false;
+
+          loginBtnText.textContent =
+            "Sign In";
+
+        }
+
+      }
+    );
+
+
+    /*
+      If the user is already logged in,
+      don't show the login page again.
+    */
 
     async function checkExistingSession() {
 
       try {
 
         const {
-          data,
-          error
-        } = await supabaseClient.auth.getSession();
-
-
-        if (error) {
-          console.error(
-            "Session check error:",
-            error
-          );
-
-          return;
-        }
+          data
+        } =
+          await supabaseClient
+            .auth
+            .getSession();
 
 
         if (
@@ -222,7 +324,7 @@
       } catch (error) {
 
         console.error(
-          "Session check failed:",
+          "Session check error:",
           error
         );
 
@@ -231,229 +333,9 @@
     }
 
 
-    /* =====================================================
-       SHOW MESSAGE
-    ===================================================== */
-
-    function showMessage(
-      message,
-      type = "error"
-    ) {
-
-      if (!loginMessage) {
-        return;
-      }
-
-      loginMessage.textContent =
-        message;
-
-      loginMessage.className =
-        "form-message " + type;
-
-    }
-
-
-    /* =====================================================
-       LOGIN
-    ===================================================== */
-
-    loginForm.addEventListener(
-      "submit",
-      async function(event) {
-
-        event.preventDefault();
-
-
-        const email =
-          emailInput.value.trim();
-
-        const password =
-          passwordInput.value;
-
-
-        if (!email) {
-
-          showMessage(
-            "Please enter your email address."
-          );
-
-          emailInput.focus();
-
-          return;
-        }
-
-
-        if (!password) {
-
-          showMessage(
-            "Please enter your password."
-          );
-
-          passwordInput.focus();
-
-          return;
-        }
-
-
-        /* BUTTON LOADING */
-
-        loginBtn.disabled = true;
-
-
-        const originalButtonHTML =
-          loginBtn.innerHTML;
-
-
-        loginBtn.innerHTML =
-          '<span class="btn-text">Signing in...</span><span class="btn-arrow">→</span>';
-
-
-        showMessage(
-          "",
-          "success"
-        );
-
-
-        try {
-
-          const {
-            data,
-            error
-          } =
-            await supabaseClient.auth.signInWithPassword({
-              email: email,
-              password: password
-            });
-
-
-          if (error) {
-
-            console.error(
-              "Supabase login error:",
-              error
-            );
-
-
-            showMessage(
-              error.message ||
-              "Unable to sign in. Please check your email and password."
-            );
-
-
-            loginBtn.disabled = false;
-
-            loginBtn.innerHTML =
-              originalButtonHTML;
-
-            return;
-          }
-
-
-          if (
-            data &&
-            data.session
-          ) {
-
-            showMessage(
-              "Login successful. Opening CRM...",
-              "success"
-            );
-
-
-            /*
-              Small delay so the user can
-              see the successful login message.
-            */
-
-            setTimeout(
-              function() {
-
-                window.location.href =
-                  "dashboard.html";
-
-              },
-              300
-            );
-
-          } else {
-
-            showMessage(
-              "Login completed but no session was created."
-            );
-
-
-            loginBtn.disabled = false;
-
-            loginBtn.innerHTML =
-              originalButtonHTML;
-
-          }
-
-
-        } catch (error) {
-
-          console.error(
-            "Login exception:",
-            error
-          );
-
-
-          showMessage(
-            "Something went wrong while signing in."
-          );
-
-
-          loginBtn.disabled = false;
-
-          loginBtn.innerHTML =
-            originalButtonHTML;
-
-        }
-
-      }
-    );
-
-
-    /* =====================================================
-       ENTER KEY / INPUT CLEANUP
-    ===================================================== */
-
-    emailInput.addEventListener(
-      "input",
-      function() {
-
-        if (loginMessage.textContent) {
-
-          loginMessage.textContent = "";
-
-        }
-
-      }
-    );
-
-
-    passwordInput.addEventListener(
-      "input",
-      function() {
-
-        if (loginMessage.textContent) {
-
-          loginMessage.textContent = "";
-
-        }
-
-      }
-    );
-
-
-    /* =====================================================
-       START
-    ===================================================== */
-
     checkExistingSession();
 
   </script>
 
 </body>
-
 </html>
