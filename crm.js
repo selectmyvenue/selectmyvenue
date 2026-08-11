@@ -1,6 +1,12 @@
 /* =========================================================
    SELECT MY VENUE — CRM
    COMPLETE CRM JAVASCRIPT
+   PHASE 2 + CUSTOMER CONTACT REMARKS
+   ========================================================= */
+
+
+/* =========================================================
+   SUPABASE
    ========================================================= */
 
 const SUPABASE_URL =
@@ -23,6 +29,7 @@ const supabaseClient =
 let currentEnquiries = [];
 let currentLead = null;
 let activeLeadTab = "";
+let originalContactRemark = "";
 
 
 /* =========================================================
@@ -325,7 +332,10 @@ async function loadEnquiries() {
 
   } catch (error) {
 
-    console.error("LOAD ENQUIRIES EXCEPTION:", error);
+    console.error(
+      "LOAD ENQUIRIES EXCEPTION:",
+      error
+    );
 
     if (tableBody) {
 
@@ -373,7 +383,6 @@ function renderEnquiries(enquiries) {
     emptyState.hidden = true;
   }
 
-
   tableBody.innerHTML =
     enquiries.map((lead) => {
 
@@ -390,7 +399,6 @@ function renderEnquiries(enquiries) {
         lead.mobile ||
         lead.mobile_number ||
         "";
-
 
       return `
         <tr>
@@ -706,7 +714,6 @@ async function updateLeadInline(
 
   if (!leadId) return;
 
-
   const lead =
     currentEnquiries.find(
       (item) =>
@@ -714,16 +721,12 @@ async function updateLeadInline(
         String(leadId)
     );
 
-
   if (!lead) return;
-
 
   const previousValue =
     selectElement.dataset.currentValue;
 
-
   selectElement.disabled = true;
-
 
   try {
 
@@ -733,7 +736,6 @@ async function updateLeadInline(
         new Date().toISOString()
     };
 
-
     const {
       error
     } =
@@ -741,7 +743,6 @@ async function updateLeadInline(
         .from("customer_enquiries")
         .update(updateData)
         .eq("id", leadId);
-
 
     if (error) {
 
@@ -761,16 +762,13 @@ async function updateLeadInline(
       return;
     }
 
-
     Object.assign(
       lead,
       changes
     );
 
-
     selectElement.dataset.currentValue =
       selectElement.value;
-
 
     if (
       Object.prototype.hasOwnProperty.call(
@@ -787,7 +785,6 @@ async function updateLeadInline(
 
     }
 
-
     if (
       Object.prototype.hasOwnProperty.call(
         changes,
@@ -801,14 +798,11 @@ async function updateLeadInline(
 
     }
 
-
     updateStats(currentEnquiries);
-
 
     showToast(
       "Lead updated successfully."
     );
-
 
   } catch (error) {
 
@@ -851,12 +845,10 @@ function updateStats(enquiries) {
   const converted =
     document.getElementById("convertedLeads");
 
-
   if (total) {
     total.textContent =
       enquiries.length;
   }
-
 
   if (newLeads) {
 
@@ -870,7 +862,6 @@ function updateStats(enquiries) {
 
   }
 
-
   if (followup) {
 
     followup.textContent =
@@ -882,7 +873,6 @@ function updateStats(enquiries) {
       ).length;
 
   }
-
 
   if (converted) {
 
@@ -930,7 +920,6 @@ function setupFilters() {
   const priorityFilter =
     document.getElementById("priorityFilter");
 
-
   if (statusFilter) {
 
     statusFilter.addEventListener(
@@ -947,7 +936,6 @@ function setupFilters() {
     );
 
   }
-
 
   if (priorityFilter) {
 
@@ -976,7 +964,6 @@ function applyFilters() {
   const priorityFilter =
     document.getElementById("priorityFilter");
 
-
   const search =
     (
       searchInput?.value ||
@@ -985,16 +972,13 @@ function applyFilters() {
       .trim()
       .toLowerCase();
 
-
   const dropdownStatus =
     statusFilter?.value ||
     "";
 
-
   const priority =
     priorityFilter?.value ||
     "";
-
 
   const filtered =
     currentEnquiries.filter((lead) => {
@@ -1007,42 +991,38 @@ function applyFilters() {
         lead.email,
         lead.location,
         lead.occasion,
-        lead.source
+        lead.source,
+        lead.contact_remark,
+        lead.internal_notes
 
       ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
 
-
       const matchesSearch =
         !search ||
         searchable.includes(search);
-
 
       const leadStatus =
         lead.status ||
         lead.lead_status ||
         "new";
 
-
       const matchesTab =
         !activeLeadTab ||
         leadStatus ===
         activeLeadTab;
-
 
       const matchesStatus =
         !dropdownStatus ||
         leadStatus ===
         dropdownStatus;
 
-
       const matchesPriority =
         !priority ||
         (lead.priority || "normal") ===
         priority;
-
 
       return (
         matchesSearch &&
@@ -1052,7 +1032,6 @@ function applyFilters() {
       );
 
     });
-
 
   renderEnquiries(filtered);
 
@@ -1070,7 +1049,6 @@ function setupRefresh() {
 
   if (!refreshBtn) return;
 
-
   refreshBtn.addEventListener(
     "click",
     async () => {
@@ -1079,9 +1057,7 @@ function setupRefresh() {
       refreshBtn.textContent =
         "Refreshing...";
 
-
       await loadEnquiries();
-
 
       refreshBtn.disabled = false;
       refreshBtn.textContent =
@@ -1104,9 +1080,7 @@ function setupLeadTabs() {
       ".stat-tab"
     );
 
-
   if (!tabs.length) return;
-
 
   tabs.forEach((tab) => {
 
@@ -1118,20 +1092,16 @@ function setupLeadTabs() {
           tab.dataset.status ||
           "";
 
-
         setActiveLeadTab(tab);
-
 
         const statusFilter =
           document.getElementById(
             "statusFilter"
           );
 
-
         if (statusFilter) {
           statusFilter.value = "";
         }
-
 
         applyFilters();
 
@@ -1162,7 +1132,6 @@ function setActiveLeadTab(
       );
 
     });
-
 
   if (selectedTab) {
 
@@ -1196,14 +1165,12 @@ function setupLeadModal() {
       "saveLeadBtn"
     );
 
-
   if (closeBtn) {
     closeBtn.addEventListener(
       "click",
       closeLeadModal
     );
   }
-
 
   if (cancelBtn) {
     cancelBtn.addEventListener(
@@ -1212,7 +1179,6 @@ function setupLeadModal() {
     );
   }
 
-
   if (saveBtn) {
     saveBtn.addEventListener(
       "click",
@@ -1220,12 +1186,10 @@ function setupLeadModal() {
     );
   }
 
-
   const modal =
     document.getElementById(
       "leadModal"
     );
-
 
   if (modal) {
 
@@ -1245,7 +1209,6 @@ function setupLeadModal() {
 
   }
 
-
   document.addEventListener(
     "keydown",
     (event) => {
@@ -1264,14 +1227,12 @@ function setupLeadModal() {
             "addEnquiryModal"
           );
 
-
         if (
           leadModal &&
           !leadModal.hidden
         ) {
           closeLeadModal();
         }
-
 
         if (
           addModal &&
@@ -1296,6 +1257,8 @@ function openLeadModal(lead) {
 
   currentLead = lead;
 
+  originalContactRemark =
+    lead.contact_remark || "";
 
   setText(
     "modalCustomerName",
@@ -1303,36 +1266,30 @@ function openLeadModal(lead) {
     "Customer"
   );
 
-
   const mobile =
     lead.mobile ||
     lead.mobile_number ||
     "";
-
 
   setText(
     "modalMobile",
     mobile || "—"
   );
 
-
   setText(
     "modalEmail",
     lead.email || "—"
   );
-
 
   setText(
     "modalLocation",
     lead.location || "—"
   );
 
-
   setText(
     "modalOccasion",
     lead.occasion || "—"
   );
-
 
   setText(
     "modalEventDate",
@@ -1341,12 +1298,10 @@ function openLeadModal(lead) {
     )
   );
 
-
   setText(
     "modalGuests",
     lead.guests || "—"
   );
-
 
   setText(
     "modalBudget",
@@ -1358,13 +1313,11 @@ function openLeadModal(lead) {
       : "—"
   );
 
-
   setText(
     "modalFood",
     lead.food_preference ||
     "—"
   );
-
 
   setText(
     "modalRequirements",
@@ -1374,11 +1327,68 @@ function openLeadModal(lead) {
   );
 
 
+  /* =======================================================
+     CONTACT REMARK
+     ======================================================= */
+
+  const contactRemark =
+    document.getElementById(
+      "modalContactRemark"
+    );
+
+  if (contactRemark) {
+
+    contactRemark.value =
+      lead.contact_remark ||
+      "";
+
+  }
+
+
+  /* =======================================================
+     CONTACT HISTORY
+     ======================================================= */
+
+  const contactCount =
+    document.getElementById(
+      "modalContactCount"
+    );
+
+  if (contactCount) {
+
+    contactCount.textContent =
+      Number(
+        lead.contact_count || 0
+      );
+
+  }
+
+
+  const lastContacted =
+    document.getElementById(
+      "modalLastContacted"
+    );
+
+  if (lastContacted) {
+
+    lastContacted.textContent =
+      lead.last_contacted_at
+        ? formatDateTime(
+            lead.last_contacted_at
+          )
+        : "Never";
+
+  }
+
+
+  /* =======================================================
+     STATUS
+     ======================================================= */
+
   const status =
     document.getElementById(
       "modalStatus"
     );
-
 
   if (status) {
 
@@ -1390,11 +1400,14 @@ function openLeadModal(lead) {
   }
 
 
+  /* =======================================================
+     PRIORITY
+     ======================================================= */
+
   const priority =
     document.getElementById(
       "modalPriority"
     );
-
 
   if (priority) {
 
@@ -1405,11 +1418,14 @@ function openLeadModal(lead) {
   }
 
 
+  /* =======================================================
+     FOLLOW-UP
+     ======================================================= */
+
   const followUp =
     document.getElementById(
       "modalFollowUp"
     );
-
 
   if (followUp) {
 
@@ -1421,11 +1437,14 @@ function openLeadModal(lead) {
   }
 
 
+  /* =======================================================
+     INTERNAL NOTES
+     ======================================================= */
+
   const notes =
     document.getElementById(
       "modalNotes"
     );
-
 
   if (notes) {
 
@@ -1436,11 +1455,14 @@ function openLeadModal(lead) {
   }
 
 
+  /* =======================================================
+     CALL BUTTON
+     ======================================================= */
+
   const callBtn =
     document.getElementById(
       "modalCallBtn"
     );
-
 
   if (callBtn) {
 
@@ -1452,11 +1474,14 @@ function openLeadModal(lead) {
   }
 
 
+  /* =======================================================
+     WHATSAPP
+     ======================================================= */
+
   const whatsappBtn =
     document.getElementById(
       "modalWhatsappBtn"
     );
-
 
   if (whatsappBtn) {
 
@@ -1464,12 +1489,10 @@ function openLeadModal(lead) {
       String(mobile)
         .replace(/\D/g, "");
 
-
     const whatsappNumber =
       cleanMobile.length === 10
         ? "91" + cleanMobile
         : cleanMobile;
-
 
     whatsappBtn.href =
       whatsappNumber
@@ -1480,11 +1503,14 @@ function openLeadModal(lead) {
   }
 
 
+  /* =======================================================
+     OPEN MODAL
+     ======================================================= */
+
   const modal =
     document.getElementById(
       "leadModal"
     );
-
 
   if (modal) {
 
@@ -1509,17 +1535,16 @@ function closeLeadModal() {
       "leadModal"
     );
 
-
   if (modal) {
     modal.hidden = true;
   }
 
-
   document.body.style.overflow =
     "";
 
-
   currentLead = null;
+
+  originalContactRemark = "";
 
 }
 
@@ -1542,12 +1567,10 @@ async function saveLeadChanges() {
     return;
   }
 
-
   const saveBtn =
     document.getElementById(
       "saveLeadBtn"
     );
-
 
   const status =
     document.getElementById(
@@ -1555,13 +1578,11 @@ async function saveLeadChanges() {
     )?.value ||
     "new";
 
-
   const priority =
     document.getElementById(
       "modalPriority"
     )?.value ||
     "normal";
-
 
   const followUp =
     document.getElementById(
@@ -1569,12 +1590,26 @@ async function saveLeadChanges() {
     )?.value ||
     "";
 
-
   const notes =
     document.getElementById(
       "modalNotes"
     )?.value.trim() ||
     "";
+
+  const contactRemark =
+    document.getElementById(
+      "modalContactRemark"
+    )?.value.trim() ||
+    "";
+
+
+  /* =======================================================
+     CHECK WHETHER A NEW CONTACT REMARK WAS ADDED
+     ======================================================= */
+
+  const remarkChanged =
+    contactRemark !==
+    originalContactRemark;
 
 
   if (saveBtn) {
@@ -1604,11 +1639,36 @@ async function saveLeadChanges() {
       internal_notes:
         notes || null,
 
+      contact_remark:
+        contactRemark || null,
+
       updated_at:
         new Date().toISOString()
 
     };
 
+
+    /* =====================================================
+       CONTACT TRACKING
+       Only update contact history when remark changes.
+       ===================================================== */
+
+    if (remarkChanged) {
+
+      updateData.contact_count =
+        Number(
+          currentLead.contact_count || 0
+        ) + 1;
+
+      updateData.last_contacted_at =
+        new Date().toISOString();
+
+    }
+
+
+    /* =====================================================
+       SAVE TO SUPABASE
+       ===================================================== */
 
     const {
       error
@@ -1638,16 +1698,38 @@ async function saveLeadChanges() {
     }
 
 
+    /* =====================================================
+       UPDATE LOCAL OBJECT
+       ===================================================== */
+
     Object.assign(
       currentLead,
       updateData
     );
 
 
-    showToast(
-      "Lead updated successfully."
-    );
+    /* =====================================================
+       SUCCESS MESSAGE
+       ===================================================== */
 
+    if (remarkChanged) {
+
+      showToast(
+        "Contact remark saved. Contact history updated."
+      );
+
+    } else {
+
+      showToast(
+        "Lead updated successfully."
+      );
+
+    }
+
+
+    /* =====================================================
+       CLOSE + REFRESH
+       ===================================================== */
 
     closeLeadModal();
 
@@ -1708,7 +1790,6 @@ function setupAddEnquiry() {
       "saveNewEnquiryBtn"
     );
 
-
   if (addBtn) {
 
     addBtn.addEventListener(
@@ -1717,7 +1798,6 @@ function setupAddEnquiry() {
     );
 
   }
-
 
   if (closeBtn) {
 
@@ -1728,7 +1808,6 @@ function setupAddEnquiry() {
 
   }
 
-
   if (cancelBtn) {
 
     cancelBtn.addEventListener(
@@ -1737,7 +1816,6 @@ function setupAddEnquiry() {
     );
 
   }
-
 
   if (saveBtn) {
 
@@ -1748,12 +1826,10 @@ function setupAddEnquiry() {
 
   }
 
-
   const modal =
     document.getElementById(
       "addEnquiryModal"
     );
-
 
   if (modal) {
 
@@ -1787,7 +1863,6 @@ function openAddEnquiryModal() {
       "addEnquiryModal"
     );
 
-
   if (!modal) {
 
     console.error(
@@ -1796,7 +1871,6 @@ function openAddEnquiryModal() {
 
     return;
   }
-
 
   modal.hidden = false;
 
@@ -1817,21 +1891,17 @@ function closeAddEnquiryModal() {
       "addEnquiryModal"
     );
 
-
   if (modal) {
     modal.hidden = true;
   }
 
-
   document.body.style.overflow =
     "";
-
 
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
-
 
   if (message) {
     message.textContent = "";
@@ -1851,24 +1921,20 @@ async function saveNewEnquiry() {
       "newCustomerName"
     )?.value.trim();
 
-
   const mobile =
     document.getElementById(
       "newMobile"
     )?.value.trim();
-
 
   const email =
     document.getElementById(
       "newEmail"
     )?.value.trim();
 
-
   const location =
     document.getElementById(
       "newLocation"
     )?.value.trim();
-
 
   const occasion =
     document.getElementById(
@@ -1876,13 +1942,11 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
-
   const eventDate =
     document.getElementById(
       "newEventDate"
     )?.value ||
     "";
-
 
   const guests =
     document.getElementById(
@@ -1890,13 +1954,11 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
-
   const budget =
     document.getElementById(
       "newBudget"
     )?.value ||
     "";
-
 
   const food =
     document.getElementById(
@@ -1904,13 +1966,11 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
-
   const source =
     document.getElementById(
       "newSource"
     )?.value ||
     "Website";
-
 
   const status =
     document.getElementById(
@@ -1918,13 +1978,11 @@ async function saveNewEnquiry() {
     )?.value ||
     "new";
 
-
   const priority =
     document.getElementById(
       "newPriority"
     )?.value ||
     "normal";
-
 
   const followUp =
     document.getElementById(
@@ -1932,13 +1990,11 @@ async function saveNewEnquiry() {
     )?.value ||
     "";
 
-
   const requirements =
     document.getElementById(
       "newRequirements"
     )?.value.trim() ||
     "";
-
 
   const notes =
     document.getElementById(
@@ -1946,18 +2002,15 @@ async function saveNewEnquiry() {
     )?.value.trim() ||
     "";
 
-
   const message =
     document.getElementById(
       "addEnquiryMessage"
     );
 
-
   const saveBtn =
     document.getElementById(
       "saveNewEnquiryBtn"
     );
-
 
   if (!name || !mobile) {
 
@@ -1971,7 +2024,6 @@ async function saveNewEnquiry() {
     return;
   }
 
-
   if (saveBtn) {
 
     saveBtn.disabled = true;
@@ -1980,12 +2032,10 @@ async function saveNewEnquiry() {
 
   }
 
-
   if (message) {
     message.textContent =
       "Saving enquiry...";
   }
-
 
   try {
 
@@ -2031,6 +2081,15 @@ async function saveNewEnquiry() {
           internal_notes:
             notes || null,
 
+          contact_remark:
+            null,
+
+          contact_count:
+            0,
+
+          last_contacted_at:
+            null,
+
           source:
             source || "Other",
 
@@ -2049,10 +2108,7 @@ async function saveNewEnquiry() {
           priority,
 
           requirements:
-            requirements || null,
-
-          last_contacted_at:
-            null
+            requirements || null
 
         });
 
@@ -2063,7 +2119,6 @@ async function saveNewEnquiry() {
         "ADD ENQUIRY ERROR:",
         error
       );
-
 
       if (message) {
 
@@ -2093,9 +2148,7 @@ async function saveNewEnquiry() {
 
     clearAddEnquiryForm();
 
-
     await loadEnquiries();
-
 
     setTimeout(
       () => {
@@ -2112,7 +2165,6 @@ async function saveNewEnquiry() {
       error
     );
 
-
     if (message) {
 
       message.textContent =
@@ -2120,7 +2172,6 @@ async function saveNewEnquiry() {
         error.message;
 
     }
-
 
   } finally {
 
@@ -2158,7 +2209,6 @@ function clearAddEnquiryForm() {
     "newNotes"
 
   ];
-
 
   fields.forEach((id) => {
 
@@ -2238,7 +2288,6 @@ function showToast(message) {
       "toast"
     );
 
-
   if (!toast) {
 
     console.log(
@@ -2249,15 +2298,12 @@ function showToast(message) {
     return;
   }
 
-
   toast.textContent =
     message;
-
 
   toast.classList.add(
     "show"
   );
-
 
   setTimeout(() => {
 
@@ -2271,7 +2317,7 @@ function showToast(message) {
 
 
 /* =========================================================
-   HELPERS
+   TEXT HELPER
    ========================================================= */
 
 function setText(
@@ -2300,10 +2346,8 @@ function formatDate(value) {
     return "—";
   }
 
-
   const date =
     new Date(value);
-
 
   if (
     Number.isNaN(
@@ -2315,13 +2359,49 @@ function formatDate(value) {
 
   }
 
-
   return date.toLocaleDateString(
     "en-IN",
     {
       day: "2-digit",
       month: "short",
       year: "numeric"
+    }
+  );
+
+}
+
+
+/* =========================================================
+   DATE + TIME FORMAT
+   ========================================================= */
+
+function formatDateTime(value) {
+
+  if (!value) {
+    return "—";
+  }
+
+  const date =
+    new Date(value);
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+
+    return value;
+
+  }
+
+  return date.toLocaleString(
+    "en-IN",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
     }
   );
 
@@ -2338,10 +2418,8 @@ function toDateTimeLocal(value) {
     return "";
   }
 
-
   const date =
     new Date(value);
-
 
   if (
     Number.isNaN(
@@ -2353,12 +2431,10 @@ function toDateTimeLocal(value) {
 
   }
 
-
   const pad =
     (number) =>
       String(number)
         .padStart(2, "0");
-
 
   return (
     date.getFullYear() +
@@ -2411,7 +2487,6 @@ function formatStatus(status) {
 
   };
 
-
   return (
     values[status] ||
     status ||
@@ -2445,7 +2520,6 @@ function getStatusClass(status) {
 
   };
 
-
   return (
     classes[status] ||
     "status-new"
@@ -2475,7 +2549,6 @@ function formatPriority(priority) {
       "Low"
 
   };
-
 
   return (
     values[priority] ||
