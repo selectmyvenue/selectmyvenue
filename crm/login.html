@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
 
 ```
@@ -18,194 +19,358 @@
     href="./crm.css"
 >
 
-<!-- Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
 
 <style>
+
     /* =====================================================
-       SELECT MY VENUE — CRM LOGIN
-       FULL SCREEN LOGIN
+       FULL SCREEN CORPORATE CRM LOGIN
     ===================================================== */
 
-    html,
-    body {
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        width: 100%;
+        height: 100%;
         margin: 0;
         padding: 0;
-        width: 100%;
-        min-height: 100%;
     }
 
     body {
+        width: 100%;
+        min-width: 100%;
+        height: 100%;
         min-height: 100vh;
-        background:
-            radial-gradient(
-                circle at 50% 20%,
-                rgba(21, 154, 140, 0.12),
-                transparent 40%
-            ),
-            linear-gradient(
-                135deg,
-                #071018 0%,
-                #0b1420 45%,
-                #071018 100%
-            );
-        color: #ffffff;
+
+        margin: 0;
+        padding: 0;
+
+        overflow-x: hidden;
+
         font-family:
             Inter,
             -apple-system,
             BlinkMacSystemFont,
             "Segoe UI",
+            Arial,
             sans-serif;
-    }
-
-    .login-page {
-        width: 100%;
-        min-height: 100vh;
-        min-height: 100dvh;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        box-sizing: border-box;
-        padding: 30px 20px;
-
-        position: relative;
-        overflow: hidden;
-    }
-
-    /* subtle background glow */
-
-    .login-page::before {
-        content: "";
-        position: absolute;
-
-        width: 520px;
-        height: 520px;
-
-        top: 50%;
-        left: 50%;
-
-        transform: translate(-50%, -55%);
 
         background:
-            radial-gradient(
-                circle,
-                rgba(21, 154, 140, 0.12) 0%,
-                rgba(21, 154, 140, 0.04) 35%,
-                transparent 70%
-            );
-
-        pointer-events: none;
-    }
-
-    .login-card {
-        position: relative;
-        z-index: 2;
-
-        width: min(430px, 100%);
-
-        box-sizing: border-box;
-
-        padding: 42px 38px 32px;
-
-        border-radius: 24px;
-
-        background:
-            linear-gradient(
-                145deg,
-                rgba(21, 31, 48, 0.98),
-                rgba(10, 18, 30, 0.98)
-            );
-
-        border: 1px solid
-            rgba(255, 255, 255, 0.09);
-
-        box-shadow:
-            0 30px 90px
-            rgba(0, 0, 0, 0.55),
-            0 0 60px
-            rgba(21, 154, 140, 0.06);
-    }
-
-    .login-logo {
-        display: block;
-
-        width: 125px;
-        height: 125px;
-
-        object-fit: contain;
-
-        margin: 0 auto 22px;
-
-        border-radius: 18px;
-    }
-
-    .login-brand {
-        text-align: center;
-
-        margin-bottom: 30px;
-    }
-
-    .login-brand h1 {
-        margin: 0;
-
-        font-size: 26px;
-        line-height: 1.2;
-
-        font-weight: 750;
-
-        letter-spacing: -0.4px;
+            #071018;
 
         color: #ffffff;
     }
 
+
+    /* =====================================================
+       FULL VIEWPORT BACKGROUND
+    ===================================================== */
+
+    .login-page {
+
+        position: fixed;
+
+        inset: 0;
+
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+
+        min-height: 100vh;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 40px;
+
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        background:
+
+            radial-gradient(
+                circle at 50% 35%,
+                rgba(21, 154, 140, 0.14),
+                transparent 35%
+            ),
+
+            radial-gradient(
+                circle at 15% 90%,
+                rgba(21, 154, 140, 0.08),
+                transparent 35%
+            ),
+
+            radial-gradient(
+                circle at 85% 10%,
+                rgba(255, 190, 70, 0.035),
+                transparent 30%
+            ),
+
+            linear-gradient(
+                135deg,
+                #050b12 0%,
+                #09131d 48%,
+                #050b12 100%
+            );
+
+    }
+
+
+    /* =====================================================
+       CORPORATE BACKGROUND GRID
+    ===================================================== */
+
+    .login-page::before {
+
+        content: "";
+
+        position: absolute;
+
+        inset: 0;
+
+        pointer-events: none;
+
+        opacity: 0.18;
+
+        background-image:
+
+            linear-gradient(
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            ),
+
+            linear-gradient(
+                90deg,
+                rgba(255,255,255,0.025) 1px,
+                transparent 1px
+            );
+
+        background-size:
+            60px 60px;
+
+    }
+
+
+    /* =====================================================
+       SOFT CENTER LIGHT
+    ===================================================== */
+
+    .login-page::after {
+
+        content: "";
+
+        position: absolute;
+
+        width: 700px;
+        height: 700px;
+
+        left: 50%;
+        top: 50%;
+
+        transform:
+            translate(-50%, -50%);
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(21,154,140,0.08) 0%,
+                rgba(21,154,140,0.025) 40%,
+                transparent 72%
+            );
+
+        pointer-events: none;
+
+    }
+
+
+    /* =====================================================
+       LOGIN CARD
+    ===================================================== */
+
+    .login-card {
+
+        position: relative;
+
+        z-index: 5;
+
+        width: 440px;
+        max-width: 100%;
+
+        padding:
+            46px
+            44px
+            34px;
+
+        border-radius: 26px;
+
+        background:
+
+            linear-gradient(
+                145deg,
+                rgba(18, 30, 44, 0.97),
+                rgba(8, 17, 27, 0.98)
+            );
+
+        border:
+            1px solid
+            rgba(255,255,255,0.10);
+
+        box-shadow:
+
+            0 40px 100px
+            rgba(0,0,0,0.60),
+
+            0 0 80px
+            rgba(21,154,140,0.08);
+
+        backdrop-filter:
+            blur(18px);
+
+        -webkit-backdrop-filter:
+            blur(18px);
+
+    }
+
+
+    /* =====================================================
+       LOGO
+    ===================================================== */
+
+    .login-logo {
+
+        display: block;
+
+        width: 150px;
+        height: 150px;
+
+        object-fit: contain;
+
+        margin:
+            0 auto 26px;
+
+        border-radius: 24px;
+
+        filter:
+            drop-shadow(
+                0 12px 25px
+                rgba(0,0,0,0.35)
+            );
+
+    }
+
+
+    /* =====================================================
+       BRAND
+    ===================================================== */
+
+    .login-brand {
+
+        text-align: center;
+
+        margin-bottom: 32px;
+
+    }
+
+
+    .login-brand h1 {
+
+        margin: 0;
+
+        font-size: 27px;
+
+        line-height: 1.2;
+
+        font-weight: 750;
+
+        letter-spacing:
+            -0.5px;
+
+        color: #ffffff;
+
+    }
+
+
     .login-brand p {
-        margin: 9px 0 0;
+
+        margin:
+            10px 0 0;
 
         font-size: 13px;
 
-        color:
-            rgba(255, 255, 255, 0.58);
+        line-height: 1.5;
 
-        letter-spacing: 0.2px;
+        color:
+            rgba(255,255,255,0.55);
+
+        letter-spacing:
+            0.2px;
+
     }
+
+
+    /* =====================================================
+       FORM
+    ===================================================== */
 
     .login-form {
+
         display: grid;
-        gap: 18px;
+
+        gap: 19px;
+
     }
+
 
     .login-field {
+
         display: grid;
+
         gap: 8px;
+
     }
 
+
     .login-field label {
+
         font-size: 11px;
 
         font-weight: 750;
 
-        letter-spacing: 0.09em;
+        letter-spacing:
+            0.10em;
 
         color:
-            rgba(255, 255, 255, 0.72);
+            rgba(255,255,255,0.68);
+
     }
 
+
     .login-field input {
+
         width: 100%;
 
-        box-sizing: border-box;
+        height: 50px;
 
-        padding: 14px 15px;
+        padding:
+            0 15px;
 
         border-radius: 12px;
 
-        border: 1px solid
-            rgba(255, 255, 255, 0.10);
+        border:
+            1px solid
+            rgba(255,255,255,0.11);
 
         background:
-            rgba(255, 255, 255, 0.045);
+            rgba(255,255,255,0.045);
 
         color: #ffffff;
 
@@ -214,38 +379,58 @@
         font-size: 15px;
 
         transition:
-            border-color 0.2s ease,
-            box-shadow 0.2s ease,
-            background 0.2s ease;
+            0.2s ease;
+
     }
+
 
     .login-field input::placeholder {
+
         color:
-            rgba(255, 255, 255, 0.35);
+            rgba(255,255,255,0.30);
+
     }
+
+
+    .login-field input:hover {
+
+        border-color:
+            rgba(255,255,255,0.18);
+
+    }
+
 
     .login-field input:focus {
+
         border-color:
-            rgba(52, 211, 153, 0.75);
+            rgba(21,154,140,0.85);
 
         background:
-            rgba(255, 255, 255, 0.065);
+            rgba(255,255,255,0.06);
 
         box-shadow:
+
             0 0 0 3px
-            rgba(52, 211, 153, 0.10);
+            rgba(21,154,140,0.10);
+
     }
 
+
+    /* =====================================================
+       LOGIN BUTTON
+    ===================================================== */
+
     .login-btn {
+
         width: 100%;
+
+        height: 50px;
+
+        margin-top: 3px;
 
         border: 0;
 
         border-radius: 12px;
-
-        padding: 14px 18px;
-
-        margin-top: 2px;
 
         cursor: pointer;
 
@@ -256,46 +441,67 @@
         color: #ffffff;
 
         background:
+
             linear-gradient(
                 135deg,
-                #159a8c,
+                #18a997,
                 #087f73
             );
 
         box-shadow:
-            0 8px 24px
-            rgba(8, 127, 115, 0.25);
+
+            0 10px 28px
+            rgba(8,127,115,0.25);
 
         transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease,
-            opacity 0.2s ease;
+            0.2s ease;
+
     }
+
 
     .login-btn:hover {
-        transform: translateY(-1px);
+
+        transform:
+            translateY(-1px);
 
         box-shadow:
-            0 12px 28px
-            rgba(8, 127, 115, 0.35);
+
+            0 14px 32px
+            rgba(8,127,115,0.35);
+
     }
+
 
     .login-btn:active {
-        transform: translateY(0);
+
+        transform:
+            translateY(0);
+
     }
+
 
     .login-btn:disabled {
+
         opacity: 0.55;
 
-        cursor: not-allowed;
+        cursor:
+            not-allowed;
 
-        transform: none;
+        transform:
+            none;
 
-        box-shadow: none;
     }
 
+
+    /* =====================================================
+       MESSAGE
+    ===================================================== */
+
     .login-message {
+
         min-height: 20px;
+
+        margin-top: 1px;
 
         text-align: center;
 
@@ -303,57 +509,142 @@
 
         line-height: 1.4;
 
-        margin-top: 2px;
     }
+
 
     .login-message.error {
-        color: #ff8f8f;
+
+        color:
+            #ff8f8f;
+
     }
+
 
     .login-message.success {
-        color: #63e6be;
+
+        color:
+            #63e6be;
+
     }
 
-    .login-footer {
-        text-align: center;
 
-        margin-top: 26px;
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    .login-footer {
+
+        margin-top: 27px;
+
+        padding-top: 20px;
+
+        border-top:
+            1px solid
+            rgba(255,255,255,0.06);
+
+        text-align: center;
 
         font-size: 10px;
 
-        letter-spacing: 0.2px;
+        letter-spacing:
+            0.3px;
 
         color:
-            rgba(255, 255, 255, 0.35);
+            rgba(255,255,255,0.32);
+
     }
+
 
     /* =====================================================
        MOBILE
     ===================================================== */
 
-    @media (max-width: 520px) {
+    @media (max-width: 600px) {
 
         .login-page {
-            padding: 20px 15px;
+
+            padding:
+                24px 16px;
+
         }
 
         .login-card {
-            padding: 34px 24px 28px;
 
-            border-radius: 20px;
+            width: 100%;
+
+            padding:
+                36px 25px 28px;
+
+            border-radius:
+                22px;
+
         }
 
         .login-logo {
-            width: 105px;
-            height: 105px;
 
-            margin-bottom: 18px;
+            width: 120px;
+            height: 120px;
+
+            margin-bottom:
+                21px;
+
         }
 
         .login-brand h1 {
-            font-size: 23px;
+
+            font-size:
+                23px;
+
         }
+
     }
+
+
+    /* =====================================================
+       SMALL HEIGHT SCREENS
+    ===================================================== */
+
+    @media (max-height: 700px) {
+
+        .login-page {
+
+            align-items:
+                flex-start;
+
+            padding-top:
+                25px;
+
+            padding-bottom:
+                25px;
+
+        }
+
+        .login-card {
+
+            padding-top:
+                30px;
+
+        }
+
+        .login-logo {
+
+            width: 105px;
+            height: 105px;
+
+            margin-bottom:
+                16px;
+
+        }
+
+        .login-brand {
+
+            margin-bottom:
+                22px;
+
+        }
+
+    }
+
 </style>
 ```
 
@@ -362,15 +653,26 @@
 <body>
 
 ```
+<!-- =====================================================
+     FULL SCREEN LOGIN
+====================================================== -->
+
 <main class="login-page">
 
+
     <section class="login-card">
+
+
+        <!-- LOGO -->
 
         <img
             src="../logo.png"
             alt="Select My Venue"
             class="login-logo"
         >
+
+
+        <!-- BRAND -->
 
         <div class="login-brand">
 
@@ -385,15 +687,20 @@
         </div>
 
 
+        <!-- LOGIN FORM -->
+
         <form
             id="loginForm"
             class="login-form"
             autocomplete="on"
         >
 
+
             <div class="login-field">
 
-                <label for="email">
+                <label
+                    for="email"
+                >
                     EMAIL ADDRESS
                 </label>
 
@@ -411,7 +718,9 @@
 
             <div class="login-field">
 
-                <label for="password">
+                <label
+                    for="password"
+                >
                     PASSWORD
                 </label>
 
@@ -443,20 +752,25 @@
                 aria-live="polite"
             ></div>
 
+
         </form>
 
 
         <div class="login-footer">
+
             Select My Venue · Secure Employee CRM
+
         </div>
 
+
     </section>
+
 
 </main>
 
 
 <!-- =====================================================
-     SUPABASE CONFIG
+     SUPABASE CONFIGURATION
 ====================================================== -->
 
 <script>
@@ -471,7 +785,7 @@
 
 
 <!-- =====================================================
-     LOGIN SCRIPT
+     LOGIN LOGIC
 ====================================================== -->
 
 <script>
@@ -484,18 +798,24 @@
 
 
     const loginForm =
-        document.getElementById("loginForm");
+        document.getElementById(
+            "loginForm"
+        );
 
     const loginBtn =
-        document.getElementById("loginBtn");
+        document.getElementById(
+            "loginBtn"
+        );
 
     const loginMessage =
-        document.getElementById("loginMessage");
+        document.getElementById(
+            "loginMessage"
+        );
 
 
     function showLoginMessage(
         message,
-        type = "error"
+        type = ""
     ) {
 
         loginMessage.textContent =
@@ -503,6 +823,7 @@
 
         loginMessage.className =
             "login-message " + type;
+
     }
 
 
@@ -512,11 +833,13 @@
 
             event.preventDefault();
 
+
             const email =
                 document
                     .getElementById("email")
                     .value
                     .trim();
+
 
             const password =
                 document
@@ -524,7 +847,10 @@
                     .value;
 
 
-            if (!email || !password) {
+            if (
+                !email ||
+                !password
+            ) {
 
                 showLoginMessage(
                     "Please enter email and password.",
@@ -532,10 +858,12 @@
                 );
 
                 return;
+
             }
 
 
-            loginBtn.disabled = true;
+            loginBtn.disabled =
+                true;
 
             loginBtn.textContent =
                 "Signing in...";
@@ -545,35 +873,44 @@
 
             try {
 
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseLogin.auth
+                const result =
+                    await supabaseLogin
+                        .auth
                         .signInWithPassword({
-                            email: email,
-                            password: password
+
+                            email:
+                                email,
+
+                            password:
+                                password
+
                         });
 
 
-                if (error) {
+                if (
+                    result.error
+                ) {
 
                     console.error(
                         "Login error:",
-                        error
+                        result.error
                     );
 
                     showLoginMessage(
-                        error.message ||
+                        result.error.message ||
                         "Invalid email or password.",
                         "error"
                     );
 
                     return;
+
                 }
 
 
-                if (data && data.session) {
+                if (
+                    result.data &&
+                    result.data.session
+                ) {
 
                     showLoginMessage(
                         "Login successful. Opening CRM...",
@@ -591,12 +928,6 @@
                         500
                     );
 
-                } else {
-
-                    showLoginMessage(
-                        "Login failed. Please try again.",
-                        "error"
-                    );
                 }
 
 
@@ -614,10 +945,12 @@
 
             } finally {
 
-                loginBtn.disabled = false;
+                loginBtn.disabled =
+                    false;
 
                 loginBtn.textContent =
                     "Login to CRM";
+
             }
 
         }
@@ -625,27 +958,27 @@
 
 
     /* =====================================================
-       CHECK EXISTING SESSION
+       EXISTING SESSION
     ====================================================== */
 
-    (async function checkExistingSession() {
+    (async function() {
 
         try {
 
-            const {
-                data
-            } =
-                await supabaseLogin.auth
+            const result =
+                await supabaseLogin
+                    .auth
                     .getSession();
 
 
             if (
-                data &&
-                data.session
+                result.data &&
+                result.data.session
             ) {
 
                 window.location.href =
                     "./dashboard.html";
+
             }
 
         } catch (error) {
@@ -663,4 +996,5 @@
 ```
 
 </body>
+
 </html>
