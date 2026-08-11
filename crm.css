@@ -1964,3 +1964,306 @@ a {
   }
 
 }
+/* =========================================================
+   FINAL CRM HEADER — PREMIUM COMPACT VERSION
+   ========================================================= */
+
+/* Compact header */
+.crm-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  height: 68px;
+  min-height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 8px 28px;
+
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom: 1px solid #e5e8ef;
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+
+/* Brand area */
+.crm-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  min-width: 0;
+}
+
+
+/* =========================================================
+   BIG LOGO
+   ========================================================= */
+
+.crm-header-logo {
+  width: 86px !important;
+  height: 50px !important;
+
+  max-width: none !important;
+
+  display: block;
+
+  object-fit: contain;
+  object-position: center;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   BRAND TEXT
+   ========================================================= */
+
+.crm-title {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+
+  gap: 4px;
+
+  line-height: 1;
+}
+
+
+/* Select My Venue • CRM */
+.crm-title strong {
+  display: block;
+
+  color: #6872d8 !important;
+
+  font-size: 18px !important;
+  font-weight: 850 !important;
+
+  letter-spacing: -0.35px;
+
+  line-height: 1.05;
+}
+
+
+/* CRM dot */
+.crm-title .crm-dot {
+  color: #0ea5a8;
+
+  font-weight: 900;
+}
+
+
+/* Lead Management */
+.crm-title span:not(.crm-dot) {
+  display: block;
+
+  color: #6872d8 !important;
+
+  font-size: 11px !important;
+  font-weight: 800 !important;
+
+  letter-spacing: 0.45px;
+
+  line-height: 1;
+}
+
+
+/* =========================================================
+   STAFF / LOGOUT
+   ========================================================= */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.staff-name {
+  max-width: 220px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #667085;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+
+.logout-btn {
+  height: 34px;
+
+  padding: 0 13px;
+
+  border: 1px solid #e0e4ec;
+  border-radius: 9px;
+
+  background: #fff;
+
+  color: #394256;
+
+  font-size: 11px;
+  font-weight: 750;
+
+  transition: all 0.2s ease;
+}
+
+
+.logout-btn:hover {
+  background: #f5f6fa;
+  border-color: #cfd5e0;
+}
+
+
+/* =========================================================
+   REMOVE DUPLICATE PAGE EYEBROW
+   SELECT MY VENUE • CRM
+   ========================================================= */
+
+.page-heading .eyebrow {
+  display: none !important;
+}
+
+
+/* =========================================================
+   CUSTOMER ENQUIRIES — SMALLER
+   ========================================================= */
+
+.page-heading h1 {
+  font-size: 30px !important;
+
+  line-height: 1.08 !important;
+
+  letter-spacing: -1px !important;
+
+  margin-bottom: 8px !important;
+}
+
+
+.page-heading h1 span {
+  color: #6872d8 !important;
+}
+
+
+/* Description */
+.page-heading p:not(.eyebrow) {
+  font-size: 13px !important;
+
+  line-height: 1.55 !important;
+
+  color: #788296;
+}
+
+
+/* =========================================================
+   MAIN CONTENT — COMPACT TOP SPACING
+   ========================================================= */
+
+.crm-main {
+  padding-top: 28px !important;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+  .crm-header {
+    height: 64px;
+    min-height: 64px;
+
+    padding: 7px 16px;
+
+    gap: 10px;
+  }
+
+
+  .crm-header-logo {
+    width: 72px !important;
+    height: 44px !important;
+  }
+
+
+  .crm-brand {
+    gap: 11px;
+  }
+
+
+  .crm-title strong {
+    font-size: 15px !important;
+  }
+
+
+  .crm-title span:not(.crm-dot) {
+    font-size: 9px !important;
+  }
+
+
+  .page-heading h1 {
+    font-size: 27px !important;
+  }
+
+}
+
+
+@media (max-width: 560px) {
+
+  .crm-header {
+    height: 60px;
+    min-height: 60px;
+
+    padding: 6px 12px;
+  }
+
+
+  .crm-header-logo {
+    width: 65px !important;
+    height: 40px !important;
+  }
+
+
+  .crm-brand {
+    gap: 9px;
+  }
+
+
+  .crm-title strong {
+    font-size: 13px !important;
+  }
+
+
+  .crm-title span:not(.crm-dot) {
+    font-size: 8px !important;
+  }
+
+
+  .staff-name {
+    display: none;
+  }
+
+
+  .logout-btn {
+    height: 31px;
+
+    padding: 0 10px;
+
+    font-size: 10px;
+  }
+
+
+  .page-heading h1 {
+    font-size: 25px !important;
+  }
+
+}
