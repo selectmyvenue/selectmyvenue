@@ -1,7 +1,6 @@
 /* =========================================================
    SELECT MY VENUE — CRM
-   PREMIUM MASTER CSS
-   VERSION 2 — CLEAN / LARGE LOGO / STABLE MODALS
+   PREMIUM CLEAN CRM — FINAL HEADER ALIGNMENT
    ========================================================= */
 
 * {
@@ -29,14 +28,14 @@ body {
 
   background:
     radial-gradient(
-      circle at 8% 0%,
-      rgba(104, 114, 216, 0.08),
-      transparent 30%
+      circle at 10% 0%,
+      rgba(104, 114, 216, 0.07),
+      transparent 28%
     ),
     radial-gradient(
-      circle at 92% 8%,
-      rgba(14, 165, 233, 0.055),
-      transparent 26%
+      circle at 90% 10%,
+      rgba(14, 165, 233, 0.045),
+      transparent 25%
     ),
     #f5f7fb;
 }
@@ -58,7 +57,7 @@ a {
 
 
 /* =========================================================
-   HEADER
+   CRM HEADER
    ========================================================= */
 
 .crm-header {
@@ -66,22 +65,17 @@ a {
   top: 0;
   z-index: 50;
 
-  height: 76px;
-  min-height: 76px;
+  height: 72px;
+  min-height: 72px;
 
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-
+  display: flex;
   align-items: center;
 
-  padding: 6px 30px;
+  padding: 6px 28px;
 
-  background: rgba(255, 255, 255, 0.97);
+  background: rgba(255, 255, 255, 0.96);
 
   border-bottom: 1px solid #e3e7ef;
-
-  box-shadow:
-    0 4px 20px rgba(25, 34, 52, 0.035);
 
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -93,38 +87,36 @@ a {
    ========================================================= */
 
 .crm-brand {
+  flex: 1 1 0;
+
   min-width: 0;
 
   display: flex;
   align-items: center;
 
-  gap: 16px;
-
-  justify-self: start;
+  gap: 10px;
 }
 
 
 /* =========================================================
    LOGO
-   IMPORTANT:
-   DO NOT SHRINK ON DESKTOP
+   Slightly reduced width so brand stays LEFT
    ========================================================= */
 
 .crm-header-logo {
-  width: 300px !important;
-  min-width: 300px !important;
-  max-width: 300px !important;
+  width: 165px !important;
+  height: auto !important;
 
-  height: 58px !important;
-  min-height: 58px !important;
-  max-height: 58px !important;
+  min-width: 165px !important;
+  max-width: 165px !important;
+
+  max-height: 42px !important;
 
   display: block !important;
 
   object-fit: contain !important;
   object-position: left center !important;
 
-  border: 0 !important;
   border-radius: 0 !important;
 
   flex-shrink: 0 !important;
@@ -136,60 +128,56 @@ a {
    ========================================================= */
 
 .crm-brand-name {
-  display: block;
-
   white-space: nowrap;
 
-  font-size: 18px;
+  color: #27314a;
+
+  font-size: 16px;
   line-height: 1;
 
-  font-weight: 950;
+  font-weight: 900;
 
-  letter-spacing: -0.5px;
+  letter-spacing: -0.45px;
 
-  background:
-    linear-gradient(
-      135deg,
-      #171e31 0%,
-      #34405e 42%,
-      #5965d2 100%
-    );
-
-  -webkit-background-clip: text;
-  background-clip: text;
-
-  -webkit-text-fill-color: transparent;
+  flex-shrink: 0;
 }
 
 
 /* =========================================================
-   CENTER — ONLY LEAD MANAGEMENT
+   CENTER — LEAD MANAGEMENT
    ========================================================= */
 
 .crm-header-center {
-  justify-self: center;
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
 
   display: flex;
   align-items: center;
   justify-content: center;
 
+  pointer-events: none;
+
   white-space: nowrap;
 
-  pointer-events: none;
+  z-index: 2;
 }
 
 .crm-header-title {
-  font-size: 21px;
+  font-size: 18px;
   line-height: 1;
 
-  font-weight: 950;
+  font-weight: 900;
 
-  letter-spacing: -0.3px;
+  letter-spacing: 0.15px;
 
   background:
     linear-gradient(
       135deg,
-      #515dcc 0%,
+      #5662d2 0%,
       #6872d8 45%,
       #1597b8 100%
     );
@@ -206,55 +194,51 @@ a {
    ========================================================= */
 
 .header-actions {
+  flex: 1 1 0;
+
   min-width: 0;
 
   display: flex;
   align-items: center;
   justify-content: flex-end;
 
-  gap: 11px;
-
-  justify-self: end;
+  gap: 10px;
 }
 
 .staff-name {
-  max-width: 210px;
+  max-width: 190px;
 
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  color: #687286;
+  color: #626c7d;
 
   font-size: 12px;
-  font-weight: 750;
+  font-weight: 700;
 }
 
 .logout-btn {
-  height: 37px;
+  height: 36px;
 
-  padding: 0 15px;
+  padding: 0 14px;
 
   border: 1px solid #dce1e9;
-
   border-radius: 9px;
 
-  background: #fff;
+  background: #ffffff;
 
   color: #30394b;
 
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 800;
 
   transition: all 0.2s ease;
 }
 
 .logout-btn:hover {
   background: #f5f6f9;
-
   border-color: #cfd5df;
-
-  transform: translateY(-1px);
 }
 
 
@@ -267,7 +251,7 @@ a {
 
   margin: 0 auto;
 
-  padding: 32px 0 60px;
+  padding: 30px 0 55px;
 }
 
 
@@ -277,14 +261,12 @@ a {
 
 .page-heading {
   display: flex;
-
   align-items: flex-end;
-
   justify-content: space-between;
 
   gap: 25px;
 
-  margin-bottom: 26px;
+  margin-bottom: 25px;
 }
 
 .eyebrow {
@@ -293,10 +275,9 @@ a {
   color: #6872d8;
 
   font-size: 10px;
-
   font-weight: 900;
 
-  letter-spacing: 1.7px;
+  letter-spacing: 1.6px;
 }
 
 .page-heading h1 {
@@ -308,7 +289,7 @@ a {
 
   line-height: 1.05;
 
-  letter-spacing: -1.6px;
+  letter-spacing: -1.5px;
 }
 
 .page-heading h1 span {
@@ -321,23 +302,19 @@ a {
   color: #788296;
 
   font-size: 14px;
-
   line-height: 1.6;
 }
 
 
 /* =========================================================
-   HEADING ACTIONS
+   HEADING BUTTONS
    ========================================================= */
 
 .heading-actions {
   display: flex;
-
   align-items: center;
 
   gap: 9px;
-
-  flex-shrink: 0;
 }
 
 .add-enquiry-btn,
@@ -349,7 +326,6 @@ a {
   border-radius: 10px;
 
   font-size: 12px;
-
   font-weight: 800;
 
   transition: all 0.2s ease;
@@ -373,9 +349,6 @@ a {
 
 .add-enquiry-btn:hover {
   transform: translateY(-1px);
-
-  box-shadow:
-    0 12px 26px rgba(104, 114, 216, 0.26);
 }
 
 .refresh-btn {
@@ -388,13 +361,11 @@ a {
 
 .refresh-btn:hover {
   background: #f7f8fb;
-
-  border-color: #d2d8e2;
 }
 
 
 /* =========================================================
-   STATISTICS
+   STATS
    ========================================================= */
 
 .stats-grid {
@@ -405,7 +376,7 @@ a {
 
   gap: 14px;
 
-  margin-bottom: 23px;
+  margin-bottom: 22px;
 }
 
 .stat-card {
@@ -414,14 +385,13 @@ a {
   min-height: 112px;
 
   display: flex;
-
   align-items: center;
 
   gap: 14px;
 
   padding: 19px;
 
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.97);
 
   border: 1px solid #e5e9f0;
 
@@ -461,7 +431,6 @@ a {
   flex-shrink: 0;
 
   display: grid;
-
   place-items: center;
 
   border-radius: 12px;
@@ -471,13 +440,11 @@ a {
   color: #626bd5;
 
   font-size: 17px;
-
   font-weight: 900;
 }
 
 .stat-card.active .stat-icon {
   background: #6872d8;
-
   color: #fff;
 }
 
@@ -489,7 +456,6 @@ a {
   color: #8b94a5;
 
   font-size: 9px;
-
   font-weight: 900;
 
   letter-spacing: 1px;
@@ -501,7 +467,6 @@ a {
   color: #171d2d;
 
   font-size: 27px;
-
   line-height: 1;
 
   letter-spacing: -0.6px;
@@ -551,7 +516,6 @@ a {
   height: 43px;
 
   display: flex;
-
   align-items: center;
 
   gap: 9px;
@@ -563,15 +527,6 @@ a {
   border: 1px solid #dfe4ed;
 
   border-radius: 10px;
-
-  transition: all 0.2s ease;
-}
-
-.search-box:focus-within {
-  border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 .search-box span {
@@ -582,11 +537,9 @@ a {
 
 .search-box input {
   width: 100%;
-
   height: 100%;
 
   border: 0;
-
   outline: 0;
 
   background: transparent;
@@ -598,7 +551,6 @@ a {
 
 .filter-bar select {
   width: 100%;
-
   height: 43px;
 
   padding: 0 11px;
@@ -614,13 +566,6 @@ a {
   outline: none;
 
   font-size: 13px;
-}
-
-.filter-bar select:focus {
-  border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 
@@ -652,7 +597,6 @@ a {
   color: #8a93a4;
 
   font-size: 9px;
-
   font-weight: 900;
 
   letter-spacing: 0.9px;
@@ -688,7 +632,6 @@ a {
   color: #20283a;
 
   font-size: 13px;
-
   font-weight: 800;
 }
 
@@ -712,35 +655,32 @@ a {
 
 
 /* =========================================================
-   VIEW DETAILS BUTTON
+   VIEW DETAILS
    ========================================================= */
 
 .view-lead-btn {
-  min-height: 33px;
+  min-height: 32px;
 
-  padding: 0 12px;
+  padding: 0 11px;
 
-  border: 1px solid #d8def0;
+  border: 1px solid #dfe4ed;
 
   border-radius: 8px;
 
-  background: #f7f8ff;
+  background: #fff;
 
   color: #5560c5;
 
   font-size: 11px;
-
-  font-weight: 850;
+  font-weight: 800;
 
   transition: all 0.2s ease;
 }
 
 .view-lead-btn:hover {
-  background: #eef1ff;
+  background: #f0f2ff;
 
-  border-color: #c5cdf3;
-
-  transform: translateY(-1px);
+  border-color: #cfd4f7;
 }
 
 
@@ -751,10 +691,7 @@ a {
 .status-badge,
 .priority-badge {
   display: inline-flex;
-
   align-items: center;
-
-  justify-content: center;
 
   min-height: 25px;
 
@@ -763,7 +700,6 @@ a {
   border-radius: 999px;
 
   font-size: 10px;
-
   font-weight: 850;
 
   white-space: nowrap;
@@ -771,13 +707,11 @@ a {
 
 .status-badge {
   background: #eef1ff;
-
   color: #5562c8;
 }
 
 .priority-badge {
   background: #f3f4f7;
-
   color: #697181;
 }
 
@@ -797,7 +731,6 @@ a {
   height: 48px;
 
   display: grid;
-
   place-items: center;
 
   margin: 0 auto 13px;
@@ -827,30 +760,25 @@ a {
 
 
 /* =========================================================
-   MODAL OVERLAY
+   MODALS
    ========================================================= */
 
 .lead-modal {
   position: fixed;
-
   inset: 0;
 
   z-index: 100;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
-  padding: 22px;
+  padding: 20px;
 
-  background:
-    rgba(12, 18, 31, 0.62);
+  background: rgba(14, 20, 33, 0.58);
 
-  backdrop-filter: blur(8px);
-
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 
   overflow-y: auto;
 }
@@ -859,27 +787,20 @@ a {
   display: none;
 }
 
-
-/* =========================================================
-   MODAL CARD
-   ========================================================= */
-
 .lead-modal-card,
 .add-enquiry-card {
-  width: min(1050px, 100%);
+  width: min(1000px, 100%);
 
-  max-height: calc(100vh - 44px);
+  max-height: calc(100vh - 40px);
 
   overflow-y: auto;
 
   background: #fff;
 
-  border: 1px solid rgba(225, 229, 238, 0.95);
-
-  border-radius: 22px;
+  border-radius: 20px;
 
   box-shadow:
-    0 35px 100px rgba(8, 15, 30, 0.25);
+    0 30px 90px rgba(10, 18, 35, 0.22);
 }
 
 
@@ -888,12 +809,6 @@ a {
    ========================================================= */
 
 .modal-header {
-  position: sticky;
-
-  top: 0;
-
-  z-index: 3;
-
   display: flex;
 
   align-items: flex-start;
@@ -902,16 +817,9 @@ a {
 
   gap: 20px;
 
-  padding: 24px 28px 18px;
+  padding: 24px 27px 18px;
 
-  background:
-    linear-gradient(
-      180deg,
-      #ffffff 0%,
-      #fbfcff 100%
-    );
-
-  border-bottom: 1px solid #edf0f4;
+  background: #fff;
 }
 
 .modal-header h2 {
@@ -919,26 +827,18 @@ a {
 
   color: #171d2d;
 
-  font-size: 25px;
+  font-size: 24px;
 
-  line-height: 1.15;
-
-  font-weight: 900;
-
-  letter-spacing: -0.6px;
+  letter-spacing: -0.5px;
 }
 
 .close-modal {
-  width: 37px;
-  height: 37px;
+  width: 36px;
+  height: 36px;
 
   flex-shrink: 0;
 
-  display: grid;
-
-  place-items: center;
-
-  border: 1px solid #e0e4ec;
+  border: 1px solid #e1e5ec;
 
   border-radius: 10px;
 
@@ -949,21 +849,15 @@ a {
   font-size: 23px;
 
   line-height: 1;
-
-  transition: all 0.2s ease;
 }
 
 .close-modal:hover {
   background: #f5f6f9;
-
-  border-color: #d3d8e2;
-
-  color: #20283a;
 }
 
 
 /* =========================================================
-   LEAD INFORMATION GRID
+   LEAD INFO
    ========================================================= */
 
 .lead-info-grid {
@@ -972,57 +866,36 @@ a {
   grid-template-columns:
     repeat(4, minmax(0, 1fr));
 
-  gap: 12px;
+  gap: 11px;
 
-  padding: 20px 28px 20px;
+  padding: 0 27px 18px;
 
   background: #fff;
 }
 
 .info-card {
-  min-height: 96px;
+  min-height: 88px;
 
-  display: flex;
+  padding: 13px;
 
-  flex-direction: column;
+  border: 1px solid #e7eaf0;
 
-  justify-content: flex-start;
+  border-radius: 11px;
 
-  padding: 14px;
-
-  border: 1px solid #e5e9f0;
-
-  border-radius: 13px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #fbfcfe,
-      #f8f9fc
-    );
-
-  transition: all 0.2s ease;
-}
-
-.info-card:hover {
-  border-color: #d9def0;
-
-  box-shadow:
-    0 6px 18px rgba(25, 34, 52, 0.045);
+  background: #fafbfc;
 }
 
 .info-card small {
   display: block;
 
-  margin-bottom: 7px;
+  margin-bottom: 6px;
 
   color: #929aaa;
 
   font-size: 9px;
-
   font-weight: 900;
 
-  letter-spacing: 0.85px;
+  letter-spacing: 0.8px;
 }
 
 .info-card strong {
@@ -1032,36 +905,24 @@ a {
 
   font-size: 13px;
 
-  line-height: 1.45;
+  line-height: 1.4;
 
   word-break: break-word;
 }
 
-
-/* =========================================================
-   CALL / WHATSAPP
-   ========================================================= */
-
 .info-actions {
   display: flex;
-
   flex-wrap: wrap;
 
   gap: 5px;
 
-  margin-top: 9px;
+  margin-top: 8px;
 }
 
 .mini-action {
   display: inline-flex;
 
-  align-items: center;
-
-  justify-content: center;
-
-  min-height: 25px;
-
-  padding: 4px 8px;
+  padding: 5px 8px;
 
   border-radius: 7px;
 
@@ -1070,16 +931,7 @@ a {
   color: #5662c8;
 
   font-size: 10px;
-
-  font-weight: 850;
-
-  transition: all 0.2s ease;
-}
-
-.mini-action:hover {
-  transform: translateY(-1px);
-
-  filter: brightness(0.98);
+  font-weight: 800;
 }
 
 .whatsapp-action {
@@ -1094,7 +946,7 @@ a {
    ========================================================= */
 
 .detail-block {
-  padding: 0 28px 20px;
+  padding: 0 27px 18px;
 
   background: #fff;
 }
@@ -1103,25 +955,24 @@ a {
 .control-group label {
   display: block;
 
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 
   color: #737d8f;
 
   font-size: 10px;
-
   font-weight: 900;
 
-  letter-spacing: 0.85px;
+  letter-spacing: 0.8px;
 }
 
 .detail-content {
-  min-height: 75px;
+  min-height: 68px;
 
-  padding: 13px;
+  padding: 12px;
 
-  border: 1px solid #e5e9f0;
+  border: 1px solid #e7eaf0;
 
-  border-radius: 12px;
+  border-radius: 10px;
 
   background: #fafbfc;
 
@@ -1129,7 +980,7 @@ a {
 
   font-size: 13px;
 
-  line-height: 1.65;
+  line-height: 1.6;
 
   white-space: pre-wrap;
 }
@@ -1145,24 +996,19 @@ a {
   grid-template-columns:
     repeat(3, minmax(0, 1fr));
 
-  gap: 14px;
+  gap: 12px;
 
-  padding: 2px 28px 20px;
+  padding: 4px 27px 18px;
 
   background: #fff;
-}
-
-.control-group {
-  min-width: 0;
 }
 
 .crm-controls select,
 .crm-controls input {
   width: 100%;
+  height: 43px;
 
-  height: 44px;
-
-  padding: 0 12px;
+  padding: 0 11px;
 
   border: 1px solid #dfe4ed;
 
@@ -1175,35 +1021,25 @@ a {
   outline: none;
 
   font-size: 13px;
-
-  transition: all 0.2s ease;
-}
-
-.crm-controls select:focus,
-.crm-controls input:focus {
-  border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 
 /* =========================================================
-   NOTES / TEXTAREA
+   TEXTAREA
    ========================================================= */
 
 .detail-block textarea {
   width: 100%;
 
-  min-height: 115px;
+  min-height: 105px;
 
-  padding: 13px;
+  padding: 12px;
 
   resize: vertical;
 
   border: 1px solid #dfe4ed;
 
-  border-radius: 11px;
+  border-radius: 10px;
 
   outline: none;
 
@@ -1212,17 +1048,6 @@ a {
   color: #354056;
 
   font-size: 13px;
-
-  line-height: 1.55;
-
-  transition: all 0.2s ease;
-}
-
-.detail-block textarea:focus {
-  border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 3px rgba(104, 114, 216, 0.08);
 }
 
 
@@ -1235,30 +1060,23 @@ a {
 
   justify-content: flex-end;
 
-  align-items: center;
+  gap: 9px;
 
-  gap: 10px;
-
-  padding: 18px 28px 25px;
+  padding: 18px 27px 24px;
 
   background: #fff;
-
-  border-top: 1px solid #edf0f4;
 }
 
 .save-btn,
 .cancel-btn {
-  min-height: 43px;
+  min-height: 42px;
 
-  padding: 0 18px;
+  padding: 0 17px;
 
   border-radius: 9px;
 
   font-size: 13px;
-
-  font-weight: 850;
-
-  transition: all 0.2s ease;
+  font-weight: 800;
 }
 
 .save-btn {
@@ -1272,16 +1090,6 @@ a {
     );
 
   color: #fff;
-
-  box-shadow:
-    0 7px 18px rgba(23, 30, 49, 0.15);
-}
-
-.save-btn:hover {
-  transform: translateY(-1px);
-
-  box-shadow:
-    0 10px 23px rgba(23, 30, 49, 0.20);
 }
 
 .cancel-btn {
@@ -1290,10 +1098,6 @@ a {
   background: #fff;
 
   color: #4b556a;
-}
-
-.cancel-btn:hover {
-  background: #f7f8fa;
 }
 
 
@@ -1306,14 +1110,13 @@ a {
 }
 
 .form-section-title {
-  padding: 16px 28px 9px;
+  padding: 15px 27px 9px;
 
   background: #fff;
 
   color: #6872d8;
 
   font-size: 10px;
-
   font-weight: 900;
 
   letter-spacing: 1.1px;
@@ -1327,9 +1130,9 @@ a {
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  gap: 14px;
+  gap: 13px;
 
-  padding: 0 28px 17px;
+  padding: 0 27px 16px;
 
   background: #fff;
 }
@@ -1354,42 +1157,31 @@ a {
   color: #354056;
 
   font-size: 13px;
-
-  transition: all 0.2s ease;
 }
 
 #addEnquiryModal .control-group input,
 #addEnquiryModal .control-group select {
-  height: 44px;
+  height: 43px;
 
-  padding: 0 12px;
+  padding: 0 11px;
 }
 
 #addEnquiryModal .control-group textarea {
-  min-height: 100px;
+  min-height: 95px;
 
-  padding: 12px;
+  padding: 11px;
 
   resize: vertical;
 }
 
-#addEnquiryModal .control-group input:focus,
-#addEnquiryModal .control-group select:focus,
-#addEnquiryModal .control-group textarea:focus {
-  border-color: #6872d8;
-
-  box-shadow:
-    0 0 0 3px rgba(104, 114, 216, 0.08);
-}
-
 #addEnquiryModal .full-width {
-  padding: 0 28px 16px;
+  padding: 0 27px 15px;
 }
 
 #addEnquiryModal .form-message {
   min-height: 20px;
 
-  padding: 0 28px 5px;
+  padding: 0 27px 4px;
 
   color: #d14343;
 
@@ -1423,7 +1215,6 @@ a {
     0 12px 35px rgba(18, 25, 40, 0.20);
 
   font-size: 13px;
-
   font-weight: 650;
 
   opacity: 0;
@@ -1443,89 +1234,49 @@ a {
 
 
 /* =========================================================
-   LARGE DESKTOP
+   RESPONSIVE
    ========================================================= */
 
-@media (min-width: 1200px) {
+@media (max-width: 1150px) {
 
   .crm-header-logo {
-    width: 300px !important;
-    min-width: 300px !important;
-    max-width: 300px !important;
-
-    height: 58px !important;
-    max-height: 58px !important;
-  }
-
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 1200px) {
-
-  .crm-header {
-    grid-template-columns: auto 1fr auto;
-
-    padding: 6px 20px;
-  }
-
-  .crm-header-logo {
-    width: 220px !important;
-    min-width: 220px !important;
-    max-width: 220px !important;
-
-    height: 52px !important;
-    max-height: 52px !important;
+    width: 150px !important;
+    min-width: 150px !important;
+    max-width: 150px !important;
   }
 
   .crm-brand-name {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .crm-header-title {
-    font-size: 19px;
+    font-size: 16px;
   }
 
   .stats-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .lead-info-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
 }
 
 
-/* =========================================================
-   SMALL LAPTOP / TABLET
-   ========================================================= */
-
-@media (max-width: 950px) {
+@media (max-width: 900px) {
 
   .crm-header {
     height: 70px;
     min-height: 70px;
 
-    padding: 5px 15px;
+    padding: 6px 16px;
   }
 
   .crm-header-logo {
-    width: 190px !important;
-    min-width: 190px !important;
-    max-width: 190px !important;
-
-    height: 48px !important;
-    max-height: 48px !important;
-  }
-
-  .crm-brand {
-    gap: 10px;
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
   }
 
   .crm-brand-name {
@@ -1533,60 +1284,61 @@ a {
   }
 
   .crm-header-title {
-    font-size: 17px;
+    font-size: 15px;
   }
 
   .staff-name {
-    max-width: 145px;
+    max-width: 130px;
   }
 
   .crm-main {
     width: min(100% - 30px, 1460px);
   }
 
+  .page-heading {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .heading-actions {
+    width: 100%;
+  }
+
 }
 
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 760px) {
+@media (max-width: 700px) {
 
   .crm-header {
-    height: auto;
-    min-height: 68px;
+    height: 66px;
+    min-height: 66px;
 
-    grid-template-columns: auto 1fr auto;
-
-    padding: 6px 10px;
-
-    gap: 8px;
+    padding: 5px 12px;
   }
 
   .crm-header-logo {
-    width: 150px !important;
-    min-width: 150px !important;
-    max-width: 150px !important;
-
-    height: 43px !important;
-    max-height: 43px !important;
-  }
-
-  .crm-brand {
-    gap: 0;
+    width: 125px !important;
+    min-width: 125px !important;
+    max-width: 125px !important;
   }
 
   .crm-brand-name {
-    display: none;
+    font-size: 12px;
   }
 
   .crm-header-center {
-    justify-self: center;
+    position: static;
+
+    transform: none;
+
+    flex: 0 0 auto;
+
+    margin: 0 8px;
   }
 
   .crm-header-title {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .staff-name {
@@ -1601,25 +1353,10 @@ a {
     font-size: 11px;
   }
 
-  .crm-main {
-    width: calc(100% - 24px);
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
 
-    padding-top: 24px;
-  }
-
-  .page-heading {
-    align-items: flex-start;
-
-    flex-direction: column;
-  }
-
-  .heading-actions {
-    width: 100%;
-  }
-
-  .add-enquiry-btn,
-  .refresh-btn {
-    flex: 1;
+    gap: 10px;
   }
 
   .filter-bar {
@@ -1638,110 +1375,83 @@ a {
     grid-template-columns: 1fr;
   }
 
-  .lead-modal {
-    padding: 10px;
-  }
-
-  .lead-modal-card,
-  .add-enquiry-card {
-    max-height: calc(100vh - 20px);
-
-    border-radius: 18px;
-  }
-
 }
 
-
-/* =========================================================
-   SMALL MOBILE
-   ========================================================= */
 
 @media (max-width: 520px) {
 
   .crm-header {
+    height: 62px;
     min-height: 62px;
 
-    padding: 4px 8px;
+    padding: 4px 9px;
   }
 
   .crm-header-logo {
-    width: 125px !important;
-    min-width: 125px !important;
-    max-width: 125px !important;
+    width: 110px !important;
+    min-width: 110px !important;
+    max-width: 110px !important;
+  }
 
-    height: 38px !important;
-    max-height: 38px !important;
+  .crm-brand-name {
+    font-size: 11px;
   }
 
   .crm-header-title {
     font-size: 12px;
   }
 
-  .logout-btn {
-    padding: 0 9px;
-
-    font-size: 10px;
-  }
-
   .crm-main {
-    width: calc(100% - 18px);
+    width: calc(100% - 20px);
+
+    padding-top: 23px;
   }
 
-  .page-heading h1 {
-    font-size: 31px;
+  .heading-actions {
+    flex-direction: column;
+  }
+
+  .add-enquiry-btn,
+  .refresh-btn {
+    width: 100%;
   }
 
   .stats-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .stat-card {
+    min-height: 100px;
+
+    padding: 13px;
 
     gap: 9px;
   }
 
-  .stat-card {
-    min-height: 96px;
-
-    padding: 12px;
-
-    gap: 8px;
-  }
-
   .stat-icon {
-    width: 35px;
-    height: 35px;
-
-    font-size: 14px;
+    width: 36px;
+    height: 36px;
   }
 
   .stat-card strong {
-    font-size: 21px;
+    font-size: 22px;
   }
 
   .modal-header {
-    padding: 19px 17px 15px;
+    padding-left: 18px;
+    padding-right: 18px;
   }
 
-  .modal-header h2 {
-    font-size: 21px;
-  }
-
-  .lead-info-grid {
-    padding: 15px 17px 17px;
-  }
-
-  .detail-block {
-    padding-left: 17px;
-    padding-right: 17px;
-  }
-
-  .crm-controls {
-    padding-left: 17px;
-    padding-right: 17px;
+  .lead-info-grid,
+  .detail-block,
+  .crm-controls,
+  .modal-actions {
+    padding-left: 18px;
+    padding-right: 18px;
   }
 
   .modal-actions {
     flex-direction: column;
-
-    padding: 16px 17px 20px;
   }
 
   .save-btn,
@@ -1749,20 +1459,16 @@ a {
     width: 100%;
   }
 
-  .form-section-title {
-    padding-left: 17px;
-    padding-right: 17px;
-  }
-
+  .form-section-title,
   .form-grid {
-    padding-left: 17px;
-    padding-right: 17px;
+    padding-left: 18px;
+    padding-right: 18px;
   }
 
   #addEnquiryModal .full-width,
   #addEnquiryModal .form-message {
-    padding-left: 17px;
-    padding-right: 17px;
+    padding-left: 18px;
+    padding-right: 18px;
   }
 
 }
