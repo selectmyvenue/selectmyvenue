@@ -10,7 +10,12 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>Select My Venue — CRM</title>
+  <meta
+    name="description"
+    content="Select My Venue CRM - Customer Enquiry and Lead Management"
+  >
+
+  <title>Select My Venue | CRM</title>
 
   <link
     rel="stylesheet"
@@ -23,206 +28,409 @@
 </head>
 
 
-<body>
+<body class="crm-body">
 
-  <!-- =====================================================
-       CRM HEADER
-  ====================================================== -->
 
-  <header class="crm-header">
+<!-- =====================================================
+     CRM HEADER
+====================================================== -->
 
-    <div class="crm-brand">
+<header class="crm-header">
 
-      <img
-        src="../logo.png"
-        alt="Select My Venue"
-      >
+  <div class="crm-header-inner">
 
-      <div class="crm-title">
+
+    <!-- BRAND -->
+
+    <a
+      href="#"
+      class="crm-brand"
+      aria-label="Select My Venue CRM"
+    >
+
+      <div class="crm-logo-wrap">
+
+        <img
+          src="../logo.png"
+          alt="Select My Venue"
+          class="crm-logo"
+        >
+
+      </div>
+
+
+      <div class="crm-brand-text">
 
         <strong>
-          CRM
+          Select My Venue
         </strong>
 
         <span>
-          Lead Management
+          CRM • Lead Management
         </span>
 
       </div>
 
-    </div>
+    </a>
 
 
-    <div class="header-actions">
 
-      <span
-        id="staffName"
-        class="staff-name"
-      >
-        Loading...
-      </span>
+    <!-- HEADER RIGHT -->
+
+    <div class="crm-header-right">
+
+
+      <div class="staff-profile">
+
+        <div class="staff-avatar">
+          SMV
+        </div>
+
+        <div class="staff-info">
+
+          <span class="staff-label">
+            LOGGED IN AS
+          </span>
+
+          <strong
+            id="staffName"
+            class="staff-name"
+          >
+            Loading...
+          </strong>
+
+        </div>
+
+      </div>
+
 
       <button
         id="logoutBtn"
         class="logout-btn"
         type="button"
       >
+        <span>
+          ↪
+        </span>
+
         Logout
       </button>
 
     </div>
 
-  </header>
+  </div>
+
+</header>
 
 
 
-  <!-- =====================================================
-       MAIN CONTENT
-  ====================================================== -->
+<!-- =====================================================
+     MAIN CRM
+====================================================== -->
 
-  <main class="crm-container">
+<main class="crm-container">
 
 
-    <!-- PAGE HEADING -->
+  <!-- ===================================================
+       DASHBOARD HERO
+  ==================================================== -->
 
-    <section class="page-heading">
+  <section class="crm-hero">
 
-      <div>
 
-        <p class="eyebrow">
-          SELECT MY VENUE
-        </p>
+    <div class="crm-hero-copy">
 
-        <h1>
-          Customer
-          <span>Enquiries</span>
-        </h1>
+      <div class="crm-eyebrow">
 
-        <p>
-          Manage venue enquiries, follow-ups and customer
-          conversations from one place.
-        </p>
+        <span class="status-dot"></span>
+
+        CRM DASHBOARD
 
       </div>
 
-<button
-  id="addEnquiryBtn"
-  class="add-enquiry-btn"
-  type="button"
->
-  + Add Enquiry
-</button>
+
+      <h1>
+
+        Customer
+        <span>Enquiries</span>
+
+      </h1>
+
+
+      <p>
+
+        Manage customer requirements, follow-ups and
+        venue opportunities from one simple workspace.
+
+      </p>
+
+    </div>
+
+
+
+    <div class="crm-hero-actions">
+
       <button
         id="refreshBtn"
         class="refresh-btn"
         type="button"
       >
-        ↻ Refresh
+
+        <span>
+          ↻
+        </span>
+
+        Refresh
+
       </button>
 
-    </section>
 
+      <button
+        id="addEnquiryBtn"
+        class="add-enquiry-btn"
+        type="button"
+      >
 
+        <span>
+          +
+        </span>
 
-    <!-- ===================================================
-         STATISTICS
-    ==================================================== -->
+        Add Enquiry
 
-    <section class="stats-grid">
+      </button>
 
-  <button
-    type="button"
-    class="stat-card stat-tab active"
-    data-status=""
-  >
-    <div class="stat-icon">
-      ✦
     </div>
 
-    <div>
-      <small>TOTAL LEADS</small>
-      <strong id="totalLeads">0</strong>
-    </div>
-  </button>
+
+  </section>
 
 
-  <button
-    type="button"
-    class="stat-card stat-tab"
-    data-status="new"
-  >
-    <div class="stat-icon">
-      ●
-    </div>
 
-    <div>
-      <small>NEW</small>
-      <strong id="newLeads">0</strong>
-    </div>
-  </button>
+  <!-- ===================================================
+       QUICK STATUS
+  ==================================================== -->
+
+  <section class="stats-grid">
 
 
-  <button
-    type="button"
-    class="stat-card stat-tab"
-    data-status="follow_up"
-  >
-    <div class="stat-icon">
-      ↻
-    </div>
+    <!-- TOTAL -->
 
-    <div>
-      <small>FOLLOW-UP</small>
-      <strong id="followupLeads">0</strong>
-    </div>
-  </button>
+    <button
+      type="button"
+      class="stat-card stat-tab active"
+      data-status=""
+    >
 
+      <div class="stat-card-top">
 
-  <button
-    type="button"
-    class="stat-card stat-tab"
-    data-status="converted"
-  >
-    <div class="stat-icon">
-      ✓
-    </div>
+        <span class="stat-label">
+          TOTAL LEADS
+        </span>
 
-    <div>
-      <small>CONVERTED</small>
-      <strong id="convertedLeads">0</strong>
-    </div>
-  </button>
+        <span class="stat-icon">
+          ✦
+        </span>
 
-</section>
+      </div>
 
 
-    <!-- ===================================================
-         LEADS
-    ==================================================== -->
+      <div class="stat-card-bottom">
 
-    <section class="leads-section">
+        <strong id="totalLeads">
+          0
+        </strong>
+
+        <span>
+          All enquiries
+        </span>
+
+      </div>
+
+    </button>
 
 
-      <!-- FILTER BAR -->
 
-      <div class="filter-bar">
+    <!-- NEW -->
+
+    <button
+      type="button"
+      class="stat-card stat-tab"
+      data-status="new"
+    >
+
+      <div class="stat-card-top">
+
+        <span class="stat-label">
+          NEW
+        </span>
+
+        <span class="stat-icon">
+          ●
+        </span>
+
+      </div>
 
 
-        <div class="search-box">
+      <div class="stat-card-bottom">
 
-          <span>
-            ⌕
-          </span>
+        <strong id="newLeads">
+          0
+        </strong>
 
-          <input
-            type="search"
-            id="searchInput"
-            placeholder="Search customer, mobile or location..."
-          >
+        <span>
+          New enquiries
+        </span>
 
+      </div>
+
+    </button>
+
+
+
+    <!-- FOLLOW UP -->
+
+    <button
+      type="button"
+      class="stat-card stat-tab"
+      data-status="follow_up"
+    >
+
+      <div class="stat-card-top">
+
+        <span class="stat-label">
+          FOLLOW-UP
+        </span>
+
+        <span class="stat-icon">
+          ↻
+        </span>
+
+      </div>
+
+
+      <div class="stat-card-bottom">
+
+        <strong id="followupLeads">
+          0
+        </strong>
+
+        <span>
+          Need attention
+        </span>
+
+      </div>
+
+    </button>
+
+
+
+    <!-- CONVERTED -->
+
+    <button
+      type="button"
+      class="stat-card stat-tab"
+      data-status="converted"
+    >
+
+      <div class="stat-card-top">
+
+        <span class="stat-label">
+          CONVERTED
+        </span>
+
+        <span class="stat-icon">
+          ✓
+        </span>
+
+      </div>
+
+
+      <div class="stat-card-bottom">
+
+        <strong id="convertedLeads">
+          0
+        </strong>
+
+        <span>
+          Successful leads
+        </span>
+
+      </div>
+
+    </button>
+
+
+  </section>
+
+
+
+  <!-- ===================================================
+       LEADS WORKSPACE
+  ==================================================== -->
+
+  <section class="leads-section">
+
+
+    <!-- SECTION HEADER -->
+
+    <div class="section-topbar">
+
+      <div>
+
+        <div class="section-kicker">
+          LEAD WORKSPACE
         </div>
 
+        <h2>
+          All Customer Enquiries
+        </h2>
 
+        <p>
+          Search, filter and manage incoming venue requirements.
+        </p>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         FILTER TOOLBAR
+    ================================================== -->
+
+    <div class="filter-bar">
+
+
+      <!-- SEARCH -->
+
+      <div class="search-box">
+
+        <span
+          class="search-icon"
+          aria-hidden="true"
+        >
+          ⌕
+        </span>
+
+        <input
+          type="search"
+          id="searchInput"
+          placeholder="Search customer, mobile, email or location..."
+          autocomplete="off"
+        >
+
+      </div>
+
+
+
+      <!-- STATUS -->
+
+      <div class="filter-field">
+
+        <label for="statusFilter">
+          STATUS
+        </label>
 
         <select id="statusFilter">
 
@@ -256,7 +464,17 @@
 
         </select>
 
+      </div>
 
+
+
+      <!-- PRIORITY -->
+
+      <div class="filter-field">
+
+        <label for="priorityFilter">
+          PRIORITY
+        </label>
 
         <select id="priorityFilter">
 
@@ -282,18 +500,24 @@
 
         </select>
 
-
       </div>
 
 
+    </div>
 
-      <!-- =================================================
-           TABLE
-      ================================================== -->
 
-      <div class="table-wrapper">
+
+    <!-- =================================================
+         LEAD TABLE
+    ================================================== -->
+
+    <div class="table-wrapper">
+
+
+      <div class="table-scroll">
 
         <table class="leads-table">
+
 
           <thead>
 
@@ -312,7 +536,7 @@
               </th>
 
               <th>
-                DATE
+                EVENT DATE
               </th>
 
               <th>
@@ -320,7 +544,7 @@
               </th>
 
               <th>
-                BUDGET
+                BUDGET / PERSON
               </th>
 
               <th>
@@ -331,13 +555,14 @@
                 PRIORITY
               </th>
 
-              <th>
+              <th class="action-column">
                 ACTION
               </th>
 
             </tr>
 
           </thead>
+
 
 
           <tbody id="leadsTableBody">
@@ -348,71 +573,103 @@
                 colspan="9"
                 class="loading-cell"
               >
-                Loading enquiries...
+
+                <div class="table-loading">
+
+                  <span class="loading-spinner"></span>
+
+                  Loading enquiries...
+
+                </div>
+
               </td>
 
             </tr>
 
           </tbody>
 
+
         </table>
-
-
-
-        <!-- EMPTY STATE -->
-
-        <div
-          id="emptyState"
-          class="empty-state"
-          hidden
-        >
-
-          <div class="empty-icon">
-            ✦
-          </div>
-
-          <h3>
-            No enquiries found
-          </h3>
-
-          <p>
-            New customer enquiries will appear here automatically.
-          </p>
-
-        </div>
 
       </div>
 
 
-    </section>
+
+      <!-- EMPTY STATE -->
+
+      <div
+        id="emptyState"
+        class="empty-state"
+        hidden
+      >
+
+        <div class="empty-icon">
+          ✦
+        </div>
+
+        <h3>
+          No enquiries found
+        </h3>
+
+        <p>
+          New customer enquiries will appear here automatically.
+        </p>
+
+      </div>
 
 
-  </main>
+    </div>
+
+
+  </section>
+
+
+</main>
 
 
 
-  <!-- =====================================================
-       LEAD MODAL
-  ====================================================== -->
+<!-- =====================================================
+     LEAD DETAILS MODAL
+====================================================== -->
 
-  <div
-    id="leadModal"
-    class="lead-modal"
-    hidden
-  >
+<div
+  id="leadModal"
+  class="lead-modal"
+  hidden
+>
 
+
+  <div class="lead-modal-card">
+
+
+    <!-- =================================================
+         MODAL HEADER
+    ================================================== -->
 
     <div class="modal-header">
 
-      <div>
 
-        <p class="eyebrow">
-          CUSTOMER ENQUIRY
-        </p>
+      <div class="modal-title-area">
 
-        <h2 id="modalCustomerName">
-          Customer
-        </h2>
+        <div class="modal-title-icon">
+          SMV
+        </div>
+
+        <div>
+
+          <p class="eyebrow">
+            CUSTOMER ENQUIRY
+          </p>
+
+          <h2 id="modalCustomerName">
+            Customer
+          </h2>
+
+          <span class="modal-subtitle">
+            Lead details & requirement
+          </span>
+
+        </div>
 
       </div>
 
@@ -421,146 +678,142 @@
         id="closeModalBtn"
         class="close-modal"
         type="button"
+        aria-label="Close"
       >
         ×
       </button>
 
+
     </div>
 
 
 
-    <!-- CUSTOMER INFORMATION -->
+    <!-- =================================================
+         CUSTOMER CONTACT
+    ================================================== -->
 
-    <div class="lead-info-grid">
-
-
-      <div class="info-card">
-
-        <small>
-          MOBILE
-        </small>
-
-        <strong id="modalMobile">
-          —
-        </strong>
+    <div class="modal-section">
 
 
-        <a
-          id="modalCallBtn"
-          href="#"
-          class="mini-action"
-        >
-          ☎ Call
-        </a>
+      <div class="modal-section-heading">
 
+        <span class="section-number">
+          01
+        </span>
 
-        <a
-          id="modalWhatsappBtn"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          class="mini-action whatsapp-action"
-        >
-          ◉ WhatsApp
-        </a>
+        <div>
+
+          <strong>
+            Customer Information
+          </strong>
+
+          <small>
+            Contact and location details
+          </small>
+
+        </div>
 
       </div>
 
 
 
-      <div class="info-card">
-
-        <small>
-          EMAIL
-        </small>
-
-        <strong id="modalEmail">
-          —
-        </strong>
-
-      </div>
+      <div class="lead-info-grid">
 
 
+        <!-- MOBILE -->
 
-      <div class="info-card">
+        <div class="info-card contact-info-card">
 
-        <small>
-          LOCATION
-        </small>
+          <div class="info-card-icon">
+            ☎
+          </div>
 
-        <strong id="modalLocation">
-          —
-        </strong>
+          <div class="info-card-content">
 
-      </div>
+            <small>
+              MOBILE
+            </small>
 
+            <strong id="modalMobile">
+              —
+            </strong>
 
-
-      <div class="info-card">
-
-        <small>
-          OCCASION
-        </small>
-
-        <strong id="modalOccasion">
-          —
-        </strong>
-
-      </div>
+          </div>
 
 
+          <div class="info-actions">
 
-      <div class="info-card">
+            <a
+              id="modalCallBtn"
+              href="#"
+              class="mini-action"
+            >
+              Call
+            </a>
 
-        <small>
-          EVENT DATE
-        </small>
 
-        <strong id="modalEventDate">
-          —
-        </strong>
+            <a
+              id="modalWhatsappBtn"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              class="mini-action whatsapp-action"
+            >
+              WhatsApp
+            </a>
 
-      </div>
+          </div>
+
+        </div>
 
 
 
-      <div class="info-card">
+        <!-- EMAIL -->
 
-        <small>
-          GUESTS
-        </small>
+        <div class="info-card">
 
-        <strong id="modalGuests">
-          —
-        </strong>
+          <div class="info-card-icon">
+            @
+          </div>
 
-      </div>
+          <div class="info-card-content">
 
+            <small>
+              EMAIL
+            </small>
 
+            <strong id="modalEmail">
+              —
+            </strong>
 
-      <div class="info-card">
+          </div>
 
-        <small>
-          BUDGET / PERSON
-        </small>
-
-        <strong id="modalBudget">
-          —
-        </strong>
-
-      </div>
+        </div>
 
 
 
-      <div class="info-card">
+        <!-- LOCATION -->
 
-        <small>
-          FOOD PREFERENCE
-        </small>
+        <div class="info-card">
 
-        <strong id="modalFood">
-          —
-        </strong>
+          <div class="info-card-icon">
+            ◎
+          </div>
+
+          <div class="info-card-content">
+
+            <small>
+              LOCATION
+            </small>
+
+            <strong id="modalLocation">
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
 
       </div>
 
@@ -569,145 +822,345 @@
 
 
 
-    <!-- REQUIREMENTS -->
+    <!-- =================================================
+         EVENT INFORMATION
+    ================================================== -->
 
-    <div class="detail-block">
+    <div class="modal-section">
 
-      <label>
-        OTHER REQUIREMENTS
-      </label>
+
+      <div class="modal-section-heading">
+
+        <span class="section-number">
+          02
+        </span>
+
+        <div>
+
+          <strong>
+            Event Requirements
+          </strong>
+
+          <small>
+            Details provided by the customer
+          </small>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="lead-info-grid event-info-grid">
+
+
+        <div class="info-card">
+
+          <div class="info-card-content">
+
+            <small>
+              OCCASION
+            </small>
+
+            <strong id="modalOccasion">
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <div class="info-card-content">
+
+            <small>
+              EVENT DATE
+            </small>
+
+            <strong id="modalEventDate">
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <div class="info-card-content">
+
+            <small>
+              GUESTS
+            </small>
+
+            <strong id="modalGuests">
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <div class="info-card-content">
+
+            <small>
+              BUDGET / PERSON
+            </small>
+
+            <strong id="modalBudget">
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div class="info-card">
+
+          <div class="info-card-content">
+
+            <small>
+              FOOD PREFERENCE
+            </small>
+
+            <strong id="modalFood">
+              —
+            </strong>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         OTHER REQUIREMENTS
+    ================================================== -->
+
+    <div class="modal-section requirements-section">
+
+
+      <div class="modal-section-heading">
+
+        <span class="section-number">
+          03
+        </span>
+
+        <div>
+
+          <strong>
+            Other Requirements
+          </strong>
+
+          <small>
+            Special requests and additional information
+          </small>
+
+        </div>
+
+      </div>
+
 
       <div
         id="modalRequirements"
-        class="detail-content"
+        class="detail-content requirements-content"
       >
         —
       </div>
 
-    </div>
-
-
-
-    <!-- CRM CONTROLS -->
-
-    <div class="crm-controls">
-
-
-      <div class="control-group">
-
-        <label for="modalStatus">
-          LEAD STATUS
-        </label>
-
-        <select id="modalStatus">
-
-          <option value="new">
-            New
-          </option>
-
-          <option value="contacted">
-            Contacted
-          </option>
-
-          <option value="follow_up">
-            Follow-up
-          </option>
-
-          <option value="qualified">
-            Qualified
-          </option>
-
-          <option value="converted">
-            Converted
-          </option>
-
-          <option value="closed">
-            Closed
-          </option>
-
-        </select>
-
-      </div>
-
-
-
-      <div class="control-group">
-
-        <label for="modalPriority">
-          PRIORITY
-        </label>
-
-        <select id="modalPriority">
-
-          <option value="urgent">
-            Urgent
-          </option>
-
-          <option value="high">
-            High
-          </option>
-
-          <option value="normal">
-            Normal
-          </option>
-
-          <option value="low">
-            Low
-          </option>
-
-        </select>
-
-      </div>
-
-
-
-      <div class="control-group">
-
-        <label for="modalFollowUp">
-          FOLLOW-UP
-        </label>
-
-        <input
-          type="datetime-local"
-          id="modalFollowUp"
-        >
-
-      </div>
-
 
     </div>
 
 
 
-    <!-- INTERNAL NOTES -->
+    <!-- =================================================
+         CRM MANAGEMENT
+    ================================================== -->
 
-    <div class="detail-block">
+    <div class="modal-section crm-management-section">
 
-      <label for="modalNotes">
-        INTERNAL NOTES
-      </label>
 
-      <textarea
-        id="modalNotes"
-        rows="5"
-        placeholder="Add internal notes about this lead..."
-      ></textarea>
+      <div class="modal-section-heading">
+
+        <span class="section-number">
+          04
+        </span>
+
+        <div>
+
+          <strong>
+            Lead Management
+          </strong>
+
+          <small>
+            Update lead status and follow-up
+          </small>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="crm-controls">
+
+
+        <!-- STATUS -->
+
+        <div class="control-group">
+
+          <label for="modalStatus">
+            LEAD STATUS
+          </label>
+
+          <select id="modalStatus">
+
+            <option value="new">
+              New
+            </option>
+
+            <option value="contacted">
+              Contacted
+            </option>
+
+            <option value="follow_up">
+              Follow-up
+            </option>
+
+            <option value="qualified">
+              Qualified
+            </option>
+
+            <option value="converted">
+              Converted
+            </option>
+
+            <option value="closed">
+              Closed
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- PRIORITY -->
+
+        <div class="control-group">
+
+          <label for="modalPriority">
+            PRIORITY
+          </label>
+
+          <select id="modalPriority">
+
+            <option value="urgent">
+              Urgent
+            </option>
+
+            <option value="high">
+              High
+            </option>
+
+            <option value="normal">
+              Normal
+            </option>
+
+            <option value="low">
+              Low
+            </option>
+
+          </select>
+
+        </div>
+
+
+
+        <!-- FOLLOW UP -->
+
+        <div class="control-group">
+
+          <label for="modalFollowUp">
+            FOLLOW-UP DATE & TIME
+          </label>
+
+          <input
+            type="datetime-local"
+            id="modalFollowUp"
+          >
+
+        </div>
+
+
+      </div>
+
 
     </div>
 
 
 
-    <!-- MODAL ACTIONS -->
+    <!-- =================================================
+         INTERNAL NOTES
+    ================================================== -->
+
+    <div class="modal-section notes-section">
+
+
+      <div class="modal-section-heading">
+
+        <span class="section-number">
+          05
+        </span>
+
+        <div>
+
+          <strong>
+            Internal Notes
+          </strong>
+
+          <small>
+            Visible only inside the CRM
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="notes-wrapper">
+
+        <textarea
+          id="modalNotes"
+          rows="5"
+          placeholder="Add internal notes about this lead..."
+        ></textarea>
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         MODAL FOOTER
+    ================================================== -->
 
     <div class="modal-actions">
-
-      <button
-        id="saveLeadBtn"
-        class="save-btn"
-        type="button"
-      >
-        Save Changes
-      </button>
 
 
       <button
@@ -718,434 +1171,555 @@
         Cancel
       </button>
 
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =====================================================
-       TOAST
-  ====================================================== -->
-
-  <div
-    id="toast"
-    class="toast"
-    hidden
-  >
-
-    <span id="toastMessage">
-      Done
-    </span>
-
-  </div>
-
-
-
-  <!-- CRM JAVASCRIPT -->
-
-  <script src="../crm.js"></script>
-
-</body>
-
-</html>
-<div id="addEnquiryModal" class="lead-modal" hidden>
-
-  <div class="modal-header">
-
-    <div>
-      <p class="eyebrow">NEW CUSTOMER ENQUIRY</p>
-      <h2>Add Enquiry</h2>
-    </div>
-
-    <button
-      id="closeAddEnquiryBtn"
-      class="close-modal"
-      type="button"
-    >
-      ×
-    </button>
-
-  </div>
-
-
-  <div class="add-enquiry-form">
-
-    <div class="form-section-title">
-      Customer Details
-    </div>
-
-    <div class="form-grid">
-
-      <div class="control-group">
-        <label for="newCustomerName">
-          CUSTOMER NAME *
-        </label>
-
-        <input
-          id="newCustomerName"
-          type="text"
-          placeholder="Enter customer name"
-          required
-        >
-      </div>
-
-
-      <div class="control-group">
-        <label for="newMobile">
-          MOBILE NUMBER *
-        </label>
-
-        <input
-          id="newMobile"
-          type="tel"
-          placeholder="Enter mobile number"
-          required
-        >
-      </div>
-
-
-      <div class="control-group">
-        <label for="newEmail">
-          EMAIL
-        </label>
-
-        <input
-          id="newEmail"
-          type="email"
-          placeholder="customer@email.com"
-        >
-      </div>
-
-
-      <div class="control-group">
-        <label for="newLocation">
-          LOCATION
-        </label>
-
-        <input
-          id="newLocation"
-          type="text"
-          placeholder="Delhi, Gurgaon, Noida..."
-        >
-      </div>
-
-    </div>
-
-
-    <div class="form-section-title">
-      Event Details
-    </div>
-
-    <div class="form-grid">
-
-      <div class="control-group">
-        <label for="newOccasion">
-          OCCASION
-        </label>
-
-        <select id="newOccasion">
-
-          <option value="">
-            Select occasion
-          </option>
-
-          <option value="Wedding">
-            Wedding
-          </option>
-
-          <option value="Engagement">
-            Engagement
-          </option>
-
-          <option value="Birthday">
-            Birthday
-          </option>
-
-          <option value="Anniversary">
-            Anniversary
-          </option>
-
-          <option value="Corporate Event">
-            Corporate Event
-          </option>
-
-          <option value="Party">
-            Party
-          </option>
-
-          <option value="Other">
-            Other
-          </option>
-
-        </select>
-      </div>
-
-
-      <div class="control-group">
-        <label for="newEventDate">
-          EVENT DATE
-        </label>
-
-        <input
-          id="newEventDate"
-          type="date"
-        >
-      </div>
-
-
-      <div class="control-group">
-        <label for="newGuests">
-          GUESTS
-        </label>
-
-        <input
-          id="newGuests"
-          type="number"
-          min="1"
-          placeholder="Number of guests"
-        >
-      </div>
-
-
-      <div class="control-group">
-        <label for="newBudget">
-          BUDGET / PERSON
-        </label>
-
-        <input
-          id="newBudget"
-          type="number"
-          min="0"
-          placeholder="₹ per person"
-        >
-      </div>
-
-
-      <div class="control-group">
-        <label for="newFood">
-          FOOD PREFERENCE
-        </label>
-
-        <select id="newFood">
-
-          <option value="">
-            Select preference
-          </option>
-
-          <option value="Veg">
-            Veg
-          </option>
-
-          <option value="Non-Veg">
-            Non-Veg
-          </option>
-
-          <option value="Both">
-            Both
-          </option>
-
-          <option value="Not Specified">
-            Not Specified
-          </option>
-
-        </select>
-      </div>
-
-    </div>
-
-
-    <div class="form-section-title">
-      Lead Source & CRM
-    </div>
-
-    <div class="form-grid">
-
-      <div class="control-group">
-
-        <label for="newSource">
-          SOURCE *
-        </label>
-
-        <select id="newSource">
-
-          <option value="Website">
-            Website
-          </option>
-
-          <option value="WhatsApp">
-            WhatsApp
-          </option>
-
-          <option value="Phone Call">
-            Phone Call
-          </option>
-
-          <option value="Facebook">
-            Facebook
-          </option>
-
-          <option value="Instagram">
-            Instagram
-          </option>
-
-          <option value="Referral">
-            Referral
-          </option>
-
-          <option value="Venue">
-            Venue
-          </option>
-
-          <option value="Other">
-            Other
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="control-group">
-
-        <label for="newStatus">
-          LEAD STATUS
-        </label>
-
-        <select id="newStatus">
-
-          <option value="new">
-            New
-          </option>
-
-          <option value="contacted">
-            Contacted
-          </option>
-
-          <option value="follow_up">
-            Follow-up
-          </option>
-
-          <option value="qualified">
-            Qualified
-          </option>
-
-          <option value="converted">
-            Converted
-          </option>
-
-          <option value="closed">
-            Closed
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="control-group">
-
-        <label for="newPriority">
-          PRIORITY
-        </label>
-
-        <select id="newPriority">
-
-          <option value="normal">
-            Normal
-          </option>
-
-          <option value="urgent">
-            Urgent
-          </option>
-
-          <option value="high">
-            High
-          </option>
-
-          <option value="low">
-            Low
-          </option>
-
-        </select>
-
-      </div>
-
-
-      <div class="control-group">
-
-        <label for="newFollowUp">
-          FOLLOW-UP
-        </label>
-
-        <input
-          type="datetime-local"
-          id="newFollowUp"
-        >
-
-      </div>
-
-    </div>
-
-
-    <div class="control-group full-width">
-
-      <label for="newRequirements">
-        OTHER REQUIREMENTS
-      </label>
-
-      <textarea
-        id="newRequirements"
-        rows="4"
-        placeholder="Venue requirements, special requests, etc."
-      ></textarea>
-
-    </div>
-
-
-    <div class="control-group full-width">
-
-      <label for="newNotes">
-        INTERNAL NOTES
-      </label>
-
-      <textarea
-        id="newNotes"
-        rows="4"
-        placeholder="Internal CRM notes..."
-      ></textarea>
-
-    </div>
-
-
-    <p
-      id="addEnquiryMessage"
-      class="form-message"
-      role="alert"
-    ></p>
-
-
-    <div class="modal-actions">
 
       <button
-        id="saveNewEnquiryBtn"
+        id="saveLeadBtn"
         class="save-btn"
         type="button"
       >
-        Save Enquiry
+        Save Changes
       </button>
 
+
+    </div>
+
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     ADD NEW ENQUIRY MODAL
+====================================================== -->
+
+<div
+  id="addEnquiryModal"
+  class="lead-modal"
+  hidden
+>
+
+
+  <div class="lead-modal-card add-enquiry-card">
+
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+
+      <div class="modal-title-area">
+
+        <div class="modal-title-icon">
+          +
+        </div>
+
+        <div>
+
+          <p class="eyebrow">
+            NEW CUSTOMER ENQUIRY
+          </p>
+
+          <h2>
+            Add Enquiry
+          </h2>
+
+          <span class="modal-subtitle">
+            Create a new customer lead manually
+          </span>
+
+        </div>
+
+      </div>
+
+
       <button
-        id="cancelAddEnquiryBtn"
-        class="cancel-btn"
+        id="closeAddEnquiryBtn"
+        class="close-modal"
         type="button"
+        aria-label="Close"
       >
-        Cancel
+        ×
       </button>
+
+
+    </div>
+
+
+
+    <div class="add-enquiry-form">
+
+
+      <!-- =================================================
+           CUSTOMER DETAILS
+      ================================================== -->
+
+      <div class="form-section-title">
+        <span>01</span>
+        Customer Details
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <div class="control-group">
+
+          <label for="newCustomerName">
+            CUSTOMER NAME *
+          </label>
+
+          <input
+            id="newCustomerName"
+            type="text"
+            placeholder="Enter customer name"
+            required
+          >
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newMobile">
+            MOBILE NUMBER *
+          </label>
+
+          <input
+            id="newMobile"
+            type="tel"
+            placeholder="Enter mobile number"
+            required
+          >
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newEmail">
+            EMAIL
+          </label>
+
+          <input
+            id="newEmail"
+            type="email"
+            placeholder="customer@email.com"
+          >
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newLocation">
+            CITY / LOCATION
+          </label>
+
+          <input
+            id="newLocation"
+            type="text"
+            placeholder="Delhi, Gurgaon, Noida..."
+          >
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           EVENT DETAILS
+      ================================================== -->
+
+      <div class="form-section-title">
+        <span>02</span>
+        Event Details
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <div class="control-group">
+
+          <label for="newOccasion">
+            OCCASION
+          </label>
+
+          <select id="newOccasion">
+
+            <option value="">
+              Select occasion
+            </option>
+
+            <option value="Wedding">
+              Wedding
+            </option>
+
+            <option value="Engagement">
+              Engagement
+            </option>
+
+            <option value="Birthday">
+              Birthday
+            </option>
+
+            <option value="Anniversary">
+              Anniversary
+            </option>
+
+            <option value="Corporate Event">
+              Corporate Event
+            </option>
+
+            <option value="Party">
+              Party
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newEventDate">
+            EVENT DATE
+          </label>
+
+          <input
+            id="newEventDate"
+            type="date"
+          >
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newGuests">
+            NUMBER OF GUESTS
+          </label>
+
+          <input
+            id="newGuests"
+            type="number"
+            min="1"
+            placeholder="e.g. 300"
+          >
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newBudget">
+            BUDGET / PERSON
+          </label>
+
+          <input
+            id="newBudget"
+            type="number"
+            min="0"
+            placeholder="₹ per person"
+          >
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newFood">
+            FOOD PREFERENCE
+          </label>
+
+          <select id="newFood">
+
+            <option value="">
+              Select preference
+            </option>
+
+            <option value="Veg">
+              Veg
+            </option>
+
+            <option value="Non-Veg">
+              Non-Veg
+            </option>
+
+            <option value="Both">
+              Both
+            </option>
+
+            <option value="Not Specified">
+              Not Specified
+            </option>
+
+          </select>
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           LEAD SOURCE / CRM
+      ================================================== -->
+
+      <div class="form-section-title">
+        <span>03</span>
+        Lead Source & CRM
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <div class="control-group">
+
+          <label for="newSource">
+            SOURCE *
+          </label>
+
+          <select id="newSource">
+
+            <option value="Website">
+              Website
+            </option>
+
+            <option value="WhatsApp">
+              WhatsApp
+            </option>
+
+            <option value="Phone Call">
+              Phone Call
+            </option>
+
+            <option value="Facebook">
+              Facebook
+            </option>
+
+            <option value="Instagram">
+              Instagram
+            </option>
+
+            <option value="Referral">
+              Referral
+            </option>
+
+            <option value="Venue">
+              Venue
+            </option>
+
+            <option value="Other">
+              Other
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newStatus">
+            LEAD STATUS
+          </label>
+
+          <select id="newStatus">
+
+            <option value="new">
+              New
+            </option>
+
+            <option value="contacted">
+              Contacted
+            </option>
+
+            <option value="follow_up">
+              Follow-up
+            </option>
+
+            <option value="qualified">
+              Qualified
+            </option>
+
+            <option value="converted">
+              Converted
+            </option>
+
+            <option value="closed">
+              Closed
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newPriority">
+            PRIORITY
+          </label>
+
+          <select id="newPriority">
+
+            <option value="normal">
+              Normal
+            </option>
+
+            <option value="urgent">
+              Urgent
+            </option>
+
+            <option value="high">
+              High
+            </option>
+
+            <option value="low">
+              Low
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="control-group">
+
+          <label for="newFollowUp">
+            FOLLOW-UP
+          </label>
+
+          <input
+            type="datetime-local"
+            id="newFollowUp"
+          >
+
+        </div>
+
+
+      </div>
+
+
+
+      <!-- =================================================
+           REQUIREMENTS
+      ================================================== -->
+
+      <div class="control-group full-width">
+
+        <label for="newRequirements">
+          OTHER REQUIREMENTS
+        </label>
+
+        <textarea
+          id="newRequirements"
+          rows="4"
+          placeholder="Venue requirements, special requests, parking, rooms, decoration, catering, etc."
+        ></textarea>
+
+      </div>
+
+
+
+      <!-- =================================================
+           INTERNAL NOTES
+      ================================================== -->
+
+      <div class="control-group full-width">
+
+        <label for="newNotes">
+          INTERNAL NOTES
+        </label>
+
+        <textarea
+          id="newNotes"
+          rows="4"
+          placeholder="Internal CRM notes..."
+        ></textarea>
+
+      </div>
+
+
+
+      <!-- MESSAGE -->
+
+      <p
+        id="addEnquiryMessage"
+        class="form-message"
+        role="alert"
+      ></p>
+
+
+
+      <!-- ACTIONS -->
+
+      <div class="modal-actions">
+
+        <button
+          id="cancelAddEnquiryBtn"
+          class="cancel-btn"
+          type="button"
+        >
+          Cancel
+        </button>
+
+
+        <button
+          id="saveNewEnquiryBtn"
+          class="save-btn"
+          type="button"
+        >
+          Save Enquiry
+        </button>
+
+      </div>
+
 
     </div>
 
   </div>
 
 </div>
+
+
+
+<!-- =====================================================
+     TOAST
+====================================================== -->
+
+<div
+  id="toast"
+  class="toast"
+  hidden
+>
+
+  <span id="toastMessage">
+    Done
+  </span>
+
+</div>
+
+
+
+<!-- =====================================================
+     CRM JAVASCRIPT
+====================================================== -->
+
+<script src="../crm.js"></script>
+
+
+</body>
+
+</html>
