@@ -1,462 +1,359 @@
-```html
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+```
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>Select My Venue CRM — Customer Enquiries</title>
+<title>Select My Venue CRM — Customer Enquiries</title>
 
-    <link rel="stylesheet" href="./crm.css">
+<link rel="stylesheet" href="./crm.css">
 
-    <!-- Supabase -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-        defer
-    ></script>
+<!-- Supabase -->
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    defer
+></script>
 
-    <!-- CRM JS -->
-    <script
-        src="./crm.js"
-        defer
-    ></script>
+<!-- CRM JavaScript -->
+<script
+    src="./crm.js"
+    defer
+></script>
+```
+
 </head>
 
 <body>
 
-<!-- =========================================================
-     CRM HEADER
-========================================================= -->
-
 <header class="crm-header">
 
-    <!-- LEFT -->
-    <div class="crm-brand">
+```
+<div class="crm-brand">
 
-        <!-- Keep your existing logo path if different -->
-        <img
-            src="../logo.png"
-            alt="Select My Venue"
-            class="crm-header-logo"
-        >
+    <img
+        src="../logo.png"
+        alt="Select My Venue"
+        class="crm-header-logo"
+    >
 
-        <div class="crm-brand-name">
-            Select My Venue CRM
-        </div>
-
+    <div class="crm-brand-name">
+        Select My Venue CRM
     </div>
 
+</div>
 
-    <!-- CENTER -->
-    <div class="crm-header-center">
+<div class="crm-header-center">
 
-        <div class="crm-header-title">
-            Lead Management
-        </div>
-
+    <div class="crm-header-title">
+        Lead Management
     </div>
 
+</div>
 
-    <!-- RIGHT -->
-    <div class="header-actions">
+<div class="header-actions">
 
-        <span
-            id="staffName"
-            class="staff-name"
-        >
-            Employee
-        </span>
+    <span
+        id="staffName"
+        class="staff-name"
+    >
+        Employee
+    </span>
 
-        <button
-            type="button"
-            id="logoutBtn"
-            class="logout-btn"
-        >
-            Logout
-        </button>
+    <button
+        type="button"
+        id="logoutBtn"
+        class="logout-btn"
+    >
+        Logout
+    </button>
 
-    </div>
+</div>
+```
 
 </header>
 
-
-<!-- =========================================================
-     MAIN CRM
-========================================================= -->
-
 <main class="crm-main">
 
+```
+<section class="page-heading">
 
-    <!-- =====================================================
-         PAGE HEADING
-    ====================================================== -->
+    <div>
 
-    <section class="page-heading">
+        <div class="eyebrow">
+            CRM DASHBOARD
+        </div>
+
+        <h1>
+            Customer <span>Enquiries</span>
+        </h1>
+
+        <p>
+            Manage customer enquiries, update lead information,
+            schedule follow-ups and keep every enquiry organized.
+        </p>
+
+    </div>
+
+    <div class="heading-actions">
+
+        <button
+            type="button"
+            id="addEnquiryBtn"
+            class="add-enquiry-btn"
+        >
+            + Add Enquiry
+        </button>
+
+        <button
+            type="button"
+            id="refreshBtn"
+            class="refresh-btn"
+        >
+            ↻ Refresh
+        </button>
+
+    </div>
+
+</section>
+
+
+<section
+    class="stats-grid"
+    aria-label="Enquiry statistics"
+>
+
+    <button
+        type="button"
+        class="stat-card active"
+        data-status-filter="all"
+        id="statAll"
+    >
+
+        <div class="stat-icon">
+            ≡
+        </div>
 
         <div>
 
-            <div class="eyebrow">
-                CRM DASHBOARD
-            </div>
+            <small>
+                TOTAL ENQUIRIES
+            </small>
 
-            <h1>
-                Customer <span>Enquiries</span>
-            </h1>
-
-            <p>
-                Manage customer enquiries, update lead information,
-                schedule follow-ups and keep every enquiry organized.
-            </p>
+            <strong id="totalCount">
+                0
+            </strong>
 
         </div>
 
-
-        <div class="heading-actions">
-
-            <button
-                type="button"
-                id="addEnquiryBtn"
-                class="add-enquiry-btn"
-            >
-                + Add Enquiry
-            </button>
-
-            <button
-                type="button"
-                id="refreshBtn"
-                class="refresh-btn"
-            >
-                ↻ Refresh
-            </button>
-
-        </div>
-
-    </section>
+    </button>
 
 
-    <!-- =====================================================
-         STAT CARDS
-    ====================================================== -->
-
-    <section
-        class="stats-grid"
-        aria-label="Enquiry statistics"
+    <button
+        type="button"
+        class="stat-card"
+        data-status-filter="New"
+        id="statNew"
     >
 
-        <button
-            type="button"
-            class="stat-card active"
-            data-status-filter="all"
-            id="statAll"
-        >
+        <div class="stat-icon">
+            +
+        </div>
 
-            <div class="stat-icon">
-                ≡
-            </div>
+        <div>
 
-            <div>
+            <small>
+                NEW
+            </small>
 
-                <small>
-                    TOTAL ENQUIRIES
-                </small>
-
-                <strong id="totalCount">
-                    0
-                </strong>
-
-            </div>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="stat-card"
-            data-status-filter="New"
-            id="statNew"
-        >
-
-            <div class="stat-icon">
-                +
-            </div>
-
-            <div>
-
-                <small>
-                    NEW
-                </small>
-
-                <strong id="newCount">
-                    0
-                </strong>
-
-            </div>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="stat-card"
-            data-status-filter="Contacted"
-            id="statContacted"
-        >
-
-            <div class="stat-icon">
-                ✓
-            </div>
-
-            <div>
-
-                <small>
-                    CONTACTED
-                </small>
-
-                <strong id="contactedCount">
-                    0
-                </strong>
-
-            </div>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="stat-card"
-            data-status-filter="Closed"
-            id="statClosed"
-        >
-
-            <div class="stat-icon">
-                ●
-            </div>
-
-            <div>
-
-                <small>
-                    CLOSED
-                </small>
-
-                <strong id="closedCount">
-                    0
-                </strong>
-
-            </div>
-
-        </button>
-
-    </section>
-
-
-    <!-- =====================================================
-         LEADS SECTION
-    ====================================================== -->
-
-    <section class="leads-section">
-
-
-        <!-- =================================================
-             FILTER BAR
-        ================================================== -->
-
-        <div class="filter-bar">
-
-            <div class="search-box">
-
-                <span aria-hidden="true">
-                    ⌕
-                </span>
-
-                <input
-                    type="search"
-                    id="searchInput"
-                    placeholder="Search by customer, phone, venue or event..."
-                    autocomplete="off"
-                >
-
-            </div>
-
-
-            <select
-                id="statusFilter"
-                aria-label="Filter by status"
-            >
-
-                <option value="all">
-                    All Status
-                </option>
-
-                <option value="New">
-                    New
-                </option>
-
-                <option value="Contacted">
-                    Contacted
-                </option>
-
-                <option value="Follow-up">
-                    Follow-up
-                </option>
-
-                <option value="Qualified">
-                    Qualified
-                </option>
-
-                <option value="Converted">
-                    Converted
-                </option>
-
-                <option value="Closed">
-                    Closed
-                </option>
-
-                <option value="Lost">
-                    Lost
-                </option>
-
-            </select>
-
-
-            <select
-                id="priorityFilter"
-                aria-label="Filter by priority"
-            >
-
-                <option value="all">
-                    All Priority
-                </option>
-
-                <option value="High">
-                    High
-                </option>
-
-                <option value="Medium">
-                    Medium
-                </option>
-
-                <option value="Low">
-                    Low
-                </option>
-
-            </select>
+            <strong id="newCount">
+                0
+            </strong>
 
         </div>
 
-
-        <!-- =================================================
-             TABLE
-        ================================================== -->
-
-        <div class="table-wrapper">
-
-            <table class="leads-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            CUSTOMER
-                        </th>
-
-                        <th>
-                            PHONE
-                        </th>
-
-                        <th>
-                            EVENT
-                        </th>
-
-                        <th>
-                            VENUE
-                        </th>
-
-                        <th>
-                            EVENT DATE
-                        </th>
-
-                        <th>
-                            GUESTS
-                        </th>
-
-                        <th>
-                            STATUS
-                        </th>
-
-                        <th>
-                            PRIORITY
-                        </th>
-
-                        <th>
-                            FOLLOW-UP
-                        </th>
-
-                        <th>
-                            REMARKS
-                        </th>
-
-                        <th>
-                            ACTION
-                        </th>
-
-                    </tr>
-
-                </thead>
+    </button>
 
 
-                <tbody id="leadsTableBody">
+    <button
+        type="button"
+        class="stat-card"
+        data-status-filter="Contacted"
+        id="statContacted"
+    >
 
-                    <tr>
+        <div class="stat-icon">
+            ✓
+        </div>
 
-                        <td
-                            colspan="11"
-                            class="loading-cell"
-                        >
-                            Loading enquiries...
-                        </td>
+        <div>
 
-                    </tr>
+            <small>
+                CONTACTED
+            </small>
 
-                </tbody>
-
-            </table>
+            <strong id="contactedCount">
+                0
+            </strong>
 
         </div>
 
+    </button>
 
-        <!-- =================================================
-             EMPTY STATE
-        ================================================== -->
 
-        <div
-            id="emptyState"
-            class="empty-state"
-            hidden
-        >
+    <button
+        type="button"
+        class="stat-card"
+        data-status-filter="Closed"
+        id="statClosed"
+    >
 
-            <div class="empty-icon">
+        <div class="stat-icon">
+            ●
+        </div>
+
+        <div>
+
+            <small>
+                CLOSED
+            </small>
+
+            <strong id="closedCount">
+                0
+            </strong>
+
+        </div>
+
+    </button>
+
+</section>
+
+
+<section class="leads-section">
+
+    <div class="filter-bar">
+
+        <div class="search-box">
+
+            <span aria-hidden="true">
                 ⌕
-            </div>
+            </span>
 
-            <h3>
-                No enquiries found
-            </h3>
-
-            <p>
-                Try changing your search or filter.
-            </p>
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search by customer, phone, venue or event..."
+                autocomplete="off"
+            >
 
         </div>
 
-    </section>
+
+        <select
+            id="statusFilter"
+            aria-label="Filter by status"
+        >
+
+            <option value="all">All Status</option>
+            <option value="New">New</option>
+            <option value="Contacted">Contacted</option>
+            <option value="Follow-up">Follow-up</option>
+            <option value="Qualified">Qualified</option>
+            <option value="Converted">Converted</option>
+            <option value="Closed">Closed</option>
+            <option value="Lost">Lost</option>
+
+        </select>
+
+
+        <select
+            id="priorityFilter"
+            aria-label="Filter by priority"
+        >
+
+            <option value="all">All Priority</option>
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+
+        </select>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table class="leads-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>CUSTOMER</th>
+                    <th>PHONE</th>
+                    <th>EVENT</th>
+                    <th>VENUE</th>
+                    <th>EVENT DATE</th>
+                    <th>GUESTS</th>
+                    <th>STATUS</th>
+                    <th>PRIORITY</th>
+                    <th>FOLLOW-UP</th>
+                    <th>REMARKS</th>
+                    <th>ACTION</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="leadsTableBody">
+
+                <tr>
+
+                    <td
+                        colspan="11"
+                        class="loading-cell"
+                    >
+                        Loading enquiries...
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <div
+        id="emptyState"
+        class="empty-state"
+        hidden
+    >
+
+        <div class="empty-icon">
+            ⌕
+        </div>
+
+        <h3>
+            No enquiries found
+        </h3>
+
+        <p>
+            Try changing your search or filter.
+        </p>
+
+    </div>
+
+</section>
+```
 
 </main>
-
 
 <!-- =========================================================
      VIEW / EDIT LEAD MODAL
@@ -469,409 +366,315 @@
     aria-hidden="true"
 >
 
-    <div
-        class="lead-modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="leadModalTitle"
-    >
+```
+<div
+    class="lead-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="leadModalTitle"
+>
 
+    <div class="modal-header">
 
-        <!-- MODAL HEADER -->
+        <div>
 
-        <div class="modal-header">
-
-            <div>
-
-                <div class="eyebrow">
-                    ENQUIRY DETAILS
-                </div>
-
-                <h2 id="leadModalTitle">
-                    Customer Enquiry
-                </h2>
-
+            <div class="eyebrow">
+                ENQUIRY DETAILS
             </div>
 
+            <h2 id="leadModalTitle">
+                Customer Enquiry
+            </h2>
 
-            <button
-                type="button"
-                class="close-modal"
-                id="closeLeadModal"
-                aria-label="Close"
-            >
-                ×
-            </button>
+        </div>
+
+        <button
+            type="button"
+            class="close-modal"
+            id="closeLeadModal"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="lead-info-grid">
+
+        <div class="info-card">
+
+            <small>CUSTOMER</small>
+
+            <strong id="detailCustomerName">
+                —
+            </strong>
 
         </div>
 
 
-        <!-- =================================================
-             BASIC CUSTOMER INFORMATION
-        ================================================== -->
+        <div class="info-card">
 
-        <div class="lead-info-grid">
+            <small>PHONE</small>
 
-
-            <div class="info-card">
-
-                <small>
-                    CUSTOMER
-                </small>
-
-                <strong id="detailCustomerName">
-                    —
-                </strong>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <small>
-                    PHONE
-                </small>
-
-                <strong id="detailPhone">
-                    —
-                </strong>
-
-                <div
-                    class="info-actions"
-                    id="detailPhoneActions"
-                >
-                </div>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <small>
-                    EMAIL
-                </small>
-
-                <strong id="detailEmail">
-                    —
-                </strong>
-
-                <div
-                    class="info-actions"
-                    id="detailEmailActions"
-                >
-                </div>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <small>
-                    LEAD SOURCE
-                </small>
-
-                <strong id="detailSource">
-                    —
-                </strong>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             LEAD INFORMATION
-        ================================================== -->
-
-        <div class="detail-section-title">
-            ENQUIRY INFORMATION
-        </div>
-
-
-        <div class="crm-controls">
-
-
-            <!-- EVENT TYPE -->
-
-            <div class="control-group">
-
-                <label for="detailEventType">
-                    EVENT TYPE
-                </label>
-
-                <select id="detailEventType">
-
-                    <option value="">
-                        Select Event
-                    </option>
-
-                    <option value="Wedding">
-                        Wedding
-                    </option>
-
-                    <option value="Engagement">
-                        Engagement
-                    </option>
-
-                    <option value="Birthday">
-                        Birthday
-                    </option>
-
-                    <option value="Corporate">
-                        Corporate
-                    </option>
-
-                    <option value="Anniversary">
-                        Anniversary
-                    </option>
-
-                    <option value="Party">
-                        Party
-                    </option>
-
-                    <option value="Other">
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- VENUE -->
-
-            <div class="control-group">
-
-                <label for="detailVenue">
-                    VENUE
-                </label>
-
-                <input
-                    type="text"
-                    id="detailVenue"
-                    placeholder="Venue name"
-                >
-
-            </div>
-
-
-            <!-- EVENT DATE -->
-
-            <div class="control-group">
-
-                <label for="detailEventDate">
-                    EVENT DATE
-                </label>
-
-                <input
-                    type="date"
-                    id="detailEventDate"
-                >
-
-            </div>
-
-
-            <!-- GUESTS -->
-
-            <div class="control-group">
-
-                <label for="detailGuests">
-                    GUESTS
-                </label>
-
-                <input
-                    type="number"
-                    id="detailGuests"
-                    min="0"
-                    placeholder="Number of guests"
-                >
-
-            </div>
-
-
-            <!-- STATUS -->
-
-            <div class="control-group">
-
-                <label for="detailStatus">
-                    STATUS
-                </label>
-
-                <select id="detailStatus">
-
-                    <option value="New">
-                        New
-                    </option>
-
-                    <option value="Contacted">
-                        Contacted
-                    </option>
-
-                    <option value="Follow-up">
-                        Follow-up
-                    </option>
-
-                    <option value="Qualified">
-                        Qualified
-                    </option>
-
-                    <option value="Converted">
-                        Converted
-                    </option>
-
-                    <option value="Closed">
-                        Closed
-                    </option>
-
-                    <option value="Lost">
-                        Lost
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- PRIORITY -->
-
-            <div class="control-group">
-
-                <label for="detailPriority">
-                    PRIORITY
-                </label>
-
-                <select id="detailPriority">
-
-                    <option value="High">
-                        High
-                    </option>
-
-                    <option value="Medium">
-                        Medium
-                    </option>
-
-                    <option value="Low">
-                        Low
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- FOLLOW UP -->
-
-            <div class="control-group">
-
-                <label for="detailFollowUp">
-                    FOLLOW-UP
-                </label>
-
-                <input
-                    type="datetime-local"
-                    id="detailFollowUp"
-                >
-
-            </div>
-
-
-            <!-- ASSIGNED TO -->
-
-            <div class="control-group">
-
-                <label for="detailAssignedTo">
-                    ASSIGNED TO
-                </label>
-
-                <input
-                    type="text"
-                    id="detailAssignedTo"
-                    placeholder="Employee name"
-                >
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             CUSTOMER MESSAGE
-        ================================================== -->
-
-        <div class="detail-block">
-
-            <label>
-                CUSTOMER MESSAGE
-            </label>
+            <strong id="detailPhone">
+                —
+            </strong>
 
             <div
-                id="detailMessage"
-                class="detail-content"
-            >
+                class="info-actions"
+                id="detailPhoneActions"
+            ></div>
+
+        </div>
+
+
+        <div class="info-card">
+
+            <small>EMAIL</small>
+
+            <strong id="detailEmail">
                 —
-            </div>
+            </strong>
+
+            <div
+                class="info-actions"
+                id="detailEmailActions"
+            ></div>
 
         </div>
 
 
-        <!-- =================================================
-             REMARKS
-        ================================================== -->
+        <div class="info-card">
 
-        <div class="detail-block">
+            <small>LEAD SOURCE</small>
 
-            <label for="detailRemarks">
-                INTERNAL REMARKS
-            </label>
-
-            <textarea
-                id="detailRemarks"
-                placeholder="Add internal remarks..."
-            ></textarea>
-
-        </div>
-
-
-        <!-- =================================================
-             MODAL MESSAGE
-        ================================================== -->
-
-        <div
-            id="leadModalMessage"
-            class="form-message"
-            role="status"
-            aria-live="polite"
-        ></div>
-
-
-        <!-- =================================================
-             MODAL ACTIONS
-        ================================================== -->
-
-        <div class="modal-actions">
-
-            <button
-                type="button"
-                id="cancelLeadEdit"
-                class="cancel-btn"
-            >
-                Cancel
-            </button>
-
-            <button
-                type="button"
-                id="saveLeadBtn"
-                class="save-btn"
-            >
-                Save Changes
-            </button>
+            <strong id="detailSource">
+                —
+            </strong>
 
         </div>
 
     </div>
 
-</div>
 
+    <div class="detail-section-title">
+        ENQUIRY INFORMATION
+    </div>
+
+
+    <div class="crm-controls">
+
+        <div class="control-group">
+
+            <label for="detailEventType">
+                EVENT TYPE
+            </label>
+
+            <select id="detailEventType">
+
+                <option value="">Select Event</option>
+                <option value="Wedding">Wedding</option>
+                <option value="Engagement">Engagement</option>
+                <option value="Birthday">Birthday</option>
+                <option value="Corporate">Corporate</option>
+                <option value="Anniversary">Anniversary</option>
+                <option value="Party">Party</option>
+                <option value="Other">Other</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="control-group">
+
+            <label for="detailVenue">
+                VENUE
+            </label>
+
+            <input
+                type="text"
+                id="detailVenue"
+                placeholder="Venue name"
+            >
+
+        </div>
+
+
+        <div class="control-group">
+
+            <label for="detailEventDate">
+                EVENT DATE
+            </label>
+
+            <input
+                type="date"
+                id="detailEventDate"
+            >
+
+        </div>
+
+
+        <div class="control-group">
+
+            <label for="detailGuests">
+                GUESTS
+            </label>
+
+            <input
+                type="number"
+                id="detailGuests"
+                min="0"
+                placeholder="Number of guests"
+            >
+
+        </div>
+
+
+        <div class="control-group">
+
+            <label for="detailStatus">
+                STATUS
+            </label>
+
+            <select id="detailStatus">
+
+                <option value="New">New</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Follow-up">Follow-up</option>
+                <option value="Qualified">Qualified</option>
+                <option value="Converted">Converted</option>
+                <option value="Closed">Closed</option>
+                <option value="Lost">Lost</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="control-group">
+
+            <label for="detailPriority">
+                PRIORITY
+            </label>
+
+            <select id="detailPriority">
+
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="control-group">
+
+            <label for="detailFollowUp">
+                FOLLOW-UP
+            </label>
+
+            <input
+                type="datetime-local"
+                id="detailFollowUp"
+            >
+
+        </div>
+
+
+        <div class="control-group">
+
+            <label for="detailAssignedTo">
+                ASSIGNED TO
+            </label>
+
+            <input
+                type="text"
+                id="detailAssignedTo"
+                placeholder="Employee name"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div class="detail-block">
+
+        <label>
+            CUSTOMER MESSAGE
+        </label>
+
+        <div
+            id="detailMessage"
+            class="detail-content"
+        >
+            —
+        </div>
+
+    </div>
+
+
+    <div class="detail-block">
+
+        <div class="detail-label-row">
+
+            <label for="detailRemarks">
+                INTERNAL REMARKS
+            </label>
+
+            <button
+                type="button"
+                id="editRemarksBtn"
+                class="detail-edit-btn"
+            >
+                ✎ Edit
+            </button>
+
+        </div>
+
+        <textarea
+            id="detailRemarks"
+            placeholder="Add internal remarks..."
+        ></textarea>
+
+    </div>
+
+
+    <div
+        id="leadModalMessage"
+        class="form-message"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <div class="modal-actions">
+
+        <button
+            type="button"
+            id="cancelLeadEdit"
+            class="cancel-btn"
+        >
+            Cancel
+        </button>
+
+        <button
+            type="button"
+            id="saveLeadBtn"
+            class="save-btn"
+        >
+            Save Changes
+        </button>
+
+    </div>
+
+</div>
+```
+
+</div>
 
 <!-- =========================================================
      ADD ENQUIRY MODAL
@@ -884,470 +687,372 @@
     aria-hidden="true"
 >
 
-    <div
-        class="add-enquiry-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="addEnquiryTitle"
+```
+<div
+    class="add-enquiry-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="addEnquiryTitle"
+>
+
+    <div class="modal-header">
+
+        <div>
+
+            <div class="eyebrow">
+                NEW LEAD
+            </div>
+
+            <h2 id="addEnquiryTitle">
+                Add Customer Enquiry
+            </h2>
+
+        </div>
+
+        <button
+            type="button"
+            class="close-modal"
+            id="closeAddEnquiry"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+    <form
+        id="addEnquiryForm"
+        class="add-enquiry-form"
     >
 
+        <div class="form-section-title">
+            CUSTOMER DETAILS
+        </div>
 
-        <!-- HEADER -->
 
-        <div class="modal-header">
+        <div class="form-grid">
 
-            <div>
+            <div class="control-group">
 
-                <div class="eyebrow">
-                    NEW LEAD
-                </div>
+                <label for="customerName">
+                    CUSTOMER NAME
+                </label>
 
-                <h2 id="addEnquiryTitle">
-                    Add Customer Enquiry
-                </h2>
+                <input
+                    type="text"
+                    id="customerName"
+                    name="customer_name"
+                    placeholder="Customer name"
+                    required
+                >
 
             </div>
 
-            <button
-                type="button"
-                class="close-modal"
-                id="closeAddEnquiry"
-                aria-label="Close"
-            >
-                ×
-            </button>
+
+            <div class="control-group">
+
+                <label for="customerPhone">
+                    PHONE
+                </label>
+
+                <input
+                    type="tel"
+                    id="customerPhone"
+                    name="phone"
+                    placeholder="Phone number"
+                    required
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="customerEmail">
+                    EMAIL
+                </label>
+
+                <input
+                    type="email"
+                    id="customerEmail"
+                    name="email"
+                    placeholder="Email address"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="leadSource">
+                    LEAD SOURCE
+                </label>
+
+                <select
+                    id="leadSource"
+                    name="source"
+                >
+
+                    <option value="">Select Source</option>
+                    <option value="Website">Website</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Phone">Phone</option>
+                    <option value="Facebook">Facebook</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="Referral">Referral</option>
+                    <option value="Other">Other</option>
+
+                </select>
+
+            </div>
 
         </div>
 
 
-        <form
-            id="addEnquiryForm"
-            class="add-enquiry-form"
-        >
+        <div class="form-section-title">
+            EVENT DETAILS
+        </div>
 
 
-            <!-- CUSTOMER -->
+        <div class="form-grid">
 
-            <div class="form-section-title">
-                CUSTOMER DETAILS
-            </div>
+            <div class="control-group">
 
+                <label for="eventType">
+                    EVENT TYPE
+                </label>
 
-            <div class="form-grid">
-
-
-                <div class="control-group">
-
-                    <label for="customerName">
-                        CUSTOMER NAME
-                    </label>
-
-                    <input
-                        type="text"
-                        id="customerName"
-                        name="customer_name"
-                        placeholder="Customer name"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="customerPhone">
-                        PHONE
-                    </label>
-
-                    <input
-                        type="tel"
-                        id="customerPhone"
-                        name="phone"
-                        placeholder="Phone number"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="customerEmail">
-                        EMAIL
-                    </label>
-
-                    <input
-                        type="email"
-                        id="customerEmail"
-                        name="email"
-                        placeholder="Email address"
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="leadSource">
-                        LEAD SOURCE
-                    </label>
-
-                    <select
-                        id="leadSource"
-                        name="source"
-                    >
-
-                        <option value="">
-                            Select Source
-                        </option>
-
-                        <option value="Website">
-                            Website
-                        </option>
-
-                        <option value="WhatsApp">
-                            WhatsApp
-                        </option>
-
-                        <option value="Phone">
-                            Phone
-                        </option>
-
-                        <option value="Facebook">
-                            Facebook
-                        </option>
-
-                        <option value="Instagram">
-                            Instagram
-                        </option>
-
-                        <option value="Referral">
-                            Referral
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- EVENT -->
-
-            <div class="form-section-title">
-                EVENT DETAILS
-            </div>
-
-
-            <div class="form-grid">
-
-
-                <div class="control-group">
-
-                    <label for="eventType">
-                        EVENT TYPE
-                    </label>
-
-                    <select
-                        id="eventType"
-                        name="event_type"
-                    >
-
-                        <option value="">
-                            Select Event
-                        </option>
-
-                        <option value="Wedding">
-                            Wedding
-                        </option>
-
-                        <option value="Engagement">
-                            Engagement
-                        </option>
-
-                        <option value="Birthday">
-                            Birthday
-                        </option>
-
-                        <option value="Corporate">
-                            Corporate
-                        </option>
-
-                        <option value="Anniversary">
-                            Anniversary
-                        </option>
-
-                        <option value="Party">
-                            Party
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="venueName">
-                        VENUE
-                    </label>
-
-                    <input
-                        type="text"
-                        id="venueName"
-                        name="venue"
-                        placeholder="Venue name"
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="eventDate">
-                        EVENT DATE
-                    </label>
-
-                    <input
-                        type="date"
-                        id="eventDate"
-                        name="event_date"
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="guestCount">
-                        GUESTS
-                    </label>
-
-                    <input
-                        type="number"
-                        id="guestCount"
-                        name="guests"
-                        min="0"
-                        placeholder="Number of guests"
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="newStatus">
-                        STATUS
-                    </label>
-
-                    <select
-                        id="newStatus"
-                        name="status"
-                    >
-
-                        <option value="New">
-                            New
-                        </option>
-
-                        <option value="Contacted">
-                            Contacted
-                        </option>
-
-                        <option value="Follow-up">
-                            Follow-up
-                        </option>
-
-                        <option value="Qualified">
-                            Qualified
-                        </option>
-
-                        <option value="Converted">
-                            Converted
-                        </option>
-
-                        <option value="Closed">
-                            Closed
-                        </option>
-
-                        <option value="Lost">
-                            Lost
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="newPriority">
-                        PRIORITY
-                    </label>
-
-                    <select
-                        id="newPriority"
-                        name="priority"
-                    >
-
-                        <option value="Medium">
-                            Medium
-                        </option>
-
-                        <option value="High">
-                            High
-                        </option>
-
-                        <option value="Low">
-                            Low
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- FOLLOW-UP -->
-
-            <div class="form-section-title">
-                FOLLOW-UP
-            </div>
-
-
-            <div class="form-grid">
-
-
-                <div class="control-group">
-
-                    <label for="newFollowUp">
-                        FOLLOW-UP DATE & TIME
-                    </label>
-
-                    <input
-                        type="datetime-local"
-                        id="newFollowUp"
-                        name="follow_up_at"
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="newAssignedTo">
-                        ASSIGNED TO
-                    </label>
-
-                    <input
-                        type="text"
-                        id="newAssignedTo"
-                        name="assigned_to"
-                        placeholder="Employee name"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <!-- MESSAGE -->
-
-            <div class="form-section-title">
-                CUSTOMER MESSAGE
-            </div>
-
-
-            <div class="full-width">
-
-                <div class="control-group">
-
-                    <label for="customerMessage">
-                        MESSAGE
-                    </label>
-
-                    <textarea
-                        id="customerMessage"
-                        name="message"
-                        placeholder="Customer enquiry / requirement..."
-                    ></textarea>
-
-                </div>
-
-            </div>
-
-
-            <!-- REMARKS -->
-
-            <div class="full-width">
-
-                <div class="control-group">
-
-                    <label for="newRemarks">
-                        INTERNAL REMARKS
-                    </label>
-
-                    <textarea
-                        id="newRemarks"
-                        name="remarks"
-                        placeholder="Internal notes for employees..."
-                    ></textarea>
-
-                </div>
-
-            </div>
-
-
-            <!-- ERROR / SUCCESS -->
-
-            <div
-                id="addEnquiryMessage"
-                class="form-message"
-                role="status"
-                aria-live="polite"
-            ></div>
-
-
-            <!-- ACTIONS -->
-
-            <div class="modal-actions">
-
-                <button
-                    type="button"
-                    id="cancelAddEnquiry"
-                    class="cancel-btn"
+                <select
+                    id="eventType"
+                    name="event_type"
                 >
-                    Cancel
-                </button>
 
-                <button
-                    type="submit"
-                    id="submitEnquiryBtn"
-                    class="save-btn"
-                >
-                    Add Enquiry
-                </button>
+                    <option value="">Select Event</option>
+                    <option value="Wedding">Wedding</option>
+                    <option value="Engagement">Engagement</option>
+                    <option value="Birthday">Birthday</option>
+                    <option value="Corporate">Corporate</option>
+                    <option value="Anniversary">Anniversary</option>
+                    <option value="Party">Party</option>
+                    <option value="Other">Other</option>
+
+                </select>
 
             </div>
 
-        </form>
 
-    </div>
+            <div class="control-group">
+
+                <label for="venueName">
+                    VENUE
+                </label>
+
+                <input
+                    type="text"
+                    id="venueName"
+                    name="venue"
+                    placeholder="Venue name"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="eventDate">
+                    EVENT DATE
+                </label>
+
+                <input
+                    type="date"
+                    id="eventDate"
+                    name="event_date"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="guestCount">
+                    GUESTS
+                </label>
+
+                <input
+                    type="number"
+                    id="guestCount"
+                    name="guests"
+                    min="0"
+                    placeholder="Number of guests"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="newStatus">
+                    STATUS
+                </label>
+
+                <select
+                    id="newStatus"
+                    name="status"
+                >
+
+                    <option value="New">New</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Follow-up">Follow-up</option>
+                    <option value="Qualified">Qualified</option>
+                    <option value="Converted">Converted</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Lost">Lost</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="newPriority">
+                    PRIORITY
+                </label>
+
+                <select
+                    id="newPriority"
+                    name="priority"
+                >
+
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Low">Low</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-section-title">
+            FOLLOW-UP
+        </div>
+
+
+        <div class="form-grid">
+
+            <div class="control-group">
+
+                <label for="newFollowUp">
+                    FOLLOW-UP DATE & TIME
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="newFollowUp"
+                    name="follow_up_at"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="newAssignedTo">
+                    ASSIGNED TO
+                </label>
+
+                <input
+                    type="text"
+                    id="newAssignedTo"
+                    name="assigned_to"
+                    placeholder="Employee name"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="form-section-title">
+            CUSTOMER MESSAGE
+        </div>
+
+
+        <div class="full-width">
+
+            <div class="control-group">
+
+                <label for="customerMessage">
+                    MESSAGE
+                </label>
+
+                <textarea
+                    id="customerMessage"
+                    name="message"
+                    placeholder="Customer enquiry / requirement..."
+                ></textarea>
+
+            </div>
+
+        </div>
+
+
+        <div class="full-width">
+
+            <div class="control-group">
+
+                <label for="newRemarks">
+                    INTERNAL REMARKS
+                </label>
+
+                <textarea
+                    id="newRemarks"
+                    name="remarks"
+                    placeholder="Internal notes for employees..."
+                ></textarea>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="addEnquiryMessage"
+            class="form-message"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                id="cancelAddEnquiry"
+                class="cancel-btn"
+            >
+                Cancel
+            </button>
+
+            <button
+                type="submit"
+                id="submitEnquiryBtn"
+                class="save-btn"
+            >
+                Add Enquiry
+            </button>
+
+        </div>
+
+    </form>
 
 </div>
+```
 
-
-<!-- =========================================================
-     TOAST
-========================================================= -->
+</div>
 
 <div
     id="toastMessage"
@@ -1355,79 +1060,64 @@
     aria-live="polite"
 ></div>
 
-
-<!-- =========================================================
-     INLINE EDIT TEMPLATE
-     
-     crm.js can use this structure when a user clicks
-     an editable cell:
-     
-     DISPLAY VALUE
-          ↓
-     CLICK
-          ↓
-     EDIT CONTROL
-          ↓
-     SAVE / CANCEL
-========================================================= -->
-
 <template id="inlineEditTextTemplate">
 
-    <div class="inline-editor">
+```
+<div class="inline-editor">
 
-        <input
-            type="text"
-            class="inline-edit-input"
-        >
+    <input
+        type="text"
+        class="inline-edit-input"
+    >
 
-        <button
-            type="button"
-            class="inline-save-btn"
-            title="Save"
-        >
-            ✓
-        </button>
+    <button
+        type="button"
+        class="inline-save-btn"
+        title="Save"
+    >
+        ✓
+    </button>
 
-        <button
-            type="button"
-            class="inline-cancel-btn"
-            title="Cancel"
-        >
-            ×
-        </button>
+    <button
+        type="button"
+        class="inline-cancel-btn"
+        title="Cancel"
+    >
+        ×
+    </button>
 
-    </div>
+</div>
+```
 
 </template>
-
 
 <template id="inlineEditSelectTemplate">
 
-    <div class="inline-editor">
+```
+<div class="inline-editor">
 
-        <select class="inline-edit-select"></select>
+    <select class="inline-edit-select"></select>
 
-        <button
-            type="button"
-            class="inline-save-btn"
-            title="Save"
-        >
-            ✓
-        </button>
+    <button
+        type="button"
+        class="inline-save-btn"
+        title="Save"
+    >
+        ✓
+    </button>
 
-        <button
-            type="button"
-            class="inline-cancel-btn"
-            title="Cancel"
-        >
-            ×
-        </button>
+    <button
+        type="button"
+        class="inline-cancel-btn"
+        title="Cancel"
+    >
+        ×
+    </button>
 
-    </div>
+</div>
+```
 
 </template>
 
-
 </body>
 </html>
-```
