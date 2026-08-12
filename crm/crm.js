@@ -1,8 +1,9 @@
 /* =========================================================
    SELECT MY VENUE — CRM
    FINAL CRM.JS
-   Matches actual Supabase customer_enquiries columns
+   Source + Comment + Expanded Status
    ========================================================= */
+
 
 /* =========================================================
    SUPABASE CONFIG
@@ -33,11 +34,15 @@ function getSupabaseClient() {
         !window.supabase ||
         !window.supabase.createClient
     ) {
-        console.error("Supabase library not loaded.");
+        console.error(
+            "Supabase library not loaded."
+        );
+
         showToast(
             "Supabase library is not loaded.",
             "error"
         );
+
         return null;
     }
 
@@ -60,7 +65,6 @@ let filteredLeads = [];
 let currentLead = null;
 
 let currentStatusFilter = "all";
-let currentPriorityFilter = "all";
 let currentSearch = "";
 
 let toastTimer = null;
@@ -74,7 +78,9 @@ function $(selector, parent = document) {
     return parent.querySelector(selector);
 }
 
+
 function safeValue(value) {
+
     return (
         value === null ||
         value === undefined
@@ -82,6 +88,7 @@ function safeValue(value) {
         ? ""
         : String(value);
 }
+
 
 function escapeHTML(value) {
 
@@ -111,7 +118,9 @@ function showToast(
     if (!toast) {
 
         toast =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         toast.id =
             "toastMessage";
@@ -149,20 +158,23 @@ function showToast(
         toast.style.transition =
             "all .2s ease";
 
-        document.body.appendChild(toast);
+        document.body.appendChild(
+            toast
+        );
     }
 
     if (type === "error") {
+
         toast.style.background =
             "#b42318";
-    }
 
-    else if (type === "warning") {
+    } else if (type === "warning") {
+
         toast.style.background =
             "#9a6700";
-    }
 
-    else {
+    } else {
+
         toast.style.background =
             "#167c6a";
     }
@@ -173,15 +185,18 @@ function showToast(
     toast.style.opacity =
         "1";
 
-    clearTimeout(toastTimer);
+    clearTimeout(
+        toastTimer
+    );
 
     toastTimer =
-        setTimeout(() => {
-
-            toast.style.opacity =
-                "0";
-
-        }, 2800);
+        setTimeout(
+            () => {
+                toast.style.opacity =
+                    "0";
+            },
+            2800
+        );
 }
 
 
@@ -233,9 +248,7 @@ async function checkCRMAuth() {
 
         return session;
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Authentication error:",
@@ -311,9 +324,7 @@ async function logoutCRM() {
         window.location.href =
             "login.html";
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(error);
 
@@ -382,11 +393,10 @@ async function loadEnquiries() {
                 : [];
 
         applyFilters();
+
         updateStats();
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Load error:",
@@ -422,7 +432,7 @@ function setTableLoading() {
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="10" class="loading-cell">
+            <td colspan="11" class="loading-cell">
                 Loading customer enquiries...
             </td>
         </tr>
@@ -443,7 +453,7 @@ function renderTableError(message) {
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="10" class="loading-cell">
+            <td colspan="11" class="loading-cell">
                 ${escapeHTML(message)}
             </td>
         </tr>
@@ -467,22 +477,37 @@ function applyFilters() {
             lead => {
 
                 const searchable = [
+
                     lead.customer_name,
+
                     lead.mobile,
+
                     lead.email,
-                    lead.location,
-                    lead.occasion,
+
                     lead.source,
+
+                    lead.location,
+
+                    lead.occasion,
+
                     lead.requirements,
-                    lead.internal_notes
+
+                    lead.internal_notes,
+
+                    lead.status
+
                 ]
                     .filter(Boolean)
                     .join(" ")
                     .toLowerCase();
 
+
                 const matchesSearch =
                     !search ||
-                    searchable.includes(search);
+                    searchable.includes(
+                        search
+                    );
+
 
                 const status =
                     safeValue(
@@ -490,11 +515,6 @@ function applyFilters() {
                         "new"
                     ).toLowerCase();
 
-                const priority =
-                    safeValue(
-                        lead.priority ||
-                        "normal"
-                    ).toLowerCase();
 
                 const matchesStatus =
                     currentStatusFilter ===
@@ -502,16 +522,10 @@ function applyFilters() {
                     status ===
                         currentStatusFilter;
 
-                const matchesPriority =
-                    currentPriorityFilter ===
-                        "all" ||
-                    priority ===
-                        currentPriorityFilter;
 
                 return (
                     matchesSearch &&
-                    matchesStatus &&
-                    matchesPriority
+                    matchesStatus
                 );
             }
         );
@@ -539,14 +553,22 @@ function renderLeads() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="10">
+                <td colspan="11">
+
                     <div class="crm-empty-inline">
+
                         <div>⌕</div>
-                        <strong>No enquiries found</strong>
+
+                        <strong>
+                            No enquiries found
+                        </strong>
+
                         <span>
                             Try changing your search or filter.
                         </span>
+
                     </div>
+
                 </td>
             </tr>
         `;
@@ -562,25 +584,155 @@ function renderLeads() {
 
 
 /* =========================================================
-   CREATE LEAD ROW
+   STATUS COLORS
+   ========================================================= */
 
-   IMPORTANT:
-   Actual DB columns:
-   customer_name
-   mobile
-   email
-   occasion
-   event_date
-   guests
-   location
-   status
-   priority
+function getStatusStyle(status) {
+
+    const value =
+        safeValue(status)
+            .toLowerCase();
+
+    const styles = {
+
+        "new": {
+            background: "#e8f0ff",
+            color: "#2457a6",
+            border: "#c7d8ff"
+        },
+
+        "contacted": {
+            background: "#e6f7ee",
+            color: "#19764a",
+            border: "#bde8d0"
+        },
+
+        "follow-up": {
+            background: "#fff4d6",
+            color: "#9a6700",
+            border: "#f2d98d"
+        },
+
+        "detail-shared": {
+            background: "#e8e8ff",
+            color: "#5145a8",
+            border: "#d1cdf8"
+        },
+
+        "interested": {
+            background: "#e2f7f5",
+            color: "#087b72",
+            border: "#b9e8e4"
+        },
+
+        "qualified": {
+            background: "#e9f5ff",
+            color: "#1769aa",
+            border: "#c4e2f8"
+        },
+
+        "site-visit": {
+            background: "#f3eaff",
+            color: "#7540a8",
+            border: "#dfc8f6"
+        },
+
+        "negotiation": {
+            background: "#fff0df",
+            color: "#a65312",
+            border: "#f3d0a7"
+        },
+
+        "booked": {
+            background: "#e4f8e8",
+            color: "#237a36",
+            border: "#bce7c4"
+        },
+
+        "converted": {
+            background: "#dff7ef",
+            color: "#08765d",
+            border: "#b2e4d5"
+        },
+
+        "closed": {
+            background: "#edf0f2",
+            color: "#4e5963",
+            border: "#d7dce0"
+        },
+
+        "lost": {
+            background: "#ffe7e7",
+            color: "#b42318",
+            border: "#f5bcbc"
+        },
+
+        "not-interested": {
+            background: "#ffdede",
+            color: "#b42318",
+            border: "#efaaaa"
+        }
+
+    };
+
+    return (
+        styles[value] ||
+        styles["new"]
+    );
+}
+
+
+/* =========================================================
+   CREATE STATUS BADGE
+   ========================================================= */
+
+function createStatusBadge(status) {
+
+    const value =
+        status ||
+        "new";
+
+    const style =
+        getStatusStyle(
+            value
+        );
+
+    return `
+        <span
+            class="crm-status-badge"
+            style="
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                padding:5px 10px;
+                border-radius:999px;
+                font-size:11px;
+                font-weight:700;
+                line-height:1.2;
+                white-space:nowrap;
+                background:${style.background};
+                color:${style.color};
+                border:1px solid ${style.border};
+            "
+        >
+            ${escapeHTML(
+                formatStatus(value)
+            )}
+        </span>
+    `;
+}
+
+
+/* =========================================================
+   CREATE LEAD ROW
    ========================================================= */
 
 function createLeadRow(lead) {
 
     const id =
-        safeValue(lead.id);
+        safeValue(
+            lead.id
+        );
 
     const customerName =
         lead.customer_name ||
@@ -592,6 +744,10 @@ function createLeadRow(lead) {
 
     const email =
         lead.email ||
+        "—";
+
+    const source =
+        lead.source ||
         "—";
 
     const occasion =
@@ -614,9 +770,10 @@ function createLeadRow(lead) {
         lead.status ||
         "new";
 
-    const priority =
-        lead.priority ||
-        "normal";
+    const comment =
+        safeValue(
+            lead.internal_notes
+        ).trim();
 
 
     return `
@@ -625,36 +782,61 @@ function createLeadRow(lead) {
         >
 
             <!-- CUSTOMER -->
+
             <td class="customer-cell">
+
                 <strong>
                     ${escapeHTML(customerName)}
                 </strong>
+
             </td>
 
 
             <!-- PHONE -->
+
             <td class="phone-cell">
+
                 ${
                     phone !== "—"
                         ? escapeHTML(phone)
                         : "—"
                 }
+
             </td>
 
 
             <!-- EMAIL -->
+
             <td>
+
                 ${createInlineField(
                     lead,
                     "email",
                     email,
                     "text"
                 )}
+
             </td>
 
 
-            <!-- OCCASION -->
+            <!-- SOURCE -->
+
             <td>
+
+                ${createInlineField(
+                    lead,
+                    "source",
+                    source,
+                    "text"
+                )}
+
+            </td>
+
+
+            <!-- EVENT -->
+
+            <td>
+
                 ${createInlineField(
                     lead,
                     "occasion",
@@ -662,11 +844,14 @@ function createLeadRow(lead) {
                     "select",
                     getEventOptions()
                 )}
+
             </td>
 
 
             <!-- EVENT DATE -->
+
             <td>
+
                 ${createInlineField(
                     lead,
                     "event_date",
@@ -677,11 +862,14 @@ function createLeadRow(lead) {
                     null,
                     eventDate
                 )}
+
             </td>
 
 
             <!-- GUESTS -->
+
             <td>
+
                 ${createInlineField(
                     lead,
                     "guests",
@@ -690,45 +878,50 @@ function createLeadRow(lead) {
                         : guests,
                     "number"
                 )}
+
             </td>
 
 
             <!-- LOCATION -->
+
             <td>
+
                 ${createInlineField(
                     lead,
                     "location",
                     location,
                     "text"
                 )}
+
             </td>
 
 
             <!-- STATUS -->
+
             <td>
-                ${createInlineField(
+
+                ${createStatusInlineField(
                     lead,
-                    "status",
-                    formatStatus(status),
-                    "select",
-                    getStatusOptions()
+                    status
                 )}
+
             </td>
 
 
-            <!-- PRIORITY -->
+            <!-- COMMENT -->
+
             <td>
-                ${createInlineField(
+
+                ${createCommentCell(
                     lead,
-                    "priority",
-                    formatPriority(priority),
-                    "select",
-                    getPriorityOptions()
+                    comment
                 )}
+
             </td>
 
 
             <!-- ACTION -->
+
             <td class="action-column">
 
                 <button
@@ -749,11 +942,6 @@ function createLeadRow(lead) {
 
 /* =========================================================
    INLINE FIELD
-
-   NO PENCIL DISPLAY.
-
-   User clicks normal text.
-   Then it becomes editable.
    ========================================================= */
 
 function createInlineField(
@@ -766,7 +954,9 @@ function createInlineField(
 ) {
 
     const id =
-        safeValue(lead.id);
+        safeValue(
+            lead.id
+        );
 
     const value =
         rawValue !== null &&
@@ -795,6 +985,146 @@ function createInlineField(
             <span class="inline-display">
                 ${escapeHTML(shown)}
             </span>
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   STATUS INLINE FIELD
+   ========================================================= */
+
+function createStatusInlineField(
+    lead,
+    status
+) {
+
+    const id =
+        safeValue(
+            lead.id
+        );
+
+    return `
+        <div
+            class="crm-inline-field crm-status-inline-field"
+            data-inline-field="status"
+            data-lead-id="${escapeHTML(id)}"
+            data-value="${escapeHTML(
+                safeValue(status)
+            )}"
+            tabindex="0"
+            title="Click to change status"
+        >
+
+            <span class="inline-display">
+                ${createStatusBadge(status)}
+            </span>
+
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   COMMENT CELL
+   ========================================================= */
+
+function createCommentCell(
+    lead,
+    comment
+) {
+
+    const id =
+        safeValue(
+            lead.id
+        );
+
+    const hasComment =
+        comment.length > 0;
+
+    return `
+        <div
+            class="crm-comment-cell"
+            data-lead-id="${escapeHTML(id)}"
+            style="
+                display:flex;
+                align-items:center;
+                gap:7px;
+                white-space:nowrap;
+            "
+        >
+
+            ${
+                hasComment
+                    ? `
+                        <span
+                            class="crm-comment-indicator"
+                            title="Comment exists"
+                            style="
+                                display:inline-flex;
+                                align-items:center;
+                                justify-content:center;
+                                width:18px;
+                                height:18px;
+                                border-radius:50%;
+                                background:#167c6a;
+                                color:#fff;
+                                font-size:10px;
+                                font-weight:800;
+                            "
+                        >
+                            Y
+                        </span>
+                    `
+                    : ""
+            }
+
+
+            <button
+                type="button"
+                class="comment-icon-btn"
+                data-comment-action="edit"
+                data-id="${escapeHTML(id)}"
+                title="Edit comment"
+                aria-label="Edit comment"
+                style="
+                    border:0;
+                    background:transparent;
+                    padding:3px;
+                    cursor:pointer;
+                    font-size:15px;
+                    line-height:1;
+                "
+            >
+                ✏️
+            </button>
+
+
+            ${
+                hasComment
+                    ? `
+                        <button
+                            type="button"
+                            class="comment-icon-btn"
+                            data-comment-action="view"
+                            data-id="${escapeHTML(id)}"
+                            title="View comment"
+                            aria-label="View comment"
+                            style="
+                                border:0;
+                                background:transparent;
+                                padding:3px;
+                                cursor:pointer;
+                                font-size:15px;
+                                line-height:1;
+                            "
+                        >
+                            👁️
+                        </button>
+                    `
+                    : ""
+            }
+
         </div>
     `;
 }
@@ -854,9 +1184,7 @@ function startInlineEdit(element) {
     let editor;
 
 
-    /* =========================
-       DROPDOWNS
-       ========================= */
+    /* DROPDOWNS */
 
     if (
         field === "occasion"
@@ -867,6 +1195,7 @@ function startInlineEdit(element) {
                 getEventOptions(),
                 originalValue
             );
+
     }
 
     else if (
@@ -879,24 +1208,10 @@ function startInlineEdit(element) {
                 originalValue ||
                 "new"
             );
+
     }
 
-    else if (
-        field === "priority"
-    ) {
-
-        editor =
-            createSelectEditor(
-                getPriorityOptions(),
-                originalValue ||
-                "normal"
-            );
-    }
-
-
-    /* =========================
-       NORMAL INPUT
-       ========================= */
+    /* NORMAL INPUT */
 
     else {
 
@@ -921,12 +1236,6 @@ function startInlineEdit(element) {
             "crm-inline-editor";
     }
 
-
-    /* =====================================================
-       PREVENT TABLE JUMPING
-
-       Keep editor exactly inside cell.
-       ===================================================== */
 
     editor.style.width =
         "100%";
@@ -965,8 +1274,7 @@ function startInlineEdit(element) {
 
         try {
             editor.select();
-        }
-        catch (e) {}
+        } catch (e) {}
     }
 
 
@@ -986,7 +1294,6 @@ function startInlineEdit(element) {
 
         const newValue =
             editor.value;
-
 
         if (
             save &&
@@ -1011,10 +1318,6 @@ function startInlineEdit(element) {
     }
 
 
-    /* SELECT:
-       Save immediately after selection.
-    */
-
     if (
         editor.tagName ===
         "SELECT"
@@ -1023,9 +1326,7 @@ function startInlineEdit(element) {
         editor.addEventListener(
             "change",
             () => {
-
                 finish(true);
-
             }
         );
 
@@ -1040,12 +1341,8 @@ function startInlineEdit(element) {
 
             }
         );
-    }
 
-
-    /* INPUT */
-
-    else {
+    } else {
 
         editor.addEventListener(
             "blur",
@@ -1082,6 +1379,7 @@ function startInlineEdit(element) {
 
                     finish(false);
                 }
+
             }
         );
     }
@@ -1170,19 +1468,16 @@ async function saveInlineField(
         lead[field] ?? "";
 
 
-    /* =====================================================
-       ONLY REAL DATABASE COLUMNS ALLOWED
-       ===================================================== */
-
     const allowedFields = [
         "email",
+        "source",
         "occasion",
         "event_date",
         "guests",
         "location",
-        "status",
-        "priority"
+        "status"
     ];
+
 
     if (
         !allowedFields.includes(
@@ -1212,10 +1507,12 @@ async function saveInlineField(
         value = null;
     }
 
+
     if (
         field === "guests" &&
         value !== null
     ) {
+
         value =
             Number(value);
     }
@@ -1272,21 +1569,12 @@ async function saveInlineField(
         }
 
 
-        /* =================================================
-           UPDATE LOCAL DATA
-           ================================================= */
-
         Object.assign(
             lead,
             data ||
             updateData
         );
 
-
-        /* =================================================
-           REFRESH ONLY THE ROW
-           NO FULL TABLE JUMP
-           ================================================= */
 
         refreshLeadRow(
             leadId
@@ -1314,9 +1602,7 @@ async function saveInlineField(
             "Saved successfully."
         );
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             error
@@ -1368,23 +1654,33 @@ function restoreInlineDisplay(
         field === "status"
     ) {
 
-        value =
-            formatStatus(
-                value
+        const display =
+            document.createElement(
+                "span"
             );
+
+        display.className =
+            "inline-display";
+
+        display.innerHTML =
+            createStatusBadge(
+                value ||
+                "new"
+            );
+
+        editor.replaceWith(
+            display
+        );
+
+        element.classList.remove(
+            "editing"
+        );
+
+        return;
     }
 
-    else if (
-        field === "priority"
-    ) {
 
-        value =
-            formatPriority(
-                value
-            );
-    }
-
-    else if (
+    if (
         field === "event_date"
     ) {
 
@@ -1452,7 +1748,8 @@ function refreshLeadRow(
             "tr[data-lead-id]"
         );
 
-    let row = null;
+    let row =
+        null;
 
     rows.forEach(
         item => {
@@ -1464,13 +1761,16 @@ function refreshLeadRow(
                 String(leadId)
             ) {
 
-                row = item;
+                row =
+                    item;
             }
         }
     );
 
     if (!row) {
+
         renderLeads();
+
         return;
     }
 
@@ -1489,9 +1789,370 @@ function refreshLeadRow(
         temp.firstElementChild;
 
     if (newRow) {
+
         row.replaceWith(
             newRow
         );
+    }
+}
+
+
+/* =========================================================
+   COMMENT EDIT
+   ========================================================= */
+
+function editLeadComment(
+    leadId
+) {
+
+    const lead =
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
+        );
+
+    if (!lead) {
+        return;
+    }
+
+    currentLead =
+        lead;
+
+    openLeadModal(
+        leadId
+    );
+
+    setTimeout(
+        () => {
+
+            const textarea =
+                document.getElementById(
+                    "detailRemarks"
+                );
+
+            if (textarea) {
+
+                textarea.focus();
+
+                try {
+                    textarea.select();
+                } catch (e) {}
+            }
+
+        },
+        100
+    );
+}
+
+
+/* =========================================================
+   COMMENT VIEW
+   ========================================================= */
+
+function viewLeadComment(
+    leadId
+) {
+
+    const lead =
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
+        );
+
+    if (!lead) {
+        return;
+    }
+
+    const comment =
+        safeValue(
+            lead.internal_notes
+        ).trim();
+
+    if (!comment) {
+
+        showToast(
+            "No comment available.",
+            "warning"
+        );
+
+        return;
+    }
+
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+    overlay.id =
+        "commentViewOverlay";
+
+    overlay.style.position =
+        "fixed";
+
+    overlay.style.inset =
+        "0";
+
+    overlay.style.background =
+        "rgba(0,0,0,.45)";
+
+    overlay.style.zIndex =
+        "100000";
+
+    overlay.style.display =
+        "flex";
+
+    overlay.style.alignItems =
+        "center";
+
+    overlay.style.justifyContent =
+        "center";
+
+    overlay.style.padding =
+        "20px";
+
+
+    overlay.innerHTML = `
+
+        <div
+            style="
+                width:min(520px,100%);
+                background:#fff;
+                border-radius:16px;
+                padding:24px;
+                box-shadow:0 20px 60px rgba(0,0,0,.25);
+            "
+        >
+
+            <div
+                style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                    margin-bottom:16px;
+                "
+            >
+
+                <div>
+
+                    <div
+                        style="
+                            font-size:11px;
+                            font-weight:800;
+                            letter-spacing:.08em;
+                            opacity:.6;
+                        "
+                    >
+                        COMMENT
+                    </div>
+
+                    <h3
+                        style="
+                            margin:4px 0 0;
+                        "
+                    >
+                        ${escapeHTML(
+                            lead.customer_name ||
+                            "Customer"
+                        )}
+                    </h3>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="closeCommentViewer"
+                    style="
+                        border:0;
+                        background:transparent;
+                        font-size:25px;
+                        cursor:pointer;
+                    "
+                >
+                    ×
+                </button>
+
+            </div>
+
+            <div
+                style="
+                    padding:16px;
+                    border-radius:10px;
+                    background:#f5f7f8;
+                    color:#263238;
+                    line-height:1.6;
+                    white-space:pre-wrap;
+                    word-break:break-word;
+                "
+            >
+                ${escapeHTML(comment)}
+            </div>
+
+        </div>
+    `;
+
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    const close =
+        () => {
+
+            overlay.remove();
+
+        };
+
+
+    document
+        .getElementById(
+            "closeCommentViewer"
+        )
+        ?.addEventListener(
+            "click",
+            close
+        );
+
+
+    overlay.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                overlay
+            ) {
+
+                close();
+            }
+
+        }
+    );
+}
+
+
+/* =========================================================
+   SAVE COMMENT
+   ========================================================= */
+
+async function saveComment(
+    leadId,
+    comment
+) {
+
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
+        return false;
+    }
+
+    const lead =
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
+        );
+
+    if (!lead) {
+        return false;
+    }
+
+
+    const value =
+        safeValue(
+            comment
+        ).trim();
+
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await client
+                .from(
+                    "customer_enquiries"
+                )
+                .update({
+                    internal_notes:
+                        value ||
+                        null
+                })
+                .eq(
+                    "id",
+                    leadId
+                )
+                .select("*")
+                .single();
+
+
+        if (error) {
+
+            console.error(
+                "Comment save error:",
+                error
+            );
+
+            showToast(
+                error.message ||
+                "Unable to save comment.",
+                "error"
+            );
+
+            return false;
+        }
+
+
+        Object.assign(
+            lead,
+            data || {
+                internal_notes:
+                    value ||
+                    null
+            }
+        );
+
+
+        if (
+            currentLead &&
+            String(currentLead.id) ===
+                String(leadId)
+        ) {
+
+            currentLead =
+                lead;
+        }
+
+
+        refreshLeadRow(
+            leadId
+        );
+
+
+        showToast(
+            "Comment saved successfully."
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+        showToast(
+            "Unable to save comment.",
+            "error"
+        );
+
+        return false;
     }
 }
 
@@ -1553,8 +2214,6 @@ function openLeadModal(
 
 /* =========================================================
    POPULATE MODAL
-
-   Maps dashboard fields to REAL DB fields.
    ========================================================= */
 
 function populateLeadModal(
@@ -1573,16 +2232,16 @@ function populateLeadModal(
         "—"
     );
 
-    setText(
+    setControl(
         "#detailEmail",
         lead.email ||
-        "—"
+        ""
     );
 
-    setText(
+    setControl(
         "#detailSource",
         lead.source ||
-        "—"
+        ""
     );
 
     setControl(
@@ -1616,12 +2275,6 @@ function populateLeadModal(
     );
 
     setControl(
-        "#detailPriority",
-        lead.priority ||
-        "normal"
-    );
-
-    setControl(
         "#detailFollowUp",
         convertDateTimeLocal(
             lead.follow_up_at
@@ -1634,10 +2287,10 @@ function populateLeadModal(
         ""
     );
 
-    setText(
+    setControl(
         "#detailMessage",
         lead.requirements ||
-        "No customer message."
+        ""
     );
 
     setControl(
@@ -1801,21 +2454,27 @@ async function saveModalChanges() {
         currentLead.id;
 
 
-    /* =====================================================
-       REAL DATABASE COLUMN MAPPING
-       ===================================================== */
-
     const updateData = {
+
+        email:
+            getValue(
+                "#detailEmail"
+            ) || null,
+
+        source:
+            getValue(
+                "#detailSource"
+            ) || null,
 
         occasion:
             getValue(
                 "#detailEventType"
-            ),
+            ) || null,
 
         location:
             getValue(
                 "#detailVenue"
-            ),
+            ) || null,
 
         event_date:
             getValue(
@@ -1833,12 +2492,6 @@ async function saveModalChanges() {
             ) ||
             "new",
 
-        priority:
-            getValue(
-                "#detailPriority"
-            ) ||
-            "normal",
-
         follow_up_at:
             getValue(
                 "#detailFollowUp"
@@ -1847,20 +2500,20 @@ async function saveModalChanges() {
         internal_notes:
             getValue(
                 "#detailRemarks"
+            ) || null,
+
+        requirements:
+            getValue(
+                "#detailMessage"
             ) || null
     };
 
-
-    /* =====================================================
-       assigned_to is UUID in your database.
-
-       Therefore we only send it when it is a valid UUID.
-       ===================================================== */
 
     const assigned =
         getValue(
             "#detailAssignedTo"
         );
+
 
     if (
         assigned &&
@@ -1925,10 +2578,6 @@ async function saveModalChanges() {
         }
 
 
-        /* =================================================
-           UPDATE LOCAL LEAD
-           ================================================= */
-
         Object.assign(
             currentLead,
             data ||
@@ -1943,6 +2592,7 @@ async function saveModalChanges() {
                     String(leadId)
             );
 
+
         if (index !== -1) {
 
             Object.assign(
@@ -1955,10 +2605,6 @@ async function saveModalChanges() {
                 allLeads[index];
         }
 
-
-        /* =================================================
-           REFRESH TABLE
-           ================================================= */
 
         applyFilters();
 
@@ -1973,9 +2619,7 @@ async function saveModalChanges() {
             "Changes saved successfully."
         );
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             error
@@ -1985,9 +2629,8 @@ async function saveModalChanges() {
             "Unable to save changes.",
             "error"
         );
-    }
 
-    finally {
+    } finally {
 
         if (saveButton) {
 
@@ -2086,6 +2729,7 @@ function openAddEnquiryModal() {
     document.body.style.overflow =
         "hidden";
 
+
     const form =
         document.getElementById(
             "addEnquiryForm"
@@ -2094,6 +2738,7 @@ function openAddEnquiryModal() {
     if (form) {
         form.reset();
     }
+
 
     const message =
         document.getElementById(
@@ -2156,6 +2801,7 @@ async function submitAddEnquiry(
         return;
     }
 
+
     const formData =
         new FormData(form);
 
@@ -2176,38 +2822,62 @@ async function submitAddEnquiry(
 
 
     /* =====================================================
-       IMPORTANT:
-
-       Dashboard uses event_type name,
-       but database uses occasion.
+       DEFAULT STATUS
        ===================================================== */
 
-    if (
-        data.event_type !==
-        undefined
-    ) {
-
-        data.occasion =
-            data.event_type;
-
-        delete data.event_type;
-    }
-
-
     if (!data.status) {
+
         data.status =
             "new";
     }
 
-    if (!data.priority) {
-        data.priority =
-            "normal";
+
+    /* =====================================================
+       EMPTY STRINGS → NULL
+       ===================================================== */
+
+    Object.keys(data)
+        .forEach(
+            key => {
+
+                if (
+                    data[key] === ""
+                ) {
+
+                    data[key] =
+                        null;
+                }
+            }
+        );
+
+
+    /* =====================================================
+       GUESTS
+       ===================================================== */
+
+    if (
+        data.guests !== null &&
+        data.guests !== undefined
+    ) {
+
+        data.guests =
+            Number(data.guests);
+
+        if (
+            !Number.isFinite(
+                data.guests
+            )
+        ) {
+
+            data.guests =
+                null;
+        }
     }
 
 
-    /* assigned_to is UUID.
-       Don't send employee text into UUID column.
-    */
+    /* =====================================================
+       ASSIGNED_TO IS UUID
+       ===================================================== */
 
     if (
         data.assigned_to &&
@@ -2272,9 +2942,7 @@ async function submitAddEnquiry(
             "Customer enquiry added successfully."
         );
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             error
@@ -2297,6 +2965,7 @@ function updateStats() {
     const total =
         allLeads.length;
 
+
     const newCount =
         allLeads.filter(
             lead =>
@@ -2307,6 +2976,7 @@ function updateStats() {
                 "new"
         ).length;
 
+
     const contactedCount =
         allLeads.filter(
             lead =>
@@ -2316,6 +2986,7 @@ function updateStats() {
                 ).toLowerCase() ===
                 "contacted"
         ).length;
+
 
     const closedCount =
         allLeads.filter(
@@ -2331,7 +3002,9 @@ function updateStats() {
                     status ===
                         "closed" ||
                     status ===
-                        "converted"
+                        "converted" ||
+                    status ===
+                        "booked"
                 );
             }
         ).length;
@@ -2370,6 +3043,7 @@ function setStat(
         );
 
     if (element) {
+
         element.textContent =
             value;
     }
@@ -2405,7 +3079,7 @@ function setupSearch() {
 
 
 /* =========================================================
-   FILTER DROPDOWNS
+   FILTER DROPDOWN
    ========================================================= */
 
 function setupFilters() {
@@ -2413,11 +3087,6 @@ function setupFilters() {
     const status =
         document.getElementById(
             "statusFilter"
-        );
-
-    const priority =
-        document.getElementById(
-            "priorityFilter"
         );
 
 
@@ -2432,22 +3101,7 @@ function setupFilters() {
                     "all";
 
                 applyFilters();
-            }
-        );
-    }
 
-
-    if (priority) {
-
-        priority.addEventListener(
-            "change",
-            () => {
-
-                currentPriorityFilter =
-                    priority.value ||
-                    "all";
-
-                applyFilters();
             }
         );
     }
@@ -2483,22 +3137,28 @@ function setupStatFilters() {
                         "active"
                     );
 
+
                     const filter =
                         card.dataset.statusFilter;
+
 
                     currentStatusFilter =
                         filter ||
                         "all";
+
 
                     const status =
                         document.getElementById(
                             "statusFilter"
                         );
 
+
                     if (status) {
+
                         status.value =
                             currentStatusFilter;
                     }
+
 
                     applyFilters();
                 }
@@ -2582,13 +3242,57 @@ function setupGlobalClicks() {
 
 
             /* =========================
+               COMMENT ACTIONS
+            ========================= */
+
+            const commentAction =
+                event.target.closest(
+                    "[data-comment-action]"
+                );
+
+
+            if (commentAction) {
+
+                const action =
+                    commentAction.dataset
+                        .commentAction;
+
+                const id =
+                    commentAction.dataset.id;
+
+
+                if (
+                    action ===
+                    "edit"
+                ) {
+
+                    editLeadComment(
+                        id
+                    );
+
+                } else if (
+                    action ===
+                    "view"
+                ) {
+
+                    viewLeadComment(
+                        id
+                    );
+                }
+
+                return;
+            }
+
+
+            /* =========================
                INLINE EDIT
-               ========================= */
+            ========================= */
 
             const inline =
                 event.target.closest(
                     ".crm-inline-field"
                 );
+
 
             if (
                 inline &&
@@ -2607,12 +3311,13 @@ function setupGlobalClicks() {
 
             /* =========================
                VIEW DETAILS
-               ========================= */
+            ========================= */
 
             const view =
                 event.target.closest(
                     "[data-action='view']"
                 );
+
 
             if (view) {
 
@@ -2626,12 +3331,13 @@ function setupGlobalClicks() {
 
             /* =========================
                CLOSE MODAL
-               ========================= */
+            ========================= */
 
             const close =
                 event.target.closest(
                     ".close-modal"
                 );
+
 
             if (close) {
 
@@ -2642,8 +3348,10 @@ function setupGlobalClicks() {
                 ) {
 
                     closeLeadModal();
+
                     return;
                 }
+
 
                 if (
                     close.closest(
@@ -2652,19 +3360,39 @@ function setupGlobalClicks() {
                 ) {
 
                     closeAddEnquiryModal();
+
                     return;
                 }
             }
 
 
             /* =========================
+               CANCEL LEAD
+            ========================= */
+
+            const cancelLead =
+                event.target.closest(
+                    "#cancelLeadEdit"
+                );
+
+
+            if (cancelLead) {
+
+                closeLeadModal();
+
+                return;
+            }
+
+
+            /* =========================
                CANCEL ADD
-               ========================= */
+            ========================= */
 
             const cancel =
                 event.target.closest(
                     "#cancelAddEnquiry"
                 );
+
 
             if (cancel) {
 
@@ -2676,12 +3404,13 @@ function setupGlobalClicks() {
 
             /* =========================
                SAVE MODAL
-               ========================= */
+            ========================= */
 
             const save =
                 event.target.closest(
                     "#saveLeadBtn"
                 );
+
 
             if (save) {
 
@@ -2694,14 +3423,13 @@ function setupGlobalClicks() {
     );
 
 
-    /* =========================
-       LEAD MODAL BACKDROP
-       ========================= */
+    /* LEAD MODAL BACKDROP */
 
     const leadModal =
         document.getElementById(
             "leadModal"
         );
+
 
     if (leadModal) {
 
@@ -2716,19 +3444,19 @@ function setupGlobalClicks() {
 
                     closeLeadModal();
                 }
+
             }
         );
     }
 
 
-    /* =========================
-       ADD MODAL BACKDROP
-       ========================= */
+    /* ADD MODAL BACKDROP */
 
     const addModal =
         document.getElementById(
             "addEnquiryModal"
         );
+
 
     if (addModal) {
 
@@ -2743,6 +3471,7 @@ function setupGlobalClicks() {
 
                     closeAddEnquiryModal();
                 }
+
             }
         );
     }
@@ -2810,15 +3539,18 @@ function setupKeyboard() {
                 return;
             }
 
+
             const leadModal =
                 document.getElementById(
                     "leadModal"
                 );
 
+
             const addModal =
                 document.getElementById(
                     "addEnquiryModal"
                 );
+
 
             if (
                 leadModal &&
@@ -2828,6 +3560,7 @@ function setupKeyboard() {
                 closeLeadModal();
             }
 
+
             if (
                 addModal &&
                 !addModal.hidden
@@ -2835,6 +3568,19 @@ function setupKeyboard() {
 
                 closeAddEnquiryModal();
             }
+
+
+            const commentViewer =
+                document.getElementById(
+                    "commentViewOverlay"
+                );
+
+
+            if (commentViewer) {
+
+                commentViewer.remove();
+            }
+
         }
     );
 }
@@ -2870,12 +3616,14 @@ function setupAuthListener() {
                 return;
             }
 
+
             if (session) {
 
                 updateStaffName(
                     session.user
                 );
             }
+
         }
     );
 }
@@ -2894,27 +3642,6 @@ function formatStatus(
     }
 
     return String(status)
-        .replace(
-            /[-_]/g,
-            " "
-        )
-        .replace(
-            /\b\w/g,
-            char =>
-                char.toUpperCase()
-        );
-}
-
-
-function formatPriority(
-    priority
-) {
-
-    if (!priority) {
-        return "Normal";
-    }
-
-    return String(priority)
         .replace(
             /[-_]/g,
             " "
@@ -3005,6 +3732,7 @@ function getEventOptions() {
             value: "Other",
             label: "Other"
         }
+
     ];
 }
 
@@ -3029,8 +3757,33 @@ function getStatusOptions() {
         },
 
         {
+            value: "detail-shared",
+            label: "Detail Shared"
+        },
+
+        {
+            value: "interested",
+            label: "Interested"
+        },
+
+        {
             value: "qualified",
             label: "Qualified"
+        },
+
+        {
+            value: "site-visit",
+            label: "Site Visit"
+        },
+
+        {
+            value: "negotiation",
+            label: "Negotiation"
+        },
+
+        {
+            value: "booked",
+            label: "Booked"
         },
 
         {
@@ -3046,39 +3799,13 @@ function getStatusOptions() {
         {
             value: "lost",
             label: "Lost"
+        },
+
+        {
+            value: "not-interested",
+            label: "Not Interested"
         }
-    ];
-}
 
-
-function getPriorityOptions() {
-
-    return [
-
-        {
-            value: "urgent",
-            label: "Urgent"
-        },
-
-        {
-            value: "high",
-            label: "High"
-        },
-
-        {
-            value: "medium",
-            label: "Medium"
-        },
-
-        {
-            value: "normal",
-            label: "Normal"
-        },
-
-        {
-            value: "low",
-            label: "Low"
-        }
     ];
 }
 
@@ -3093,12 +3820,15 @@ async function initializeCRM() {
         "Select My Venue CRM initializing..."
     );
 
+
     const session =
         await checkCRMAuth();
+
 
     if (!session) {
         return;
     }
+
 
     setupSearch();
 
@@ -3120,7 +3850,9 @@ async function initializeCRM() {
 
     setupAuthListener();
 
+
     await loadEnquiries();
+
 
     console.log(
         "Select My Venue CRM ready."
@@ -3142,9 +3874,7 @@ if (
         initializeCRM
     );
 
-}
-
-else {
+} else {
 
     initializeCRM();
 }
@@ -3170,8 +3900,15 @@ window.crm = {
 
     logoutCRM,
 
-    startInlineEdit
+    startInlineEdit,
+
+    editLeadComment,
+
+    viewLeadComment,
+
+    saveComment
 };
+
 
 window.loadEnquiries =
     loadEnquiries;
