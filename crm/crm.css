@@ -1,37 +1,13 @@
-```css
 /* =========================================================
    SELECT MY VENUE — CRM
+   CORPORATE CRM DESIGN
    crm.css
-   PREMIUM EMPLOYEE CRM — COMPLETE REPLACEMENT
-   ========================================================= */
+========================================================= */
 
-:root {
-    --crm-bg: #07111f;
-    --crm-bg-2: #0b1728;
-    --crm-card: #101d30;
-    --crm-card-2: #132238;
-    --crm-border: rgba(255, 255, 255, 0.09);
-
-    --crm-text: #f5f7fb;
-    --crm-muted: #8e9bb0;
-    --crm-soft: #b7c2d3;
-
-    --crm-primary: #19b8a6;
-    --crm-primary-dark: #0c8f82;
-    --crm-primary-soft: rgba(25, 184, 166, 0.12);
-
-    --crm-success: #36d399;
-    --crm-warning: #f4b740;
-    --crm-danger: #ff6b6b;
-    --crm-info: #5ca9ff;
-
-    --crm-radius: 16px;
-    --crm-shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
-}
 
 /* =========================================================
    RESET
-   ========================================================= */
+========================================================= */
 
 * {
     box-sizing: border-box;
@@ -45,23 +21,11 @@ body {
     min-height: 100%;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    min-height: 100vh;
-    background:
-        radial-gradient(
-            circle at 15% 0%,
-            rgba(25, 184, 166, 0.08),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 90% 10%,
-            rgba(92, 169, 255, 0.06),
-            transparent 25%
-        ),
-        var(--crm-bg);
-
-    color: var(--crm-text);
-
     font-family:
         Inter,
         ui-sans-serif,
@@ -71,243 +35,365 @@ body {
         "Segoe UI",
         sans-serif;
 
-    font-size: 14px;
-    line-height: 1.5;
-}
+    color: #17213a;
 
-button,
-input,
-select,
-textarea {
-    font: inherit;
-}
-
-button {
-    font-family: inherit;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-/* =========================================================
-   SCROLLBAR
-   ========================================================= */
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #081321;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #26384f;
-    border-radius: 20px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #38516f;
-}
-
-/* =========================================================
-   LOGIN PAGE SUPPORT
-   ========================================================= */
-
-.login-page {
-    min-height: 100vh;
-    width: 100%;
     background:
-        radial-gradient(
-            circle at 50% 20%,
-            rgba(25, 184, 166, 0.12),
-            transparent 35%
-        ),
         linear-gradient(
             135deg,
-            #06101c,
-            #0a1727 50%,
-            #07111f
+            #f6f8fc 0%,
+            #eef2f9 48%,
+            #f8faff 100%
         );
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
-/* =========================================================
-   MAIN CRM APP
-   ========================================================= */
 
-.crm-app,
-.dashboard,
-.crm-page,
-.crm-container {
-    width: 100%;
+/* =========================================================
+   ROOT APP
+========================================================= */
+
+.crm-app {
     min-height: 100vh;
+    width: 100%;
 }
+
 
 /* =========================================================
-   TOP HEADER
-   ========================================================= */
-
-.crm-header,
-.topbar,
-.dashboard-header,
-header {
-    position: relative;
-    z-index: 20;
-}
+   HEADER
+========================================================= */
 
 .crm-header {
-    min-height: 76px;
+    width: 100%;
+    min-height: 86px;
 
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 1fr);
+
     align-items: center;
-    justify-content: space-between;
 
-    padding: 14px 28px;
+    padding: 14px 32px;
 
-    background: rgba(8, 18, 31, 0.88);
+    background: rgba(255, 255, 255, 0.96);
 
-    border-bottom: 1px solid var(--crm-border);
+    border-bottom: 1px solid #e5e9f1;
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    box-shadow:
+        0 4px 18px rgba(28, 42, 70, 0.04);
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
+
 
 /* =========================================================
    BRAND
-   ========================================================= */
+========================================================= */
 
 .crm-brand {
     display: flex;
     align-items: center;
-    gap: 13px;
+    gap: 14px;
+
+    min-width: 0;
 }
 
-.crm-brand img,
-.brand-logo {
-    width: 42px;
-    height: 42px;
+.crm-header-logo {
+    width: 174px;
+    height: 54px;
+
     object-fit: contain;
-    border-radius: 10px;
+    object-position: left center;
+
+    display: block;
 }
 
 .crm-brand-text {
     display: flex;
     flex-direction: column;
-    line-height: 1.15;
+    gap: 2px;
+
+    white-space: nowrap;
 }
 
 .crm-brand-text strong {
     font-size: 16px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    line-height: 1.1;
+
+    font-weight: 750;
+
+    color: #182341;
 }
 
 .crm-brand-text span {
-    margin-top: 4px;
-    color: var(--crm-muted);
-    font-size: 11px;
+    font-size: 10px;
+
+    color: #8b96aa;
+
+    letter-spacing: 0.06em;
+
+    text-transform: uppercase;
 }
+
 
 /* =========================================================
-   STAFF AREA
-   ========================================================= */
+   HEADER TITLE
+========================================================= */
 
-.staff-area,
-.user-area {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.crm-header-title {
+    text-align: center;
+    white-space: nowrap;
 }
 
-.staff-name {
-    color: var(--crm-soft);
-    font-weight: 600;
-    font-size: 13px;
-}
-
-.logout-btn {
-    border: 1px solid rgba(255, 255, 255, 0.10);
-
-    background: rgba(255, 255, 255, 0.04);
-
-    color: #dbe3ee;
-
-    padding: 9px 14px;
-
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.logout-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.17);
-    transform: translateY(-1px);
-}
-
-/* =========================================================
-   MAIN CONTENT
-   ========================================================= */
-
-.crm-main,
-.dashboard-main,
-.main-content {
-    width: 100%;
-    max-width: 1700px;
-
-    margin: 0 auto;
-
-    padding: 30px;
-}
-
-/* =========================================================
-   PAGE TITLE
-   ========================================================= */
-
-.page-title,
-.dashboard-title {
-    margin-bottom: 24px;
-}
-
-.page-title h1,
-.dashboard-title h1 {
-    margin: 0;
-
-    font-size: clamp(24px, 3vw, 32px);
+.crm-header-title span {
+    font-size: 28px;
 
     font-weight: 800;
 
     letter-spacing: -0.03em;
+
+    background:
+        linear-gradient(
+            90deg,
+            #485bd7,
+            #6977df
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
 }
 
-.page-title p,
-.dashboard-title p {
-    margin: 7px 0 0;
-
-    color: var(--crm-muted);
-
-    font-size: 13px;
-}
 
 /* =========================================================
-   STAT CARDS
-   ========================================================= */
+   HEADER ACTIONS
+========================================================= */
 
-.stats-grid,
-.stats,
-.stat-grid {
+.crm-header-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 16px;
+}
+
+.staff-name {
+    color: #66728a;
+
+    font-size: 13px;
+
+    font-weight: 650;
+
+    white-space: nowrap;
+}
+
+.logout-btn {
+    border: 1px solid #dce2ec;
+
+    background: #ffffff;
+
+    color: #25314b;
+
+    padding: 11px 18px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.logout-btn:hover {
+    background: #f6f8fc;
+
+    border-color: #cbd3e1;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.crm-main {
+    width: 100%;
+
+    max-width: 1900px;
+
+    margin: 0 auto;
+
+    padding: 38px 32px 60px;
+}
+
+
+/* =========================================================
+   PAGE HEADING
+========================================================= */
+
+.page-heading {
+    display: flex;
+
+    align-items: flex-end;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-bottom: 28px;
+}
+
+.page-heading-content {
+    min-width: 0;
+}
+
+.page-kicker {
+    margin-bottom: 7px;
+
+    color: #7c88a0;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+
+    text-transform: uppercase;
+}
+
+.page-heading h1 {
+    margin: 0;
+
+    font-size: clamp(30px, 3vw, 40px);
+
+    line-height: 1.08;
+
+    letter-spacing: -0.04em;
+
+    font-weight: 800;
+
+    color: #17213a;
+}
+
+.page-heading h1 span {
+    color: #5968d9;
+}
+
+.page-heading p {
+    margin: 10px 0 0;
+
+    max-width: 760px;
+
+    color: #7a879e;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   HEADING BUTTONS
+========================================================= */
+
+.heading-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+.primary-btn,
+.secondary-btn {
+    height: 46px;
+
+    border-radius: 11px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    font-size: 13px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease;
+}
+
+.primary-btn {
+    border: 1px solid #5667dc;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5668dd,
+            #4859cc
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 20px rgba(78, 94, 207, 0.22);
+}
+
+.primary-btn:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 11px 25px rgba(78, 94, 207, 0.28);
+}
+
+.primary-btn span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.secondary-btn {
+    border: 1px solid #dce2ec;
+
+    background: #ffffff;
+
+    color: #34415c;
+}
+
+.secondary-btn:hover {
+    background: #f7f9fc;
+
+    border-color: #cbd4e2;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.stats-grid {
     display: grid;
 
     grid-template-columns:
@@ -315,1326 +401,1360 @@ header {
 
     gap: 16px;
 
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .stat-card {
-    position: relative;
+    width: 100%;
 
-    min-height: 118px;
+    min-height: 116px;
 
-    padding: 20px;
+    display: flex;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(19, 34, 56, 0.98),
-            rgba(12, 25, 42, 0.98)
-        );
+    align-items: center;
 
-    border: 1px solid var(--crm-border);
+    gap: 17px;
 
-    border-radius: var(--crm-radius);
+    padding: 22px;
 
-    box-shadow: var(--crm-shadow);
+    border: 1px solid #e0e5ee;
+
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    box-shadow:
+        0 7px 24px rgba(31, 47, 79, 0.045);
+
+    text-align: left;
 
     cursor: pointer;
 
     transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        background 0.2s ease;
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(25, 184, 166, 0.28);
+
+    border-color: #cbd3f0;
+
+    box-shadow:
+        0 12px 30px rgba(31, 47, 79, 0.08);
 }
 
 .stat-card.active {
-    border-color: rgba(25, 184, 166, 0.48);
+    border-color: #7583e3;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(20, 49, 64, 0.98),
-            rgba(12, 31, 46, 0.98)
-        );
+    box-shadow:
+        0 0 0 1px #7583e3,
+        0 12px 30px rgba(75, 91, 205, 0.09);
 }
 
-.stat-card small,
-.stat-label {
-    display: block;
+.stat-icon {
+    width: 50px;
+    height: 50px;
 
-    color: var(--crm-muted);
+    flex: 0 0 50px;
 
-    font-size: 11px;
-
-    font-weight: 700;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.08em;
-}
-
-.stat-card strong,
-.stat-value {
-    display: block;
-
-    margin-top: 10px;
-
-    color: var(--crm-text);
-
-    font-size: 30px;
-
-    font-weight: 800;
-
-    line-height: 1;
-}
-
-/* =========================================================
-   TOOLBAR
-   ========================================================= */
-
-.crm-toolbar,
-.toolbar,
-.filter-bar {
     display: flex;
 
     align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #eef1ff;
+
+    color: #5969d9;
+
+    font-size: 22px;
+
+    font-weight: 800;
+}
+
+.stat-card.active .stat-icon {
+    background: #6171dc;
+
+    color: #ffffff;
+}
+
+.stat-content {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+.stat-content span {
+    color: #8590a5;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+}
+
+.stat-content strong {
+    color: #17213a;
+
+    font-size: 29px;
+
+    line-height: 1;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   LEADS SECTION
+========================================================= */
+
+.leads-section {
+    width: 100%;
+
+    overflow: hidden;
+
+    border: 1px solid #e1e6ef;
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 10px 34px rgba(28, 43, 72, 0.055);
+}
+
+
+/* =========================================================
+   FILTER BAR
+========================================================= */
+
+.filter-bar {
+    display: grid;
+
+    grid-template-columns:
+        minmax(260px, 1fr)
+        220px
+        220px;
 
     gap: 12px;
 
-    flex-wrap: wrap;
+    padding: 20px;
 
-    margin-bottom: 18px;
+    border-bottom: 1px solid #e8ebf1;
 
-    padding: 14px;
-
-    background: rgba(16, 29, 48, 0.82);
-
-    border: 1px solid var(--crm-border);
-
-    border-radius: 14px;
+    background: #fbfcfe;
 }
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
 
 .search-box {
     position: relative;
 
-    flex: 1 1 280px;
+    min-width: 0;
+}
 
-    min-width: 220px;
+.search-icon {
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #8a96aa;
+
+    font-size: 18px;
+
+    pointer-events: none;
 }
 
 .search-box input,
-#searchInput {
+.filter-bar select {
     width: 100%;
 
-    min-height: 43px;
+    height: 48px;
 
-    padding:
-        0 14px;
+    border: 1px solid #dce2eb;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 11px;
 
-    border-radius: 10px;
+    background: #ffffff;
+
+    color: #26344f;
 
     outline: none;
 
-    background: rgba(255, 255, 255, 0.045);
+    font-family: inherit;
 
-    color: var(--crm-text);
+    font-size: 13px;
 
     transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
-.search-box input::placeholder,
-#searchInput::placeholder {
-    color: #66758b;
+.search-box input {
+    padding: 0 16px 0 43px;
+}
+
+.filter-bar select {
+    padding: 0 38px 0 14px;
+
+    cursor: pointer;
+}
+
+.search-box input::placeholder {
+    color: #9ba5b6;
 }
 
 .search-box input:focus,
-#searchInput:focus {
-    border-color: rgba(25, 184, 166, 0.55);
+.filter-bar select:focus {
+    border-color: #8290e2;
 
     box-shadow:
-        0 0 0 3px
-        rgba(25, 184, 166, 0.08);
+        0 0 0 3px rgba(91, 107, 218, 0.09);
 }
 
-/* =========================================================
-   FILTER SELECTS
-   ========================================================= */
-
-.filter-bar select,
-.crm-toolbar select {
-    min-width: 145px;
-
-    min-height: 43px;
-
-    padding: 0 34px 0 12px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.10);
-
-    border-radius: 10px;
-
-    background:
-        #111f32;
-
-    color: var(--crm-text);
-
-    outline: none;
-
-    cursor: pointer;
-}
-
-.filter-bar select:focus,
-.crm-toolbar select:focus {
-    border-color: rgba(25, 184, 166, 0.55);
-}
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
-
-.refresh-btn,
-.add-enquiry-btn,
-.primary-btn,
-.save-btn {
-    min-height: 43px;
-
-    padding: 0 16px;
-
-    border: 0;
-
-    border-radius: 10px;
-
-    cursor: pointer;
-
-    color: #fff;
-
-    font-weight: 700;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--crm-primary),
-            var(--crm-primary-dark)
-        );
-
-    box-shadow:
-        0 8px 24px
-        rgba(25, 184, 166, 0.14);
-
-    transition:
-        transform 0.2s ease,
-        filter 0.2s ease,
-        opacity 0.2s ease;
-}
-
-.refresh-btn:hover,
-.add-enquiry-btn:hover,
-.primary-btn:hover,
-.save-btn:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.08);
-}
-
-.refresh-btn:disabled,
-.add-enquiry-btn:disabled,
-.primary-btn:disabled,
-.save-btn:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* =========================================================
-   LEADS CARD
-   ========================================================= */
-
-.leads-card,
-.table-card,
-.crm-table-card {
-    width: 100%;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(16, 29, 48, 0.98),
-            rgba(10, 22, 37, 0.98)
-        );
-
-    border: 1px solid var(--crm-border);
-
-    border-radius: 16px;
-
-    box-shadow: var(--crm-shadow);
-
-    overflow: hidden;
-}
 
 /* =========================================================
    TABLE WRAPPER
-   ========================================================= */
+========================================================= */
 
-.table-wrapper,
-.table-responsive,
-.leads-table-wrapper {
+.table-wrapper {
     width: 100%;
 
     overflow-x: auto;
 
-    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
 }
-
-/* =========================================================
-   TABLE
-   ========================================================= */
 
 .leads-table {
     width: 100%;
 
-    min-width: 1120px;
+    min-width: 1250px;
 
     border-collapse: separate;
 
     border-spacing: 0;
+
+    table-layout: auto;
 }
 
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
 .leads-table thead th {
-    position: sticky;
+    height: 52px;
 
-    top: 0;
+    padding: 0 18px;
 
-    z-index: 5;
+    background: #fafbfc;
 
-    padding:
-        14px 16px;
+    border-bottom: 1px solid #e4e8ef;
 
-    background:
-        #0d1a2b;
-
-    border-bottom:
-        1px solid var(--crm-border);
-
-    color: #8fa0b6;
+    color: #7b879b;
 
     font-size: 10px;
 
     font-weight: 800;
 
+    letter-spacing: 0.11em;
+
     text-align: left;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.08em;
 
     white-space: nowrap;
 }
 
-.leads-table tbody td {
-    padding:
-        14px 16px;
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.055);
-
-    color: #dce4ef;
-
-    vertical-align: middle;
-
-    background: transparent;
+.leads-table thead th:first-child {
+    padding-left: 20px;
 }
 
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
 .leads-table tbody tr {
+    background: #ffffff;
+
     transition:
         background 0.15s ease;
 }
 
+.leads-table tbody tr:nth-child(even) {
+    background: #fcfdff;
+}
+
 .leads-table tbody tr:hover {
-    background:
-        rgba(255, 255, 255, 0.025);
+    background: #f7f9ff;
+}
+
+.leads-table tbody td {
+    height: 72px;
+
+    padding: 11px 18px;
+
+    border-bottom: 1px solid #edf0f4;
+
+    color: #394862;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+    white-space: nowrap;
 }
 
 .leads-table tbody tr:last-child td {
-    border-bottom: 0;
+    border-bottom: none;
 }
 
-/* =========================================================
-   CUSTOMER NAME + PHONE
-   ========================================================= */
+.leads-table tbody td:first-child {
+    padding-left: 20px;
+}
 
-.leads-table td:first-child {
+
+/* =========================================================
+   CUSTOMER CELL
+========================================================= */
+
+.customer-cell {
     min-width: 190px;
 }
 
-.leads-table td:first-child strong {
+.customer-name {
     display: block;
 
-    color: #ffffff;
+    color: #16223b;
 
     font-size: 14px;
 
-    font-weight: 700;
+    font-weight: 750;
 
-    line-height: 1.3;
+    line-height: 1.35;
 }
 
-.leads-table td:first-child small {
+.customer-sub {
     display: block;
 
-    margin-top: 5px;
+    margin-top: 3px;
 
-    color: #7f90a6;
+    color: #8b96a8;
 
-    font-size: 12px;
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   PHONE
+   NON EDITABLE
+========================================================= */
+
+.phone-cell {
+    color: #31415e;
+
+    font-weight: 500;
 
     white-space: nowrap;
 }
 
+
 /* =========================================================
-   PHONE / CONTACT
-   ========================================================= */
+   EMAIL
+========================================================= */
 
-.phone-number,
-.customer-phone,
-.lead-phone {
-    color: #cbd6e5;
-
-    white-space: nowrap;
-
-    font-size: 12px;
+.email-cell {
+    min-width: 180px;
 }
 
-/* =========================================================
-   INLINE FIELD
-   ========================================================= */
 
-.crm-inline-field {
+/* =========================================================
+   CLICK-TO-EDIT CELLS
+   IMPORTANT:
+   NO PENCIL ICONS
+========================================================= */
+
+.editable-cell {
     position: relative;
-
-    display: flex;
-
-    align-items: center;
-
-    min-height: 34px;
-
-    width: 100%;
-
-    padding: 6px 8px;
-
-    border: 1px solid transparent;
-
-    border-radius: 8px;
 
     cursor: pointer;
 
+    border-radius: 7px;
+
     transition:
-        background 0.16s ease,
-        border-color 0.16s ease;
+        background 0.15s ease,
+        color 0.15s ease;
 }
 
-.crm-inline-field:hover {
-    background:
-        rgba(255, 255, 255, 0.045);
+.editable-cell:hover {
+    background: #f1f4ff;
 
-    border-color:
-        rgba(255, 255, 255, 0.07);
+    color: #4457c8;
 }
 
-.crm-inline-field.editing {
-    background:
-        rgba(25, 184, 166, 0.055);
-
-    border-color:
-        rgba(25, 184, 166, 0.45);
-
-    cursor: default;
+.editable-cell::after {
+    content: none !important;
 }
 
-.inline-display {
-    display: block;
-
-    overflow: hidden;
-
-    color: #d7e0eb;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-
-    max-width: 100%;
-}
 
 /* =========================================================
-   PENCIL — HIDDEN BY DEFAULT
-   ========================================================= */
+   ACTIVE INLINE EDIT
+========================================================= */
 
-.inline-edit-icon {
-    display: none;
+.inline-editing {
+    padding: 5px !important;
 
-    margin-left: 7px;
-
-    flex: 0 0 auto;
-
-    color: var(--crm-primary);
-
-    font-size: 12px;
-
-    opacity: 0.9;
+    background: #f2f5ff !important;
 }
 
-.crm-inline-field:hover .inline-edit-icon {
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-}
-
-/* Never show pencil while editing */
-.crm-inline-field.editing .inline-edit-icon {
-    display: inline-flex;
-}
-
-/* =========================================================
-   INLINE EDITOR
-   ========================================================= */
-
-.crm-inline-editor {
+.inline-editing input,
+.inline-editing select {
     width: 100%;
 
-    min-width: 90px;
+    min-width: 100px;
 
-    min-height: 31px;
+    height: 36px;
 
-    padding: 5px 8px;
+    padding: 0 9px;
 
-    border:
-        1px solid rgba(25, 184, 166, 0.55);
+    border: 1px solid #8390e0;
 
-    border-radius: 7px;
+    border-radius: 8px;
 
     outline: none;
 
-    background: #0b1829;
+    background: #ffffff;
 
-    color: #ffffff;
+    color: #24314c;
 
-    font-size: 13px;
-}
+    font-family: inherit;
 
-.crm-inline-editor:focus {
-    border-color:
-        var(--crm-primary);
+    font-size: 12px;
 
     box-shadow:
-        0 0 0 2px
-        rgba(25, 184, 166, 0.10);
+        0 0 0 3px rgba(91, 107, 218, 0.08);
 }
 
-.crm-inline-editor option {
-    background: #0b1829;
-    color: #fff;
+.inline-editing input:focus,
+.inline-editing select:focus {
+    border-color: #5b6bd6;
 }
+
 
 /* =========================================================
-   STATUS / PRIORITY
-   ========================================================= */
+   STATUS BADGES
+========================================================= */
 
-.status-badge,
-.priority-badge {
+.status-badge {
     display: inline-flex;
 
     align-items: center;
 
-    justify-content: center;
+    min-height: 28px;
 
-    min-height: 27px;
-
-    padding:
-        4px 9px;
+    padding: 5px 11px;
 
     border-radius: 999px;
 
-    font-size: 10px;
+    font-size: 11px;
 
-    font-weight: 800;
+    font-weight: 750;
 
     white-space: nowrap;
 }
 
 .status-new {
-    color: #67e8f9;
-    background: rgba(103, 232, 249, 0.10);
+    background: #eef1ff;
+    color: #4f61cc;
 }
 
 .status-contacted {
-    color: #60a5fa;
-    background: rgba(96, 165, 250, 0.10);
+    background: #eaf8f3;
+    color: #168263;
 }
 
 .status-follow-up {
-    color: #fbbf24;
-    background: rgba(251, 191, 36, 0.10);
+    background: #fff6e4;
+    color: #a56a0a;
 }
 
 .status-qualified {
-    color: #c084fc;
-    background: rgba(192, 132, 252, 0.10);
+    background: #eaf5ff;
+    color: #2670a8;
 }
 
-.status-converted,
-.status-booked {
-    color: #6ee7b7;
-    background: rgba(110, 231, 183, 0.10);
+.status-converted {
+    background: #e9f8ef;
+    color: #17804c;
 }
 
-.status-closed,
+.status-closed {
+    background: #f0f1f4;
+    color: #606b7d;
+}
+
 .status-lost {
-    color: #fb7185;
-    background: rgba(251, 113, 133, 0.10);
+    background: #fff0f0;
+    color: #bd4d4d;
 }
+
 
 /* =========================================================
-   VIEW DETAILS BUTTON
-   ========================================================= */
+   PRIORITY BADGES
+========================================================= */
 
-.view-lead-btn {
+.priority-badge {
     display: inline-flex;
 
     align-items: center;
 
-    justify-content: center;
+    min-height: 28px;
 
-    min-height: 34px;
+    padding: 5px 11px;
 
-    padding:
-        0 12px;
-
-    border:
-        1px solid rgba(25, 184, 166, 0.30);
-
-    border-radius: 8px;
-
-    background:
-        rgba(25, 184, 166, 0.08);
-
-    color:
-        #65e6d7;
+    border-radius: 999px;
 
     font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 750;
+
+    white-space: nowrap;
+}
+
+.priority-urgent {
+    background: #ffe9e9;
+    color: #bd4141;
+}
+
+.priority-high {
+    background: #fff0e5;
+    color: #b86619;
+}
+
+.priority-medium {
+    background: #fff7df;
+    color: #9a7313;
+}
+
+.priority-normal {
+    background: #eef2f8;
+    color: #637087;
+}
+
+.priority-low {
+    background: #edf7f1;
+    color: #3d8060;
+}
+
+
+/* =========================================================
+   ACTION COLUMN
+========================================================= */
+
+.action-column {
+    text-align: center !important;
+}
+
+.action-cell {
+    text-align: center;
+}
+
+.view-details-btn {
+    height: 38px;
+
+    padding: 0 14px;
+
+    border: 1px solid #dce2ed;
+
+    border-radius: 9px;
+
+    background: #ffffff;
+
+    color: #4e60c8;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 750;
 
     cursor: pointer;
 
-    white-space: nowrap;
-
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
+        background 0.16s ease,
+        border-color 0.16s ease,
+        transform 0.16s ease;
 }
 
-.view-lead-btn:hover {
-    background:
-        rgba(25, 184, 166, 0.16);
+.view-details-btn:hover {
+    background: #f2f4ff;
 
-    border-color:
-        rgba(25, 184, 166, 0.55);
+    border-color: #bdc6ef;
 
     transform: translateY(-1px);
 }
 
+
 /* =========================================================
-   EMPTY / LOADING
-   ========================================================= */
+   LOADING
+========================================================= */
 
-.loading-cell,
+.loading-cell {
+    height: 180px !important;
+
+    text-align: center;
+
+    color: #8994a8 !important;
+
+    font-size: 13px !important;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
 .empty-state {
-    min-height: 220px;
+    padding: 65px 20px;
 
-    padding: 55px 20px !important;
-
-    text-align: center !important;
-
-    color: var(--crm-muted);
-}
-
-.empty-state h3 {
-    margin: 10px 0 5px;
-
-    color: #dce5f0;
-
-    font-size: 16px;
-}
-
-.empty-state p {
-    margin: 0;
-
-    color: var(--crm-muted);
-
-    font-size: 12px;
+    text-align: center;
 }
 
 .empty-icon {
-    font-size: 28px;
+    width: 52px;
+    height: 52px;
 
-    opacity: 0.55;
+    margin: 0 auto 15px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #f0f3ff;
+
+    color: #6574d5;
+
+    font-size: 22px;
 }
 
-/* =========================================================
-   MODAL BACKDROP
-   ========================================================= */
+.empty-state h3 {
+    margin: 0;
 
-#leadModal,
-#addEnquiryModal {
+    color: #25314b;
+
+    font-size: 17px;
+}
+
+.empty-state p {
+    margin: 7px 0 0;
+
+    color: #8a95a8;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.modal-overlay {
     position: fixed;
 
     inset: 0;
 
-    z-index: 9999;
+    z-index: 1000;
 
-    width: 100%;
-    height: 100%;
+    display: flex;
 
-    padding: 24px;
+    align-items: center;
+    justify-content: center;
+
+    padding: 28px;
 
     background:
-        rgba(2, 8, 15, 0.78);
+        rgba(18, 27, 46, 0.48);
 
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
 
     overflow-y: auto;
 }
 
-/* hidden attribute */
-#leadModal[hidden],
-#addEnquiryModal[hidden] {
+.modal-overlay[hidden] {
     display: none !important;
 }
 
+
 /* =========================================================
-   MODAL PANEL
-   ========================================================= */
+   MODAL CARD
+========================================================= */
 
-#leadModal > *,
-#addEnquiryModal > * {
-    max-width: 780px;
+.lead-modal-card,
+.add-enquiry-card {
+    width: min(920px, 100%);
 
-    margin:
-        30px auto;
-}
+    max-height: calc(100vh - 56px);
 
-.modal-content,
-.modal-card,
-.lead-modal-content,
-.add-enquiry-modal {
-    width: min(780px, 100%);
+    overflow-y: auto;
 
-    margin: 30px auto;
-
-    background:
-        linear-gradient(
-            145deg,
-            #122137,
-            #0d192a
-        );
-
-    border:
-        1px solid rgba(255, 255, 255, 0.10);
+    border: 1px solid #e1e5ee;
 
     border-radius: 18px;
 
-    box-shadow:
-        0 35px 100px
-        rgba(0, 0, 0, 0.55);
+    background: #ffffff;
 
-    overflow: hidden;
+    box-shadow:
+        0 30px 80px rgba(21, 31, 53, 0.22);
 }
+
+.add-enquiry-card {
+    width: min(980px, 100%);
+}
+
 
 /* =========================================================
    MODAL HEADER
-   ========================================================= */
+========================================================= */
 
 .modal-header {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 3;
+
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
 
-    gap: 16px;
+    gap: 20px;
 
-    padding:
-        20px 22px;
+    padding: 24px 26px;
 
-    border-bottom:
-        1px solid var(--crm-border);
+    background: rgba(255, 255, 255, 0.97);
+
+    border-bottom: 1px solid #e8ebf1;
+
+    backdrop-filter: blur(8px);
 }
 
-.modal-header h2,
-.modal-header h3 {
-    margin: 0;
+.modal-kicker {
+    margin-bottom: 6px;
 
-    color: #fff;
+    color: #77839a;
 
-    font-size: 19px;
+    font-size: 10px;
 
     font-weight: 800;
+
+    letter-spacing: 0.13em;
+}
+
+.modal-header h2 {
+    margin: 0;
+
+    color: #18233c;
+
+    font-size: 22px;
+
+    letter-spacing: -0.025em;
 }
 
 .close-modal {
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
 
-    display: inline-flex;
+    flex: 0 0 38px;
+
+    display: flex;
 
     align-items: center;
     justify-content: center;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #dfe4ec;
 
-    border-radius: 8px;
+    border-radius: 10px;
 
-    background: rgba(255, 255, 255, 0.04);
+    background: #ffffff;
 
-    color: #aebacc;
+    color: #647087;
+
+    font-size: 23px;
+
+    line-height: 1;
 
     cursor: pointer;
 
-    font-size: 18px;
-
-    line-height: 1;
+    transition:
+        background 0.16s ease,
+        color 0.16s ease;
 }
 
 .close-modal:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
+    background: #f4f6fa;
+
+    color: #27334c;
 }
+
 
 /* =========================================================
-   MODAL BODY
-   ========================================================= */
+   CUSTOMER INFO
+========================================================= */
 
-.modal-body {
-    padding: 22px;
+.lead-info-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 12px;
+
+    padding: 22px 26px;
 }
 
-.modal-grid,
-.lead-details-grid {
+.info-card {
+    min-height: 82px;
+
+    padding: 15px;
+
+    border: 1px solid #e4e8ef;
+
+    border-radius: 12px;
+
+    background: #fafbfd;
+}
+
+.info-card span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #8a95a7;
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+}
+
+.info-card strong {
+    display: block;
+
+    overflow-wrap: anywhere;
+
+    color: #26334e;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DETAIL SECTION
+========================================================= */
+
+.detail-section-title,
+.form-section-title {
+    margin: 0 26px;
+
+    padding: 16px 0 10px;
+
+    border-bottom: 1px solid #edf0f4;
+
+    color: #647089;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+}
+
+.crm-controls {
     display: grid;
 
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-    gap: 14px;
+    gap: 16px;
+
+    padding: 18px 26px 8px;
 }
 
-.detail-item {
-    padding:
-        13px 14px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.065);
-
-    border-radius: 11px;
-
-    background:
-        rgba(255, 255, 255, 0.025);
-}
-
-.detail-item label {
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: #75869d;
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.08em;
-}
-
-.detail-item strong,
-.detail-item span {
-    display: block;
-
-    color: #e5ebf3;
-
-    font-size: 13px;
-
-    word-break: break-word;
-}
 
 /* =========================================================
-   MESSAGE / NOTES
-   ========================================================= */
+   FORM CONTROLS
+========================================================= */
 
-.message-box,
-.notes-box {
-    margin-top: 16px;
-
-    padding: 15px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.065);
-
-    border-radius: 11px;
-
-    background:
-        rgba(255, 255, 255, 0.025);
-}
-
-.message-box label,
-.notes-box label {
-    display: block;
-
-    margin-bottom: 7px;
-
-    color: #75869d;
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    text-transform: uppercase;
-
-    letter-spacing: 0.08em;
-}
-
-.message-box p {
-    margin: 0;
-
-    color: #d6dfeb;
-
-    line-height: 1.65;
-
-    white-space: pre-wrap;
-
-    word-break: break-word;
-}
-
-/* =========================================================
-   MODAL FORM CONTROLS
-   ========================================================= */
-
-.modal-body input,
-.modal-body select,
-.modal-body textarea,
-#addEnquiryModal input,
-#addEnquiryModal select,
-#addEnquiryModal textarea {
-    width: 100%;
-
-    min-height: 42px;
-
-    padding:
-        10px 12px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.10);
-
-    border-radius: 9px;
-
-    outline: none;
-
-    background:
-        rgba(4, 13, 24, 0.72);
-
-    color: #f5f7fb;
-}
-
-.modal-body textarea,
-#addEnquiryModal textarea {
-    min-height: 100px;
-
-    resize: vertical;
-}
-
-.modal-body input:focus,
-.modal-body select:focus,
-.modal-body textarea:focus,
-#addEnquiryModal input:focus,
-#addEnquiryModal select:focus,
-#addEnquiryModal textarea:focus {
-    border-color:
-        rgba(25, 184, 166, 0.55);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(25, 184, 166, 0.08);
-}
-
-/* =========================================================
-   MODAL FOOTER
-   ========================================================= */
-
-.modal-footer {
+.control-group {
     display: flex;
 
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 10px;
-
-    padding:
-        17px 22px;
-
-    border-top:
-        1px solid var(--crm-border);
-}
-
-.cancel-btn {
-    min-height: 42px;
-
-    padding:
-        0 15px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.10);
-
-    border-radius: 9px;
-
-    background:
-        rgba(255, 255, 255, 0.04);
-
-    color: #b9c5d5;
-
-    cursor: pointer;
-}
-
-.cancel-btn:hover {
-    background:
-        rgba(255, 255, 255, 0.08);
-
-    color: #fff;
-}
-
-/* =========================================================
-   CONTACT ACTIONS
-   ========================================================= */
-
-#modalCallBtn,
-#modalWhatsappBtn,
-#modalEmailBtn,
-.contact-btn {
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-height: 38px;
-
-    padding:
-        0 13px;
-
-    border-radius: 9px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.09);
-
-    background:
-        rgba(255, 255, 255, 0.045);
-
-    color: #dce5ef;
-
-    font-size: 12px;
-
-    font-weight: 700;
-
-    transition: 0.2s ease;
-}
-
-#modalCallBtn:hover,
-#modalWhatsappBtn:hover,
-#modalEmailBtn:hover,
-.contact-btn:hover {
-    background:
-        rgba(255, 255, 255, 0.09);
-
-    transform: translateY(-1px);
-}
-
-/* =========================================================
-   ADD ENQUIRY FORM
-   ========================================================= */
-
-#addEnquiryModal form {
-    display: grid;
-
-    gap: 15px;
-}
-
-#addEnquiryModal .form-group,
-#addEnquiryModal .field,
-#addEnquiryModal label {
-    color: #aab8ca;
-
-    font-size: 12px;
-
-    font-weight: 600;
-}
-
-#addEnquiryModal .form-group {
-    display: grid;
+    flex-direction: column;
 
     gap: 7px;
 }
 
-.form-message {
-    min-height: 20px;
+.control-group label,
+.detail-block > label {
+    color: #68758d;
 
-    color: #ff9c9c;
+    font-size: 10px;
 
-    font-size: 12px;
+    font-weight: 800;
+
+    letter-spacing: 0.09em;
 }
 
-/* =========================================================
-   TOAST
-   ========================================================= */
+.control-group input,
+.control-group select,
+.control-group textarea,
+.detail-block textarea {
+    width: 100%;
 
-#toastMessage {
-    position: fixed;
-
-    left: 50%;
-
-    bottom: 28px;
-
-    z-index: 10000;
-
-    transform:
-        translate(-50%, 20px);
-
-    opacity: 0;
-
-    pointer-events: none;
-
-    max-width:
-        min(420px, calc(100vw - 32px));
-
-    padding:
-        12px 17px;
-
-    border:
-        1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid #dce2eb;
 
     border-radius: 10px;
 
-    color: #fff;
+    background: #ffffff;
 
-    background: #20283d;
+    color: #26334d;
+
+    outline: none;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    transition:
+        border-color 0.17s ease,
+        box-shadow 0.17s ease;
+}
+
+.control-group input,
+.control-group select {
+    height: 43px;
+
+    padding: 0 12px;
+}
+
+.control-group textarea,
+.detail-block textarea {
+    min-height: 100px;
+
+    padding: 12px;
+
+    resize: vertical;
+}
+
+.control-group input:focus,
+.control-group select:focus,
+.control-group textarea:focus,
+.detail-block textarea:focus {
+    border-color: #7d8be0;
 
     box-shadow:
-        0 15px 40px
-        rgba(0, 0, 0, 0.35);
+        0 0 0 3px rgba(88, 105, 216, 0.08);
+}
+
+
+/* =========================================================
+   DETAIL BLOCK
+========================================================= */
+
+.detail-block {
+    padding: 15px 26px 0;
+}
+
+.detail-content {
+    min-height: 82px;
+
+    margin-top: 8px;
+
+    padding: 13px;
+
+    border: 1px solid #e3e7ee;
+
+    border-radius: 10px;
+
+    background: #fafbfd;
+
+    color: #44516a;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    white-space: pre-wrap;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.add-enquiry-form {
+    padding-bottom: 25px;
+}
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+
+    padding: 18px 26px;
+}
+
+.full-width {
+    padding: 0 26px;
+}
+
+
+/* =========================================================
+   FORM MESSAGE
+========================================================= */
+
+.form-message {
+    min-height: 20px;
+
+    margin: 10px 26px 0;
 
     font-size: 12px;
 
-    font-weight: 700;
+    font-weight: 650;
 
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+    text-align: center;
 }
 
-#toastMessage.show {
-    opacity: 1;
-
-    transform:
-        translate(-50%, 0);
+.form-message.error {
+    color: #c44d4d;
 }
+
+.form-message.success {
+    color: #18825e;
+}
+
 
 /* =========================================================
-   RESPONSIVE — TABLET
-   ========================================================= */
+   MODAL ACTIONS
+========================================================= */
 
-@media (max-width: 1000px) {
+.modal-actions {
+    display: flex;
 
-    .crm-main,
-    .dashboard-main,
-    .main-content {
-        padding: 22px;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    padding: 20px 26px 0;
+}
+
+.cancel-btn,
+.save-btn {
+    height: 43px;
+
+    padding: 0 18px;
+
+    border-radius: 10px;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.16s ease,
+        background 0.16s ease,
+        border-color 0.16s ease;
+}
+
+.cancel-btn {
+    border: 1px solid #dce2eb;
+
+    background: #ffffff;
+
+    color: #55627a;
+}
+
+.cancel-btn:hover {
+    background: #f6f8fb;
+
+    transform: translateY(-1px);
+}
+
+.save-btn {
+    border: 1px solid #5566d6;
+
+    background:
+        linear-gradient(
+            135deg,
+            #596bdc,
+            #4a5bc9
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 7px 18px rgba(79, 94, 207, 0.18);
+}
+
+.save-btn:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 23px rgba(79, 94, 207, 0.24);
+}
+
+
+/* =========================================================
+   HIDDEN UTILITY
+========================================================= */
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   REMOVE OLD INLINE EDIT UI
+   This is intentional.
+   No pencils / edit icons should be visible.
+========================================================= */
+
+.inline-editor,
+.inline-edit-input,
+.inline-edit-select,
+.inline-save-btn,
+.inline-cancel-btn,
+.inline-edit-icon,
+.edit-pencil,
+.pencil-icon {
+    display: none !important;
+}
+
+.leads-table .edit-icon,
+.leads-table .pencil,
+.leads-table .fa-pencil,
+.leads-table .fa-pen {
+    display: none !important;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.table-wrapper::-webkit-scrollbar,
+.lead-modal-card::-webkit-scrollbar,
+.add-enquiry-card::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track,
+.lead-modal-card::-webkit-scrollbar-track,
+.add-enquiry-card::-webkit-scrollbar-track {
+    background: #f3f5f8;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb,
+.lead-modal-card::-webkit-scrollbar-thumb,
+.add-enquiry-card::-webkit-scrollbar-thumb {
+    background: #c9d0dc;
+
+    border-radius: 999px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover,
+.lead-modal-card::-webkit-scrollbar-thumb:hover,
+.add-enquiry-card::-webkit-scrollbar-thumb:hover {
+    background: #aeb8c8;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+    .crm-header {
+        grid-template-columns:
+            1fr auto;
+
+        padding: 13px 22px;
     }
 
-    .stats-grid,
-    .stats,
-    .stat-grid {
+    .crm-header-title {
+        display: none;
+    }
+
+    .crm-header-actions {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .crm-main {
+        padding-left: 22px;
+        padding-right: 22px;
+    }
+
+    .stats-grid {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
     }
 
-    .crm-header {
-        padding: 13px 20px;
+    .filter-bar {
+        grid-template-columns:
+            minmax(200px, 1fr)
+            180px
+            180px;
     }
 }
 
-/* =========================================================
-   RESPONSIVE — MOBILE
-   ========================================================= */
 
-@media (max-width: 700px) {
-
-    body {
-        font-size: 13px;
-    }
+@media (max-width: 800px) {
 
     .crm-header {
-        min-height: auto;
+        min-height: 74px;
 
-        padding: 14px 16px;
-
-        align-items: flex-start;
+        padding: 10px 15px;
     }
 
-    .staff-area,
-    .user-area {
-        gap: 7px;
+    .crm-header-logo {
+        width: 145px;
+        height: 45px;
+    }
+
+    .crm-brand-text {
+        display: none;
     }
 
     .staff-name {
         display: none;
     }
 
-    .crm-main,
-    .dashboard-main,
-    .main-content {
-        padding: 16px;
+    .crm-main {
+        padding: 25px 15px 45px;
     }
 
-    .stats-grid,
-    .stats,
-    .stat-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 10px;
-    }
-
-    .stat-card {
-        min-height: 100px;
-
-        padding: 15px;
-    }
-
-    .stat-card strong,
-    .stat-value {
-        font-size: 24px;
-    }
-
-    .crm-toolbar,
-    .toolbar,
-    .filter-bar {
-        align-items: stretch;
+    .page-heading {
+        align-items: flex-start;
 
         flex-direction: column;
+
+        gap: 18px;
     }
 
-    .search-box {
-        flex-basis: auto;
+    .heading-actions {
         width: 100%;
     }
 
-    .filter-bar select,
-    .crm-toolbar select,
-    .refresh-btn,
-    .add-enquiry-btn {
-        width: 100%;
+    .primary-btn,
+    .secondary-btn {
+        flex: 1;
     }
 
-    .modal-grid,
-    .lead-details-grid {
-        grid-template-columns: 1fr;
+    .stats-grid {
+        grid-template-columns:
+            1fr;
     }
 
-    #leadModal,
-    #addEnquiryModal {
-        padding: 12px;
+    .filter-bar {
+        grid-template-columns:
+            1fr;
     }
 
-    .modal-content,
-    .modal-card,
-    .lead-modal-content,
-    .add-enquiry-modal {
-        margin: 12px auto;
+    .lead-info-grid {
+        grid-template-columns:
+            1fr 1fr;
+
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .crm-controls,
+    .form-grid {
+        grid-template-columns:
+            1fr;
+
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .detail-section-title,
+    .form-section-title {
+        margin-left: 18px;
+        margin-right: 18px;
+    }
+
+    .detail-block,
+    .full-width {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    .modal-header {
+        padding: 19px 18px;
+    }
+
+    .modal-actions {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .crm-header-actions {
+        gap: 7px;
+    }
+
+    .logout-btn {
+        padding: 9px 12px;
+    }
+
+    .page-heading h1 {
+        font-size: 29px;
+    }
+
+    .lead-info-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .modal-overlay {
+        padding: 10px;
+    }
+
+    .lead-modal-card,
+    .add-enquiry-card {
+        max-height: calc(100vh - 20px);
+
         border-radius: 14px;
     }
 
-    .modal-body {
-        padding: 16px;
-    }
-
-    .modal-footer {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    .modal-footer button {
-        width: 100%;
-    }
 }
-
-/* =========================================================
-   ACCESSIBILITY
-   ========================================================= */
-
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-a:focus-visible {
-    outline:
-        2px solid
-        rgba(25, 184, 166, 0.75);
-
-    outline-offset: 2px;
-}
-
-/* =========================================================
-   PRINT
-   ========================================================= */
-
-@media print {
-
-    body {
-        background: #fff;
-        color: #000;
-    }
-
-    .crm-header,
-    .crm-toolbar,
-    .filter-bar,
-    .refresh-btn,
-    .add-enquiry-btn,
-    .view-lead-btn {
-        display: none !important;
-    }
-
-    .leads-card,
-    .table-card {
-        box-shadow: none;
-        border: 1px solid #ddd;
-    }
-
-    .leads-table {
-        min-width: 0;
-    }
-}
-```
