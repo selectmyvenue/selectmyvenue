@@ -1,43 +1,72 @@
 /* =========================================================
    SELECT MY VENUE — CRM
-   PREMIUM LIGHT CRM UI
+   FINAL PREMIUM LIGHT CRM UI
+   MATCHED TO dashboard.html
    ========================================================= */
 
 :root {
-    --crm-bg: #f4f6f8;
+    --crm-bg: #f3f6fa;
     --crm-card: #ffffff;
-    --crm-border: #e1e5ea;
-    --crm-border-dark: #d2d8df;
-    --crm-text: #132238;
-    --crm-text-light: #637083;
+    --crm-card-soft: #f8fafc;
+
+    --crm-border: #dfe5ec;
+    --crm-border-light: #e9edf2;
+
+    --crm-text: #172033;
+    --crm-text-dark: #0f172a;
+    --crm-muted: #64748b;
+
     --crm-blue: #2563eb;
     --crm-blue-dark: #1d4ed8;
+    --crm-blue-soft: #eff6ff;
+
     --crm-green: #15803d;
+    --crm-green-soft: #ecfdf3;
+
+    --crm-orange: #c56a00;
+    --crm-orange-soft: #fff7e8;
+
     --crm-red: #dc2626;
-    --crm-orange: #d97706;
-    --crm-shadow: 0 2px 12px rgba(15, 23, 42, 0.06);
+    --crm-red-soft: #fef2f2;
+
+    --crm-purple: #7c3aed;
+
+    --crm-shadow:
+        0 3px 18px rgba(15, 23, 42, 0.06);
+
+    --crm-shadow-lg:
+        0 18px 55px rgba(15, 23, 42, 0.16);
 }
 
+
 /* =========================================================
-   GLOBAL
+   RESET
    ========================================================= */
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
 html {
     width: 100%;
     min-height: 100%;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: auto !important;
 }
 
 body {
-    margin: 0;
-    padding: 0;
     width: 100%;
     min-height: 100vh;
+
+    margin: 0;
+    padding: 0;
+
     background: var(--crm-bg);
     color: var(--crm-text);
+
     font-family:
         Inter,
         -apple-system,
@@ -46,7 +75,9 @@ body {
         Roboto,
         Arial,
         sans-serif;
+
     font-size: 14px;
+    line-height: 1.45;
 }
 
 button,
@@ -60,246 +91,567 @@ button {
     cursor: pointer;
 }
 
-/* =========================================================
-   REMOVE UNWANTED TOP / LEFT SPACE
-   ========================================================= */
-
-body > div:first-child {
-    margin-top: 0;
+img {
+    max-width: 100%;
 }
 
-main,
-.dashboard,
-.dashboard-container,
-.crm-container,
-.page-container {
-    margin-top: 0 !important;
+[hidden] {
+    display: none !important;
 }
 
+
 /* =========================================================
-   MAIN CRM AREA
+   MAIN APP
    ========================================================= */
 
-.crm-page,
-.crm-container,
-.dashboard-container,
-.dashboard-main,
-main {
+.crm-app {
     width: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
+
 /* =========================================================
-   HEADER / TOP AREA
+   TOP HEADER
    ========================================================= */
 
 .crm-header {
-    width: calc(100% - 40px);
-    margin: 24px 20px 0;
-    padding: 26px 30px 22px;
+    width: 100%;
+    min-height: 76px;
 
-    background: var(--crm-card);
-    border: 1px solid var(--crm-border);
-    border-radius: 12px 12px 0 0;
+    margin: 0;
+    padding: 14px 28px;
 
-    display: flex;
+    background: #ffffff;
+
+    border-bottom: 1px solid var(--crm-border);
+
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
-    gap: 20px;
 
-    box-shadow: var(--crm-shadow);
+    gap: 24px;
+
+    position: relative;
+    z-index: 20;
 }
 
-.crm-header-left {
+
+/* BRAND */
+
+.crm-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
     min-width: 0;
 }
 
-.crm-header h1,
-.crm-title,
-.page-title {
-    margin: 0;
+.crm-header-logo {
+    width: 42px;
+    height: 42px;
+
+    object-fit: contain;
+
+    flex: 0 0 auto;
+}
+
+.crm-brand-text {
+    min-width: 0;
+}
+
+.crm-brand-text strong {
+    display: block;
+
     color: #0f172a;
-    font-size: 30px;
-    line-height: 1.15;
+
+    font-size: 16px;
     font-weight: 750;
-    letter-spacing: -0.5px;
+
+    line-height: 1.2;
+
+    white-space: nowrap;
 }
 
-.crm-header p,
-.crm-subtitle {
-    margin: 7px 0 0;
-    color: var(--crm-text-light);
-    font-size: 15px;
+
+/* CENTER TITLE */
+
+.crm-header-title {
+    color: #0f172a;
+
+    font-size: 17px;
+    font-weight: 750;
+
+    text-align: center;
+
+    white-space: nowrap;
 }
+
+
+/* RIGHT SIDE */
+
+.crm-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 14px;
+
+    min-width: 0;
+}
+
+.staff-name {
+    color: #475569;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
 
 /* =========================================================
-   LEAD MANAGEMENT HEADING
+   LOGOUT
    ========================================================= */
 
-.lead-management-title {
-    font-size: 30px !important;
-    font-weight: 800 !important;
-    color: #0f172a !important;
-    letter-spacing: -0.6px;
-}
+.logout-btn {
+    min-width: 105px;
+    height: 42px;
 
-.customer-enquiries-title {
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    color: #64748b !important;
-}
+    padding: 0 18px;
 
-/* =========================================================
-   ADD BUTTON
-   ========================================================= */
-
-.add-enquiry-btn,
-#addEnquiryBtn,
-.add-lead-btn {
-    min-height: 44px;
-    padding: 0 19px;
-
-    border: 0;
+    border: 1px solid #cfd7e2;
     border-radius: 9px;
 
-    background: var(--crm-blue);
-    color: #ffffff;
+    background: #ffffff;
+    color: #1e293b;
 
-    font-weight: 700;
     font-size: 14px;
+    font-weight: 700;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.logout-btn:hover {
+    background: #f8fafc;
+    border-color: #b9c4d2;
+
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.crm-main {
+    width: 100%;
+
+    margin: 0;
+    padding: 28px 28px 40px;
+}
+
+
+/* =========================================================
+   PAGE HEADING
+   ========================================================= */
+
+.page-heading {
+    width: 100%;
+
+    margin: 0 0 22px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+}
+
+.page-heading-content {
+    min-width: 0;
+}
+
+.page-heading h1 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 29px;
+    font-weight: 800;
+
+    line-height: 1.15;
+
+    letter-spacing: -0.6px;
+}
+
+.page-heading h1 span {
+    color: #64748b;
+
+    font-size: 17px;
+    font-weight: 550;
+
+    margin-left: 5px;
+}
+
+.page-heading p {
+    margin: 7px 0 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+/* HEADING BUTTONS */
+
+.heading-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    flex-shrink: 0;
+}
+
+.primary-btn,
+.secondary-btn {
+    height: 42px;
+
+    padding: 0 16px;
+
+    border-radius: 8px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
     gap: 7px;
+
+    font-size: 13px;
+    font-weight: 700;
 
     white-space: nowrap;
 
     transition:
         background 0.15s ease,
-        transform 0.15s ease,
-        box-shadow 0.15s ease;
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.1s ease;
 }
 
-.add-enquiry-btn:hover,
-#addEnquiryBtn:hover,
-.add-lead-btn:hover {
+.primary-btn {
+    border: 1px solid var(--crm-blue);
+
+    background: var(--crm-blue);
+    color: #ffffff;
+}
+
+.primary-btn:hover {
     background: var(--crm-blue-dark);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+
+    box-shadow:
+        0 5px 14px rgba(37, 99, 235, 0.2);
 }
 
-.add-enquiry-btn:active,
-#addEnquiryBtn:active,
-.add-lead-btn:active {
+.secondary-btn {
+    border: 1px solid #cfd7e2;
+
+    background: #ffffff;
+    color: #334155;
+}
+
+.secondary-btn:hover {
+    background: #f8fafc;
+    border-color: #b8c4d2;
+}
+
+.primary-btn:active,
+.secondary-btn:active,
+.logout-btn:active {
     transform: translateY(1px);
 }
 
+
 /* =========================================================
-   FILTER AREA
+   STATISTICS
    ========================================================= */
 
-.filter-bar {
-    width: calc(100% - 40px);
-    margin: 0 20px;
+.stats-grid {
+    width: 100%;
 
-    padding: 22px 30px;
-
-    background: #fafbfc;
-    border-left: 1px solid var(--crm-border);
-    border-right: 1px solid var(--crm-border);
-    border-bottom: 1px solid var(--crm-border);
+    margin: 0 0 22px;
 
     display: grid;
+
     grid-template-columns:
-        minmax(160px, 1fr)
-        minmax(160px, 1fr)
-        minmax(160px, 1fr)
-        minmax(170px, 1fr)
-        minmax(170px, 1fr);
+        repeat(4, minmax(0, 1fr));
 
-    gap: 20px;
+    gap: 14px;
 }
 
-.filter-group {
-    min-width: 0;
-}
-
-.filter-group label {
-    display: block;
-    margin: 0 0 7px;
-
-    color: #1e3a5f;
-    font-size: 13px;
-    font-weight: 650;
-}
-
-.filter-bar select,
-.filter-bar input {
+.stat-card {
     width: 100%;
-    height: 46px;
+    min-height: 88px;
 
-    padding: 0 13px;
+    padding: 16px 18px;
+
+    border: 1px solid var(--crm-border);
+    border-radius: 11px;
 
     background: #ffffff;
-    color: #17324f;
 
-    border: 1px solid #cfd6df;
-    border-radius: 9px;
+    box-shadow: 0 2px 9px rgba(15, 23, 42, 0.035);
 
-    outline: none;
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    text-align: left;
+
+    color: inherit;
 
     transition:
         border-color 0.15s ease,
-        box-shadow 0.15s ease;
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
 }
 
-.filter-bar select:focus,
-.filter-bar input:focus {
-    border-color: #7da7ee;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.09);
+.stat-card:hover {
+    border-color: #c4d0df;
+
+    box-shadow:
+        0 5px 16px rgba(15, 23, 42, 0.07);
+
+    transform: translateY(-1px);
 }
+
+.stat-card.active {
+    border-color: #a9c4ed;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f8fbff 100%
+        );
+}
+
+
+/* STAT ICON */
+
+.stat-icon {
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    border-radius: 9px;
+
+    background: #f1f5f9;
+    color: #475569;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.stat-card:nth-child(2) .stat-icon {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.stat-card:nth-child(3) .stat-icon {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+.stat-card:nth-child(4) .stat-icon {
+    background: #fff7e8;
+    color: #c56a00;
+}
+
+
+/* STAT CONTENT */
+
+.stat-content {
+    min-width: 0;
+}
+
+.stat-content span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: #64748b;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    letter-spacing: 0.45px;
+}
+
+.stat-content strong {
+    display: block;
+
+    color: #0f172a;
+
+    font-size: 25px;
+    font-weight: 800;
+
+    line-height: 1.1;
+}
+
 
 /* =========================================================
-   SEARCH AREA
+   LEADS SECTION
    ========================================================= */
+
+.leads-section {
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================================
+   FILTER BAR
+   ========================================================= */
+
+.filter-bar {
+    width: 100%;
+
+    min-height: 76px;
+
+    padding: 15px 17px;
+
+    background: #ffffff;
+
+    border: 1px solid var(--crm-border);
+    border-bottom: 0;
+
+    border-radius: 11px 11px 0 0;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(300px, 1fr)
+        180px
+        180px;
+
+    gap: 12px;
+
+    align-items: center;
+}
+
+
+/* SEARCH */
 
 .search-box {
     position: relative;
+
+    width: 100%;
 }
 
 .search-box input {
     width: 100%;
-    height: 44px;
+    height: 42px;
 
-    padding: 0 14px;
+    padding: 0 13px 0 40px;
 
-    background: #ffffff;
-    border: 1px solid var(--crm-border-dark);
+    border: 1px solid #cfd7e2;
     border-radius: 8px;
 
+    background: #ffffff;
+    color: #172033;
+
     outline: none;
+
+    font-size: 13px;
+}
+
+.search-box input::placeholder {
+    color: #94a3b8;
 }
 
 .search-box input:focus {
-    border-color: #7da7ee;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    border-color: #8fb1e6;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
 }
+
+.search-icon {
+    position: absolute;
+
+    left: 14px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #64748b;
+
+    font-size: 17px;
+
+    pointer-events: none;
+}
+
+
+/* FILTER SELECTS */
+
+.filter-bar > select {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 11px;
+
+    border: 1px solid #cfd7e2;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #334155;
+
+    outline: none;
+
+    font-size: 13px;
+    font-weight: 550;
+
+    cursor: pointer;
+}
+
+.filter-bar > select:focus {
+    border-color: #8fb1e6;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
 
 /* =========================================================
    TABLE WRAPPER
    ========================================================= */
 
-.table-wrapper,
-.table-container,
-.leads-table-wrapper {
-    width: calc(100% - 40px);
-    margin: 0 20px 30px;
+.table-wrapper {
+    width: 100%;
 
     background: #ffffff;
 
     border: 1px solid var(--crm-border);
-    border-top: 0;
 
-    border-radius: 0 0 12px 12px;
+    border-radius: 0 0 11px 11px;
 
     overflow-x: auto;
     overflow-y: visible;
@@ -309,56 +661,57 @@ main {
     scrollbar-width: thin;
 }
 
+
 /* =========================================================
    TABLE
    ========================================================= */
 
 .leads-table {
     width: 100%;
-    min-width: 1250px;
+
+    min-width: 1220px;
 
     border-collapse: separate;
     border-spacing: 0;
 
-    background: #ffffff;
-
     table-layout: auto;
+
+    background: #ffffff;
 }
 
 .leads-table thead {
-    background: #fafbfc;
+    background: #f8fafc;
 }
 
 .leads-table th {
-    height: 62px;
+    height: 49px;
 
-    padding: 0 18px;
-
-    color: #16375f;
+    padding: 0 14px;
 
     border-bottom: 1px solid var(--crm-border);
 
-    font-size: 12px;
-    font-weight: 650;
+    color: #52627a;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    letter-spacing: 0.55px;
 
     text-align: left;
-    text-transform: uppercase;
-
-    letter-spacing: 0.35px;
 
     white-space: nowrap;
 }
 
 .leads-table td {
-    height: 81px;
+    height: 66px;
 
-    padding: 14px 18px;
+    padding: 9px 14px;
 
-    color: #18324f;
+    border-bottom: 1px solid #edf0f4;
 
-    border-bottom: 1px solid #e7ebef;
+    color: #334155;
 
-    font-size: 14px;
+    font-size: 13px;
 
     vertical-align: middle;
 
@@ -368,45 +721,71 @@ main {
 .leads-table tbody tr {
     background: #ffffff;
 
-    transition: background 0.12s ease;
+    transition: background 0.1s ease;
 }
 
 .leads-table tbody tr:hover {
-    background: #fbfdff;
+    background: #fafcff;
 }
 
 .leads-table tbody tr:last-child td {
     border-bottom: 0;
 }
 
+
 /* =========================================================
-   CUSTOMER NAME
+   CUSTOMER
    ========================================================= */
+
+.leads-table td:first-child {
+    min-width: 155px;
+}
 
 .leads-table td:first-child strong {
     display: block;
 
     color: #0f172a;
 
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 750;
 
-    line-height: 1.3;
+    line-height: 1.25;
 }
 
 .leads-table td:first-child small {
     display: block;
 
-    margin-top: 3px;
+    margin-top: 2px;
 
-    color: #64748b;
-    font-size: 12px;
+    color: #94a3b8;
+
+    font-size: 10px;
 }
 
+
 /* =========================================================
-   INLINE EDIT FIELD
-   IMPORTANT:
-   No permanent pencil.
+   EVENT / LOCATION
+   ========================================================= */
+
+.leads-table td:nth-child(4) {
+    min-width: 110px;
+}
+
+.leads-table td:nth-child(5) {
+    min-width: 105px;
+}
+
+.leads-table td:nth-child(6) {
+    min-width: 75px;
+}
+
+.leads-table td:nth-child(7) {
+    min-width: 125px;
+}
+
+
+/* =========================================================
+   INLINE EDITING
    ========================================================= */
 
 .crm-inline-field {
@@ -424,9 +803,11 @@ main {
     border: 1px solid transparent;
     border-radius: 6px;
 
-    cursor: pointer;
+    background: transparent;
 
-    color: #18324f;
+    color: #334155;
+
+    cursor: pointer;
 
     transition:
         background 0.12s ease,
@@ -434,58 +815,65 @@ main {
 }
 
 .crm-inline-field:hover {
-    background: #f5f8fc;
-    border-color: #dce3ec;
+    background: #f7f9fc;
+    border-color: #e1e7ef;
 }
 
-/* Hide pencils completely until editing */
+
+/* NO PERMANENT PENCILS */
 
 .inline-edit-icon {
     display: none !important;
 }
 
-/* =========================================================
-   INLINE EDITING
-   ========================================================= */
+
+/* ACTIVE EDITOR */
 
 .crm-inline-field.editing {
+    min-width: 110px;
+
     padding: 0;
     margin: 0;
 
     background: #ffffff;
 
-    border: 1px solid #7da7ee;
+    border: 1px solid #8fb1e6;
 
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.07);
 
     cursor: default;
 
-    z-index: 10;
+    z-index: 30;
 }
 
 .crm-inline-editor {
     width: 100%;
-    min-width: 110px;
-    height: 38px;
+    min-width: 100px;
 
-    padding: 0 9px;
+    height: 34px;
+
+    padding: 0 8px;
 
     border: 0;
     outline: none;
 
     background: transparent;
 
-    color: #132238;
+    color: #172033;
+
+    font-size: 13px;
 }
 
 .crm-inline-field.editing select.crm-inline-editor {
-    min-width: 130px;
+    min-width: 120px;
 
     cursor: pointer;
 }
 
+
 /* =========================================================
-   STATUS / PRIORITY BADGES
+   STATUS BADGES
    ========================================================= */
 
 .status-badge,
@@ -495,32 +883,39 @@ main {
     align-items: center;
     justify-content: center;
 
-    min-height: 28px;
+    min-height: 25px;
 
-    padding: 4px 12px;
+    padding: 3px 9px;
 
     border-radius: 999px;
 
-    font-size: 12px;
-    font-weight: 650;
+    font-size: 10px;
+    font-weight: 700;
 
     white-space: nowrap;
 }
 
+
+/* STATUS */
+
 .status-new {
     background: #eef2f7;
-    color: #334155;
+    color: #475569;
 }
 
-.status-contacted,
-.status-qualified {
-    background: #e7f0ff;
+.status-contacted {
+    background: #e8f1ff;
     color: #2459ad;
 }
 
 .status-follow-up {
-    background: #fff3d6;
+    background: #fff4d9;
     color: #a15c00;
+}
+
+.status-qualified {
+    background: #f1eafe;
+    color: #6d28d9;
 }
 
 .status-converted,
@@ -535,23 +930,61 @@ main {
     color: #991b1b;
 }
 
+
+/* PRIORITY */
+
+.priority-urgent {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.priority-high {
+    background: #fff4d9;
+    color: #a15c00;
+}
+
+.priority-medium {
+    background: #e8f1ff;
+    color: #2459ad;
+}
+
+.priority-normal {
+    background: #eef2f7;
+    color: #475569;
+}
+
+.priority-low {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+
 /* =========================================================
-   VIEW DETAILS BUTTON
+   ACTION BUTTON
    ========================================================= */
 
+.action-column {
+    text-align: center !important;
+}
+
+.leads-table td:last-child {
+    text-align: center;
+}
+
 .view-lead-btn {
-    min-height: 34px;
+    min-width: 86px;
+    height: 32px;
 
-    padding: 0 12px;
+    padding: 0 10px;
 
-    border: 1px solid #d5dce5;
+    border: 1px solid #ccd6e2;
     border-radius: 7px;
 
     background: #ffffff;
     color: #2459ad;
 
-    font-size: 12px;
-    font-weight: 650;
+    font-size: 11px;
+    font-weight: 700;
 
     transition:
         background 0.12s ease,
@@ -559,91 +992,148 @@ main {
 }
 
 .view-lead-btn:hover {
-    background: #f3f7fd;
-    border-color: #9db9e2;
+    background: #eff6ff;
+    border-color: #9eb9df;
 }
 
+
 /* =========================================================
-   EMPTY / LOADING
+   LOADING
    ========================================================= */
 
 .loading-cell {
-    height: 160px !important;
+    height: 130px !important;
 
     text-align: center !important;
 
     color: #64748b !important;
+
+    font-size: 13px !important;
 }
 
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
 .empty-state {
-    padding: 55px 20px;
+    width: 100%;
+
+    margin: 18px 0 0;
+    padding: 50px 20px;
+
+    border: 1px solid var(--crm-border);
+    border-radius: 11px;
+
+    background: #ffffff;
 
     text-align: center;
 
-    color: #64748b;
+    box-shadow: var(--crm-shadow);
+}
+
+.empty-icon {
+    color: #94a3b8;
+
+    font-size: 30px;
 }
 
 .empty-state h3 {
-    margin: 8px 0;
+    margin: 9px 0 4px;
 
     color: #1e293b;
+
+    font-size: 17px;
 }
 
 .empty-state p {
     margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
 }
 
+
 /* =========================================================
-   MODAL BACKDROP
+   MODAL OVERLAY
    ========================================================= */
 
-#leadModal,
-#addEnquiryModal {
+.modal-overlay {
     position: fixed;
 
     inset: 0;
 
     z-index: 9999;
 
-    padding: 30px;
+    padding: 25px;
 
-    background: rgba(15, 23, 42, 0.48);
+    background: rgba(15, 23, 42, 0.52);
 
     overflow-y: auto;
+
+    overscroll-behavior: contain;
 }
 
+
 /* =========================================================
-   MODAL
+   LEAD MODAL
    ========================================================= */
 
-.modal-content,
-.modal-card,
-#leadModal .modal-content,
-#addEnquiryModal .modal-content {
-    width: min(760px, 100%);
+.lead-modal-card,
+.add-enquiry-card {
+    width: min(820px, 100%);
 
-    margin: 40px auto;
+    margin: 25px auto;
 
     background: #ffffff;
 
-    border: 1px solid #dfe4ea;
+    border: 1px solid #dce3eb;
+
     border-radius: 14px;
 
-    box-shadow:
-        0 20px 60px rgba(15, 23, 42, 0.18);
+    box-shadow: var(--crm-shadow-lg);
 
     overflow: hidden;
+
+    position: relative;
 }
 
+
+/* =========================================================
+   MODAL HEADER
+   ========================================================= */
+
 .modal-header {
-    padding: 20px 24px;
+    min-height: 72px;
+
+    padding: 17px 22px;
 
     border-bottom: 1px solid var(--crm-border);
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #fafbfd 100%
+        );
 
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 15px;
+}
+
+.modal-kicker {
+    margin-bottom: 3px;
+
+    color: #64748b;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.75px;
 }
 
 .modal-header h2 {
@@ -651,18 +1141,25 @@ main {
 
     color: #0f172a;
 
-    font-size: 21px;
-    font-weight: 750;
+    font-size: 20px;
+    font-weight: 800;
+
+    line-height: 1.2;
 }
 
-.close-modal {
-    width: 36px;
-    height: 36px;
 
-    border: 0;
+/* CLOSE */
+
+.close-modal {
+    width: 34px;
+    height: 34px;
+
+    flex: 0 0 34px;
+
+    border: 1px solid #d9e0e8;
     border-radius: 8px;
 
-    background: #f1f5f9;
+    background: #f8fafc;
     color: #475569;
 
     font-size: 20px;
@@ -673,311 +1170,507 @@ main {
 }
 
 .close-modal:hover {
-    background: #e2e8f0;
+    background: #eef2f7;
+    color: #0f172a;
 }
+
 
 /* =========================================================
-   MODAL BODY
+   CUSTOMER SUMMARY
    ========================================================= */
 
-.modal-body {
-    padding: 24px;
-}
+.lead-info-grid {
+    padding: 18px 22px;
 
-.modal-body label {
-    display: block;
+    display: grid;
 
-    margin-bottom: 6px;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
 
-    color: #334155;
-
-    font-size: 13px;
-    font-weight: 650;
-}
-
-.modal-body input,
-.modal-body select,
-.modal-body textarea {
-    width: 100%;
-
-    min-height: 42px;
-
-    padding: 9px 11px;
-
-    border: 1px solid #cfd6df;
-    border-radius: 8px;
+    gap: 11px;
 
     background: #ffffff;
 
-    color: #172b43;
+    border-bottom: 1px solid var(--crm-border-light);
+}
+
+.info-card {
+    min-width: 0;
+
+    padding: 12px;
+
+    border: 1px solid #e5eaf0;
+    border-radius: 9px;
+
+    background: #fafbfd;
+}
+
+.info-card > span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #718096;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.55px;
+}
+
+.info-card > strong {
+    display: block;
+
+    color: #172033;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.locked-detail {
+    cursor: default;
+}
+
+
+/* =========================================================
+   CONTACT ACTIONS
+   ========================================================= */
+
+.contact-actions {
+    margin-top: 7px;
+
+    display: flex;
+    gap: 5px;
+}
+
+
+/* =========================================================
+   DETAIL INPUTS
+   ========================================================= */
+
+.detail-edit-input {
+    width: 100%;
+    height: 34px;
+
+    padding: 0 9px;
+
+    border: 1px solid #d1d9e3;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #172033;
 
     outline: none;
+
+    font-size: 12px;
 }
 
-.modal-body input:focus,
-.modal-body select:focus,
-.modal-body textarea:focus {
-    border-color: #7da7ee;
+.detail-edit-input:focus {
+    border-color: #8fb1e6;
 
     box-shadow:
-        0 0 0 3px rgba(37, 99, 235, 0.08);
+        0 0 0 3px rgba(37, 99, 235, 0.07);
 }
 
-.modal-body textarea {
-    min-height: 100px;
+
+/* =========================================================
+   DETAIL SECTION TITLES
+   ========================================================= */
+
+.detail-section-title,
+.form-section-title {
+    margin: 0;
+
+    padding: 15px 22px 8px;
+
+    color: #52627a;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 0.7px;
+}
+
+
+/* =========================================================
+   MODAL CONTROLS
+   ========================================================= */
+
+.crm-controls {
+    padding: 8px 22px 17px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 13px;
+}
+
+.control-group {
+    min-width: 0;
+}
+
+.control-group label,
+.detail-block > label {
+    display: block;
+
+    margin: 0 0 5px;
+
+    color: #52627a;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 0.45px;
+}
+
+.control-group input,
+.control-group select,
+.control-group textarea,
+.detail-block textarea {
+    width: 100%;
+
+    min-height: 39px;
+
+    padding: 8px 10px;
+
+    border: 1px solid #cfd7e2;
+    border-radius: 7px;
+
+    background: #ffffff;
+    color: #172033;
+
+    outline: none;
+
+    font-size: 12px;
+}
+
+.control-group input:focus,
+.control-group select:focus,
+.control-group textarea:focus,
+.detail-block textarea:focus {
+    border-color: #8fb1e6;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.07);
+}
+
+
+/* =========================================================
+   DETAIL BLOCKS
+   ========================================================= */
+
+.detail-block {
+    padding: 0 22px 15px;
+}
+
+.detail-block textarea {
+    min-height: 76px;
 
     resize: vertical;
 }
 
-/* =========================================================
-   MODAL GRID
-   ========================================================= */
-
-.modal-grid {
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 18px;
-}
-
-.modal-field {
-    min-width: 0;
-}
-
-.modal-field.full-width {
-    grid-column: 1 / -1;
-}
 
 /* =========================================================
-   MODAL FOOTER
+   FORM MESSAGE
    ========================================================= */
 
-.modal-footer {
-    padding: 17px 24px;
+.form-message {
+    min-height: 0;
+
+    margin: 0 22px;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+.form-message:not(:empty) {
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   MODAL ACTIONS
+   ========================================================= */
+
+.modal-actions {
+    padding: 14px 22px;
 
     border-top: 1px solid var(--crm-border);
+
+    background: #fafbfd;
 
     display: flex;
     align-items: center;
     justify-content: flex-end;
 
-    gap: 10px;
+    gap: 9px;
 }
 
+.cancel-btn,
 .save-btn {
-    min-height: 42px;
-
-    padding: 0 18px;
-
-    border: 0;
-    border-radius: 8px;
-
-    background: var(--crm-blue);
-    color: #ffffff;
-
-    font-weight: 700;
-}
-
-.save-btn:hover {
-    background: var(--crm-blue-dark);
-}
-
-.cancel-btn {
-    min-height: 42px;
+    min-height: 40px;
 
     padding: 0 17px;
 
-    border: 1px solid #d1d7df;
     border-radius: 8px;
 
-    background: #ffffff;
-    color: #334155;
+    font-size: 12px;
+    font-weight: 750;
 
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-btn {
+    border: 1px solid #d1d8e1;
+
+    background: #ffffff;
+    color: #475569;
 }
 
 .cancel-btn:hover {
     background: #f8fafc;
 }
 
-/* =========================================================
-   TOAST
-   ========================================================= */
+.save-btn {
+    border: 1px solid var(--crm-blue);
 
-#toastMessage {
-    position: fixed;
-
-    left: 50%;
-    bottom: 28px;
-
-    z-index: 10000;
-
-    padding: 11px 17px;
-
-    border-radius: 8px;
-
+    background: var(--crm-blue);
     color: #ffffff;
+}
 
-    font-size: 13px;
-    font-weight: 600;
+.save-btn:hover {
+    background: var(--crm-blue-dark);
 
     box-shadow:
-        0 8px 25px rgba(15, 23, 42, 0.18);
-
-    opacity: 0;
-
-    transform:
-        translate(-50%, 12px);
-
-    pointer-events: none;
-
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
+        0 4px 12px rgba(37, 99, 235, 0.18);
 }
 
-#toastMessage.show {
-    opacity: 1;
-
-    transform:
-        translate(-50%, 0);
+.save-btn:disabled,
+.cancel-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
+
 
 /* =========================================================
-   STATS
+   ADD ENQUIRY FORM
    ========================================================= */
 
-.stat-card {
-    background: #ffffff;
-
-    border: 1px solid var(--crm-border);
-    border-radius: 10px;
-
-    box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
-
-    cursor: pointer;
-
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
+.add-enquiry-form {
+    width: 100%;
 }
 
-.stat-card:hover,
-.stat-card.active {
-    border-color: #9db9e2;
+.form-grid {
+    padding: 8px 22px 17px;
 
-    box-shadow:
-        0 3px 12px rgba(15, 23, 42, 0.07);
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 13px;
 }
+
+.add-enquiry-form .full-width {
+    padding: 0 22px 15px;
+}
+
+.add-enquiry-form textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
 
 /* =========================================================
-   LOGOUT
+   REMOVE UNWANTED STRUCTURAL ELEMENTS
    ========================================================= */
 
-.logout-btn {
-    min-height: 40px;
-
-    padding: 0 15px;
-
-    border: 1px solid #d7dde5;
-    border-radius: 8px;
-
-    background: #ffffff;
-    color: #334155;
-
-    font-weight: 650;
+.crm-app > br,
+.crm-main > br,
+.page-heading > br,
+.leads-section > br {
+    display: none !important;
 }
 
-.logout-btn:hover {
-    background: #f8fafc;
-    border-color: #c5ccd5;
-}
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE — 1100px
    ========================================================= */
 
 @media (max-width: 1100px) {
 
-    .filter-bar {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+    .crm-header {
+        grid-template-columns: 1fr auto;
     }
 
-    .crm-header {
-        padding: 22px;
+    .crm-header-title {
+        display: none;
+    }
+
+    .stats-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-bar {
+        grid-template-columns:
+            minmax(220px, 1fr)
+            170px
+            170px;
+    }
+
+    .lead-info-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 }
+
+
+/* =========================================================
+   RESPONSIVE — 760px
+   ========================================================= */
 
 @media (max-width: 760px) {
 
     .crm-header {
-        width: calc(100% - 20px);
-        margin: 10px 10px 0;
+        min-height: auto;
 
-        padding: 20px;
+        padding: 12px 15px;
 
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .crm-header-actions {
+        justify-content: space-between;
+    }
+
+    .crm-main {
+        padding: 18px 12px 30px;
+    }
+
+    .page-heading {
         align-items: flex-start;
 
         flex-direction: column;
+
+        gap: 14px;
+    }
+
+    .heading-actions {
+        width: 100%;
+    }
+
+    .heading-actions button {
+        flex: 1;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 
     .filter-bar {
-        width: calc(100% - 20px);
-        margin: 0 10px;
-
         grid-template-columns: 1fr;
 
-        padding: 18px;
+        padding: 13px;
     }
 
-    .table-wrapper,
-    .table-container,
-    .leads-table-wrapper {
-        width: calc(100% - 20px);
-        margin-left: 10px;
-        margin-right: 10px;
+    .table-wrapper {
+        border-radius: 0 0 9px 9px;
     }
 
-    .modal-grid {
+    .lead-info-grid {
         grid-template-columns: 1fr;
     }
 
-    .modal-field.full-width {
-        grid-column: auto;
+    .crm-controls,
+    .form-grid {
+        grid-template-columns: 1fr;
     }
 
-    #leadModal,
-    #addEnquiryModal {
-        padding: 12px;
+    .modal-overlay {
+        padding: 10px;
     }
 
-    .modal-content,
-    .modal-card,
-    #leadModal .modal-content,
-    #addEnquiryModal .modal-content {
-        margin: 15px auto;
+    .lead-modal-card,
+    .add-enquiry-card {
+        margin: 10px auto;
+        border-radius: 11px;
+    }
+
+    .modal-header {
+        padding: 15px;
+    }
+
+    .detail-section-title,
+    .form-section-title {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .crm-controls,
+    .detail-block,
+    .form-grid {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .add-enquiry-form .full-width {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .modal-actions {
+        padding: 12px 15px;
+    }
+
+    .form-message {
+        margin-left: 15px;
+        margin-right: 15px;
     }
 }
+
 
 /* =========================================================
-   PREVENT PAGE JUMP DURING INLINE EDIT
+   SMALL MOBILE
    ========================================================= */
 
-html {
-    scroll-behavior: auto !important;
-}
+@media (max-width: 480px) {
 
-.crm-inline-field,
-.crm-inline-field * {
-    scroll-margin: 0 !important;
-}
+    .crm-brand-text strong {
+        font-size: 14px;
+    }
 
-/* =========================================================
-   HIDE RAW / UNUSED ELEMENTS
-   ========================================================= */
+    .crm-header-logo {
+        width: 36px;
+        height: 36px;
+    }
 
-[hidden] {
-    display: none !important;
+    .staff-name {
+        display: none;
+    }
+
+    .page-heading h1 {
+        font-size: 24px;
+    }
+
+    .page-heading h1 span {
+        display: block;
+
+        margin: 3px 0 0;
+
+        font-size: 14px;
+    }
+
+    .stat-card {
+        min-height: 78px;
+    }
 }
