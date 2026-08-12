@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -9,7 +8,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Select My Venue CRM — Customer Enquiries</title>
+    <title>Select My Venue CRM — Lead Management</title>
 
     <link
         rel="stylesheet"
@@ -18,6 +17,7 @@
 
     <!-- =====================================================
          SUPABASE CONFIG
+         KEEP THESE EXISTING VALUES
     ====================================================== -->
 
     <script>
@@ -29,7 +29,7 @@
     </script>
 
     <!-- =====================================================
-         SUPABASE
+         SUPABASE JS
     ====================================================== -->
 
     <script
@@ -44,7 +44,6 @@
         src="../crm.js"
         defer
     ></script>
-
 </head>
 
 
@@ -54,7 +53,7 @@
 
 
     <!-- =====================================================
-         HEADER
+         CRM HEADER
     ====================================================== -->
 
     <header class="crm-header">
@@ -70,12 +69,8 @@
             <div class="crm-brand-text">
 
                 <strong>
-                    Select My Venue
+                    Select My Venue CRM
                 </strong>
-
-                <span>
-                    Smart Lead Management
-                </span>
 
             </div>
 
@@ -83,11 +78,7 @@
 
 
         <div class="crm-header-title">
-
-            <span>
-                Lead Management
-            </span>
-
+            Lead Management
         </div>
 
 
@@ -113,7 +104,6 @@
     </header>
 
 
-
     <!-- =====================================================
          MAIN
     ====================================================== -->
@@ -122,24 +112,20 @@
 
 
         <!-- =================================================
-             PAGE HEADING
+             PAGE HEADER
         ================================================== -->
 
         <section class="page-heading">
 
             <div class="page-heading-content">
 
-                <div class="page-kicker">
-                    CUSTOMER CRM
-                </div>
-
                 <h1>
                     Customer <span>Enquiries</span>
                 </h1>
 
                 <p>
-                    Manage enquiries, customer information,
-                    follow-ups and lead progress from one place.
+                    Manage customer enquiries, follow-ups and
+                    lead progress from one place.
                 </p>
 
             </div>
@@ -170,13 +156,14 @@
         </section>
 
 
-
         <!-- =================================================
-             STAT CARDS
+             STATISTICS
         ================================================== -->
 
         <section class="stats-grid">
 
+
+            <!-- TOTAL -->
 
             <button
                 type="button"
@@ -204,6 +191,7 @@
             </button>
 
 
+            <!-- NEW -->
 
             <button
                 type="button"
@@ -231,6 +219,7 @@
             </button>
 
 
+            <!-- CONTACTED -->
 
             <button
                 type="button"
@@ -258,6 +247,7 @@
             </button>
 
 
+            <!-- CLOSED -->
 
             <button
                 type="button"
@@ -287,15 +277,16 @@
         </section>
 
 
-
         <!-- =================================================
-             LEADS PANEL
+             CUSTOMER ENQUIRIES
         ================================================== -->
 
         <section class="leads-section">
 
 
-            <!-- FILTER BAR -->
+            <!-- =================================================
+                 FILTER BAR
+            ================================================== -->
 
             <div class="filter-bar">
 
@@ -389,7 +380,6 @@
             </div>
 
 
-
             <!-- =================================================
                  TABLE
             ================================================== -->
@@ -467,7 +457,6 @@
             </div>
 
 
-
             <!-- =================================================
                  EMPTY STATE
             ================================================== -->
@@ -497,7 +486,6 @@
     </main>
 
 
-
     <!-- =====================================================
          VIEW / EDIT LEAD MODAL
     ====================================================== -->
@@ -515,6 +503,8 @@
             aria-labelledby="leadModalTitle"
         >
 
+
+            <!-- MODAL HEADER -->
 
             <div class="modal-header">
 
@@ -543,11 +533,14 @@
             </div>
 
 
-
-            <!-- CUSTOMER SUMMARY -->
+            <!-- =================================================
+                 CUSTOMER SUMMARY
+            ================================================== -->
 
             <div class="lead-info-grid">
 
+
+                <!-- CUSTOMER - LOCKED -->
 
                 <div class="info-card">
 
@@ -555,12 +548,17 @@
                         CUSTOMER
                     </span>
 
-                    <strong id="detailCustomerName">
+                    <strong
+                        id="detailCustomerName"
+                        class="locked-detail"
+                    >
                         —
                     </strong>
 
                 </div>
 
+
+                <!-- PHONE - LOCKED -->
 
                 <div class="info-card">
 
@@ -568,12 +566,22 @@
                         PHONE
                     </span>
 
-                    <strong id="detailPhone">
+                    <strong
+                        id="detailPhone"
+                        class="locked-detail"
+                    >
                         —
                     </strong>
 
+                    <div
+                        id="detailPhoneActions"
+                        class="contact-actions"
+                    ></div>
+
                 </div>
 
+
+                <!-- EMAIL - EDITABLE -->
 
                 <div class="info-card">
 
@@ -581,12 +589,22 @@
                         EMAIL
                     </span>
 
-                    <strong id="detailEmail">
-                        —
-                    </strong>
+                    <input
+                        type="email"
+                        id="detailEmail"
+                        class="detail-edit-input"
+                        placeholder="Email address"
+                    >
+
+                    <div
+                        id="detailEmailActions"
+                        class="contact-actions"
+                    ></div>
 
                 </div>
 
+
+                <!-- SOURCE -->
 
                 <div class="info-card">
 
@@ -594,17 +612,21 @@
                         LEAD SOURCE
                     </span>
 
-                    <strong id="detailSource">
-                        —
-                    </strong>
+                    <input
+                        type="text"
+                        id="detailSource"
+                        class="detail-edit-input"
+                        placeholder="Lead source"
+                    >
 
                 </div>
 
             </div>
 
 
-
-            <!-- ENQUIRY INFORMATION -->
+            <!-- =================================================
+                 ENQUIRY INFORMATION
+            ================================================== -->
 
             <div class="detail-section-title">
                 ENQUIRY INFORMATION
@@ -613,6 +635,8 @@
 
             <div class="crm-controls">
 
+
+                <!-- EVENT TYPE -->
 
                 <div class="control-group">
 
@@ -659,6 +683,7 @@
                 </div>
 
 
+                <!-- VENUE -->
 
                 <div class="control-group">
 
@@ -675,6 +700,7 @@
                 </div>
 
 
+                <!-- EVENT DATE -->
 
                 <div class="control-group">
 
@@ -690,6 +716,7 @@
                 </div>
 
 
+                <!-- GUESTS -->
 
                 <div class="control-group">
 
@@ -707,6 +734,7 @@
                 </div>
 
 
+                <!-- STATUS -->
 
                 <div class="control-group">
 
@@ -749,6 +777,7 @@
                 </div>
 
 
+                <!-- PRIORITY -->
 
                 <div class="control-group">
 
@@ -783,6 +812,7 @@
                 </div>
 
 
+                <!-- FOLLOW-UP -->
 
                 <div class="control-group">
 
@@ -798,6 +828,7 @@
                 </div>
 
 
+                <!-- ASSIGNED TO -->
 
                 <div class="control-group">
 
@@ -816,27 +847,28 @@
             </div>
 
 
-
-            <!-- CUSTOMER MESSAGE -->
+            <!-- =================================================
+                 CUSTOMER MESSAGE
+            ================================================== -->
 
             <div class="detail-block">
 
-                <label>
+                <label for="detailMessage">
                     CUSTOMER MESSAGE
                 </label>
 
-                <div
+                <textarea
                     id="detailMessage"
-                    class="detail-content"
-                >
-                    —
-                </div>
+                    class="detail-edit-textarea"
+                    placeholder="Customer enquiry / requirement..."
+                ></textarea>
 
             </div>
 
 
-
-            <!-- REMARKS -->
+            <!-- =================================================
+                 INTERNAL REMARKS
+            ================================================== -->
 
             <div class="detail-block">
 
@@ -852,6 +884,7 @@
             </div>
 
 
+            <!-- MODAL MESSAGE -->
 
             <div
                 id="leadModalMessage"
@@ -861,6 +894,7 @@
             ></div>
 
 
+            <!-- MODAL ACTIONS -->
 
             <div class="modal-actions">
 
@@ -887,7 +921,6 @@
     </div>
 
 
-
     <!-- =====================================================
          ADD ENQUIRY MODAL
     ====================================================== -->
@@ -905,6 +938,8 @@
             aria-labelledby="addEnquiryTitle"
         >
 
+
+            <!-- MODAL HEADER -->
 
             <div class="modal-header">
 
@@ -933,12 +968,17 @@
             </div>
 
 
+            <!-- =================================================
+                 ADD FORM
+            ================================================== -->
 
             <form
                 id="addEnquiryForm"
                 class="add-enquiry-form"
             >
 
+
+                <!-- CUSTOMER DETAILS -->
 
                 <div class="form-section-title">
                     CUSTOMER DETAILS
@@ -1048,6 +1088,7 @@
                 </div>
 
 
+                <!-- EVENT DETAILS -->
 
                 <div class="form-section-title">
                     EVENT DETAILS
@@ -1235,6 +1276,7 @@
                 </div>
 
 
+                <!-- FOLLOW-UP -->
 
                 <div class="form-section-title">
                     FOLLOW-UP
@@ -1277,6 +1319,7 @@
                 </div>
 
 
+                <!-- CUSTOMER MESSAGE -->
 
                 <div class="form-section-title">
                     CUSTOMER MESSAGE
@@ -1302,6 +1345,7 @@
                 </div>
 
 
+                <!-- INTERNAL REMARKS -->
 
                 <div class="full-width">
 
@@ -1322,6 +1366,7 @@
                 </div>
 
 
+                <!-- FORM MESSAGE -->
 
                 <div
                     id="addEnquiryMessage"
@@ -1331,6 +1376,7 @@
                 ></div>
 
 
+                <!-- FORM ACTIONS -->
 
                 <div class="modal-actions">
 
