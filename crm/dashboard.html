@@ -10,17 +10,19 @@
 
     <title>Select My Venue CRM — Lead Management</title>
 
-   <link rel="stylesheet" href="crm.css">
+    <link rel="stylesheet" href="crm.css">
 
     <!-- =====================================================
          SUPABASE CONFIG
-         KEEP THESE EXISTING VALUES
     ====================================================== -->
 
     <script>
-    window.SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
-    window.SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-</script>
+        window.SUPABASE_URL =
+            "https://uajqwyoqbbswkfiwosyw.supabase.co";
+
+        window.SUPABASE_ANON_KEY =
+            "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+    </script>
 
     <!-- =====================================================
          SUPABASE JS
@@ -34,7 +36,7 @@
          CRM JAVASCRIPT
     ====================================================== -->
 
-   <script src="crm.js" defer></script>
+    <script src="crm.js" defer></script>
 </head>
 
 
@@ -58,11 +60,9 @@
             >
 
             <div class="crm-brand-text">
-
                 <strong>
                     Select My Venue CRM
                 </strong>
-
             </div>
 
         </div>
@@ -152,7 +152,6 @@
         ================================================== -->
 
         <section class="stats-grid">
-
 
             <!-- TOTAL -->
 
@@ -290,7 +289,7 @@
                     <input
                         type="search"
                         id="searchInput"
-                        placeholder="Search customer, phone, email, venue or event..."
+                        placeholder="Search customer, phone, email, source, location or event..."
                         autocomplete="off"
                     >
 
@@ -318,8 +317,28 @@
                         Follow-up
                     </option>
 
+                    <option value="detail-shared">
+                        Detail Shared
+                    </option>
+
+                    <option value="interested">
+                        Interested
+                    </option>
+
                     <option value="qualified">
                         Qualified
+                    </option>
+
+                    <option value="site-visit">
+                        Site Visit
+                    </option>
+
+                    <option value="negotiation">
+                        Negotiation
+                    </option>
+
+                    <option value="booked">
+                        Booked
                     </option>
 
                     <option value="converted">
@@ -334,36 +353,8 @@
                         Lost
                     </option>
 
-                </select>
-
-
-                <select
-                    id="priorityFilter"
-                    aria-label="Filter by priority"
-                >
-
-                    <option value="all">
-                        All Priority
-                    </option>
-
-                    <option value="urgent">
-                        Urgent
-                    </option>
-
-                    <option value="high">
-                        High
-                    </option>
-
-                    <option value="medium">
-                        Medium
-                    </option>
-
-                    <option value="normal">
-                        Normal
-                    </option>
-
-                    <option value="low">
-                        Low
+                    <option value="not-interested">
+                        Not Interested
                     </option>
 
                 </select>
@@ -396,6 +387,10 @@
                             </th>
 
                             <th>
+                                SOURCE
+                            </th>
+
+                            <th>
                                 EVENT
                             </th>
 
@@ -416,7 +411,7 @@
                             </th>
 
                             <th>
-                                PRIORITY
+                                COMMENT
                             </th>
 
                             <th class="action-column">
@@ -433,7 +428,7 @@
                         <tr>
 
                             <td
-                                colspan="10"
+                                colspan="11"
                                 class="loading-cell"
                             >
                                 Loading customer enquiries...
@@ -494,7 +489,6 @@
             aria-labelledby="leadModalTitle"
         >
 
-
             <!-- MODAL HEADER -->
 
             <div class="modal-header">
@@ -524,14 +518,11 @@
             </div>
 
 
-            <!-- =================================================
-                 CUSTOMER SUMMARY
-            ================================================== -->
+            <!-- CUSTOMER SUMMARY -->
 
             <div class="lead-info-grid">
 
-
-                <!-- CUSTOMER - LOCKED -->
+                <!-- CUSTOMER -->
 
                 <div class="info-card">
 
@@ -549,7 +540,7 @@
                 </div>
 
 
-                <!-- PHONE - LOCKED -->
+                <!-- PHONE -->
 
                 <div class="info-card">
 
@@ -572,7 +563,7 @@
                 </div>
 
 
-                <!-- EMAIL - EDITABLE -->
+                <!-- EMAIL -->
 
                 <div class="info-card">
 
@@ -615,9 +606,7 @@
             </div>
 
 
-            <!-- =================================================
-                 ENQUIRY INFORMATION
-            ================================================== -->
+            <!-- ENQUIRY INFORMATION -->
 
             <div class="detail-section-title">
                 ENQUIRY INFORMATION
@@ -625,7 +614,6 @@
 
 
             <div class="crm-controls">
-
 
                 <!-- EVENT TYPE -->
 
@@ -674,7 +662,7 @@
                 </div>
 
 
-                <!-- VENUE -->
+                <!-- LOCATION -->
 
                 <div class="control-group">
 
@@ -747,8 +735,28 @@
                             Follow-up
                         </option>
 
+                        <option value="detail-shared">
+                            Detail Shared
+                        </option>
+
+                        <option value="interested">
+                            Interested
+                        </option>
+
                         <option value="qualified">
                             Qualified
+                        </option>
+
+                        <option value="site-visit">
+                            Site Visit
+                        </option>
+
+                        <option value="negotiation">
+                            Negotiation
+                        </option>
+
+                        <option value="booked">
+                            Booked
                         </option>
 
                         <option value="converted">
@@ -763,39 +771,8 @@
                             Lost
                         </option>
 
-                    </select>
-
-                </div>
-
-
-                <!-- PRIORITY -->
-
-                <div class="control-group">
-
-                    <label for="detailPriority">
-                        PRIORITY
-                    </label>
-
-                    <select id="detailPriority">
-
-                        <option value="urgent">
-                            Urgent
-                        </option>
-
-                        <option value="high">
-                            High
-                        </option>
-
-                        <option value="medium">
-                            Medium
-                        </option>
-
-                        <option value="normal">
-                            Normal
-                        </option>
-
-                        <option value="low">
-                            Low
+                        <option value="not-interested">
+                            Not Interested
                         </option>
 
                     </select>
@@ -830,7 +807,7 @@
                     <input
                         type="text"
                         id="detailAssignedTo"
-                        placeholder="Employee name"
+                        placeholder="Employee UUID"
                     >
 
                 </div>
@@ -838,9 +815,7 @@
             </div>
 
 
-            <!-- =================================================
-                 CUSTOMER MESSAGE
-            ================================================== -->
+            <!-- CUSTOMER MESSAGE -->
 
             <div class="detail-block">
 
@@ -857,19 +832,17 @@
             </div>
 
 
-            <!-- =================================================
-                 INTERNAL REMARKS
-            ================================================== -->
+            <!-- INTERNAL COMMENT -->
 
             <div class="detail-block">
 
                 <label for="detailRemarks">
-                    INTERNAL REMARKS
+                    COMMENT
                 </label>
 
                 <textarea
                     id="detailRemarks"
-                    placeholder="Add internal remarks..."
+                    placeholder="Add internal comment..."
                 ></textarea>
 
             </div>
@@ -929,7 +902,6 @@
             aria-labelledby="addEnquiryTitle"
         >
 
-
             <!-- MODAL HEADER -->
 
             <div class="modal-header">
@@ -959,15 +931,12 @@
             </div>
 
 
-            <!-- =================================================
-                 ADD FORM
-            ================================================== -->
+            <!-- ADD FORM -->
 
             <form
                 id="addEnquiryForm"
                 class="add-enquiry-form"
             >
-
 
                 <!-- CUSTOMER DETAILS -->
 
@@ -977,7 +946,6 @@
 
 
                 <div class="form-grid">
-
 
                     <div class="control-group">
 
@@ -1005,7 +973,7 @@
                         <input
                             type="tel"
                             id="customerPhone"
-                            name="phone"
+                            name="mobile"
                             placeholder="Phone number"
                             required
                         >
@@ -1088,7 +1056,6 @@
 
                 <div class="form-grid">
 
-
                     <div class="control-group">
 
                         <label for="eventType">
@@ -1097,7 +1064,7 @@
 
                         <select
                             id="eventType"
-                            name="event_type"
+                            name="occasion"
                         >
 
                             <option value="">
@@ -1146,7 +1113,7 @@
                         <input
                             type="text"
                             id="venueName"
-                            name="venue"
+                            name="location"
                             placeholder="Venue or location"
                         >
 
@@ -1208,8 +1175,28 @@
                                 Follow-up
                             </option>
 
+                            <option value="detail-shared">
+                                Detail Shared
+                            </option>
+
+                            <option value="interested">
+                                Interested
+                            </option>
+
                             <option value="qualified">
                                 Qualified
+                            </option>
+
+                            <option value="site-visit">
+                                Site Visit
+                            </option>
+
+                            <option value="negotiation">
+                                Negotiation
+                            </option>
+
+                            <option value="booked">
+                                Booked
                             </option>
 
                             <option value="converted">
@@ -1224,40 +1211,8 @@
                                 Lost
                             </option>
 
-                        </select>
-
-                    </div>
-
-
-                    <div class="control-group">
-
-                        <label for="newPriority">
-                            PRIORITY
-                        </label>
-
-                        <select
-                            id="newPriority"
-                            name="priority"
-                        >
-
-                            <option value="normal">
-                                Normal
-                            </option>
-
-                            <option value="urgent">
-                                Urgent
-                            </option>
-
-                            <option value="high">
-                                High
-                            </option>
-
-                            <option value="medium">
-                                Medium
-                            </option>
-
-                            <option value="low">
-                                Low
+                            <option value="not-interested">
+                                Not Interested
                             </option>
 
                         </select>
@@ -1275,7 +1230,6 @@
 
 
                 <div class="form-grid">
-
 
                     <div class="control-group">
 
@@ -1302,7 +1256,7 @@
                             type="text"
                             id="newAssignedTo"
                             name="assigned_to"
-                            placeholder="Employee name"
+                            placeholder="Employee UUID"
                         >
 
                     </div>
@@ -1327,7 +1281,7 @@
 
                         <textarea
                             id="customerMessage"
-                            name="message"
+                            name="requirements"
                             placeholder="Customer enquiry / requirement..."
                         ></textarea>
 
@@ -1336,20 +1290,20 @@
                 </div>
 
 
-                <!-- INTERNAL REMARKS -->
+                <!-- COMMENT -->
 
                 <div class="full-width">
 
                     <div class="control-group">
 
                         <label for="newRemarks">
-                            INTERNAL REMARKS
+                            COMMENT
                         </label>
 
                         <textarea
                             id="newRemarks"
-                            name="remarks"
-                            placeholder="Internal notes for employees..."
+                            name="internal_notes"
+                            placeholder="Internal comment for employees..."
                         ></textarea>
 
                     </div>
