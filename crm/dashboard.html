@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,13 +28,18 @@
             "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
     </script>
 
-    <!-- Supabase -->
+    <!-- =====================================================
+         SUPABASE
+    ====================================================== -->
+
     <script
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-        defer
     ></script>
 
-    <!-- CRM JavaScript -->
+    <!-- =====================================================
+         CRM JAVASCRIPT
+    ====================================================== -->
+
     <script
         src="../crm.js"
         defer
@@ -45,10 +49,6 @@
 
 
 <body>
-
-<!-- =========================================================
-     CRM APP
-========================================================= -->
 
 <div class="crm-app">
 
@@ -67,30 +67,38 @@
                 class="crm-header-logo"
             >
 
-            <div class="crm-brand-name">
-                Select My Venue
+            <div class="crm-brand-text">
+
+                <strong>
+                    Select My Venue
+                </strong>
+
+                <span>
+                    Smart Lead Management
+                </span>
+
             </div>
 
         </div>
 
 
-        <div class="crm-header-center">
+        <div class="crm-header-title">
 
-            <div class="crm-header-title">
+            <span>
                 Lead Management
-            </div>
+            </span>
 
         </div>
 
 
-        <div class="header-actions">
+        <div class="crm-header-actions">
 
-            <span
+            <div
                 id="staffName"
                 class="staff-name"
             >
                 Employee
-            </span>
+            </div>
 
             <button
                 type="button"
@@ -107,7 +115,7 @@
 
 
     <!-- =====================================================
-         MAIN CONTENT
+         MAIN
     ====================================================== -->
 
     <main class="crm-main">
@@ -119,15 +127,19 @@
 
         <section class="page-heading">
 
-            <div>
+            <div class="page-heading-content">
+
+                <div class="page-kicker">
+                    CUSTOMER CRM
+                </div>
 
                 <h1>
                     Customer <span>Enquiries</span>
                 </h1>
 
                 <p>
-                    Manage customer enquiries, update lead information,
-                    schedule follow-ups and keep every enquiry organized.
+                    Manage enquiries, customer information,
+                    follow-ups and lead progress from one place.
                 </p>
 
             </div>
@@ -138,17 +150,19 @@
                 <button
                     type="button"
                     id="addEnquiryBtn"
-                    class="add-enquiry-btn"
+                    class="primary-btn"
                 >
-                    + Add Enquiry
+                    <span>+</span>
+                    Add Enquiry
                 </button>
 
                 <button
                     type="button"
                     id="refreshBtn"
-                    class="refresh-btn"
+                    class="secondary-btn"
                 >
-                    ↻ Refresh
+                    <span>↻</span>
+                    Refresh
                 </button>
 
             </div>
@@ -158,30 +172,28 @@
 
 
         <!-- =================================================
-             STATISTICS
+             STAT CARDS
         ================================================== -->
 
-        <section
-            class="stats-grid"
-            aria-label="Enquiry statistics"
-        >
+        <section class="stats-grid">
+
 
             <button
                 type="button"
                 class="stat-card active"
-                data-status-filter="all"
                 id="statAll"
+                data-status-filter="all"
             >
 
                 <div class="stat-icon">
                     ≡
                 </div>
 
-                <div>
+                <div class="stat-content">
 
-                    <small>
+                    <span>
                         TOTAL ENQUIRIES
-                    </small>
+                    </span>
 
                     <strong id="totalCount">
                         0
@@ -192,22 +204,23 @@
             </button>
 
 
+
             <button
                 type="button"
                 class="stat-card"
-                data-status-filter="New"
                 id="statNew"
+                data-status-filter="new"
             >
 
                 <div class="stat-icon">
                     +
                 </div>
 
-                <div>
+                <div class="stat-content">
 
-                    <small>
+                    <span>
                         NEW
-                    </small>
+                    </span>
 
                     <strong id="newCount">
                         0
@@ -218,22 +231,23 @@
             </button>
 
 
+
             <button
                 type="button"
                 class="stat-card"
-                data-status-filter="Contacted"
                 id="statContacted"
+                data-status-filter="contacted"
             >
 
                 <div class="stat-icon">
                     ✓
                 </div>
 
-                <div>
+                <div class="stat-content">
 
-                    <small>
+                    <span>
                         CONTACTED
-                    </small>
+                    </span>
 
                     <strong id="contactedCount">
                         0
@@ -244,22 +258,23 @@
             </button>
 
 
+
             <button
                 type="button"
                 class="stat-card"
-                data-status-filter="Closed"
                 id="statClosed"
+                data-status-filter="closed"
             >
 
                 <div class="stat-icon">
                     ●
                 </div>
 
-                <div>
+                <div class="stat-content">
 
-                    <small>
+                    <span>
                         CLOSED
-                    </small>
+                    </span>
 
                     <strong id="closedCount">
                         0
@@ -274,7 +289,7 @@
 
 
         <!-- =================================================
-             LEADS
+             LEADS PANEL
         ================================================== -->
 
         <section class="leads-section">
@@ -286,14 +301,14 @@
 
                 <div class="search-box">
 
-                    <span aria-hidden="true">
+                    <span class="search-icon">
                         ⌕
                     </span>
 
                     <input
                         type="search"
                         id="searchInput"
-                        placeholder="Search customer, phone, venue or event..."
+                        placeholder="Search customer, phone, email, venue or event..."
                         autocomplete="off"
                     >
 
@@ -349,6 +364,10 @@
                         All Priority
                     </option>
 
+                    <option value="urgent">
+                        Urgent
+                    </option>
+
                     <option value="high">
                         High
                     </option>
@@ -363,10 +382,6 @@
 
                     <option value="low">
                         Low
-                    </option>
-
-                    <option value="urgent">
-                        Urgent
                     </option>
 
                 </select>
@@ -423,7 +438,7 @@
                                 PRIORITY
                             </th>
 
-                            <th>
+                            <th class="action-column">
                                 ACTION
                             </th>
 
@@ -453,7 +468,9 @@
 
 
 
-            <!-- EMPTY STATE -->
+            <!-- =================================================
+                 EMPTY STATE
+            ================================================== -->
 
             <div
                 id="emptyState"
@@ -479,577 +496,107 @@
 
     </main>
 
-</div>
 
 
-
-<!-- =========================================================
-     VIEW / EDIT LEAD MODAL
-========================================================= -->
-
-<div
-    id="leadModal"
-    class="modal-overlay"
-    hidden
->
+    <!-- =====================================================
+         VIEW / EDIT LEAD MODAL
+    ====================================================== -->
 
     <div
-        class="lead-modal-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="leadModalTitle"
+        id="leadModal"
+        class="modal-overlay"
+        hidden
     >
-
-
-        <!-- MODAL HEADER -->
-
-        <div class="modal-header">
-
-            <div>
-
-                <div class="eyebrow">
-                    ENQUIRY DETAILS
-                </div>
-
-                <h2 id="leadModalTitle">
-                    Customer Enquiry
-                </h2>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="close-modal"
-                id="closeLeadModal"
-                aria-label="Close"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-
-        <!-- =================================================
-             CUSTOMER INFORMATION
-        ================================================== -->
-
-        <div class="lead-info-grid">
-
-
-            <div class="info-card">
-
-                <small>
-                    CUSTOMER
-                </small>
-
-                <strong id="detailCustomerName">
-                    —
-                </strong>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <small>
-                    PHONE
-                </small>
-
-                <strong id="detailPhone">
-                    —
-                </strong>
-
-                <div
-                    class="info-actions"
-                    id="detailPhoneActions"
-                ></div>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <small>
-                    EMAIL
-                </small>
-
-                <strong id="detailEmail">
-                    —
-                </strong>
-
-                <div
-                    class="info-actions"
-                    id="detailEmailActions"
-                ></div>
-
-            </div>
-
-
-            <div class="info-card">
-
-                <small>
-                    LEAD SOURCE
-                </small>
-
-                <strong id="detailSource">
-                    —
-                </strong>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =================================================
-             ENQUIRY INFORMATION
-        ================================================== -->
-
-        <div class="detail-section-title">
-            ENQUIRY INFORMATION
-        </div>
-
-
-        <div class="crm-controls">
-
-
-            <div class="control-group">
-
-                <label for="detailEventType">
-                    EVENT TYPE
-                </label>
-
-                <select id="detailEventType">
-
-                    <option value="">
-                        Select Event
-                    </option>
-
-                    <option value="Wedding">
-                        Wedding
-                    </option>
-
-                    <option value="Engagement">
-                        Engagement
-                    </option>
-
-                    <option value="Birthday">
-                        Birthday
-                    </option>
-
-                    <option value="Corporate">
-                        Corporate
-                    </option>
-
-                    <option value="Anniversary">
-                        Anniversary
-                    </option>
-
-                    <option value="Party">
-                        Party
-                    </option>
-
-                    <option value="Other">
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="control-group">
-
-                <label for="detailVenue">
-                    VENUE
-                </label>
-
-                <input
-                    type="text"
-                    id="detailVenue"
-                    placeholder="Venue name"
-                >
-
-            </div>
-
-
-            <div class="control-group">
-
-                <label for="detailEventDate">
-                    EVENT DATE
-                </label>
-
-                <input
-                    type="date"
-                    id="detailEventDate"
-                >
-
-            </div>
-
-
-            <div class="control-group">
-
-                <label for="detailGuests">
-                    GUESTS
-                </label>
-
-                <input
-                    type="number"
-                    id="detailGuests"
-                    min="0"
-                    placeholder="Number of guests"
-                >
-
-            </div>
-
-
-            <div class="control-group">
-
-                <label for="detailStatus">
-                    STATUS
-                </label>
-
-                <select id="detailStatus">
-
-                    <option value="new">
-                        New
-                    </option>
-
-                    <option value="contacted">
-                        Contacted
-                    </option>
-
-                    <option value="follow-up">
-                        Follow-up
-                    </option>
-
-                    <option value="qualified">
-                        Qualified
-                    </option>
-
-                    <option value="converted">
-                        Converted
-                    </option>
-
-                    <option value="closed">
-                        Closed
-                    </option>
-
-                    <option value="lost">
-                        Lost
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="control-group">
-
-                <label for="detailPriority">
-                    PRIORITY
-                </label>
-
-                <select id="detailPriority">
-
-                    <option value="urgent">
-                        Urgent
-                    </option>
-
-                    <option value="high">
-                        High
-                    </option>
-
-                    <option value="medium">
-                        Medium
-                    </option>
-
-                    <option value="normal">
-                        Normal
-                    </option>
-
-                    <option value="low">
-                        Low
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="control-group">
-
-                <label for="detailFollowUp">
-                    FOLLOW-UP
-                </label>
-
-                <input
-                    type="datetime-local"
-                    id="detailFollowUp"
-                >
-
-            </div>
-
-
-            <div class="control-group">
-
-                <label for="detailAssignedTo">
-                    ASSIGNED TO
-                </label>
-
-                <input
-                    type="text"
-                    id="detailAssignedTo"
-                    placeholder="Employee name"
-                >
-
-            </div>
-
-        </div>
-
-
-
-        <!-- =================================================
-             CUSTOMER MESSAGE
-        ================================================== -->
-
-        <div class="detail-block">
-
-            <label>
-                CUSTOMER MESSAGE
-            </label>
-
-            <div
-                id="detailMessage"
-                class="detail-content"
-            >
-                —
-            </div>
-
-        </div>
-
-
-
-        <!-- =================================================
-             INTERNAL REMARKS
-        ================================================== -->
-
-        <div class="detail-block">
-
-            <label for="detailRemarks">
-                INTERNAL REMARKS
-            </label>
-
-            <textarea
-                id="detailRemarks"
-                placeholder="Add internal remarks..."
-            ></textarea>
-
-        </div>
-
-
 
         <div
-            id="leadModalMessage"
-            class="form-message"
-            role="status"
-            aria-live="polite"
-        ></div>
-
-
-
-        <!-- MODAL ACTIONS -->
-
-        <div class="modal-actions">
-
-            <button
-                type="button"
-                id="cancelLeadEdit"
-                class="cancel-btn"
-            >
-                Cancel
-            </button>
-
-            <button
-                type="button"
-                id="saveLeadBtn"
-                class="save-btn"
-            >
-                Save Changes
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =========================================================
-     ADD ENQUIRY MODAL
-========================================================= -->
-
-<div
-    id="addEnquiryModal"
-    class="modal-overlay"
-    hidden
->
-
-    <div
-        class="add-enquiry-card"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="addEnquiryTitle"
-    >
-
-
-        <!-- MODAL HEADER -->
-
-        <div class="modal-header">
-
-            <div>
-
-                <div class="eyebrow">
-                    NEW LEAD
-                </div>
-
-                <h2 id="addEnquiryTitle">
-                    Add Customer Enquiry
-                </h2>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="close-modal"
-                id="closeAddEnquiry"
-                aria-label="Close"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-
-        <!-- =================================================
-             ADD FORM
-        ================================================== -->
-
-        <form
-            id="addEnquiryForm"
-            class="add-enquiry-form"
+            class="lead-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="leadModalTitle"
         >
 
 
-            <!-- CUSTOMER DETAILS -->
+            <div class="modal-header">
 
-            <div class="form-section-title">
-                CUSTOMER DETAILS
-            </div>
+                <div>
 
+                    <div class="modal-kicker">
+                        ENQUIRY DETAILS
+                    </div>
 
-            <div class="form-grid">
-
-
-                <div class="control-group">
-
-                    <label for="customerName">
-                        CUSTOMER NAME
-                    </label>
-
-                    <input
-                        type="text"
-                        id="customerName"
-                        name="customer_name"
-                        placeholder="Customer name"
-                        required
-                    >
+                    <h2 id="leadModalTitle">
+                        Customer Enquiry
+                    </h2>
 
                 </div>
 
 
-                <div class="control-group">
+                <button
+                    type="button"
+                    class="close-modal"
+                    id="closeLeadModal"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
 
-                    <label for="customerPhone">
+            </div>
+
+
+
+            <!-- CUSTOMER SUMMARY -->
+
+            <div class="lead-info-grid">
+
+
+                <div class="info-card">
+
+                    <span>
+                        CUSTOMER
+                    </span>
+
+                    <strong id="detailCustomerName">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
                         PHONE
-                    </label>
+                    </span>
 
-                    <input
-                        type="tel"
-                        id="customerPhone"
-                        name="phone"
-                        placeholder="Phone number"
-                        required
-                    >
+                    <strong id="detailPhone">
+                        —
+                    </strong>
 
                 </div>
 
 
-                <div class="control-group">
+                <div class="info-card">
 
-                    <label for="customerEmail">
+                    <span>
                         EMAIL
-                    </label>
+                    </span>
 
-                    <input
-                        type="email"
-                        id="customerEmail"
-                        name="email"
-                        placeholder="Email address"
-                    >
+                    <strong id="detailEmail">
+                        —
+                    </strong>
 
                 </div>
 
 
-                <div class="control-group">
+                <div class="info-card">
 
-                    <label for="leadSource">
+                    <span>
                         LEAD SOURCE
-                    </label>
+                    </span>
 
-                    <select
-                        id="leadSource"
-                        name="source"
-                    >
-
-                        <option value="">
-                            Select Source
-                        </option>
-
-                        <option value="Website">
-                            Website
-                        </option>
-
-                        <option value="WhatsApp">
-                            WhatsApp
-                        </option>
-
-                        <option value="Phone">
-                            Phone
-                        </option>
-
-                        <option value="Facebook">
-                            Facebook
-                        </option>
-
-                        <option value="Instagram">
-                            Instagram
-                        </option>
-
-                        <option value="Referral">
-                            Referral
-                        </option>
-
-                        <option value="Other">
-                            Other
-                        </option>
-
-                    </select>
+                    <strong id="detailSource">
+                        —
+                    </strong>
 
                 </div>
 
@@ -1057,26 +604,23 @@
 
 
 
-            <!-- EVENT DETAILS -->
+            <!-- ENQUIRY INFORMATION -->
 
-            <div class="form-section-title">
-                EVENT DETAILS
+            <div class="detail-section-title">
+                ENQUIRY INFORMATION
             </div>
 
 
-            <div class="form-grid">
+            <div class="crm-controls">
 
 
                 <div class="control-group">
 
-                    <label for="eventType">
+                    <label for="detailEventType">
                         EVENT TYPE
                     </label>
 
-                    <select
-                        id="eventType"
-                        name="event_type"
-                    >
+                    <select id="detailEventType">
 
                         <option value="">
                             Select Event
@@ -1115,47 +659,47 @@
                 </div>
 
 
+
                 <div class="control-group">
 
-                    <label for="venueName">
-                        VENUE
+                    <label for="detailVenue">
+                        VENUE / LOCATION
                     </label>
 
                     <input
                         type="text"
-                        id="venueName"
-                        name="venue"
-                        placeholder="Venue name"
+                        id="detailVenue"
+                        placeholder="Venue or location"
                     >
 
                 </div>
 
 
+
                 <div class="control-group">
 
-                    <label for="eventDate">
+                    <label for="detailEventDate">
                         EVENT DATE
                     </label>
 
                     <input
                         type="date"
-                        id="eventDate"
-                        name="event_date"
+                        id="detailEventDate"
                     >
 
                 </div>
 
 
+
                 <div class="control-group">
 
-                    <label for="guestCount">
+                    <label for="detailGuests">
                         GUESTS
                     </label>
 
                     <input
                         type="number"
-                        id="guestCount"
-                        name="guests"
+                        id="detailGuests"
                         min="0"
                         placeholder="Number of guests"
                     >
@@ -1163,16 +707,14 @@
                 </div>
 
 
+
                 <div class="control-group">
 
-                    <label for="newStatus">
+                    <label for="detailStatus">
                         STATUS
                     </label>
 
-                    <select
-                        id="newStatus"
-                        name="status"
-                    >
+                    <select id="detailStatus">
 
                         <option value="new">
                             New
@@ -1207,20 +749,14 @@
                 </div>
 
 
+
                 <div class="control-group">
 
-                    <label for="newPriority">
+                    <label for="detailPriority">
                         PRIORITY
                     </label>
 
-                    <select
-                        id="newPriority"
-                        name="priority"
-                    >
-
-                        <option value="normal">
-                            Normal
-                        </option>
+                    <select id="detailPriority">
 
                         <option value="urgent">
                             Urgent
@@ -1234,6 +770,10 @@
                             Medium
                         </option>
 
+                        <option value="normal">
+                            Normal
+                        </option>
+
                         <option value="low">
                             Low
                         </option>
@@ -1242,45 +782,32 @@
 
                 </div>
 
-            </div>
-
-
-
-            <!-- FOLLOW-UP -->
-
-            <div class="form-section-title">
-                FOLLOW-UP
-            </div>
-
-
-            <div class="form-grid">
 
 
                 <div class="control-group">
 
-                    <label for="newFollowUp">
-                        FOLLOW-UP DATE & TIME
+                    <label for="detailFollowUp">
+                        FOLLOW-UP
                     </label>
 
                     <input
                         type="datetime-local"
-                        id="newFollowUp"
-                        name="follow_up_at"
+                        id="detailFollowUp"
                     >
 
                 </div>
 
 
+
                 <div class="control-group">
 
-                    <label for="newAssignedTo">
+                    <label for="detailAssignedTo">
                         ASSIGNED TO
                     </label>
 
                     <input
                         type="text"
-                        id="newAssignedTo"
-                        name="assigned_to"
+                        id="detailAssignedTo"
                         placeholder="Employee name"
                     >
 
@@ -1292,55 +819,42 @@
 
             <!-- CUSTOMER MESSAGE -->
 
-            <div class="form-section-title">
-                CUSTOMER MESSAGE
-            </div>
+            <div class="detail-block">
 
+                <label>
+                    CUSTOMER MESSAGE
+                </label>
 
-            <div class="full-width">
-
-                <div class="control-group">
-
-                    <label for="customerMessage">
-                        MESSAGE
-                    </label>
-
-                    <textarea
-                        id="customerMessage"
-                        name="message"
-                        placeholder="Customer enquiry / requirement..."
-                    ></textarea>
-
+                <div
+                    id="detailMessage"
+                    class="detail-content"
+                >
+                    —
                 </div>
 
             </div>
 
 
 
-            <!-- INTERNAL REMARKS -->
+            <!-- REMARKS -->
 
-            <div class="full-width">
+            <div class="detail-block">
 
-                <div class="control-group">
+                <label for="detailRemarks">
+                    INTERNAL REMARKS
+                </label>
 
-                    <label for="newRemarks">
-                        INTERNAL REMARKS
-                    </label>
-
-                    <textarea
-                        id="newRemarks"
-                        name="remarks"
-                        placeholder="Internal notes for employees..."
-                    ></textarea>
-
-                </div>
+                <textarea
+                    id="detailRemarks"
+                    placeholder="Add internal remarks..."
+                ></textarea>
 
             </div>
 
 
 
             <div
-                id="addEnquiryMessage"
+                id="leadModalMessage"
                 class="form-message"
                 role="status"
                 aria-live="polite"
@@ -1348,35 +862,504 @@
 
 
 
-            <!-- FORM ACTIONS -->
-
             <div class="modal-actions">
 
                 <button
                     type="button"
-                    id="cancelAddEnquiry"
+                    id="cancelLeadEdit"
                     class="cancel-btn"
                 >
                     Cancel
                 </button>
 
                 <button
-                    type="submit"
-                    id="submitEnquiryBtn"
+                    type="button"
+                    id="saveLeadBtn"
                     class="save-btn"
                 >
-                    Add Enquiry
+                    Save Changes
                 </button>
 
             </div>
 
-        </form>
+        </div>
 
     </div>
 
-</div>
 
+
+    <!-- =====================================================
+         ADD ENQUIRY MODAL
+    ====================================================== -->
+
+    <div
+        id="addEnquiryModal"
+        class="modal-overlay"
+        hidden
+    >
+
+        <div
+            class="add-enquiry-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="addEnquiryTitle"
+        >
+
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="modal-kicker">
+                        NEW LEAD
+                    </div>
+
+                    <h2 id="addEnquiryTitle">
+                        Add Customer Enquiry
+                    </h2>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="close-modal"
+                    id="closeAddEnquiry"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+
+            <form
+                id="addEnquiryForm"
+                class="add-enquiry-form"
+            >
+
+
+                <div class="form-section-title">
+                    CUSTOMER DETAILS
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="control-group">
+
+                        <label for="customerName">
+                            CUSTOMER NAME
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customerName"
+                            name="customer_name"
+                            placeholder="Customer name"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="customerPhone">
+                            PHONE
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="customerPhone"
+                            name="phone"
+                            placeholder="Phone number"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="customerEmail">
+                            EMAIL
+                        </label>
+
+                        <input
+                            type="email"
+                            id="customerEmail"
+                            name="email"
+                            placeholder="Email address"
+                        >
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="leadSource">
+                            LEAD SOURCE
+                        </label>
+
+                        <select
+                            id="leadSource"
+                            name="source"
+                        >
+
+                            <option value="">
+                                Select Source
+                            </option>
+
+                            <option value="Website">
+                                Website
+                            </option>
+
+                            <option value="WhatsApp">
+                                WhatsApp
+                            </option>
+
+                            <option value="Phone">
+                                Phone
+                            </option>
+
+                            <option value="Facebook">
+                                Facebook
+                            </option>
+
+                            <option value="Instagram">
+                                Instagram
+                            </option>
+
+                            <option value="Referral">
+                                Referral
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="form-section-title">
+                    EVENT DETAILS
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="control-group">
+
+                        <label for="eventType">
+                            EVENT TYPE
+                        </label>
+
+                        <select
+                            id="eventType"
+                            name="event_type"
+                        >
+
+                            <option value="">
+                                Select Event
+                            </option>
+
+                            <option value="Wedding">
+                                Wedding
+                            </option>
+
+                            <option value="Engagement">
+                                Engagement
+                            </option>
+
+                            <option value="Birthday">
+                                Birthday
+                            </option>
+
+                            <option value="Corporate">
+                                Corporate
+                            </option>
+
+                            <option value="Anniversary">
+                                Anniversary
+                            </option>
+
+                            <option value="Party">
+                                Party
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="venueName">
+                            VENUE / LOCATION
+                        </label>
+
+                        <input
+                            type="text"
+                            id="venueName"
+                            name="venue"
+                            placeholder="Venue or location"
+                        >
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="eventDate">
+                            EVENT DATE
+                        </label>
+
+                        <input
+                            type="date"
+                            id="eventDate"
+                            name="event_date"
+                        >
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="guestCount">
+                            GUESTS
+                        </label>
+
+                        <input
+                            type="number"
+                            id="guestCount"
+                            name="guests"
+                            min="0"
+                            placeholder="Number of guests"
+                        >
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="newStatus">
+                            STATUS
+                        </label>
+
+                        <select
+                            id="newStatus"
+                            name="status"
+                        >
+
+                            <option value="new">
+                                New
+                            </option>
+
+                            <option value="contacted">
+                                Contacted
+                            </option>
+
+                            <option value="follow-up">
+                                Follow-up
+                            </option>
+
+                            <option value="qualified">
+                                Qualified
+                            </option>
+
+                            <option value="converted">
+                                Converted
+                            </option>
+
+                            <option value="closed">
+                                Closed
+                            </option>
+
+                            <option value="lost">
+                                Lost
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="newPriority">
+                            PRIORITY
+                        </label>
+
+                        <select
+                            id="newPriority"
+                            name="priority"
+                        >
+
+                            <option value="normal">
+                                Normal
+                            </option>
+
+                            <option value="urgent">
+                                Urgent
+                            </option>
+
+                            <option value="high">
+                                High
+                            </option>
+
+                            <option value="medium">
+                                Medium
+                            </option>
+
+                            <option value="low">
+                                Low
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="form-section-title">
+                    FOLLOW-UP
+                </div>
+
+
+                <div class="form-grid">
+
+
+                    <div class="control-group">
+
+                        <label for="newFollowUp">
+                            FOLLOW-UP DATE & TIME
+                        </label>
+
+                        <input
+                            type="datetime-local"
+                            id="newFollowUp"
+                            name="follow_up_at"
+                        >
+
+                    </div>
+
+
+                    <div class="control-group">
+
+                        <label for="newAssignedTo">
+                            ASSIGNED TO
+                        </label>
+
+                        <input
+                            type="text"
+                            id="newAssignedTo"
+                            name="assigned_to"
+                            placeholder="Employee name"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="form-section-title">
+                    CUSTOMER MESSAGE
+                </div>
+
+
+                <div class="full-width">
+
+                    <div class="control-group">
+
+                        <label for="customerMessage">
+                            MESSAGE
+                        </label>
+
+                        <textarea
+                            id="customerMessage"
+                            name="message"
+                            placeholder="Customer enquiry / requirement..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="full-width">
+
+                    <div class="control-group">
+
+                        <label for="newRemarks">
+                            INTERNAL REMARKS
+                        </label>
+
+                        <textarea
+                            id="newRemarks"
+                            name="remarks"
+                            placeholder="Internal notes for employees..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+
+                <div
+                    id="addEnquiryMessage"
+                    class="form-message"
+                    role="status"
+                    aria-live="polite"
+                ></div>
+
+
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        id="cancelAddEnquiry"
+                        class="cancel-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="submitEnquiryBtn"
+                        class="save-btn"
+                    >
+                        Add Enquiry
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+</div>
 
 </body>
 </html>
-```
