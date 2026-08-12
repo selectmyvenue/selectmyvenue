@@ -2,7 +2,7 @@
 // SELECT MY VENUE
 // CUSTOMER WEBSITE
 // Website → Supabase → CRM
-// COMPLETE MOBILE-SAFE VERSION
+// MOBILE-SAFE VERSION
 // =====================================================
 
 "use strict";
@@ -25,47 +25,35 @@ const SUPABASE_ANON_KEY =
 
 let supabaseClient = null;
 
+try {
 
-function initializeSupabase() {
+  if (
+    window.supabase &&
+    typeof window.supabase.createClient === "function"
+  ) {
 
-  try {
-
-    if (
-      window.supabase &&
-      typeof window.supabase.createClient === "function"
-    ) {
-
-      supabaseClient =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_ANON_KEY
-        );
-
-      console.log(
-        "Supabase client initialized successfully."
+    supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
       );
 
-      return true;
+    console.log("Supabase client initialized.");
 
-    }
-
+  } else {
 
     console.error(
       "Supabase library was not loaded."
     );
 
-    return false;
-
-  } catch (error) {
-
-    console.error(
-      "Supabase initialization error:",
-      error
-    );
-
-    return false;
-
   }
+
+} catch (error) {
+
+  console.error(
+    "Supabase initialization error:",
+    error
+  );
 
 }
 
@@ -78,19 +66,11 @@ document.addEventListener(
   "DOMContentLoaded",
   function () {
 
-    initializeSupabase();
-
     setupMobileMenu();
 
     setupHeroSearch();
 
     setupCustomerEnquiry();
-
-    setupMobileFormProtection();
-
-    console.log(
-      "Select My Venue website initialized."
-    );
 
   }
 );
@@ -103,24 +83,14 @@ document.addEventListener(
 function setupMobileMenu() {
 
   const menuToggle =
-    document.getElementById(
-      "menuToggle"
-    );
-
+    document.getElementById("menuToggle");
 
   const mainNav =
-    document.getElementById(
-      "mainNav"
-    );
+    document.getElementById("mainNav");
 
 
-  if (
-    !menuToggle ||
-    !mainNav
-  ) {
-
+  if (!menuToggle || !mainNav) {
     return;
-
   }
 
 
@@ -129,21 +99,14 @@ function setupMobileMenu() {
     function (event) {
 
       event.preventDefault();
-
       event.stopPropagation();
 
-
       const isOpen =
-        mainNav.classList.toggle(
-          "open"
-        );
-
+        mainNav.classList.toggle("open");
 
       menuToggle.setAttribute(
         "aria-expanded",
-        isOpen
-          ? "true"
-          : "false"
+        isOpen ? "true" : "false"
       );
 
     }
@@ -152,28 +115,23 @@ function setupMobileMenu() {
 
   mainNav
     .querySelectorAll("a")
-    .forEach(
-      function (link) {
+    .forEach(function (link) {
 
-        link.addEventListener(
-          "click",
-          function () {
+      link.addEventListener(
+        "click",
+        function () {
 
-            mainNav.classList.remove(
-              "open"
-            );
+          mainNav.classList.remove("open");
 
+          menuToggle.setAttribute(
+            "aria-expanded",
+            "false"
+          );
 
-            menuToggle.setAttribute(
-              "aria-expanded",
-              "false"
-            );
+        }
+      );
 
-          }
-        );
-
-      }
-    );
+    });
 
 }
 
@@ -185,15 +143,10 @@ function setupMobileMenu() {
 function setupHeroSearch() {
 
   const searchForm =
-    document.getElementById(
-      "searchForm"
-    );
-
+    document.getElementById("searchForm");
 
   if (!searchForm) {
-
     return;
-
   }
 
 
@@ -202,7 +155,6 @@ function setupHeroSearch() {
     async function (event) {
 
       event.preventDefault();
-
       event.stopPropagation();
 
 
@@ -213,27 +165,16 @@ function setupHeroSearch() {
 
 
       const eventType =
-        getValue(
-          "eventType"
-        );
-
+        getValue("eventType");
 
       const location =
-        getValue(
-          "location"
-        );
-
+        getValue("location");
 
       const guests =
-        getValue(
-          "guests"
-        );
-
+        getValue("guests");
 
       const eventDate =
-        getValue(
-          "date"
-        );
+        getValue("date");
 
 
       const message =
@@ -242,14 +183,10 @@ function setupHeroSearch() {
         );
 
 
-      // -------------------------------------------------
-      // VALIDATION
-      // -------------------------------------------------
+      clearInlineMessage(message);
 
-      if (
-        !eventType ||
-        !location
-      ) {
+
+      if (!eventType || !location) {
 
         showInlineMessage(
           message,
@@ -262,10 +199,6 @@ function setupHeroSearch() {
       }
 
 
-      // -------------------------------------------------
-      // LOADING
-      // -------------------------------------------------
-
       setButtonLoading(
         submitButton,
         "Submitting..."
@@ -274,7 +207,13 @@ function setupHeroSearch() {
 
       try {
 
-        ensureSupabase();
+        if (!supabaseClient) {
+
+          throw new Error(
+            "Supabase client is not initialized."
+          );
+
+        }
 
 
         const requirements =
@@ -287,20 +226,16 @@ function setupHeroSearch() {
 
 
         // =================================================
-        // IMPORTANT
+        // IMPORTANT:
+        // DO NOT USE .select() HERE.
         //
-        // DO NOT USE .select() HERE
-        //
-        // We only need INSERT permission for the public
-        // website. This prevents an unnecessary SELECT
-        // permission requirement.
+        // Public website visitors have INSERT permission,
+        // but SELECT is restricted to authenticated CRM users.
         // =================================================
 
         const { error } =
           await supabaseClient
-            .from(
-              "customer_enquiries"
-            )
+            .from("customer_enquiries")
             .insert({
 
               customer_name:
@@ -319,8 +254,7 @@ function setupHeroSearch() {
                 eventType,
 
               event_date:
-                eventDate ||
-                null,
+                eventDate || null,
 
               guests:
                 convertGuestRangeToNumber(
@@ -382,7 +316,7 @@ function setupHeroSearch() {
 
         showInlineMessage(
           message,
-          "Enquiry submitted successfully! Our team will contact you shortly.",
+          "✓ Enquiry submitted successfully! Our team will contact you shortly.",
           "success"
         );
 
@@ -397,9 +331,7 @@ function setupHeroSearch() {
 
         showInlineMessage(
           message,
-          getFriendlyErrorMessage(
-            error
-          ),
+          getFriendlySupabaseError(error),
           "error"
         );
 
@@ -413,15 +345,14 @@ function setupHeroSearch() {
 
       }
 
-    },
-    false
+    }
   );
 
 }
 
 
 // =====================================================
-// CUSTOMER ENQUIRY
+// CUSTOMER ENQUIRY FORM
 // =====================================================
 
 function setupCustomerEnquiry() {
@@ -455,33 +386,16 @@ function setupCustomerEnquiry() {
     );
 
 
-  // ===================================================
-  // MOBILE SAFE FORM
-  // ===================================================
-
-  form.setAttribute(
-    "novalidate",
-    "novalidate"
-  );
-
-
-  // ===================================================
-  // FORM SUBMIT
-  // ===================================================
-
   form.addEventListener(
     "submit",
     async function (event) {
 
-      // -----------------------------------------------
-      // CRITICAL
-      // NEVER ALLOW NORMAL BROWSER FORM SUBMIT
-      // -----------------------------------------------
+      // =================================================
+      // STOP NORMAL HTML FORM SUBMISSION
+      // =================================================
 
       event.preventDefault();
-
       event.stopPropagation();
-
 
       if (
         typeof event.stopImmediatePropagation ===
@@ -493,97 +407,59 @@ function setupCustomerEnquiry() {
       }
 
 
-      // -----------------------------------------------
+      // =================================================
       // PREVENT DOUBLE SUBMISSION
-      // -----------------------------------------------
+      // =================================================
 
       if (
-        form.dataset.submitting ===
-        "true"
+        submitButton &&
+        submitButton.disabled
       ) {
-
-        console.log(
-          "Submission already in progress."
-        );
 
         return;
 
       }
 
 
-      clearInlineMessage(
-        message
-      );
+      clearInlineMessage(message);
 
 
       // =================================================
-      // GET FORM VALUES
+      // GET VALUES
       // =================================================
 
       const customerName =
-        getValue(
-          "customerName"
-        );
-
+        getValue("customerName");
 
       const customerMobile =
-        getValue(
-          "customerMobile"
-        );
-
+        getValue("customerMobile");
 
       const customerEmail =
-        getValue(
-          "customerEmail"
-        );
-
+        getValue("customerEmail");
 
       const customerLocation =
-        getValue(
-          "customerLocation"
-        );
-
+        getValue("customerLocation");
 
       const customerEventType =
-        getValue(
-          "customerEventType"
-        );
-
+        getValue("customerEventType");
 
       const customerEventDate =
-        getValue(
-          "customerEventDate"
-        );
-
+        getValue("customerEventDate");
 
       const customerGuests =
-        getValue(
-          "customerGuests"
-        );
-
+        getValue("customerGuests");
 
       const customerBudget =
-        getValue(
-          "customerBudget"
-        );
-
+        getValue("customerBudget");
 
       const customerFood =
-        getValue(
-          "customerFood"
-        );
-
+        getValue("customerFood");
 
       const customerRequirements =
-        getValue(
-          "customerRequirements"
-        );
-
+        getValue("customerRequirements");
 
       const leadSource =
-        getValue(
-          "leadSource"
-        ) ||
+        getValue("leadSource") ||
         "Website";
 
 
@@ -599,24 +475,17 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-
-        focusField(
-          "customerName"
-        );
-
+        focusField("customerName");
 
         return;
 
       }
 
 
-      // -------------------------------------------------
-      // MOBILE NUMBER
-      // -------------------------------------------------
-
+      // Remove spaces, hyphens and brackets from phone.
       const cleanMobile =
         customerMobile.replace(
-          /\D/g,
+          /[\s\-()+]/g,
           ""
         );
 
@@ -633,26 +502,16 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-
-        focusField(
-          "customerMobile"
-        );
-
+        focusField("customerMobile");
 
         return;
 
       }
 
 
-      // -------------------------------------------------
-      // EMAIL
-      // -------------------------------------------------
-
       if (
         customerEmail &&
-        !isValidEmail(
-          customerEmail
-        )
+        !isValidEmail(customerEmail)
       ) {
 
         showInlineMessage(
@@ -661,20 +520,12 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-
-        focusField(
-          "customerEmail"
-        );
-
+        focusField("customerEmail");
 
         return;
 
       }
 
-
-      // -------------------------------------------------
-      // LOCATION
-      // -------------------------------------------------
 
       if (!customerLocation) {
 
@@ -684,20 +535,12 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-
-        focusField(
-          "customerLocation"
-        );
-
+        focusField("customerLocation");
 
         return;
 
       }
 
-
-      // -------------------------------------------------
-      // EVENT TYPE
-      // -------------------------------------------------
 
       if (!customerEventType) {
 
@@ -707,11 +550,7 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-
-        focusField(
-          "customerEventType"
-        );
-
+        focusField("customerEventType");
 
         return;
 
@@ -719,12 +558,8 @@ function setupCustomerEnquiry() {
 
 
       // =================================================
-      // SET SUBMITTING STATE
+      // LOADING
       // =================================================
-
-      form.dataset.submitting =
-        "true";
-
 
       setButtonLoading(
         submitButton,
@@ -764,104 +599,98 @@ function setupCustomerEnquiry() {
 
 
       // =================================================
-      // DATABASE SUBMISSION
+      // SUPABASE INSERT
       // =================================================
 
       try {
 
-        ensureSupabase();
+        if (!supabaseClient) {
 
+          throw new Error(
+            "Supabase client is not initialized."
+          );
 
-        const enquiryPayload = {
-
-          customer_name:
-            customerName,
-
-          mobile:
-            cleanMobile,
-
-          email:
-            customerEmail ||
-            null,
-
-          location:
-            customerLocation,
-
-          occasion:
-            customerEventType,
-
-          event_date:
-            customerEventDate ||
-            null,
-
-          guests:
-            customerGuests
-              ? Number(
-                  customerGuests
-                )
-              : null,
-
-          budget_per_person:
-            customerBudget
-              ? Number(
-                  customerBudget
-                )
-              : null,
-
-          food_preference:
-            customerFood ||
-            null,
-
-          requirements:
-            requirements,
-
-          source:
-            leadSource,
-
-          status:
-            "new",
-
-          priority:
-            "normal",
-
-          assigned_to:
-            null,
-
-          follow_up_at:
-            null,
-
-          internal_notes:
-            null,
-
-          last_contacted_at:
-            null
-
-        };
+        }
 
 
         console.log(
-          "Submitting enquiry:",
-          enquiryPayload
+          "Submitting customer enquiry..."
         );
 
 
         // =================================================
-        // INSERT ONLY
+        // IMPORTANT MOBILE FIX
         //
         // NO .select()
         //
-        // This is intentional.
-        // Public website only needs INSERT.
+        // The anonymous website visitor only needs INSERT.
+        // CRM authenticated users have SELECT access.
         // =================================================
 
         const { error } =
           await supabaseClient
-            .from(
-              "customer_enquiries"
-            )
-            .insert(
-              enquiryPayload
-            );
+            .from("customer_enquiries")
+            .insert({
+
+              customer_name:
+                customerName,
+
+              mobile:
+                cleanMobile,
+
+              email:
+                customerEmail ||
+                null,
+
+              location:
+                customerLocation,
+
+              occasion:
+                customerEventType,
+
+              event_date:
+                customerEventDate ||
+                null,
+
+              guests:
+                customerGuests
+                  ? Number(customerGuests)
+                  : null,
+
+              budget_per_person:
+                customerBudget
+                  ? Number(customerBudget)
+                  : null,
+
+              food_preference:
+                customerFood ||
+                null,
+
+              requirements:
+                requirements,
+
+              source:
+                leadSource,
+
+              status:
+                "new",
+
+              priority:
+                "normal",
+
+              assigned_to:
+                null,
+
+              follow_up_at:
+                null,
+
+              internal_notes:
+                null,
+
+              last_contacted_at:
+                null
+
+            });
 
 
         // =================================================
@@ -874,7 +703,6 @@ function setupCustomerEnquiry() {
             "SUPABASE DATABASE ERROR:",
             error
           );
-
 
           throw error;
 
@@ -890,31 +718,8 @@ function setupCustomerEnquiry() {
         );
 
 
-        // -------------------------------------------------
-        // ONLY RESET AFTER SUCCESS
-        // -------------------------------------------------
-
         form.reset();
 
-
-        // Restore hidden source
-        const sourceField =
-          document.getElementById(
-            "leadSource"
-          );
-
-
-        if (sourceField) {
-
-          sourceField.value =
-            "Website";
-
-        }
-
-
-        // -------------------------------------------------
-        // SUCCESS MESSAGE
-        // -------------------------------------------------
 
         showInlineMessage(
           message,
@@ -923,9 +728,9 @@ function setupCustomerEnquiry() {
         );
 
 
-        // -------------------------------------------------
-        // KEEP USER NEAR FORM
-        // -------------------------------------------------
+        // =================================================
+        // KEEP USER NEAR CONFIRMATION
+        // =================================================
 
         setTimeout(
           function () {
@@ -952,23 +757,14 @@ function setupCustomerEnquiry() {
         );
 
 
-        // IMPORTANT:
-        // Do not hide the real error from the console.
-
         showInlineMessage(
           message,
-          getFriendlyErrorMessage(
-            error
-          ),
+          getFriendlySupabaseError(error),
           "error"
         );
 
 
       } finally {
-
-        form.dataset.submitting =
-          "false";
-
 
         restoreButton(
           submitButton,
@@ -985,193 +781,22 @@ function setupCustomerEnquiry() {
 
 
 // =====================================================
-// MOBILE NUMBER PROTECTION
-// =====================================================
-
-function setupMobileFormProtection() {
-
-  const mobileInput =
-    document.getElementById(
-      "customerMobile"
-    );
-
-
-  if (!mobileInput) {
-
-    return;
-
-  }
-
-
-  mobileInput.setAttribute(
-    "inputmode",
-    "numeric"
-  );
-
-
-  mobileInput.setAttribute(
-    "autocomplete",
-    "tel"
-  );
-
-
-  mobileInput.addEventListener(
-    "input",
-    function () {
-
-      this.value =
-        this.value
-          .replace(
-            /\D/g,
-            ""
-          )
-          .slice(
-            0,
-            10
-          );
-
-    }
-  );
-
-}
-
-
-// =====================================================
-// ENSURE SUPABASE
-// =====================================================
-
-function ensureSupabase() {
-
-  if (!supabaseClient) {
-
-    initializeSupabase();
-
-  }
-
-
-  if (!supabaseClient) {
-
-    throw new Error(
-      "Supabase client could not be initialized."
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// BUTTON LOADING
-// =====================================================
-
-function setButtonLoading(
-  button,
-  text
-) {
-
-  if (!button) {
-
-    return;
-
-  }
-
-
-  if (
-    !button.dataset.originalText
-  ) {
-
-    button.dataset.originalText =
-      button.textContent;
-
-  }
-
-
-  button.disabled =
-    true;
-
-
-  button.setAttribute(
-    "aria-busy",
-    "true"
-  );
-
-
-  button.style.opacity =
-    "0.7";
-
-
-  button.style.pointerEvents =
-    "none";
-
-
-  button.textContent =
-    text;
-
-}
-
-
-// =====================================================
-// RESTORE BUTTON
-// =====================================================
-
-function restoreButton(
-  button,
-  fallbackText
-) {
-
-  if (!button) {
-
-    return;
-
-  }
-
-
-  button.disabled =
-    false;
-
-
-  button.removeAttribute(
-    "aria-busy"
-  );
-
-
-  button.style.opacity =
-    "";
-
-
-  button.style.pointerEvents =
-    "";
-
-
-  button.textContent =
-    button.dataset.originalText ||
-    fallbackText;
-
-}
-
-
-// =====================================================
 // GET VALUE
 // =====================================================
 
 function getValue(id) {
 
   const element =
-    document.getElementById(
-      id
-    );
+    document.getElementById(id);
 
 
   if (!element) {
-
     return "";
-
   }
 
 
   return String(
-    element.value ||
-    ""
+    element.value || ""
   ).trim();
 
 }
@@ -1184,37 +809,21 @@ function getValue(id) {
 function focusField(id) {
 
   const element =
-    document.getElementById(
-      id
-    );
+    document.getElementById(id);
 
 
-  if (!element) {
+  if (element) {
 
-    return;
-
-  }
-
-
-  setTimeout(
-    function () {
-
-      try {
-
-        element.focus({
-          preventScroll:
-            true
-        });
-
-      } catch (error) {
+    setTimeout(
+      function () {
 
         element.focus();
 
-      }
+      },
+      50
+    );
 
-    },
-    50
-  );
+  }
 
 }
 
@@ -1223,32 +832,24 @@ function focusField(id) {
 // EMAIL VALIDATION
 // =====================================================
 
-function isValidEmail(
-  email
-) {
+function isValidEmail(email) {
 
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    .test(
-      email
-    );
+    .test(email);
 
 }
 
 
 // =====================================================
-// BUILD REQUIREMENTS
+// BUILD FULL REQUIREMENTS
 // =====================================================
 
-function buildFullRequirements(
-  details
-) {
+function buildFullRequirements(details) {
 
   const lines = [];
 
 
-  if (
-    details.eventType
-  ) {
+  if (details.eventType) {
 
     lines.push(
       "Event: " +
@@ -1258,9 +859,7 @@ function buildFullRequirements(
   }
 
 
-  if (
-    details.location
-  ) {
+  if (details.location) {
 
     lines.push(
       "Location: " +
@@ -1270,9 +869,7 @@ function buildFullRequirements(
   }
 
 
-  if (
-    details.guests
-  ) {
+  if (details.guests) {
 
     lines.push(
       "Guests: " +
@@ -1282,9 +879,7 @@ function buildFullRequirements(
   }
 
 
-  if (
-    details.eventDate
-  ) {
+  if (details.eventDate) {
 
     lines.push(
       "Event Date: " +
@@ -1294,9 +889,7 @@ function buildFullRequirements(
   }
 
 
-  if (
-    details.budget
-  ) {
+  if (details.budget) {
 
     lines.push(
       "Budget / Person: ₹" +
@@ -1306,9 +899,7 @@ function buildFullRequirements(
   }
 
 
-  if (
-    details.food
-  ) {
+  if (details.food) {
 
     lines.push(
       "Food Preference: " +
@@ -1318,9 +909,7 @@ function buildFullRequirements(
   }
 
 
-  if (
-    details.other
-  ) {
+  if (details.other) {
 
     lines.push(
       "Other Requirements: " +
@@ -1330,9 +919,7 @@ function buildFullRequirements(
   }
 
 
-  return lines.join(
-    "\n"
-  );
+  return lines.join("\n");
 
 }
 
@@ -1383,9 +970,7 @@ function buildRequirements(
   }
 
 
-  return details.join(
-    "\n"
-  );
+  return details.join("\n");
 
 }
 
@@ -1394,21 +979,15 @@ function buildRequirements(
 // GUEST RANGE CONVERSION
 // =====================================================
 
-function convertGuestRangeToNumber(
-  value
-) {
+function convertGuestRangeToNumber(value) {
 
   if (!value) {
-
     return null;
-
   }
 
 
   if (
-    value.includes(
-      "500+"
-    )
+    value.includes("500+")
   ) {
 
     return 500;
@@ -1417,9 +996,7 @@ function convertGuestRangeToNumber(
 
 
   const numbers =
-    value.match(
-      /\d+/g
-    );
+    value.match(/\d+/g);
 
 
   if (
@@ -1437,22 +1014,14 @@ function convertGuestRangeToNumber(
   ) {
 
     const first =
-      Number(
-        numbers[0]
-      );
-
+      Number(numbers[0]);
 
     const second =
-      Number(
-        numbers[1]
-      );
+      Number(numbers[1]);
 
 
     return Math.round(
-      (
-        first +
-        second
-      ) / 2
+      (first + second) / 2
     );
 
   }
@@ -1466,53 +1035,161 @@ function convertGuestRangeToNumber(
 
 
 // =====================================================
-// FRIENDLY ERROR
+// BUTTON LOADING
 // =====================================================
 
-function getFriendlyErrorMessage(
-  error
+function setButtonLoading(
+  button,
+  text
 ) {
 
-  console.error(
-    "FULL SUPABASE ERROR:",
-    error
+  if (!button) {
+    return;
+  }
+
+
+  button.disabled = true;
+
+
+  button.dataset.oldText =
+    button.textContent;
+
+
+  button.textContent =
+    text;
+
+
+  button.setAttribute(
+    "aria-busy",
+    "true"
   );
 
+}
+
+
+// =====================================================
+// RESTORE BUTTON
+// =====================================================
+
+function restoreButton(
+  button,
+  fallbackText
+) {
+
+  if (!button) {
+    return;
+  }
+
+
+  button.disabled = false;
+
+
+  button.textContent =
+    button.dataset.oldText ||
+    fallbackText;
+
+
+  button.removeAttribute(
+    "aria-busy"
+  );
+
+}
+
+
+// =====================================================
+// FRIENDLY SUPABASE ERROR
+// =====================================================
+
+function getFriendlySupabaseError(error) {
 
   if (!error) {
 
     return (
-      "Something went wrong while submitting your enquiry. Please try again."
+      "Something went wrong. Please try again."
     );
 
   }
+
+
+  console.error(
+    "FULL SUPABASE ERROR:",
+    {
+      message:
+        error.message,
+
+      details:
+        error.details,
+
+      hint:
+        error.hint,
+
+      code:
+        error.code
+    }
+  );
 
 
   const errorMessage =
     String(
       error.message ||
       ""
-    );
+    ).toLowerCase();
 
 
-  const lowerMessage =
-    errorMessage.toLowerCase();
+  const errorDetails =
+    String(
+      error.details ||
+      ""
+    ).toLowerCase();
 
 
-  // ---------------------------------------------------
-  // NETWORK
-  // ---------------------------------------------------
+  const combined =
+    errorMessage +
+    " " +
+    errorDetails;
+
+
+  // -----------------------------------------------------
+  // RLS / PERMISSION
+  // -----------------------------------------------------
 
   if (
-    lowerMessage.includes(
-      "failed to fetch"
-    ) ||
-    lowerMessage.includes(
-      "network"
-    ) ||
-    lowerMessage.includes(
-      "fetch"
-    )
+    combined.includes("row-level security") ||
+    combined.includes("rls") ||
+    combined.includes("permission denied") ||
+    combined.includes("not allowed")
+  ) {
+
+    return (
+      "We could not submit your enquiry right now. Please try again."
+    );
+
+  }
+
+
+  // -----------------------------------------------------
+  // CHECK CONSTRAINT
+  // -----------------------------------------------------
+
+  if (
+    combined.includes("check constraint")
+  ) {
+
+    return (
+      "There is a database validation issue. Please try again."
+    );
+
+  }
+
+
+  // -----------------------------------------------------
+  // NETWORK
+  // -----------------------------------------------------
+
+  if (
+    combined.includes("network") ||
+    combined.includes("failed to fetch") ||
+    combined.includes("fetch")
   ) {
 
     return (
@@ -1522,93 +1199,15 @@ function getFriendlyErrorMessage(
   }
 
 
-  // ---------------------------------------------------
-  // RLS
-  // ---------------------------------------------------
-
-  if (
-    lowerMessage.includes(
-      "row-level security"
-    ) ||
-    lowerMessage.includes(
-      "permission denied"
-    )
-  ) {
-
-    return (
-      "The enquiry service is currently blocked by database permissions."
-    );
-
-  }
-
-
-  // ---------------------------------------------------
-  // STATUS
-  // ---------------------------------------------------
-
-  if (
-    lowerMessage.includes(
-      "status_check"
-    )
-  ) {
-
-    return (
-      "The enquiry status configuration has an issue. Please contact support."
-    );
-
-  }
-
-
-  // ---------------------------------------------------
-  // NOT NULL
-  // ---------------------------------------------------
-
-  if (
-    lowerMessage.includes(
-      "not-null"
-    ) ||
-    lowerMessage.includes(
-      "null value"
-    )
-  ) {
-
-    return (
-      "Some required enquiry information is missing. Please check the form."
-    );
-
-  }
-
-
-  // ---------------------------------------------------
-  // DUPLICATE
-  // ---------------------------------------------------
-
-  if (
-    lowerMessage.includes(
-      "duplicate"
-    )
-  ) {
-
-    return (
-      "This enquiry appears to have already been submitted."
-    );
-
-  }
-
-
-  // ---------------------------------------------------
-  // GENERIC
-  // ---------------------------------------------------
-
   return (
-    "We could not submit your enquiry. Please try again."
+    "We could not submit your enquiry right now. Please try again."
   );
 
 }
 
 
 // =====================================================
-// SHOW MESSAGE
+// INLINE FORM MESSAGE
 // =====================================================
 
 function showInlineMessage(
@@ -1674,6 +1273,10 @@ function showInlineMessage(
     "600";
 
 
+  element.style.lineHeight =
+    "1.5";
+
+
   if (
     type === "success"
   ) {
@@ -1681,10 +1284,8 @@ function showInlineMessage(
     element.style.background =
       "#e9fff2";
 
-
     element.style.color =
       "#15803d";
-
 
     element.style.border =
       "1px solid #bbf7d0";
@@ -1694,10 +1295,8 @@ function showInlineMessage(
     element.style.background =
       "#fff1f2";
 
-
     element.style.color =
       "#b42318";
-
 
     element.style.border =
       "1px solid #fecdd3";
@@ -1716,9 +1315,7 @@ function clearInlineMessage(
 ) {
 
   if (!element) {
-
     return;
-
   }
 
 
@@ -1739,7 +1336,7 @@ function clearInlineMessage(
 
 
 // =====================================================
-// GLOBAL JAVASCRIPT ERROR
+// GLOBAL JAVASCRIPT ERROR LOG
 // =====================================================
 
 window.addEventListener(
@@ -1747,7 +1344,7 @@ window.addEventListener(
   function (event) {
 
     console.error(
-      "WEBSITE JAVASCRIPT ERROR:",
+      "WEBSITE ERROR:",
       event.error ||
       event.message
     );
@@ -1757,7 +1354,7 @@ window.addEventListener(
 
 
 // =====================================================
-// UNHANDLED PROMISE ERROR
+// PROMISE ERROR LOG
 // =====================================================
 
 window.addEventListener(
@@ -1774,24 +1371,44 @@ window.addEventListener(
 
 
 // =====================================================
-// FINAL LOAD CHECK
+// STARTUP LOG
 // =====================================================
 
 console.log(
-  "====================================="
+  "========================================"
 );
 
 console.log(
-  "SELECT MY VENUE SCRIPT LOADED"
+  "Select My Venue website script loaded."
 );
 
 console.log(
-  "Supabase library:",
-  window.supabase
-    ? "AVAILABLE"
-    : "NOT AVAILABLE"
+  "Mobile-safe enquiry submission enabled."
 );
 
 console.log(
-  "====================================="
+  "Public INSERT mode: ACTIVE"
 );
+
+console.log(
+  "Public SELECT request: DISABLED"
+);
+
+console.log(
+  "========================================"
+);
+
+
+if (supabaseClient) {
+
+  console.log(
+    "Supabase client: READY"
+  );
+
+} else {
+
+  console.error(
+    "Supabase client: NOT READY"
+  );
+
+}
