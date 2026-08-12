@@ -1,38 +1,27 @@
 /* =========================================================
    SELECT MY VENUE — CRM
-   crm/crm.js
-   FINAL STABLE VERSION
-
-   - Uses Supabase configuration from dashboard.html
-   - Name + Phone are read-only
-   - Other table fields edit ONLY after clicking
-   - No pencils displayed
-   - Correct 10-column table alignment
-   - Event type mapping supported
-   - View Details works
-   - Modal editing works
-   - Add Enquiry works
-   - Search + filters work
-   - Supabase saves changes
+   FINAL CRM.JS
+   Supabase + Employee CRM
    ========================================================= */
-
 
 /* =========================================================
    SUPABASE CONFIG
    ========================================================= */
 
 const CRM_SUPABASE_URL =
-    window.SUPABASE_URL || "";
+    window.SUPABASE_URL ||
+    "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
 const CRM_SUPABASE_ANON_KEY =
-    window.SUPABASE_ANON_KEY || "";
+    window.SUPABASE_ANON_KEY ||
+    "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+
+let supabaseClient = null;
 
 
 /* =========================================================
    SUPABASE CLIENT
    ========================================================= */
-
-let supabaseClient = null;
 
 function getSupabaseClient() {
 
@@ -45,10 +34,6 @@ function getSupabaseClient() {
         typeof window.supabase.createClient !== "function"
     ) {
         console.error("Supabase library not loaded.");
-        showToast(
-            "Supabase library is not loaded.",
-            "error"
-        );
         return null;
     }
 
@@ -56,38 +41,16 @@ function getSupabaseClient() {
         !CRM_SUPABASE_URL ||
         !CRM_SUPABASE_ANON_KEY
     ) {
-        console.error("Supabase URL or key missing.");
-        showToast(
-            "Supabase configuration is missing.",
-            "error"
-        );
+        console.error("Supabase configuration missing.");
         return null;
     }
 
-    try {
+    supabaseClient = window.supabase.createClient(
+        CRM_SUPABASE_URL,
+        CRM_SUPABASE_ANON_KEY
+    );
 
-        supabaseClient =
-            window.supabase.createClient(
-                CRM_SUPABASE_URL,
-                CRM_SUPABASE_ANON_KEY
-            );
-
-        return supabaseClient;
-
-    } catch (error) {
-
-        console.error(
-            "Supabase client error:",
-            error
-        );
-
-        showToast(
-            "Unable to connect to Supabase.",
-            "error"
-        );
-
-        return null;
-    }
+    return supabaseClient;
 }
 
 
@@ -103,24 +66,20 @@ let currentStatusFilter = "all";
 let currentPriorityFilter = "all";
 let currentSearch = "";
 
-let toastTimer = null;
+let databaseColumns = new Set();
 
 
 /* =========================================================
    HELPERS
    ========================================================= */
 
-function $(selector, parent = document) {
-    return parent.querySelector(selector);
+function $(selector) {
+    return document.querySelector(selector);
 }
 
 
 function safeValue(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
+    if (value === null || value === undefined) {
         return "";
     }
 
@@ -139,21 +98,22 @@ function escapeHTML(value) {
 }
 
 
+function escapeAttribute(value) {
+    return escapeHTML(value);
+}
+
+
 /* =========================================================
    TOAST
    ========================================================= */
 
 function showToast(message, type = "success") {
 
-    let toast =
-        document.getElementById(
-            "crmToast"
-        );
+    let toast = document.getElementById("crmToast");
 
     if (!toast) {
 
-        toast =
-            document.createElement("div");
+        toast = document.createElement("div");
 
         toast.id = "crmToast";
 
@@ -161,15 +121,14 @@ function showToast(message, type = "success") {
         toast.style.right = "24px";
         toast.style.bottom = "24px";
         toast.style.zIndex = "99999";
-        toast.style.padding = "13px 18px";
+        toast.style.padding = "12px 18px";
         toast.style.borderRadius = "10px";
         toast.style.color = "#fff";
         toast.style.fontSize = "14px";
         toast.style.fontWeight = "600";
         toast.style.boxShadow =
             "0 10px 30px rgba(0,0,0,.25)";
-        toast.style.transition =
-            "opacity .2s ease, transform .2s ease";
+        toast.style.transition = "opacity .2s ease";
 
         document.body.appendChild(toast);
     }
@@ -181,21 +140,15 @@ function showToast(message, type = "success") {
             ? "#b42318"
             : type === "warning"
                 ? "#9a6700"
-                : "#13795b";
+                : "#147d64";
 
     toast.style.opacity = "1";
-    toast.style.transform = "translateY(0)";
 
-    clearTimeout(toastTimer);
+    clearTimeout(window.crmToastTimer);
 
-    toastTimer =
-        setTimeout(() => {
-
-            toast.style.opacity = "0";
-            toast.style.transform =
-                "translateY(8px)";
-
-        }, 2800);
+    window.crmToastTimer = setTimeout(() => {
+        toast.style.opacity = "0";
+    }, 2800);
 }
 
 
@@ -205,8 +158,7 @@ function showToast(message, type = "success") {
 
 async function checkCRMAuth() {
 
-    const client =
-        getSupabaseClient();
+    const client = getSupabaseClient();
 
     if (!client) {
         return null;
@@ -215,47 +167,30 @@ async function checkCRMAuth() {
     try {
 
         const {
-            data,
+            data: { session },
             error
-        } =
-            await client.auth.getSession();
+        } = await client.auth.getSession();
 
         if (error) {
-
-            console.error(
-                "Auth error:",
-                error
-            );
-
-            showToast(
-                "Authentication error.",
-                "error"
-            );
-
+            console.error("Auth error:", error);
             return null;
         }
-
-        const session =
-            data?.session;
 
         if (!session) {
 
-            window.location.href =
-                "login.html";
+            window.location.href = "login.html";
 
             return null;
         }
 
-        updateStaffName(
-            session.user
-        );
+        updateStaffName(session.user);
 
         return session;
 
     } catch (error) {
 
         console.error(
-            "Authentication failed:",
+            "Authentication error:",
             error
         );
 
@@ -267,9 +202,7 @@ async function checkCRMAuth() {
 function updateStaffName(user) {
 
     const element =
-        document.getElementById(
-            "staffName"
-        );
+        document.getElementById("staffName");
 
     if (!element || !user) {
         return;
@@ -278,14 +211,12 @@ function updateStaffName(user) {
     const metadata =
         user.user_metadata || {};
 
-    const name =
+    element.textContent =
         metadata.full_name ||
         metadata.name ||
         metadata.display_name ||
         user.email ||
         "Employee";
-
-    element.textContent = name;
 }
 
 
@@ -295,8 +226,7 @@ function updateStaffName(user) {
 
 async function logoutCRM() {
 
-    const client =
-        getSupabaseClient();
+    const client = getSupabaseClient();
 
     if (!client) {
         return;
@@ -304,9 +234,7 @@ async function logoutCRM() {
 
     try {
 
-        const {
-            error
-        } =
+        const { error } =
             await client.auth.signOut();
 
         if (error) {
@@ -324,8 +252,7 @@ async function logoutCRM() {
             return;
         }
 
-        window.location.href =
-            "login.html";
+        window.location.href = "login.html";
 
     } catch (error) {
 
@@ -345,8 +272,7 @@ async function logoutCRM() {
 
 async function loadEnquiries() {
 
-    const client =
-        getSupabaseClient();
+    const client = getSupabaseClient();
 
     if (!client) {
         return;
@@ -359,21 +285,20 @@ async function loadEnquiries() {
         const {
             data,
             error
-        } =
-            await client
-                .from("customer_enquiries")
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending: false
-                    }
-                );
+        } = await client
+            .from("customer_enquiries")
+            .select("*")
+            .order(
+                "created_at",
+                {
+                    ascending: false
+                }
+            );
 
         if (error) {
 
             console.error(
-                "Supabase enquiries error:",
+                "Supabase load error:",
                 error
             );
 
@@ -395,6 +320,27 @@ async function loadEnquiries() {
                 ? data
                 : [];
 
+        /*
+          Remember the actual columns returned
+          by Supabase.
+        */
+
+        databaseColumns.clear();
+
+        if (allLeads.length) {
+
+            Object.keys(
+                allLeads[0]
+            ).forEach(column => {
+                databaseColumns.add(column);
+            });
+        }
+
+        console.log(
+            "CRM database columns:",
+            Array.from(databaseColumns)
+        );
+
         applyFilters();
         updateStats();
 
@@ -406,12 +352,7 @@ async function loadEnquiries() {
         );
 
         renderTableError(
-            "Unable to load enquiries."
-        );
-
-        showToast(
-            "Unable to load enquiries.",
-            "error"
+            "Something went wrong while loading enquiries."
         );
     }
 }
@@ -434,10 +375,7 @@ function setTableLoading() {
 
     tbody.innerHTML = `
         <tr>
-            <td
-                colspan="10"
-                class="loading-cell"
-            >
+            <td colspan="10" class="loading-cell">
                 Loading customer enquiries...
             </td>
         </tr>
@@ -458,10 +396,7 @@ function renderTableError(message) {
 
     tbody.innerHTML = `
         <tr>
-            <td
-                colspan="10"
-                class="loading-cell"
-            >
+            <td colspan="10" class="loading-cell">
                 ${escapeHTML(message)}
             </td>
         </tr>
@@ -470,7 +405,32 @@ function renderTableError(message) {
 
 
 /* =========================================================
-   FIELD MAPPING
+   DATABASE COLUMN DETECTION
+   ========================================================= */
+
+function findExistingColumn(
+    lead,
+    possibleColumns
+) {
+
+    for (const column of possibleColumns) {
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                lead,
+                column
+            )
+        ) {
+            return column;
+        }
+    }
+
+    return null;
+}
+
+
+/* =========================================================
+   FIELD MAPPINGS
    ========================================================= */
 
 function getCustomerName(lead) {
@@ -491,7 +451,7 @@ function getPhone(lead) {
         lead.mobile ||
         lead.contact_number ||
         lead.phone_number ||
-        "—"
+        ""
     );
 }
 
@@ -500,68 +460,190 @@ function getEmail(lead) {
 
     return (
         lead.email ||
-        "—"
-    );
-}
-
-
-function getEventType(lead) {
-
-    return (
-        lead.event_type ||
-        lead.event_name ||
-        lead.event ||
-        lead.event_category ||
+        lead.customer_email ||
         ""
     );
 }
 
 
-function getEventDate(lead) {
+function getEventColumn(lead) {
 
-    return (
-        lead.event_date ||
-        lead.date ||
-        ""
+    /*
+      IMPORTANT:
+      Do NOT assume event_type.
+
+      Your Supabase table appears to use
+      another column name.
+
+      We detect the actual one.
+    */
+
+    return findExistingColumn(
+        lead,
+        [
+            "event",
+            "event_name",
+            "event_type",
+            "eventType",
+            "eventname"
+        ]
     );
 }
 
 
-function getGuests(lead) {
+function getEventValue(lead) {
 
-    return (
-        lead.guests ??
-        lead.guest_count ??
-        lead.number_of_guests ??
-        ""
+    const column =
+        getEventColumn(lead);
+
+    if (!column) {
+        return "";
+    }
+
+    return lead[column] || "";
+}
+
+
+function getVenueColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "venue",
+            "location",
+            "city",
+            "venue_name",
+            "venue_location"
+        ]
     );
 }
 
 
-function getLocation(lead) {
+function getVenueValue(lead) {
 
-    return (
-        lead.venue ||
-        lead.location ||
-        lead.city ||
-        lead.venue_name ||
-        ""
+    const column =
+        getVenueColumn(lead);
+
+    return column
+        ? lead[column] || ""
+        : "";
+}
+
+
+function getEventDateColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "event_date",
+            "date",
+            "eventDate"
+        ]
     );
 }
 
 
-function getSource(lead) {
+function getEventDateValue(lead) {
 
-    return (
-        lead.source ||
-        lead.lead_source ||
-        ""
+    const column =
+        getEventDateColumn(lead);
+
+    return column
+        ? lead[column] || ""
+        : "";
+}
+
+
+function getGuestsColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "guests",
+            "guest_count",
+            "number_of_guests",
+            "guestCount"
+        ]
+    );
+}
+
+
+function getGuestsValue(lead) {
+
+    const column =
+        getGuestsColumn(lead);
+
+    return column
+        ? lead[column] ?? ""
+        : "";
+}
+
+
+function getStatusColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "status"
+        ]
+    );
+}
+
+
+function getPriorityColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "priority"
+        ]
+    );
+}
+
+
+function getFollowUpColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "follow_up_at",
+            "followup_at",
+            "follow_up",
+            "followup"
+        ]
+    );
+}
+
+
+function getAssignedColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "assigned_to",
+            "assigned",
+            "assignedTo"
+        ]
+    );
+}
+
+
+function getRemarksColumn(lead) {
+
+    return findExistingColumn(
+        lead,
+        [
+            "remarks",
+            "internal_notes",
+            "notes",
+            "internal_remarks"
+        ]
     );
 }
 
 
 /* =========================================================
-   FILTERING
+   FILTERS
    ========================================================= */
 
 function applyFilters() {
@@ -572,66 +654,61 @@ function applyFilters() {
             .toLowerCase();
 
     filteredLeads =
-        allLeads.filter(
-            (lead) => {
+        allLeads.filter(lead => {
 
-                const searchable = [
+            const searchable = [
 
-                    getCustomerName(lead),
-                    getPhone(lead),
-                    getEmail(lead),
-                    getEventType(lead),
-                    getEventDate(lead),
-                    getGuests(lead),
-                    getLocation(lead),
-                    getSource(lead),
-                    lead.message,
-                    lead.remarks,
-                    lead.internal_notes
+                getCustomerName(lead),
+                getPhone(lead),
+                getEmail(lead),
+                getEventValue(lead),
+                getVenueValue(lead),
+                getEventDateValue(lead),
+                getGuestsValue(lead),
+                lead.message,
+                lead.status,
+                lead.priority
 
-                ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .toLowerCase();
+            ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
 
-                const matchesSearch =
-                    !search ||
-                    searchable.includes(search);
+            const matchesSearch =
+                !search ||
+                searchable.includes(search);
 
-                const status =
-                    safeValue(
-                        lead.status || "new"
-                    ).toLowerCase();
+            const status =
+                safeValue(
+                    lead.status || "new"
+                ).toLowerCase();
 
-                const priority =
-                    safeValue(
-                        lead.priority || "normal"
-                    ).toLowerCase();
+            const priority =
+                safeValue(
+                    lead.priority || "normal"
+                ).toLowerCase();
 
-                const matchesStatus =
-                    currentStatusFilter === "all" ||
-                    status ===
-                    currentStatusFilter;
+            const matchesStatus =
+                currentStatusFilter === "all" ||
+                status === currentStatusFilter;
 
-                const matchesPriority =
-                    currentPriorityFilter === "all" ||
-                    priority ===
-                    currentPriorityFilter;
+            const matchesPriority =
+                currentPriorityFilter === "all" ||
+                priority === currentPriorityFilter;
 
-                return (
-                    matchesSearch &&
-                    matchesStatus &&
-                    matchesPriority
-                );
-            }
-        );
+            return (
+                matchesSearch &&
+                matchesStatus &&
+                matchesPriority
+            );
+        });
 
     renderLeads();
 }
 
 
 /* =========================================================
-   RENDER LEADS
+   RENDER TABLE
    ========================================================= */
 
 function renderLeads() {
@@ -641,28 +718,27 @@ function renderLeads() {
             "leadsTableBody"
         );
 
-    const emptyState =
-        document.getElementById(
-            "emptyState"
-        );
-
     if (!tbody) {
         return;
     }
 
     if (!filteredLeads.length) {
 
-        tbody.innerHTML = "";
-
-        if (emptyState) {
-            emptyState.hidden = false;
-        }
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10">
+                    <div class="empty-state">
+                        <div class="empty-icon">⌕</div>
+                        <h3>No enquiries found</h3>
+                        <p>
+                            Try changing your search or filters.
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        `;
 
         return;
-    }
-
-    if (emptyState) {
-        emptyState.hidden = true;
     }
 
     tbody.innerHTML =
@@ -673,20 +749,7 @@ function renderLeads() {
 
 
 /* =========================================================
-   CREATE TABLE ROW
-
-   10 columns exactly matching dashboard.html:
-
-   1 Customer
-   2 Phone
-   3 Email
-   4 Event
-   5 Event Date
-   6 Guests
-   7 Location
-   8 Status
-   9 Priority
-   10 Action
+   LEAD ROW
    ========================================================= */
 
 function createLeadRow(lead) {
@@ -703,17 +766,17 @@ function createLeadRow(lead) {
     const email =
         getEmail(lead);
 
-    const eventType =
-        getEventType(lead);
+    const event =
+        getEventValue(lead);
 
     const eventDate =
-        getEventDate(lead);
+        getEventDateValue(lead);
 
     const guests =
-        getGuests(lead);
+        getGuestsValue(lead);
 
-    const location =
-        getLocation(lead);
+    const venue =
+        getVenueValue(lead);
 
     const status =
         lead.status || "new";
@@ -722,113 +785,130 @@ function createLeadRow(lead) {
         lead.priority || "normal";
 
     return `
-        <tr
-            data-lead-id="${escapeHTML(id)}"
-        >
+        <tr data-lead-id="${escapeAttribute(id)}">
 
-            <!-- CUSTOMER - READ ONLY -->
+            <!-- CUSTOMER : NOT EDITABLE -->
             <td>
-                <div class="customer-cell">
-                    <strong>
-                        ${escapeHTML(name)}
-                    </strong>
-                </div>
+                <strong>
+                    ${escapeHTML(name)}
+                </strong>
             </td>
 
-
-            <!-- PHONE - READ ONLY -->
+            <!-- PHONE : NOT EDITABLE -->
             <td>
-                <div class="phone-cell">
-                    ${escapeHTML(phone)}
-                </div>
+                ${escapeHTML(phone || "—")}
             </td>
 
-
-            <!-- EMAIL - CLICK TO EDIT -->
+            <!-- EMAIL : EDITABLE -->
             <td>
-                ${createEditableCell(
+                ${createInlineField(
                     lead,
                     "email",
                     email,
-                    "text"
+                    "text",
+                    {
+                        column: findExistingColumn(
+                            lead,
+                            [
+                                "email",
+                                "customer_email"
+                            ]
+                        )
+                    }
                 )}
             </td>
 
-
-            <!-- EVENT - CLICK TO EDIT -->
+            <!-- EVENT : EDITABLE -->
             <td>
-                ${createEditableCell(
+                ${createInlineField(
                     lead,
-                    "event_type",
-                    eventType || "—",
+                    "event",
+                    event,
                     "select",
-                    getEventOptions()
+                    {
+                        column:
+                            getEventColumn(lead),
+                        options:
+                            getEventOptions()
+                    }
                 )}
             </td>
 
-
-            <!-- EVENT DATE - CLICK TO EDIT -->
+            <!-- EVENT DATE : EDITABLE -->
             <td>
-                ${createEditableCell(
+                ${createInlineField(
                     lead,
                     "event_date",
-                    eventDate
-                        ? formatDate(eventDate)
-                        : "—",
+                    formatDate(eventDate),
                     "date",
-                    null,
-                    eventDate
+                    {
+                        column:
+                            getEventDateColumn(lead),
+                        rawValue:
+                            eventDate
+                    }
                 )}
             </td>
 
-
-            <!-- GUESTS - CLICK TO EDIT -->
+            <!-- GUESTS : EDITABLE -->
             <td>
-                ${createEditableCell(
+                ${createInlineField(
                     lead,
                     "guests",
-                    guests === ""
-                        ? "—"
-                        : guests,
-                    "number"
+                    guests,
+                    "number",
+                    {
+                        column:
+                            getGuestsColumn(lead)
+                    }
                 )}
             </td>
 
-
-            <!-- LOCATION - CLICK TO EDIT -->
+            <!-- LOCATION : EDITABLE -->
             <td>
-                ${createEditableCell(
+                ${createInlineField(
                     lead,
-                    "venue",
-                    location || "—",
-                    "text"
+                    "location",
+                    venue,
+                    "text",
+                    {
+                        column:
+                            getVenueColumn(lead)
+                    }
                 )}
             </td>
 
-
-            <!-- STATUS - CLICK TO EDIT -->
+            <!-- STATUS : EDITABLE -->
             <td>
-                ${createEditableCell(
+                ${createInlineField(
                     lead,
                     "status",
                     formatStatus(status),
                     "select",
-                    getStatusOptions()
+                    {
+                        column:
+                            getStatusColumn(lead),
+                        options:
+                            getStatusOptions()
+                    }
                 )}
             </td>
 
-
-            <!-- PRIORITY - CLICK TO EDIT -->
+            <!-- PRIORITY : EDITABLE -->
             <td>
-                ${createEditableCell(
+                ${createInlineField(
                     lead,
                     "priority",
                     formatPriority(priority),
                     "select",
-                    getPriorityOptions()
+                    {
+                        column:
+                            getPriorityColumn(lead),
+                        options:
+                            getPriorityOptions()
+                    }
                 )}
             </td>
-
 
             <!-- ACTION -->
             <td class="action-column">
@@ -837,7 +917,7 @@ function createLeadRow(lead) {
                     type="button"
                     class="view-lead-btn"
                     data-action="view"
-                    data-id="${escapeHTML(id)}"
+                    data-id="${escapeAttribute(id)}"
                 >
                     View Details
                 </button>
@@ -850,62 +930,51 @@ function createLeadRow(lead) {
 
 
 /* =========================================================
-   CLICK-TO-EDIT CELL
-
-   No pencil icon.
-   Looks like normal text until clicked.
+   INLINE FIELD
+   NO PENCIL SHOWN
    ========================================================= */
 
-function createEditableCell(
+function createInlineField(
     lead,
-    field,
+    logicalField,
     displayValue,
-    type = "text",
-    options = null,
-    rawValue = null
+    type,
+    config = {}
 ) {
 
     const id =
         safeValue(lead.id);
 
-    let value;
+    const column =
+        config.column;
 
-    if (
-        rawValue !== null &&
-        rawValue !== undefined
-    ) {
-        value = rawValue;
-    } else {
+    /*
+      If a database column does not exist,
+      don't make the field editable.
+    */
 
-        if (field === "venue") {
+    const editable =
+        !!column;
 
-            value =
-                lead.venue ??
-                lead.location ??
-                lead.city ??
-                "";
-
-        } else {
-
-            value =
-                lead[field] ?? "";
-        }
-    }
+    const shown =
+        displayValue === null ||
+        displayValue === undefined ||
+        displayValue === ""
+            ? "—"
+            : displayValue;
 
     return `
         <div
-            class="crm-inline-field"
-            data-inline-field="${escapeHTML(field)}"
-            data-lead-id="${escapeHTML(id)}"
-            data-raw-value="${escapeHTML(value)}"
-            tabindex="0"
-            title="Click to edit"
+            class="crm-inline-field${editable ? "" : " not-editable"}"
+            data-inline-field="${escapeAttribute(logicalField)}"
+            data-db-column="${escapeAttribute(column || "")}"
+            data-lead-id="${escapeAttribute(id)}"
+            data-editable="${editable ? "true" : "false"}"
+            tabindex="${editable ? "0" : "-1"}"
+            title="${editable ? "Click to edit" : ""}"
         >
             <span class="inline-display">
-                ${escapeHTML(
-                    displayValue ||
-                    "—"
-                )}
+                ${escapeHTML(shown)}
             </span>
         </div>
     `;
@@ -913,13 +982,22 @@ function createEditableCell(
 
 
 /* =========================================================
-   START INLINE EDIT
+   INLINE EDIT
    ========================================================= */
 
 function startInlineEdit(element) {
 
+    if (!element) {
+        return;
+    }
+
     if (
-        !element ||
+        element.dataset.editable !== "true"
+    ) {
+        return;
+    }
+
+    if (
         element.classList.contains("editing")
     ) {
         return;
@@ -928,8 +1006,21 @@ function startInlineEdit(element) {
     const leadId =
         element.dataset.leadId;
 
-    const field =
+    const logicalField =
         element.dataset.inlineField;
+
+    const dbColumn =
+        element.dataset.dbColumn;
+
+    if (!dbColumn) {
+
+        showToast(
+            "This field is not available in the database.",
+            "error"
+        );
+
+        return;
+    }
 
     const lead =
         allLeads.find(
@@ -939,32 +1030,24 @@ function startInlineEdit(element) {
         );
 
     if (!lead) {
-        showToast(
-            "Enquiry not found.",
-            "error"
-        );
         return;
     }
 
-    let originalValue;
+    const originalValue =
+        lead[dbColumn] ?? "";
 
-    if (field === "venue") {
+    /*
+      Remember page position.
+      This prevents the annoying page jumping.
+    */
 
-        originalValue =
-            lead.venue ??
-            lead.location ??
-            lead.city ??
-            "";
+    const scrollX =
+        window.scrollX;
 
-    } else {
+    const scrollY =
+        window.scrollY;
 
-        originalValue =
-            lead[field] ?? "";
-    }
-
-    element.classList.add(
-        "editing"
-    );
+    element.classList.add("editing");
 
     const display =
         element.querySelector(
@@ -977,9 +1060,15 @@ function startInlineEdit(element) {
 
     let editor;
 
-    if (
-        field === "status"
-    ) {
+    if (logicalField === "event") {
+
+        editor =
+            createSelectEditor(
+                getEventOptions(),
+                originalValue
+            );
+
+    } else if (logicalField === "status") {
 
         editor =
             createSelectEditor(
@@ -987,24 +1076,12 @@ function startInlineEdit(element) {
                 originalValue || "new"
             );
 
-    } else if (
-        field === "priority"
-    ) {
+    } else if (logicalField === "priority") {
 
         editor =
             createSelectEditor(
                 getPriorityOptions(),
                 originalValue || "normal"
-            );
-
-    } else if (
-        field === "event_type"
-    ) {
-
-        editor =
-            createSelectEditor(
-                getEventOptions(),
-                originalValue || ""
             );
 
     } else {
@@ -1018,62 +1095,76 @@ function startInlineEdit(element) {
             "crm-inline-editor";
 
         if (
-            field === "event_date"
+            logicalField === "event_date"
         ) {
-
-            editor.type =
-                "date";
+            editor.type = "date";
 
         } else if (
-            field === "guests"
+            logicalField === "guests"
         ) {
-
-            editor.type =
-                "number";
-
+            editor.type = "number";
             editor.min = "0";
 
         } else {
-
-            editor.type =
-                "text";
+            editor.type = "text";
         }
 
         editor.value =
             safeValue(originalValue);
+
+        editor.style.width = "100%";
+        editor.style.boxSizing =
+            "border-box";
     }
 
-    display.replaceWith(
-        editor
+    display.replaceWith(editor);
+
+    /*
+      Restore scroll position immediately.
+    */
+
+    window.scrollTo(
+        scrollX,
+        scrollY
     );
 
-    editor.focus();
+    setTimeout(() => {
 
-    if (
-        editor.tagName === "INPUT" &&
-        editor.type === "text"
-    ) {
-        editor.select();
-    }
+        try {
+            editor.focus();
+        } catch (e) {}
 
-    let finished = false;
+        window.scrollTo(
+            scrollX,
+            scrollY
+        );
+
+    }, 0);
+
+    let completed = false;
 
     async function finish(
         shouldSave = true
     ) {
 
-        if (finished) {
+        if (completed) {
             return;
         }
 
-        finished = true;
+        completed = true;
 
         if (!shouldSave) {
 
             restoreInlineDisplay(
                 element,
                 lead,
-                field
+                logicalField,
+                dbColumn
+            );
+
+            window.scrollTo(
+                scrollX,
+                scrollY
             );
 
             return;
@@ -1090,20 +1181,30 @@ function startInlineEdit(element) {
             restoreInlineDisplay(
                 element,
                 lead,
-                field
+                logicalField,
+                dbColumn
+            );
+
+            window.scrollTo(
+                scrollX,
+                scrollY
             );
 
             return;
         }
 
         await saveInlineField(
-            leadId,
-            field,
+            lead,
+            dbColumn,
             newValue,
-            originalValue
+            element
+        );
+
+        window.scrollTo(
+            scrollX,
+            scrollY
         );
     }
-
 
     editor.addEventListener(
         "blur",
@@ -1111,15 +1212,14 @@ function startInlineEdit(element) {
 
             setTimeout(
                 () => finish(true),
-                120
+                150
             );
         }
     );
 
-
     editor.addEventListener(
         "keydown",
-        (event) => {
+        event => {
 
             if (
                 event.key === "Enter"
@@ -1159,32 +1259,32 @@ function createSelectEditor(
     select.className =
         "crm-inline-editor";
 
-    options.forEach(
-        option => {
+    select.style.width = "100%";
+    select.style.boxSizing =
+        "border-box";
 
-            const item =
-                document.createElement(
-                    "option"
-                );
+    options.forEach(option => {
 
-            item.value =
-                option.value;
-
-            item.textContent =
-                option.label;
-
-            if (
-                String(option.value) ===
-                String(selectedValue)
-            ) {
-                item.selected = true;
-            }
-
-            select.appendChild(
-                item
+        const item =
+            document.createElement(
+                "option"
             );
+
+        item.value =
+            option.value;
+
+        item.textContent =
+            option.label;
+
+        if (
+            String(option.value) ===
+            String(selectedValue)
+        ) {
+            item.selected = true;
         }
-    );
+
+        select.appendChild(item);
+    });
 
     return select;
 }
@@ -1195,10 +1295,10 @@ function createSelectEditor(
    ========================================================= */
 
 async function saveInlineField(
-    leadId,
-    field,
+    lead,
+    dbColumn,
     newValue,
-    oldValue
+    element
 ) {
 
     const client =
@@ -1208,59 +1308,12 @@ async function saveInlineField(
         return;
     }
 
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-        return;
-    }
-
-    let databaseField =
-        field;
-
-    /*
-       Location display uses venue first.
-       We therefore save to venue if the
-       database already has a venue value.
-    */
-
-    if (field === "venue") {
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                lead,
-                "venue"
-            )
-        ) {
-
-            databaseField =
-                "venue";
-
-        } else if (
-            Object.prototype.hasOwnProperty.call(
-                lead,
-                "location"
-            )
-        ) {
-
-            databaseField =
-                "location";
-
-        } else {
-
-            databaseField =
-                "venue";
-        }
-    }
-
+    const oldValue =
+        lead[dbColumn];
 
     const updateData = {};
 
-    updateData[databaseField] =
+    updateData[dbColumn] =
         newValue === ""
             ? null
             : newValue;
@@ -1270,32 +1323,56 @@ async function saveInlineField(
         const {
             data,
             error
-        } =
-            await client
-                .from("customer_enquiries")
-                .update(updateData)
-                .eq("id", leadId)
-                .select()
-                .single();
+        } = await client
+            .from("customer_enquiries")
+            .update(updateData)
+            .eq("id", lead.id)
+            .select()
+            .single();
 
         if (error) {
 
             console.error(
-                "Inline update failed:",
+                "Inline save error:",
                 error
             );
 
-            showToast(
-                error.message ||
-                "Unable to save change.",
-                "error"
-            );
+            /*
+              Specifically handle schema cache
+              problem.
+            */
 
-            lead[field] =
+            if (
+                error.message &&
+                error.message
+                    .toLowerCase()
+                    .includes(
+                        "schema cache"
+                    )
+            ) {
+
+                showToast(
+                    `Database column "${dbColumn}" is not available.`,
+                    "error"
+                );
+
+            } else {
+
+                showToast(
+                    error.message ||
+                    "Unable to save change.",
+                    "error"
+                );
+            }
+
+            lead[dbColumn] =
                 oldValue;
 
-            refreshLeadRow(
-                leadId
+            restoreInlineDisplay(
+                element,
+                lead,
+                null,
+                dbColumn
             );
 
             return;
@@ -1307,48 +1384,37 @@ async function saveInlineField(
                 lead,
                 data
             );
-
         } else {
 
-            lead[databaseField] =
-                updateData[databaseField];
+            lead[dbColumn] =
+                updateData[dbColumn];
         }
 
         showToast(
-            "Saved successfully."
+            "Change saved successfully."
         );
 
-        refreshLeadRow(
-            leadId
+        restoreInlineDisplay(
+            element,
+            lead,
+            null,
+            dbColumn
         );
 
         updateStats();
 
-        if (
-            currentLead &&
-            String(currentLead.id) ===
-            String(leadId)
-        ) {
-
-            currentLead =
-                lead;
-
-            populateLeadModal(
-                currentLead
-            );
-        }
-
     } catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
-        lead[field] =
+        lead[dbColumn] =
             oldValue;
 
-        refreshLeadRow(
-            leadId
+        restoreInlineDisplay(
+            element,
+            lead,
+            null,
+            dbColumn
         );
 
         showToast(
@@ -1360,13 +1426,14 @@ async function saveInlineField(
 
 
 /* =========================================================
-   RESTORE INLINE DISPLAY
+   RESTORE INLINE FIELD
    ========================================================= */
 
 function restoreInlineDisplay(
     element,
     lead,
-    field
+    logicalField,
+    dbColumn
 ) {
 
     if (!element) {
@@ -1382,38 +1449,31 @@ function restoreInlineDisplay(
         return;
     }
 
-    let value;
-
-    if (field === "venue") {
-
-        value =
-            lead.venue ??
-            lead.location ??
-            lead.city ??
-            "";
-
-    } else {
-
-        value =
-            lead[field];
-    }
+    let value =
+        dbColumn
+            ? lead[dbColumn]
+            : "";
 
     if (
-        field === "status"
+        logicalField === "status" ||
+        dbColumn === "status"
     ) {
 
         value =
             formatStatus(value);
 
     } else if (
-        field === "priority"
+        logicalField === "priority" ||
+        dbColumn === "priority"
     ) {
 
         value =
             formatPriority(value);
 
     } else if (
-        field === "event_date"
+        logicalField === "event_date" ||
+        dbColumn === "event_date" ||
+        dbColumn === "date"
     ) {
 
         value =
@@ -1439,9 +1499,7 @@ function restoreInlineDisplay(
     display.textContent =
         value;
 
-    editor.replaceWith(
-        display
-    );
+    editor.replaceWith(display);
 
     element.classList.remove(
         "editing"
@@ -1450,78 +1508,10 @@ function restoreInlineDisplay(
 
 
 /* =========================================================
-   REFRESH ROW
-   ========================================================= */
-
-function refreshLeadRow(
-    leadId
-) {
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-        return;
-    }
-
-    const rows =
-        document.querySelectorAll(
-            "#leadsTableBody tr"
-        );
-
-    let row = null;
-
-    rows.forEach(
-        item => {
-
-            if (
-                String(
-                    item.dataset.leadId
-                ) ===
-                String(leadId)
-            ) {
-                row = item;
-            }
-        }
-    );
-
-    if (!row) {
-
-        renderLeads();
-
-        return;
-    }
-
-    const temporary =
-        document.createElement(
-            "tbody"
-        );
-
-    temporary.innerHTML =
-        createLeadRow(lead);
-
-    const newRow =
-        temporary.firstElementChild;
-
-    if (newRow) {
-        row.replaceWith(
-            newRow
-        );
-    }
-}
-
-
-/* =========================================================
    VIEW DETAILS
    ========================================================= */
 
-function openLeadModal(
-    leadId
-) {
+function openLeadModal(leadId) {
 
     const lead =
         allLeads.find(
@@ -1540,8 +1530,9 @@ function openLeadModal(
         return;
     }
 
-    currentLead =
-        lead;
+    currentLead = lead;
+
+    populateLeadModal(lead);
 
     const modal =
         document.getElementById(
@@ -1551,19 +1542,14 @@ function openLeadModal(
     if (!modal) {
 
         showToast(
-            "Lead details window not found.",
+            "Lead modal not found.",
             "error"
         );
 
         return;
     }
 
-    populateLeadModal(
-        lead
-    );
-
-    modal.hidden =
-        false;
+    modal.hidden = false;
 
     document.body.style.overflow =
         "hidden";
@@ -1571,80 +1557,83 @@ function openLeadModal(
 
 
 /* =========================================================
-   MODAL POPULATION
+   POPULATE MODAL
    ========================================================= */
 
-function populateLeadModal(
-    lead
-) {
+function populateLeadModal(lead) {
 
     setText(
-        "#detailCustomerName",
+        "detailCustomerName",
         getCustomerName(lead)
     );
 
     setText(
-        "#detailPhone",
-        getPhone(lead)
+        "detailPhone",
+        getPhone(lead) || "—"
     );
 
     setText(
-        "#detailEmail",
-        getEmail(lead)
+        "detailEmail",
+        getEmail(lead) || "—"
     );
 
     setText(
-        "#detailSource",
-        getSource(lead) || "—"
+        "detailSource",
+        lead.source ||
+        lead.lead_source ||
+        "—"
     );
 
     setControl(
-        "#detailEventType",
-        getEventType(lead)
+        "detailEventType",
+        getEventValue(lead)
     );
 
     setControl(
-        "#detailVenue",
-        getLocation(lead)
+        "detailVenue",
+        getVenueValue(lead)
     );
 
     setControl(
-        "#detailEventDate",
-        getEventDate(lead)
+        "detailEventDate",
+        getEventDateValue(lead)
     );
 
     setControl(
-        "#detailGuests",
-        getGuests(lead)
+        "detailGuests",
+        getGuestsValue(lead)
     );
 
     setControl(
-        "#detailStatus",
+        "detailStatus",
         lead.status || "new"
     );
 
     setControl(
-        "#detailPriority",
+        "detailPriority",
         lead.priority || "normal"
     );
 
     setControl(
-        "#detailFollowUp",
-        convertToDateTimeLocal(
-            lead.follow_up_at ||
-            lead.followup_at ||
-            ""
-        )
+        "detailFollowUp",
+        getFollowUpColumn(lead)
+            ? lead[
+                getFollowUpColumn(lead)
+            ] || ""
+            : ""
     );
 
     setControl(
-        "#detailAssignedTo",
-        lead.assigned_to ||
-        ""
+        "detailAssignedTo",
+        getAssignedColumn(lead)
+            ? lead[
+                getAssignedColumn(lead)
+            ] || ""
+            : ""
     );
 
     setText(
-        "#detailMessage",
+        "detailMessage",
         lead.message ||
         lead.enquiry ||
         lead.requirements ||
@@ -1652,11 +1641,12 @@ function populateLeadModal(
     );
 
     setControl(
-        "#detailRemarks",
-        lead.remarks ||
-        lead.internal_notes ||
-        lead.notes ||
-        ""
+        "detailRemarks",
+        getRemarksColumn(lead)
+            ? lead[
+                getRemarksColumn(lead)
+            ] || ""
+            : ""
     );
 }
 
@@ -1666,14 +1656,12 @@ function populateLeadModal(
    ========================================================= */
 
 function setText(
-    selector,
+    id,
     value
 ) {
 
     const element =
-        document.querySelector(
-            selector
-        );
+        document.getElementById(id);
 
     if (!element) {
         return;
@@ -1685,14 +1673,12 @@ function setText(
 
 
 function setControl(
-    selector,
+    id,
     value
 ) {
 
     const element =
-        document.querySelector(
-            selector
-        );
+        document.getElementById(id);
 
     if (!element) {
         return;
@@ -1703,73 +1689,8 @@ function setControl(
 }
 
 
-function convertToDateTimeLocal(
-    value
-) {
-
-    if (!value) {
-        return "";
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return safeValue(value)
-            .slice(0, 16);
-    }
-
-    const pad =
-        number =>
-            String(number)
-                .padStart(2, "0");
-
-    return (
-        date.getFullYear() +
-        "-" +
-        pad(date.getMonth() + 1) +
-        "-" +
-        pad(date.getDate()) +
-        "T" +
-        pad(date.getHours()) +
-        ":" +
-        pad(date.getMinutes())
-    );
-}
-
-
 /* =========================================================
-   CLOSE LEAD MODAL
-   ========================================================= */
-
-function closeLeadModal() {
-
-    const modal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (!modal) {
-        return;
-    }
-
-    modal.hidden =
-        true;
-
-    document.body.style.overflow =
-        "";
-
-    currentLead =
-        null;
-}
-
-
-/* =========================================================
-   SAVE MODAL
+   SAVE MODAL CHANGES
    ========================================================= */
 
 async function saveModalChanges() {
@@ -1791,166 +1712,175 @@ async function saveModalChanges() {
         return;
     }
 
-    const leadId =
-        currentLead.id;
+    const lead =
+        currentLead;
 
     const updateData = {};
 
+    /*
+      EVENT
+    */
 
-    const eventType =
-        $("#detailEventType")?.value;
+    const eventColumn =
+        getEventColumn(lead);
 
-    const venue =
-        $("#detailVenue")?.value;
+    if (eventColumn) {
 
-    const eventDate =
-        $("#detailEventDate")?.value;
-
-    const guests =
-        $("#detailGuests")?.value;
-
-    const status =
-        $("#detailStatus")?.value;
-
-    const priority =
-        $("#detailPriority")?.value;
-
-    const followUp =
-        $("#detailFollowUp")?.value;
-
-    const assignedTo =
-        $("#detailAssignedTo")?.value;
-
-    const remarks =
-        $("#detailRemarks")?.value;
-
-
-    if (
-        eventType !== undefined
-    ) {
-        updateData.event_type =
-            eventType || null;
+        updateData[eventColumn] =
+            $("#detailEventType")?.value ||
+            null;
     }
 
     /*
-       Use venue column when available.
+      VENUE / LOCATION
     */
 
-    if (
-        Object.prototype.hasOwnProperty.call(
-            currentLead,
-            "venue"
-        )
-    ) {
+    const venueColumn =
+        getVenueColumn(lead);
 
-        updateData.venue =
-            venue || null;
+    if (venueColumn) {
 
-    } else {
-
-        updateData.location =
-            venue || null;
+        updateData[venueColumn] =
+            $("#detailVenue")?.value ||
+            null;
     }
 
+    /*
+      EVENT DATE
+    */
 
-    if (
-        eventDate !== undefined
-    ) {
-        updateData.event_date =
-            eventDate || null;
+    const dateColumn =
+        getEventDateColumn(lead);
+
+    if (dateColumn) {
+
+        updateData[dateColumn] =
+            $("#detailEventDate")?.value ||
+            null;
     }
 
+    /*
+      GUESTS
+    */
 
-    if (
-        guests !== undefined
-    ) {
-        updateData.guests =
-            guests === ""
+    const guestsColumn =
+        getGuestsColumn(lead);
+
+    if (guestsColumn) {
+
+        const value =
+            $("#detailGuests")?.value;
+
+        updateData[guestsColumn] =
+            value === ""
                 ? null
-                : Number(guests);
+                : Number(value);
     }
 
+    /*
+      STATUS
+    */
 
-    if (
-        status !== undefined
-    ) {
-        updateData.status =
-            status || "new";
+    const statusColumn =
+        getStatusColumn(lead);
+
+    if (statusColumn) {
+
+        updateData[statusColumn] =
+            $("#detailStatus")?.value ||
+            "new";
     }
 
+    /*
+      PRIORITY
+    */
 
-    if (
-        priority !== undefined
-    ) {
-        updateData.priority =
-            priority || "normal";
+    const priorityColumn =
+        getPriorityColumn(lead);
+
+    if (priorityColumn) {
+
+        updateData[priorityColumn] =
+            $("#detailPriority")?.value ||
+            "normal";
     }
 
+    /*
+      FOLLOW UP
+    */
 
-    if (
-        followUp !== undefined
-    ) {
-        updateData.follow_up_at =
-            followUp
-                ? new Date(
-                    followUp
-                ).toISOString()
-                : null;
+    const followColumn =
+        getFollowUpColumn(lead);
+
+    if (followColumn) {
+
+        updateData[followColumn] =
+            $("#detailFollowUp")?.value ||
+            null;
     }
 
+    /*
+      ASSIGNED TO
+    */
 
-    if (
-        assignedTo !== undefined
-    ) {
-        updateData.assigned_to =
-            assignedTo || null;
+    const assignedColumn =
+        getAssignedColumn(lead);
+
+    if (assignedColumn) {
+
+        updateData[assignedColumn] =
+            $("#detailAssignedTo")?.value ||
+            null;
     }
 
+    /*
+      REMARKS
+    */
 
-    if (
-        remarks !== undefined
-    ) {
+    const remarksColumn =
+        getRemarksColumn(lead);
 
-        /*
-           Use remarks if it exists in the
-           current row, otherwise internal_notes.
-        */
+    if (remarksColumn) {
 
-        if (
-            Object.prototype.hasOwnProperty.call(
-                currentLead,
-                "remarks"
-            )
-        ) {
-
-            updateData.remarks =
-                remarks || null;
-
-        } else {
-
-            updateData.internal_notes =
-                remarks || null;
-        }
+        updateData[remarksColumn] =
+            $("#detailRemarks")?.value ||
+            null;
     }
 
+    if (!Object.keys(updateData).length) {
 
-    const message =
-        document.getElementById(
-            "leadModalMessage"
+        showToast(
+            "No editable database fields found.",
+            "error"
         );
+
+        return;
+    }
+
+    const saveButton =
+        document.getElementById(
+            "saveLeadBtn"
+        );
+
+    if (saveButton) {
+
+        saveButton.disabled = true;
+
+        saveButton.textContent =
+            "Saving...";
+    }
 
     try {
 
         const {
             data,
             error
-        } =
-            await client
-                .from("customer_enquiries")
-                .update(updateData)
-                .eq("id", leadId)
-                .select()
-                .single();
+        } = await client
+            .from("customer_enquiries")
+            .update(updateData)
+            .eq("id", lead.id)
+            .select()
+            .single();
 
         if (error) {
 
@@ -1959,11 +1889,11 @@ async function saveModalChanges() {
                 error
             );
 
-            if (message) {
-                message.textContent =
-                    error.message ||
-                    "Unable to save changes.";
-            }
+            showModalMessage(
+                error.message ||
+                "Unable to save changes.",
+                true
+            );
 
             showToast(
                 error.message ||
@@ -1977,71 +1907,155 @@ async function saveModalChanges() {
         if (data) {
 
             Object.assign(
-                currentLead,
+                lead,
                 data
             );
-
         } else {
 
             Object.assign(
-                currentLead,
+                lead,
                 updateData
             );
         }
 
+        /*
+          Update main array too.
+        */
 
         const index =
             allLeads.findIndex(
                 item =>
                     String(item.id) ===
-                    String(leadId)
+                    String(lead.id)
             );
 
         if (index !== -1) {
 
             Object.assign(
                 allLeads[index],
-                data ||
-                updateData
+                lead
             );
 
             currentLead =
                 allLeads[index];
         }
 
-
-        renderLeads();
-        updateStats();
-
-        populateLeadModal(
-            currentLead
+        showModalMessage(
+            "Changes saved successfully.",
+            false
         );
-
-        if (message) {
-            message.textContent =
-                "Changes saved successfully.";
-        }
 
         showToast(
-            "Enquiry updated successfully."
+            "Changes saved successfully."
         );
+
+        updateStats();
+
+        /*
+          Refresh table while preserving
+          current page position.
+        */
+
+        const scrollX =
+            window.scrollX;
+
+        const scrollY =
+            window.scrollY;
+
+        applyFilters();
+
+        requestAnimationFrame(() => {
+
+            window.scrollTo(
+                scrollX,
+                scrollY
+            );
+        });
 
     } catch (error) {
 
         console.error(
+            "Modal save exception:",
             error
+        );
+
+        showModalMessage(
+            "Unable to save changes.",
+            true
         );
 
         showToast(
             "Unable to save changes.",
             "error"
         );
+
+    } finally {
+
+        if (saveButton) {
+
+            saveButton.disabled = false;
+
+            saveButton.textContent =
+                "Save Changes";
+        }
     }
 }
 
 
 /* =========================================================
-   ADD ENQUIRY MODAL
+   MODAL MESSAGE
+   ========================================================= */
+
+function showModalMessage(
+    message,
+    isError
+) {
+
+    const element =
+        document.getElementById(
+            "leadModalMessage"
+        );
+
+    if (!element) {
+        return;
+    }
+
+    element.textContent =
+        message;
+
+    element.style.color =
+        isError
+            ? "#ff6b6b"
+            : "#36d399";
+}
+
+
+/* =========================================================
+   CLOSE LEAD MODAL
+   ========================================================= */
+
+function closeLeadModal() {
+
+    const modal =
+        document.getElementById(
+            "leadModal"
+        );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.hidden = true;
+
+    document.body.style.overflow =
+        "";
+
+    currentLead = null;
+}
+
+
+/* =========================================================
+   ADD ENQUIRY
    ========================================================= */
 
 function openAddEnquiryModal() {
@@ -2054,15 +2068,14 @@ function openAddEnquiryModal() {
     if (!modal) {
 
         showToast(
-            "Add enquiry window not found.",
+            "Add enquiry form not found.",
             "error"
         );
 
         return;
     }
 
-    modal.hidden =
-        false;
+    modal.hidden = false;
 
     document.body.style.overflow =
         "hidden";
@@ -2082,15 +2095,10 @@ function openAddEnquiryModal() {
         );
 
     if (message) {
-        message.textContent =
-            "";
+        message.textContent = "";
     }
 }
 
-
-/* =========================================================
-   CLOSE ADD ENQUIRY
-   ========================================================= */
 
 function closeAddEnquiryModal() {
 
@@ -2103,8 +2111,7 @@ function closeAddEnquiryModal() {
         return;
     }
 
-    modal.hidden =
-        true;
+    modal.hidden = true;
 
     document.body.style.overflow =
         "";
@@ -2112,7 +2119,7 @@ function closeAddEnquiryModal() {
 
 
 /* =========================================================
-   ADD ENQUIRY
+   ADD ENQUIRY SUBMIT
    ========================================================= */
 
 async function submitAddEnquiry(
@@ -2142,85 +2149,47 @@ async function submitAddEnquiry(
 
     const data = {};
 
+    formData.forEach(
+        (value, key) => {
 
-    for (
-        const [
-            key,
-            value
-        ]
-        of formData.entries()
-    ) {
-
-        data[key] =
-            typeof value === "string"
-                ? value.trim()
-                : value;
-    }
-
+            data[key] =
+                typeof value === "string"
+                    ? value.trim()
+                    : value;
+        }
+    );
 
     if (!data.status) {
-        data.status =
-            "new";
+        data.status = "new";
     }
-
 
     if (!data.priority) {
-        data.priority =
-            "normal";
+        data.priority = "normal";
     }
 
+    const button =
+        document.getElementById(
+            "submitEnquiryBtn"
+        );
 
-    if (
-        data.guests === ""
-    ) {
-        data.guests =
-            null;
-    } else if (
-        data.guests !== undefined
-    ) {
-        data.guests =
-            Number(data.guests);
+    if (button) {
+
+        button.disabled = true;
+
+        button.textContent =
+            "Adding...";
     }
-
-
-    if (
-        data.event_date === ""
-    ) {
-        data.event_date =
-            null;
-    }
-
-
-    if (
-        data.follow_up_at === ""
-    ) {
-        data.follow_up_at =
-            null;
-    }
-
-
-    if (
-        data.customer_name &&
-        !data.name
-    ) {
-        data.name =
-            data.customer_name;
-    }
-
 
     try {
 
         const {
             data: created,
             error
-        } =
-            await client
-                .from("customer_enquiries")
-                .insert([
-                    data
-                ])
-                .select()
-                .single();
+        } = await client
+            .from("customer_enquiries")
+            .insert([data])
+            .select()
+            .single();
 
         if (error) {
 
@@ -2229,34 +2198,18 @@ async function submitAddEnquiry(
                 error
             );
 
-            const message =
-                document.getElementById(
-                    "addEnquiryMessage"
-                );
-
-            if (message) {
-                message.textContent =
-                    error.message ||
-                    "Unable to create enquiry.";
-            }
-
             showToast(
                 error.message ||
-                "Unable to create enquiry.",
+                "Unable to add enquiry.",
                 "error"
             );
 
             return;
         }
 
-
         if (created) {
-
-            allLeads.unshift(
-                created
-            );
+            allLeads.unshift(created);
         }
-
 
         applyFilters();
         updateStats();
@@ -2269,14 +2222,22 @@ async function submitAddEnquiry(
 
     } catch (error) {
 
-        console.error(
-            error
-        );
+        console.error(error);
 
         showToast(
-            "Unable to create enquiry.",
+            "Unable to add enquiry.",
             "error"
         );
+
+    } finally {
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Add Enquiry";
+        }
     }
 }
 
@@ -2294,121 +2255,53 @@ function updateStats() {
         allLeads.filter(
             lead =>
                 String(
-                    lead.status ||
-                    "new"
-                ).toLowerCase() ===
-                "new"
+                    lead.status || "new"
+                ).toLowerCase() === "new"
         ).length;
-
 
     const contactedCount =
         allLeads.filter(
             lead =>
                 String(
-                    lead.status ||
-                    ""
+                    lead.status || ""
                 ).toLowerCase() ===
                 "contacted"
         ).length;
 
-
     const closedCount =
         allLeads.filter(
-            lead =>
-                String(
-                    lead.status ||
-                    ""
-                ).toLowerCase() ===
-                "closed"
+            lead => {
+
+                const status =
+                    String(
+                        lead.status || ""
+                    ).toLowerCase();
+
+                return (
+                    status === "closed" ||
+                    status === "converted"
+                );
+            }
         ).length;
 
-
-    setStat(
+    setText(
         "totalCount",
         total
     );
 
-    setStat(
+    setText(
         "newCount",
         newCount
     );
 
-    setStat(
+    setText(
         "contactedCount",
         contactedCount
     );
 
-    setStat(
+    setText(
         "closedCount",
         closedCount
-    );
-}
-
-
-function setStat(
-    id,
-    value
-) {
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-    if (element) {
-        element.textContent =
-            value;
-    }
-}
-
-
-/* =========================================================
-   STAT FILTERS
-   ========================================================= */
-
-function setupStatFilters() {
-
-    const cards =
-        document.querySelectorAll(
-            ".stat-card"
-        );
-
-    cards.forEach(
-        card => {
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    cards.forEach(
-                        item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
-
-                    card.classList.add(
-                        "active"
-                    );
-
-                    currentStatusFilter =
-                        card.dataset.statusFilter ||
-                        "all";
-
-                    const statusFilter =
-                        document.getElementById(
-                            "statusFilter"
-                        );
-
-                    if (statusFilter) {
-                        statusFilter.value =
-                            currentStatusFilter;
-                    }
-
-                    applyFilters();
-                }
-            );
-        }
     );
 }
 
@@ -2447,44 +2340,38 @@ function setupSearch() {
 
 function setupFilters() {
 
-    const statusFilter =
+    const status =
         document.getElementById(
             "statusFilter"
         );
 
-    const priorityFilter =
+    const priority =
         document.getElementById(
             "priorityFilter"
         );
 
+    if (status) {
 
-    if (statusFilter) {
-
-        statusFilter.addEventListener(
+        status.addEventListener(
             "change",
             () => {
 
                 currentStatusFilter =
-                    statusFilter.value ||
-                    "all";
-
-                updateActiveStatCard();
+                    status.value || "all";
 
                 applyFilters();
             }
         );
     }
 
+    if (priority) {
 
-    if (priorityFilter) {
-
-        priorityFilter.addEventListener(
+        priority.addEventListener(
             "change",
             () => {
 
                 currentPriorityFilter =
-                    priorityFilter.value ||
-                    "all";
+                    priority.value || "all";
 
                 applyFilters();
             }
@@ -2493,33 +2380,54 @@ function setupFilters() {
 }
 
 
-function updateActiveStatCard() {
+/* =========================================================
+   STAT FILTERS
+   ========================================================= */
 
-    const cards =
-        document.querySelectorAll(
+function setupStatFilters() {
+
+    document
+        .querySelectorAll(
             ".stat-card"
-        );
+        )
+        .forEach(card => {
 
-    cards.forEach(
-        card => {
+            card.addEventListener(
+                "click",
+                () => {
 
-            if (
-                card.dataset.statusFilter ===
-                currentStatusFilter
-            ) {
+                    document
+                        .querySelectorAll(
+                            ".stat-card"
+                        )
+                        .forEach(item =>
+                            item.classList.remove(
+                                "active"
+                            )
+                        );
 
-                card.classList.add(
-                    "active"
-                );
+                    card.classList.add(
+                        "active"
+                    );
 
-            } else {
+                    currentStatusFilter =
+                        card.dataset.statusFilter ||
+                        "all";
 
-                card.classList.remove(
-                    "active"
-                );
-            }
-        }
-    );
+                    const status =
+                        document.getElementById(
+                            "statusFilter"
+                        );
+
+                    if (status) {
+                        status.value =
+                            currentStatusFilter;
+                    }
+
+                    applyFilters();
+                }
+            );
+        });
 }
 
 
@@ -2527,7 +2435,7 @@ function updateActiveStatCard() {
    REFRESH
    ========================================================= */
 
-function setupRefreshButton() {
+function setupRefresh() {
 
     const button =
         document.getElementById(
@@ -2542,22 +2450,20 @@ function setupRefreshButton() {
         "click",
         async () => {
 
-            button.disabled =
-                true;
-
-            const original =
+            const oldText =
                 button.innerHTML;
+
+            button.disabled = true;
 
             button.textContent =
                 "Refreshing...";
 
             await loadEnquiries();
 
-            button.disabled =
-                false;
+            button.disabled = false;
 
             button.innerHTML =
-                original;
+                oldText;
         }
     );
 }
@@ -2595,10 +2501,9 @@ function setupGlobalClicks() {
         "click",
         event => {
 
-
-            /* -----------------------------------------
-               INLINE EDIT
-               ----------------------------------------- */
+            /*
+              INLINE EDIT
+            */
 
             const inline =
                 event.target.closest(
@@ -2607,10 +2512,14 @@ function setupGlobalClicks() {
 
             if (
                 inline &&
+                inline.dataset.editable ===
+                "true" &&
                 !inline.classList.contains(
                     "editing"
                 )
             ) {
+
+                event.preventDefault();
 
                 startInlineEdit(
                     inline
@@ -2620,35 +2529,36 @@ function setupGlobalClicks() {
             }
 
 
-            /* -----------------------------------------
-               VIEW DETAILS
-               ----------------------------------------- */
+            /*
+              VIEW DETAILS
+            */
 
-            const viewButton =
+            const view =
                 event.target.closest(
                     "[data-action='view']"
                 );
 
-            if (viewButton) {
+            if (view) {
+
+                event.preventDefault();
 
                 openLeadModal(
-                    viewButton.dataset.id
+                    view.dataset.id
                 );
 
                 return;
             }
 
 
-            /* -----------------------------------------
-               LEAD MODAL CLOSE
-               ----------------------------------------- */
+            /*
+              CLOSE LEAD MODAL
+            */
 
-            const closeButton =
+            if (
                 event.target.closest(
                     "#closeLeadModal"
-                );
-
-            if (closeButton) {
+                )
+            ) {
 
                 closeLeadModal();
 
@@ -2656,16 +2566,31 @@ function setupGlobalClicks() {
             }
 
 
-            /* -----------------------------------------
-               ADD MODAL CLOSE
-               ----------------------------------------- */
+            /*
+              CANCEL LEAD MODAL
+            */
 
-            const closeAdd =
+            if (
+                event.target.closest(
+                    "#cancelLeadEdit"
+                )
+            ) {
+
+                closeLeadModal();
+
+                return;
+            }
+
+
+            /*
+              CLOSE ADD MODAL
+            */
+
+            if (
                 event.target.closest(
                     "#closeAddEnquiry"
-                );
-
-            if (closeAdd) {
+                )
+            ) {
 
                 closeAddEnquiryModal();
 
@@ -2673,16 +2598,15 @@ function setupGlobalClicks() {
             }
 
 
-            /* -----------------------------------------
-               CANCEL ADD
-               ----------------------------------------- */
+            /*
+              CANCEL ADD
+            */
 
-            const cancelAdd =
+            if (
                 event.target.closest(
                     "#cancelAddEnquiry"
-                );
-
-            if (cancelAdd) {
+                )
+            ) {
 
                 closeAddEnquiryModal();
 
@@ -2690,29 +2614,29 @@ function setupGlobalClicks() {
             }
 
 
-            /* -----------------------------------------
-               SAVE LEAD MODAL
-               ----------------------------------------- */
+            /*
+              SAVE MODAL
+            */
 
-            const saveButton =
+            if (
                 event.target.closest(
                     "#saveLeadBtn"
-                );
+                )
+            ) {
 
-            if (saveButton) {
+                event.preventDefault();
 
                 saveModalChanges();
 
                 return;
             }
-
         }
     );
 
 
-    /* -----------------------------------------
-       LEAD MODAL BACKDROP
-       ----------------------------------------- */
+    /*
+      Lead modal backdrop
+    */
 
     const leadModal =
         document.getElementById(
@@ -2729,6 +2653,7 @@ function setupGlobalClicks() {
                     event.target ===
                     leadModal
                 ) {
+
                     closeLeadModal();
                 }
             }
@@ -2736,9 +2661,9 @@ function setupGlobalClicks() {
     }
 
 
-    /* -----------------------------------------
-       ADD MODAL BACKDROP
-       ----------------------------------------- */
+    /*
+      Add modal backdrop
+    */
 
     const addModal =
         document.getElementById(
@@ -2755,6 +2680,7 @@ function setupGlobalClicks() {
                     event.target ===
                     addModal
                 ) {
+
                     closeAddEnquiryModal();
                 }
             }
@@ -2808,7 +2734,51 @@ function setupLogout() {
 
 
 /* =========================================================
-   AUTH STATE
+   KEYBOARD
+   ========================================================= */
+
+function setupKeyboard() {
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key !== "Escape"
+            ) {
+                return;
+            }
+
+            const leadModal =
+                document.getElementById(
+                    "leadModal"
+                );
+
+            const addModal =
+                document.getElementById(
+                    "addEnquiryModal"
+                );
+
+            if (
+                leadModal &&
+                !leadModal.hidden
+            ) {
+                closeLeadModal();
+            }
+
+            if (
+                addModal &&
+                !addModal.hidden
+            ) {
+                closeAddEnquiryModal();
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   AUTH LISTENER
    ========================================================= */
 
 function setupAuthListener() {
@@ -2849,69 +2819,19 @@ function setupAuthListener() {
 
 
 /* =========================================================
-   KEYBOARD
-   ========================================================= */
-
-function setupKeyboard() {
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key !==
-                "Escape"
-            ) {
-                return;
-            }
-
-            const leadModal =
-                document.getElementById(
-                    "leadModal"
-                );
-
-            const addModal =
-                document.getElementById(
-                    "addEnquiryModal"
-                );
-
-            if (
-                leadModal &&
-                !leadModal.hidden
-            ) {
-
-                closeLeadModal();
-            }
-
-            if (
-                addModal &&
-                !addModal.hidden
-            ) {
-
-                closeAddEnquiryModal();
-            }
-        }
-    );
-}
-
-
-/* =========================================================
-   FORMATTERS
+   FORMATTING
    ========================================================= */
 
 function formatStatus(
-    status
+    value
 ) {
 
-    if (!status) {
+    if (!value) {
         return "New";
     }
 
-    return String(status)
-        .replace(
-            /[-_]/g,
-            " "
-        )
+    return String(value)
+        .replace(/[-_]/g, " ")
         .replace(
             /\b\w/g,
             char =>
@@ -2921,18 +2841,15 @@ function formatStatus(
 
 
 function formatPriority(
-    priority
+    value
 ) {
 
-    if (!priority) {
+    if (!value) {
         return "Normal";
     }
 
-    return String(priority)
-        .replace(
-            /[-_]/g,
-            " "
-        )
+    return String(value)
+        .replace(/[-_]/g, " ")
         .replace(
             /\b\w/g,
             char =>
@@ -2949,6 +2866,28 @@ function formatDate(
         return "—";
     }
 
+    /*
+      Date-only values should not be
+      shifted by timezone.
+    */
+
+    const stringValue =
+        String(value);
+
+    if (
+        /^\d{4}-\d{2}-\d{2}$/.test(
+            stringValue
+        )
+    ) {
+
+        const parts =
+            stringValue.split("-");
+
+        return `${parts[2]} ${getMonthName(
+            Number(parts[1])
+        )} ${parts[0]}`;
+    }
+
     const date =
         new Date(value);
 
@@ -2957,7 +2896,8 @@ function formatDate(
             date.getTime()
         )
     ) {
-        return String(value);
+
+        return stringValue;
     }
 
     return date.toLocaleDateString(
@@ -2971,49 +2911,67 @@ function formatDate(
 }
 
 
+function getMonthName(
+    month
+) {
+
+    const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+    ];
+
+    return (
+        months[month - 1] ||
+        ""
+    );
+}
+
+
 /* =========================================================
-   DROPDOWN OPTIONS
+   OPTIONS
    ========================================================= */
 
 function getStatusOptions() {
 
     return [
-
         {
             value: "new",
             label: "New"
         },
-
         {
             value: "contacted",
             label: "Contacted"
         },
-
         {
             value: "follow-up",
             label: "Follow-up"
         },
-
         {
             value: "qualified",
             label: "Qualified"
         },
-
         {
             value: "converted",
             label: "Converted"
         },
-
         {
             value: "closed",
             label: "Closed"
         },
-
         {
             value: "lost",
             label: "Lost"
         }
-
     ];
 }
 
@@ -3021,32 +2979,26 @@ function getStatusOptions() {
 function getPriorityOptions() {
 
     return [
-
-        {
-            value: "urgent",
-            label: "Urgent"
-        },
-
-        {
-            value: "high",
-            label: "High"
-        },
-
-        {
-            value: "medium",
-            label: "Medium"
-        },
-
         {
             value: "normal",
             label: "Normal"
         },
-
         {
             value: "low",
             label: "Low"
+        },
+        {
+            value: "medium",
+            label: "Medium"
+        },
+        {
+            value: "high",
+            label: "High"
+        },
+        {
+            value: "urgent",
+            label: "Urgent"
         }
-
     ];
 }
 
@@ -3054,47 +3006,38 @@ function getPriorityOptions() {
 function getEventOptions() {
 
     return [
-
         {
             value: "",
             label: "Select Event"
         },
-
         {
             value: "Wedding",
             label: "Wedding"
         },
-
         {
             value: "Engagement",
             label: "Engagement"
         },
-
         {
             value: "Birthday",
             label: "Birthday"
         },
-
         {
             value: "Corporate",
             label: "Corporate"
         },
-
         {
             value: "Anniversary",
             label: "Anniversary"
         },
-
         {
             value: "Party",
             label: "Party"
         },
-
         {
             value: "Other",
             label: "Other"
         }
-
     ];
 }
 
@@ -3106,7 +3049,7 @@ function getEventOptions() {
 async function initializeCRM() {
 
     console.log(
-        "Select My Venue CRM initializing..."
+        "Select My Venue CRM starting..."
     );
 
     const session =
@@ -3118,12 +3061,12 @@ async function initializeCRM() {
 
     setupSearch();
     setupFilters();
-    setupRefreshButton();
+    setupStatFilters();
+    setupRefresh();
     setupAddButton();
     setupGlobalClicks();
     setupAddForm();
     setupLogout();
-    setupStatFilters();
     setupKeyboard();
     setupAuthListener();
 
@@ -3176,9 +3119,7 @@ window.crm = {
     logoutCRM,
 
     startInlineEdit
-
 };
-
 
 window.loadEnquiries =
     loadEnquiries;
