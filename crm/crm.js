@@ -1,603 +1,517 @@
 /* =========================================================
    SELECT MY VENUE — CRM
    crm.js
-   COMPLETE REPLACEMENT
-
-   Features:
-   - Supabase Auth
-   - Customer enquiries
-   - Correct phone/email mapping
-   - No pencil/edit icons
-   - Click-to-edit clean table
-   - View Details modal
-   - Modal editing + saving
-   - Add Enquiry
-   - Search
-   - Status / Priority filters
-   - Refresh
    ========================================================= */
 
+(() => {
+    "use strict";
 
-/* =========================================================
-   SUPABASE CONFIG
-   dashboard.html provides these values BEFORE crm.js loads.
+    /* =====================================================
+       CONFIG
+       These are already supplied by dashboard.html
+    ===================================================== */
 
-   DO NOT put another Supabase URL/key here.
-   ========================================================= */
+    const SUPABASE_URL =
+        window.SUPABASE_URL ||
+        "https://uajqwyoqbbswkfiwosyw.supabase.co";
 
-const CRM_SUPABASE_URL =
-    window.SUPABASE_URL || "";
+    const SUPABASE_ANON_KEY =
+        window.SUPABASE_ANON_KEY ||
+        "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
-const CRM_SUPABASE_ANON_KEY =
-    window.SUPABASE_ANON_KEY || "";
 
-let supabaseClient = null;
+    /* =====================================================
+       GLOBAL STATE
+    ===================================================== */
 
+    let supabaseClient = null;
 
-/* =========================================================
-   SUPABASE CLIENT
-   ========================================================= */
+    let allLeads = [];
+    let filteredLeads = [];
 
-function getSupabaseClient() {
+    let currentLead = null;
 
-    if (supabaseClient) {
-        return supabaseClient;
-    }
+    let currentStatusFilter = "all";
+    let currentPriorityFilter = "all";
+    let currentSearch = "";
 
-    if (
-        !window.supabase ||
-        typeof window.supabase.createClient !== "function"
-    ) {
-        console.error("Supabase library not loaded.");
-        showToast(
-            "Supabase library is not loaded.",
-            "error"
-        );
-        return null;
-    }
+    let editingCell = null;
 
-    if (
-        !CRM_SUPABASE_URL ||
-        !CRM_SUPABASE_ANON_KEY
-    ) {
-        console.error(
-            "Supabase configuration is missing."
-        );
 
-        showToast(
-            "Supabase configuration is missing.",
-            "error"
-        );
+    /* =====================================================
+       START
+    ===================================================== */
 
-        return null;
-    }
+    document.addEventListener("DOMContentLoaded", init);
 
-    supabaseClient =
-        window.supabase.createClient(
-            CRM_SUPABASE_URL,
-            CRM_SUPABASE_ANON_KEY
-        );
 
-    return supabaseClient;
-}
+    async function init() {
 
+        try {
 
-/* =========================================================
-   GLOBAL STATE
-   ========================================================= */
+            if (!window.supabase) {
+                showFatalError(
+                    "Supabase library could not be loaded."
+                );
+                return;
+            }
 
-let allLeads = [];
-let filteredLeads = [];
-
-let currentLead = null;
-
-let currentStatusFilter = "all";
-let currentPriorityFilter = "all";
-let currentSearch = "";
-
-let toastTimer = null;
-
-
-/* =========================================================
-   DOM HELPERS
-   ========================================================= */
-
-function $(selector, parent = document) {
-    return parent.querySelector(selector);
-}
-
-function $all(selector, parent = document) {
-    return Array.from(
-        parent.querySelectorAll(selector)
-    );
-}
-
-
-/* =========================================================
-   SAFE HELPERS
-   ========================================================= */
-
-function safeValue(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return "";
-    }
-
-    return String(value);
-}
-
-
-function escapeHTML(value) {
-
-    return safeValue(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-/* =========================================================
-   FIELD RESOLUTION
-   ---------------------------------------------------------
-   This is the important fix for Phone / Email.
-
-   The CRM will look for the first existing/populated
-   column from the supplied aliases.
-   ========================================================= */
-
-const FIELD_ALIASES = {
-
-    name: [
-        "name",
-        "customer_name",
-        "customer",
-        "full_name"
-    ],
-
-    phone: [
-        "phone",
-        "mobile",
-        "phone_number",
-        "mobile_number",
-        "contact_number",
-        "customer_phone",
-        "customer_mobile",
-        "contact_phone"
-    ],
-
-    email: [
-        "email",
-        "email_address",
-        "email_id",
-        "customer_email",
-        "customer_email_address",
-        "contact_email"
-    ],
-
-    event_type: [
-        "event_type",
-        "event",
-        "event_name"
-    ],
-
-    event_date: [
-        "event_date",
-        "date",
-        "eventDate"
-    ],
-
-    guests: [
-        "guests",
-        "guest_count",
-        "number_of_guests",
-        "no_of_guests",
-        "guest_number"
-    ],
-
-    location: [
-        "location",
-        "city",
-        "area",
-        "customer_location"
-    ],
-
-    venue: [
-        "venue",
-        "venue_name"
-    ],
-
-    source: [
-        "source",
-        "lead_source",
-        "enquiry_source"
-    ],
-
-    message: [
-        "message",
-        "enquiry",
-        "requirements",
-        "customer_message",
-        "customer_requirement",
-        "comment"
-    ],
-
-    remarks: [
-        "remarks",
-        "internal_notes",
-        "notes",
-        "internal_remarks"
-    ],
-
-    follow_up_at: [
-        "follow_up_at",
-        "followup_at",
-        "follow_up",
-        "followup",
-        "follow_up_date"
-    ],
-
-    assigned_to: [
-        "assigned_to",
-        "assigned",
-        "employee",
-        "employee_name"
-    ],
-
-    status: [
-        "status"
-    ],
-
-    priority: [
-        "priority"
-    ]
-};
-
-
-/* =========================================================
-   GET FIELD KEY
-   ---------------------------------------------------------
-   IMPORTANT:
-
-   If the database has:
-       email = null
-       customer_email = "abc@email.com"
-
-   this function returns customer_email.
-
-   That prevents the Email column from appearing blank.
-   ========================================================= */
-
-function getFieldKey(lead, logicalField) {
-
-    if (!lead) {
-        return null;
-    }
-
-    const aliases =
-        FIELD_ALIASES[logicalField] || [];
-
-    /* First prefer a populated value. */
-
-    for (const key of aliases) {
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                lead,
-                key
-            ) &&
-            lead[key] !== null &&
-            lead[key] !== undefined &&
-            String(lead[key]).trim() !== ""
-        ) {
-            return key;
-        }
-    }
-
-    /* Then use the first existing database column. */
-
-    for (const key of aliases) {
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                lead,
-                key
-            )
-        ) {
-            return key;
-        }
-    }
-
-    return null;
-}
-
-
-/* =========================================================
-   GET FIELD VALUE
-   ========================================================= */
-
-function getLeadValue(
-    lead,
-    logicalField,
-    fallback = ""
-) {
-
-    const key =
-        getFieldKey(
-            lead,
-            logicalField
-        );
-
-    if (!key) {
-        return fallback;
-    }
-
-    const value =
-        lead[key];
-
-    if (
-        value === null ||
-        value === undefined ||
-        String(value).trim() === ""
-    ) {
-        return fallback;
-    }
-
-    return value;
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-function showToast(
-    message,
-    type = "success"
-) {
-
-    let toast =
-        document.getElementById(
-            "toastMessage"
-        );
-
-    if (!toast) {
-
-        toast =
-            document.createElement("div");
-
-        toast.id =
-            "toastMessage";
-
-        document.body.appendChild(
-            toast
-        );
-    }
-
-    toast.textContent =
-        message;
-
-    toast.classList.remove(
-        "show"
-    );
-
-    if (type === "error") {
-
-        toast.style.background =
-            "#b42318";
-
-    } else if (type === "warning") {
-
-        toast.style.background =
-            "#9a6700";
-
-    } else {
-
-        toast.style.background =
-            "#20283d";
-    }
-
-    requestAnimationFrame(() => {
-
-        toast.classList.add(
-            "show"
-        );
-
-    });
-
-    clearTimeout(
-        toastTimer
-    );
-
-    toastTimer =
-        setTimeout(() => {
-
-            toast.classList.remove(
-                "show"
+            if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+                showFatalError(
+                    "Supabase configuration is missing."
+                );
+                return;
+            }
+
+            supabaseClient =
+                window.supabase.createClient(
+                    SUPABASE_URL,
+                    SUPABASE_ANON_KEY
+                );
+
+
+            setupEvents();
+
+            await checkAuthentication();
+
+        } catch (error) {
+
+            console.error(
+                "CRM initialization error:",
+                error
             );
 
-        }, 2800);
-}
-
-
-/* =========================================================
-   AUTHENTICATION
-   ========================================================= */
-
-async function checkCRMAuth() {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) {
-        return null;
+            showFatalError(
+                "CRM could not be initialized."
+            );
+        }
     }
 
-    try {
+
+    /* =====================================================
+       AUTHENTICATION
+    ===================================================== */
+
+    async function checkAuthentication() {
 
         const {
             data,
             error
-        } =
-            await client.auth.getSession();
+        } = await supabaseClient.auth.getSession();
 
         if (error) {
 
             console.error(
-                "Auth error:",
+                "Session error:",
                 error
-            );
-
-            return null;
-        }
-
-        const session =
-            data?.session;
-
-        if (!session) {
-
-            window.location.href =
-                "login.html";
-
-            return null;
-        }
-
-        updateStaffName(
-            session.user
-        );
-
-        return session;
-
-    } catch (error) {
-
-        console.error(
-            "Authentication check failed:",
-            error
-        );
-
-        return null;
-    }
-}
-
-
-/* =========================================================
-   STAFF NAME
-   ========================================================= */
-
-function updateStaffName(user) {
-
-    if (!user) {
-        return;
-    }
-
-    const element =
-        document.getElementById(
-            "staffName"
-        ) ||
-        document.querySelector(
-            ".staff-name"
-        );
-
-    if (!element) {
-        return;
-    }
-
-    const metadata =
-        user.user_metadata || {};
-
-    const name =
-        metadata.full_name ||
-        metadata.name ||
-        metadata.display_name ||
-        user.email ||
-        "Employee";
-
-    element.textContent =
-        name;
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-async function logoutCRM() {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) {
-        return;
-    }
-
-    try {
-
-        const {
-            error
-        } =
-            await client.auth.signOut();
-
-        if (error) {
-
-            console.error(
-                "Logout error:",
-                error
-            );
-
-            showToast(
-                "Unable to logout.",
-                "error"
             );
 
             return;
         }
 
+        if (!data || !data.session) {
+
+            /*
+             * If dashboard is opened directly without login,
+             * return to CRM login page.
+             */
+
+            window.location.href = "./login.html";
+
+            return;
+        }
+
+
+        const user =
+            data.session.user;
+
+
+        setStaffName(user);
+
+        await loadLeads();
+    }
+
+
+    function setStaffName(user) {
+
+        const staffName =
+            document.getElementById("staffName");
+
+        if (!staffName) {
+            return;
+        }
+
+        const metadata =
+            user?.user_metadata || {};
+
+        const name =
+            metadata.full_name ||
+            metadata.name ||
+            metadata.display_name ||
+            user?.email ||
+            "Employee";
+
+        staffName.textContent = name;
+    }
+
+
+    /* =====================================================
+       EVENTS
+    ===================================================== */
+
+    function setupEvents() {
+
+        /* Logout */
+
+        const logoutBtn =
+            document.getElementById("logoutBtn");
+
+        if (logoutBtn) {
+
+            logoutBtn.addEventListener(
+                "click",
+                logout
+            );
+        }
+
+
+        /* Refresh */
+
+        const refreshBtn =
+            document.getElementById("refreshBtn");
+
+        if (refreshBtn) {
+
+            refreshBtn.addEventListener(
+                "click",
+                async () => {
+
+                    await loadLeads();
+                }
+            );
+        }
+
+
+        /* Search */
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                () => {
+
+                    currentSearch =
+                        searchInput.value
+                            .trim()
+                            .toLowerCase();
+
+                    applyFilters();
+                }
+            );
+        }
+
+
+        /* Status filter */
+
+        const statusFilter =
+            document.getElementById("statusFilter");
+
+        if (statusFilter) {
+
+            statusFilter.addEventListener(
+                "change",
+                () => {
+
+                    currentStatusFilter =
+                        statusFilter.value ||
+                        "all";
+
+                    applyFilters();
+                }
+            );
+        }
+
+
+        /* Priority filter */
+
+        const priorityFilter =
+            document.getElementById(
+                "priorityFilter"
+            );
+
+        if (priorityFilter) {
+
+            priorityFilter.addEventListener(
+                "change",
+                () => {
+
+                    currentPriorityFilter =
+                        priorityFilter.value ||
+                        "all";
+
+                    applyFilters();
+                }
+            );
+        }
+
+
+        /* Stat cards */
+
+        document
+            .querySelectorAll(
+                ".stat-card[data-status-filter]"
+            )
+            .forEach(card => {
+
+                card.addEventListener(
+                    "click",
+                    () => {
+
+                        const value =
+                            normalizeStatus(
+                                card.dataset.statusFilter
+                            );
+
+                        currentStatusFilter =
+                            value === "all"
+                                ? "all"
+                                : value;
+
+                        if (statusFilter) {
+
+                            statusFilter.value =
+                                currentStatusFilter;
+                        }
+
+                        document
+                            .querySelectorAll(
+                                ".stat-card"
+                            )
+                            .forEach(item => {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+                            });
+
+                        card.classList.add(
+                            "active"
+                        );
+
+                        applyFilters();
+                    }
+                );
+            });
+
+
+        /* Add enquiry */
+
+        const addBtn =
+            document.getElementById(
+                "addEnquiryBtn"
+            );
+
+        if (addBtn) {
+
+            addBtn.addEventListener(
+                "click",
+                openAddEnquiryModal
+            );
+        }
+
+
+        /* Close add enquiry */
+
+        const closeAdd =
+            document.getElementById(
+                "closeAddEnquiry"
+            );
+
+        if (closeAdd) {
+
+            closeAdd.addEventListener(
+                "click",
+                closeAddEnquiryModal
+            );
+        }
+
+
+        const cancelAdd =
+            document.getElementById(
+                "cancelAddEnquiry"
+            );
+
+        if (cancelAdd) {
+
+            cancelAdd.addEventListener(
+                "click",
+                closeAddEnquiryModal
+            );
+        }
+
+
+        /* Add enquiry form */
+
+        const addForm =
+            document.getElementById(
+                "addEnquiryForm"
+            );
+
+        if (addForm) {
+
+            addForm.addEventListener(
+                "submit",
+                handleAddEnquiry
+            );
+        }
+
+
+        /* Close details */
+
+        const closeDetails =
+            document.getElementById(
+                "closeLeadModal"
+            );
+
+        if (closeDetails) {
+
+            closeDetails.addEventListener(
+                "click",
+                closeLeadModal
+            );
+        }
+
+
+        /* Cancel details */
+
+        const cancelEdit =
+            document.getElementById(
+                "cancelLeadEdit"
+            );
+
+        if (cancelEdit) {
+
+            cancelEdit.addEventListener(
+                "click",
+                closeLeadModal
+            );
+        }
+
+
+        /* Save details */
+
+        const saveBtn =
+            document.getElementById(
+                "saveLeadBtn"
+            );
+
+        if (saveBtn) {
+
+            saveBtn.addEventListener(
+                "click",
+                saveLeadDetails
+            );
+        }
+
+
+        /*
+         * ESC closes modal
+         */
+
+        document.addEventListener(
+            "keydown",
+            event => {
+
+                if (event.key !== "Escape") {
+                    return;
+                }
+
+                closeLeadModal();
+                closeAddEnquiryModal();
+            }
+        );
+
+
+        /*
+         * Click outside modal
+         */
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                const target =
+                    event.target;
+
+                if (
+                    target.classList &&
+                    target.classList.contains(
+                        "lead-modal"
+                    )
+                ) {
+                    closeLeadModal();
+                }
+
+                if (
+                    target.classList &&
+                    target.classList.contains(
+                        "add-enquiry-modal"
+                    )
+                ) {
+                    closeAddEnquiryModal();
+                }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
+
+    async function logout() {
+
+        try {
+
+            await supabaseClient.auth.signOut();
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+        }
+
         window.location.href =
-            "login.html";
-
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-        showToast(
-            "Unable to logout.",
-            "error"
-        );
-    }
-}
-
-
-/* =========================================================
-   LOAD ENQUIRIES
-   ========================================================= */
-
-async function loadEnquiries() {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) {
-        return;
+            "./login.html";
     }
 
-    setTableLoading();
 
-    try {
+    /* =====================================================
+       LOAD LEADS
+    ===================================================== */
 
-        const {
-            data,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
+    async function loadLeads() {
+
+        setLoadingState();
+
+        try {
+
+            /*
+             * IMPORTANT:
+             * Select * keeps the existing database structure.
+             * We do NOT rename or overwrite database columns.
+             */
+
+            const {
+                data,
+                error
+            } = await supabaseClient
+                .from("enquiries")
                 .select("*")
                 .order(
                     "created_at",
@@ -606,1911 +520,1564 @@ async function loadEnquiries() {
                     }
                 );
 
-        if (error) {
+
+            if (error) {
+
+                console.error(
+                    "Supabase enquiries error:",
+                    error
+                );
+
+                /*
+                 * Some projects may use "leads"
+                 * instead of "enquiries".
+                 */
+
+                const fallback =
+                    await supabaseClient
+                        .from("leads")
+                        .select("*")
+                        .order(
+                            "created_at",
+                            {
+                                ascending: false
+                            }
+                        );
+
+                if (
+                    fallback.error ||
+                    !fallback.data
+                ) {
+
+                    throw error;
+                }
+
+                allLeads =
+                    fallback.data;
+
+            } else {
+
+                allLeads =
+                    data || [];
+            }
+
+
+            console.log(
+                "CRM leads loaded:",
+                allLeads
+            );
+
+
+            updateStatistics();
+
+            applyFilters();
+
+        } catch (error) {
 
             console.error(
-                "Supabase enquiries error:",
+                "Load leads error:",
                 error
             );
 
-            renderTableError(
-                "Unable to load enquiries."
+            showTableMessage(
+                "Unable to load enquiries. Please refresh the page."
+            );
+        }
+    }
+
+
+    /* =====================================================
+       DATABASE FIELD MAPPING
+    ===================================================== */
+
+    function findField(row, names) {
+
+        if (!row) {
+            return null;
+        }
+
+        const keys =
+            Object.keys(row);
+
+        for (
+            const wanted of names
+        ) {
+
+            const exact =
+                keys.find(
+                    key =>
+                        key === wanted
+                );
+
+            if (exact) {
+                return exact;
+            }
+        }
+
+
+        for (
+            const wanted of names
+        ) {
+
+            const lowerWanted =
+                wanted.toLowerCase();
+
+            const match =
+                keys.find(
+                    key =>
+                        key.toLowerCase() ===
+                        lowerWanted
+                );
+
+            if (match) {
+                return match;
+            }
+        }
+
+
+        return null;
+    }
+
+
+    function getValue(row, names) {
+
+        const field =
+            findField(
+                row,
+                names
             );
 
-            showToast(
-                "Unable to load enquiries.",
-                "error"
+        if (!field) {
+            return "";
+        }
+
+        return row[field];
+    }
+
+
+    function getId(row) {
+
+        return getValue(
+            row,
+            [
+                "id",
+                "enquiry_id",
+                "lead_id"
+            ]
+        );
+    }
+
+
+    function getCustomerName(row) {
+
+        return getValue(
+            row,
+            [
+                "customer_name",
+                "name",
+                "full_name",
+                "customer"
+            ]
+        );
+    }
+
+
+    function getPhone(row) {
+
+        return getValue(
+            row,
+            [
+                "phone",
+                "mobile",
+                "phone_number",
+                "mobile_number",
+                "customer_phone",
+                "contact_phone"
+            ]
+        );
+    }
+
+
+    function getEmail(row) {
+
+        return getValue(
+            row,
+            [
+                "email",
+                "customer_email",
+                "email_address",
+                "contact_email"
+            ]
+        );
+    }
+
+
+    function getEventType(row) {
+
+        return getValue(
+            row,
+            [
+                "event_type",
+                "event",
+                "event_name"
+            ]
+        );
+    }
+
+
+    function getVenue(row) {
+
+        return getValue(
+            row,
+            [
+                "venue",
+                "venue_name",
+                "location"
+            ]
+        );
+    }
+
+
+    function getEventDate(row) {
+
+        return getValue(
+            row,
+            [
+                "event_date",
+                "date"
+            ]
+        );
+    }
+
+
+    function getGuests(row) {
+
+        return getValue(
+            row,
+            [
+                "guests",
+                "guest_count",
+                "number_of_guests"
+            ]
+        );
+    }
+
+
+    function getStatus(row) {
+
+        return getValue(
+            row,
+            [
+                "status",
+                "lead_status"
+            ]
+        );
+    }
+
+
+    function getPriority(row) {
+
+        return getValue(
+            row,
+            [
+                "priority",
+                "lead_priority"
+            ]
+        );
+    }
+
+
+    function getSource(row) {
+
+        return getValue(
+            row,
+            [
+                "source",
+                "lead_source"
+            ]
+        );
+    }
+
+
+    function getMessage(row) {
+
+        return getValue(
+            row,
+            [
+                "message",
+                "customer_message",
+                "comment",
+                "comments"
+            ]
+        );
+    }
+
+
+    function getRemarks(row) {
+
+        return getValue(
+            row,
+            [
+                "remarks",
+                "internal_remarks",
+                "notes",
+                "internal_notes"
+            ]
+        );
+    }
+
+
+    function getFollowUp(row) {
+
+        return getValue(
+            row,
+            [
+                "follow_up_at",
+                "followup_at",
+                "follow_up",
+                "followup_date"
+            ]
+        );
+    }
+
+
+    function getAssignedTo(row) {
+
+        return getValue(
+            row,
+            [
+                "assigned_to",
+                "assigned",
+                "employee"
+            ]
+        );
+    }
+
+
+    /* =====================================================
+       FILTERS
+    ===================================================== */
+
+    function applyFilters() {
+
+        filteredLeads =
+            allLeads.filter(
+                lead => {
+
+                    const status =
+                        normalizeStatus(
+                            getStatus(lead)
+                        );
+
+                    const priority =
+                        normalizePriority(
+                            getPriority(lead)
+                        );
+
+
+                    if (
+                        currentStatusFilter !==
+                        "all" &&
+                        status !==
+                        currentStatusFilter
+                    ) {
+                        return false;
+                    }
+
+
+                    if (
+                        currentPriorityFilter !==
+                        "all" &&
+                        priority !==
+                        currentPriorityFilter
+                    ) {
+                        return false;
+                    }
+
+
+                    if (
+                        currentSearch
+                    ) {
+
+                        const searchable = [
+
+                            getCustomerName(
+                                lead
+                            ),
+
+                            getPhone(
+                                lead
+                            ),
+
+                            getEmail(
+                                lead
+                            ),
+
+                            getVenue(
+                                lead
+                            ),
+
+                            getEventType(
+                                lead
+                            ),
+
+                            getSource(
+                                lead
+                            )
+
+                        ]
+                            .join(" ")
+                            .toLowerCase();
+
+
+                        if (
+                            !searchable.includes(
+                                currentSearch
+                            )
+                        ) {
+
+                            return false;
+                        }
+                    }
+
+
+                    return true;
+                }
             );
+
+
+        renderTable();
+    }
+
+
+    /* =====================================================
+       STATISTICS
+    ===================================================== */
+
+    function updateStatistics() {
+
+        const total =
+            allLeads.length;
+
+
+        const newCount =
+            allLeads.filter(
+                row =>
+                    normalizeStatus(
+                        getStatus(row)
+                    ) === "new"
+            ).length;
+
+
+        const contactedCount =
+            allLeads.filter(
+                row =>
+                    normalizeStatus(
+                        getStatus(row)
+                    ) === "contacted"
+            ).length;
+
+
+        const closedCount =
+            allLeads.filter(
+                row =>
+                    normalizeStatus(
+                        getStatus(row)
+                    ) === "closed"
+            ).length;
+
+
+        setText(
+            "totalCount",
+            total
+        );
+
+        setText(
+            "newCount",
+            newCount
+        );
+
+        setText(
+            "contactedCount",
+            contactedCount
+        );
+
+        setText(
+            "closedCount",
+            closedCount
+        );
+    }
+
+
+    /* =====================================================
+       TABLE
+    ===================================================== */
+
+    function renderTable() {
+
+        const tbody =
+            document.getElementById(
+                "leadsTableBody"
+            );
+
+        const emptyState =
+            document.getElementById(
+                "emptyState"
+            );
+
+
+        if (!tbody) {
+            return;
+        }
+
+
+        tbody.innerHTML = "";
+
+
+        if (
+            !filteredLeads.length
+        ) {
+
+            if (emptyState) {
+                emptyState.hidden = false;
+            }
 
             return;
         }
 
-        allLeads =
-            Array.isArray(data)
-                ? data
-                : [];
 
-        applyFilters();
-        updateStats();
-
-    } catch (error) {
-
-        console.error(
-            "Load enquiries failed:",
-            error
-        );
-
-        renderTableError(
-            "Something went wrong while loading enquiries."
-        );
-
-        showToast(
-            "Unable to load enquiries.",
-            "error"
-        );
-    }
-}
+        if (emptyState) {
+            emptyState.hidden = true;
+        }
 
 
-/* =========================================================
-   TABLE LOADING
-   ========================================================= */
+        filteredLeads.forEach(
+            lead => {
 
-function setTableLoading() {
-
-    const tbody =
-        document.getElementById(
-            "leadsTableBody"
-        ) ||
-        document.querySelector(
-            ".leads-table tbody"
-        );
-
-    if (!tbody) {
-        return;
-    }
-
-    tbody.innerHTML = `
-        <tr>
-            <td
-                colspan="9"
-                class="loading-cell"
-            >
-                Loading customer enquiries...
-            </td>
-        </tr>
-    `;
-}
-
-
-function renderTableError(message) {
-
-    const tbody =
-        document.getElementById(
-            "leadsTableBody"
-        ) ||
-        document.querySelector(
-            ".leads-table tbody"
-        );
-
-    if (!tbody) {
-        return;
-    }
-
-    tbody.innerHTML = `
-        <tr>
-            <td
-                colspan="9"
-                class="loading-cell"
-            >
-                ${escapeHTML(message)}
-            </td>
-        </tr>
-    `;
-}
-
-
-/* =========================================================
-   SEARCH TEXT
-   ========================================================= */
-
-function getSearchableText(lead) {
-
-    return [
-
-        getLeadValue(
-            lead,
-            "name"
-        ),
-
-        getLeadValue(
-            lead,
-            "phone"
-        ),
-
-        getLeadValue(
-            lead,
-            "email"
-        ),
-
-        getLeadValue(
-            lead,
-            "venue"
-        ),
-
-        getLeadValue(
-            lead,
-            "location"
-        ),
-
-        getLeadValue(
-            lead,
-            "event_type"
-        ),
-
-        getLeadValue(
-            lead,
-            "message"
-        ),
-
-        getLeadValue(
-            lead,
-            "source"
-        )
-
-    ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-}
-
-
-/* =========================================================
-   FILTERS
-   ========================================================= */
-
-function applyFilters() {
-
-    const search =
-        currentSearch
-            .trim()
-            .toLowerCase();
-
-    filteredLeads =
-        allLeads.filter(
-            (lead) => {
-
-                const searchable =
-                    getSearchableText(
-                        lead
+                const tr =
+                    document.createElement(
+                        "tr"
                     );
 
-                const matchesSearch =
-                    !search ||
-                    searchable.includes(
-                        search
+                tr.dataset.leadId =
+                    String(
+                        getId(lead)
                     );
 
-                const status =
-                    safeValue(
-                        getLeadValue(
-                            lead,
-                            "status",
-                            "new"
-                        )
+
+                /* CUSTOMER */
+
+                const customerTd =
+                    document.createElement(
+                        "td"
+                    );
+
+                customerTd.className =
+                    "customer-cell";
+
+
+                const customerName =
+                    document.createElement(
+                        "strong"
+                    );
+
+                customerName.textContent =
+                    safeDisplay(
+                        getCustomerName(
+                            lead
+                        ),
+                        "Unnamed Customer"
+                    );
+
+
+                customerTd.appendChild(
+                    customerName
+                );
+
+
+                /* PHONE */
+
+                const phoneTd =
+                    createEditableCell(
+                        lead,
+                        "phone",
+                        getPhone(lead),
+                        false
+                    );
+
+
+                /* EMAIL */
+
+                const emailTd =
+                    createEditableCell(
+                        lead,
+                        "email",
+                        getEmail(lead),
+                        true
+                    );
+
+
+                /* EVENT */
+
+                const eventTd =
+                    createEditableCell(
+                        lead,
+                        "event_type",
+                        getEventType(lead),
+                        true,
+                        "select",
+                        [
+                            "Wedding",
+                            "Engagement",
+                            "Birthday",
+                            "Corporate",
+                            "Anniversary",
+                            "Party",
+                            "Other"
+                        ]
+                    );
+
+
+                /* DATE */
+
+                const dateTd =
+                    createEditableCell(
+                        lead,
+                        "event_date",
+                        formatDate(
+                            getEventDate(lead)
+                        ),
+                        true,
+                        "date",
+                        null,
+                        getEventDate(lead)
+                    );
+
+
+                /* GUESTS */
+
+                const guestsTd =
+                    createEditableCell(
+                        lead,
+                        "guests",
+                        getGuests(lead),
+                        true,
+                        "number"
+                    );
+
+
+                /* LOCATION / VENUE */
+
+                const locationTd =
+                    createEditableCell(
+                        lead,
+                        "venue",
+                        getVenue(lead),
+                        true
+                    );
+
+
+                /* STATUS */
+
+                const statusTd =
+                    createEditableCell(
+                        lead,
+                        "status",
+                        prettyStatus(
+                            getStatus(lead)
+                        ),
+                        true,
+                        "select",
+                        [
+                            "new",
+                            "contacted",
+                            "follow-up",
+                            "qualified",
+                            "converted",
+                            "closed",
+                            "lost"
+                        ]
+                    );
+
+
+                /* PRIORITY */
+
+                const priorityTd =
+                    createEditableCell(
+                        lead,
+                        "priority",
+                        prettyStatus(
+                            getPriority(lead)
+                        ),
+                        true,
+                        "select",
+                        [
+                            "urgent",
+                            "high",
+                            "medium",
+                            "normal",
+                            "low"
+                        ]
+                    );
+
+
+                /* ACTION */
+
+                const actionTd =
+                    document.createElement(
+                        "td"
+                    );
+
+                actionTd.className =
+                    "action-cell";
+
+
+                const detailsBtn =
+                    document.createElement(
+                        "button"
+                    );
+
+                detailsBtn.type =
+                    "button";
+
+                detailsBtn.className =
+                    "view-details-btn";
+
+                detailsBtn.textContent =
+                    "View Details";
+
+
+                detailsBtn.addEventListener(
+                    "click",
+                    event => {
+
+                        event.stopPropagation();
+
+                        openLeadDetails(
+                            lead
+                        );
+                    }
+                );
+
+
+                actionTd.appendChild(
+                    detailsBtn
+                );
+
+
+                tr.appendChild(
+                    customerTd
+                );
+
+                tr.appendChild(
+                    phoneTd
+                );
+
+                tr.appendChild(
+                    emailTd
+                );
+
+                tr.appendChild(
+                    eventTd
+                );
+
+                tr.appendChild(
+                    dateTd
+                );
+
+                tr.appendChild(
+                    guestsTd
+                );
+
+                tr.appendChild(
+                    locationTd
+                );
+
+                tr.appendChild(
+                    statusTd
+                );
+
+                tr.appendChild(
+                    priorityTd
+                );
+
+                tr.appendChild(
+                    actionTd
+                );
+
+
+                tbody.appendChild(
+                    tr
+                );
+            }
+        );
+    }
+
+
+    /* =====================================================
+       CLEAN CLICK-TO-EDIT CELL
+       NO PENCIL / NO EDIT ICON
+    ===================================================== */
+
+    function createEditableCell(
+        lead,
+        logicalField,
+        displayValue,
+        editable = true,
+        type = "text",
+        options = null,
+        rawValue = null
+    ) {
+
+        const td =
+            document.createElement(
+                "td"
+            );
+
+
+        const value =
+            document.createElement(
+                "span"
+            );
+
+        value.className =
+            "cell-value";
+
+
+        value.textContent =
+            safeDisplay(
+                displayValue,
+                "—"
+            );
+
+
+        td.appendChild(
+            value
+        );
+
+
+        if (!editable) {
+
+            td.classList.add(
+                "non-editable-cell"
+            );
+
+            return td;
+        }
+
+
+        /*
+         * Important:
+         * There is intentionally NO pencil,
+         * edit icon, title or visible indicator.
+         */
+
+        td.classList.add(
+            "click-to-edit"
+        );
+
+
+        td.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target.closest(
+                        "input, select, button"
                     )
-                        .toLowerCase();
+                ) {
+                    return;
+                }
 
-                const priority =
-                    safeValue(
-                        getLeadValue(
+                startInlineEdit(
+                    td,
+                    lead,
+                    logicalField,
+                    type,
+                    options,
+                    rawValue ??
+                        getLogicalValue(
                             lead,
-                            "priority",
-                            "normal"
+                            logicalField
                         )
-                    )
-                        .toLowerCase();
-
-                const matchesStatus =
-                    currentStatusFilter === "all" ||
-                    status ===
-                        currentStatusFilter;
-
-                const matchesPriority =
-                    currentPriorityFilter === "all" ||
-                    priority ===
-                        currentPriorityFilter;
-
-                return (
-                    matchesSearch &&
-                    matchesStatus &&
-                    matchesPriority
                 );
             }
         );
 
-    renderLeads();
-}
 
-
-/* =========================================================
-   RENDER TABLE
-   ========================================================= */
-
-function renderLeads() {
-
-    const tbody =
-        document.getElementById(
-            "leadsTableBody"
-        ) ||
-        document.querySelector(
-            ".leads-table tbody"
-        );
-
-    if (!tbody) {
-        return;
+        return td;
     }
 
-    if (!filteredLeads.length) {
 
-        tbody.innerHTML = `
-            <tr>
-                <td
-                    colspan="9"
-                    class="loading-cell"
-                >
-                    <div class="empty-state">
-                        <div class="empty-icon">
-                            ⌕
-                        </div>
-
-                        <h3>
-                            No enquiries found
-                        </h3>
-
-                        <p>
-                            Try changing your search or filter.
-                        </p>
-                    </div>
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-    tbody.innerHTML =
-        filteredLeads
-            .map(
-                createLeadRow
-            )
-            .join("");
-}
-
-
-/* =========================================================
-   CREATE LEAD ROW
-   ---------------------------------------------------------
-   IMPORTANT:
-   CUSTOMER, PHONE and EMAIL are now separate columns.
-   No pencil is generated anywhere.
-   ========================================================= */
-
-function createLeadRow(lead) {
-
-    const id =
-        safeValue(
-            lead.id
-        );
-
-    const name =
-        getLeadValue(
-            lead,
-            "name",
-            "Unknown Customer"
-        );
-
-    const phone =
-        getLeadValue(
-            lead,
-            "phone",
-            "—"
-        );
-
-    const email =
-        getLeadValue(
-            lead,
-            "email",
-            "—"
-        );
-
-    const eventType =
-        getLeadValue(
-            lead,
-            "event_type",
-            "—"
-        );
-
-    const eventDate =
-        getLeadValue(
-            lead,
-            "event_date",
-            ""
-        );
-
-    const guests =
-        getLeadValue(
-            lead,
-            "guests",
-            "—"
-        );
-
-    const location =
-        getLeadValue(
-            lead,
-            "location",
-            "—"
-        );
-
-    const status =
-        getLeadValue(
-            lead,
-            "status",
-            "new"
-        );
-
-    const priority =
-        getLeadValue(
-            lead,
-            "priority",
-            "normal"
-        );
-
-    const phoneField =
-        getFieldKey(
-            lead,
-            "phone"
-        );
-
-    const emailField =
-        getFieldKey(
-            lead,
-            "email"
-        );
-
-    const eventField =
-        getFieldKey(
-            lead,
-            "event_type"
-        );
-
-    const dateField =
-        getFieldKey(
-            lead,
-            "event_date"
-        );
-
-    const guestsField =
-        getFieldKey(
-            lead,
-            "guests"
-        );
-
-    const locationField =
-        getFieldKey(
-            lead,
-            "location"
-        );
-
-    return `
-        <tr
-            data-lead-id="${escapeHTML(id)}"
-        >
-
-            <!-- CUSTOMER -->
-
-            <td>
-                <div class="crm-table-value">
-                    ${escapeHTML(name)}
-                </div>
-            </td>
-
-
-            <!-- PHONE -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    phoneField,
-                    phone,
-                    "text",
-                    {
-                        logicalField: "phone"
-                    }
-                )}
-            </td>
-
-
-            <!-- EMAIL -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    emailField,
-                    email,
-                    "email",
-                    {
-                        logicalField: "email"
-                    }
-                )}
-            </td>
-
-
-            <!-- EVENT -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    eventField,
-                    eventType,
-                    "select",
-                    {
-                        options:
-                            getEventOptions(),
-                        logicalField:
-                            "event_type"
-                    }
-                )}
-            </td>
-
-
-            <!-- EVENT DATE -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    dateField,
-                    formatDate(eventDate),
-                    "date",
-                    {
-                        rawValue:
-                            eventDate,
-                        logicalField:
-                            "event_date"
-                    }
-                )}
-            </td>
-
-
-            <!-- GUESTS -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    guestsField,
-                    guests,
-                    "number",
-                    {
-                        logicalField:
-                            "guests"
-                    }
-                )}
-            </td>
-
-
-            <!-- LOCATION -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    locationField,
-                    location,
-                    "text",
-                    {
-                        logicalField:
-                            "location"
-                    }
-                )}
-            </td>
-
-
-            <!-- STATUS -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "status",
-                    formatStatus(status),
-                    "select",
-                    {
-                        options:
-                            getStatusOptions(),
-                        logicalField:
-                            "status"
-                    }
-                )}
-            </td>
-
-
-            <!-- PRIORITY -->
-
-            <td>
-                ${createInlineField(
-                    lead,
-                    "priority",
-                    formatPriority(priority),
-                    "select",
-                    {
-                        options:
-                            getPriorityOptions(),
-                        logicalField:
-                            "priority"
-                    }
-                )}
-            </td>
-
-
-            <!-- ACTION -->
-
-            <td>
-                <button
-                    type="button"
-                    class="view-lead-btn"
-                    data-action="view"
-                    data-id="${escapeHTML(id)}"
-                >
-                    View Details
-                </button>
-            </td>
-
-        </tr>
-    `;
-}
-
-
-/* =========================================================
-   INLINE FIELD
-   ---------------------------------------------------------
-   DISPLAY ONLY.
-   No pencil.
-   Click anywhere on the value to edit.
-   ========================================================= */
-
-function createInlineField(
-    lead,
-    field,
-    displayValue,
-    type = "text",
-    config = {}
-) {
-
-    if (!field) {
-
-        return `
-            <div
-                class="crm-inline-field crm-inline-disabled"
-            >
-                <span class="inline-display">
-                    ${escapeHTML(
-                        displayValue || "—"
-                    )}
-                </span>
-            </div>
-        `;
-    }
-
-    const id =
-        safeValue(
-            lead.id
-        );
-
-    const rawValue =
-        config.rawValue !== undefined
-            ? config.rawValue
-            : lead[field];
-
-    const logicalField =
-        config.logicalField ||
-        field;
-
-    return `
-        <div
-            class="crm-inline-field"
-            data-inline-field="${escapeHTML(field)}"
-            data-logical-field="${escapeHTML(logicalField)}"
-            data-lead-id="${escapeHTML(id)}"
-            tabindex="0"
-            title="Click to edit"
-        >
-
-            <span class="inline-display">
-                ${escapeHTML(
-                    displayValue || "—"
-                )}
-            </span>
-
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   START INLINE EDIT
-   ========================================================= */
-
-function startInlineEdit(element) {
-
-    if (
-        !element ||
-        element.classList.contains(
-            "editing"
-        )
+    /* =====================================================
+       INLINE EDIT
+    ===================================================== */
+
+    function startInlineEdit(
+        td,
+        lead,
+        logicalField,
+        type,
+        options,
+        currentValue
     ) {
-        return;
-    }
-
-    const field =
-        element.dataset.inlineField;
-
-    const logicalField =
-        element.dataset.logicalField ||
-        field;
-
-    const leadId =
-        element.dataset.leadId;
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-
-        showToast(
-            "Enquiry not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    const actualField =
-        field ||
-        getFieldKey(
-            lead,
-            logicalField
-        );
-
-    if (!actualField) {
-
-        showToast(
-            "This field is not available.",
-            "warning"
-        );
-
-        return;
-    }
-
-    const originalValue =
-        lead[actualField] ??
-        "";
-
-    const display =
-        element.querySelector(
-            ".inline-display"
-        );
-
-    if (!display) {
-        return;
-    }
-
-    element.classList.add(
-        "editing"
-    );
-
-    let editor = null;
-
-    if (
-        logicalField ===
-        "status"
-    ) {
-
-        editor =
-            createSelectEditor(
-                getStatusOptions(),
-                originalValue ||
-                    "new"
-            );
-
-    } else if (
-        logicalField ===
-        "priority"
-    ) {
-
-        editor =
-            createSelectEditor(
-                getPriorityOptions(),
-                originalValue ||
-                    "normal"
-            );
-
-    } else if (
-        logicalField ===
-        "event_type"
-    ) {
-
-        editor =
-            createSelectEditor(
-                getEventOptions(),
-                originalValue ||
-                    ""
-            );
-
-    } else {
-
-        editor =
-            document.createElement(
-                "input"
-            );
 
         if (
-            logicalField ===
-            "event_date"
+            editingCell &&
+            editingCell !== td
         ) {
+            cancelInlineEdit();
+        }
 
-            editor.type =
-                "date";
 
-        } else if (
-            logicalField ===
-            "guests"
+        if (
+            td.classList.contains(
+                "editing"
+            )
         ) {
+            return;
+        }
 
-            editor.type =
-                "number";
 
-            editor.min =
-                "0";
+        editingCell = td;
 
-        } else if (
-            logicalField ===
-            "email"
-        ) {
+        td.classList.add(
+            "editing"
+        );
 
-            editor.type =
-                "email";
+
+        const original =
+            td.querySelector(
+                ".cell-value"
+            );
+
+
+        if (original) {
+            original.style.display =
+                "none";
+        }
+
+
+        const editor =
+            document.createElement(
+                "div"
+            );
+
+        editor.className =
+            "clean-inline-editor";
+
+
+        let input;
+
+
+        if (type === "select") {
+
+            input =
+                document.createElement(
+                    "select"
+                );
+
+            options.forEach(
+                option => {
+
+                    const item =
+                        document.createElement(
+                            "option"
+                        );
+
+                    item.value =
+                        option;
+
+                    item.textContent =
+                        prettyStatus(
+                            option
+                        );
+
+                    if (
+                        normalizeStatus(
+                            option
+                        ) ===
+                        normalizeStatus(
+                            currentValue
+                        )
+                    ) {
+                        item.selected =
+                            true;
+                    }
+
+                    input.appendChild(
+                        item
+                    );
+                }
+            );
 
         } else {
 
-            editor.type =
-                "text";
+            input =
+                document.createElement(
+                    "input"
+                );
+
+            input.type =
+                type;
+
+            input.value =
+                currentValue ??
+                "";
         }
 
-        editor.value =
-            safeValue(
-                originalValue
+
+        input.className =
+            "clean-inline-input";
+
+
+        const save =
+            document.createElement(
+                "button"
             );
+
+        save.type =
+            "button";
+
+        save.className =
+            "clean-inline-save";
+
+        save.textContent =
+            "Save";
+
+
+        const cancel =
+            document.createElement(
+                "button"
+            );
+
+        cancel.type =
+            "button";
+
+        cancel.className =
+            "clean-inline-cancel";
+
+        cancel.textContent =
+            "Cancel";
+
+
+        editor.appendChild(
+            input
+        );
+
+        editor.appendChild(
+            save
+        );
+
+        editor.appendChild(
+            cancel
+        );
+
+
+        td.appendChild(
+            editor
+        );
+
+
+        save.addEventListener(
+            "click",
+            async event => {
+
+                event.stopPropagation();
+
+                await saveInlineEdit(
+                    td,
+                    lead,
+                    logicalField,
+                    input.value,
+                    original,
+                    editor
+                );
+            }
+        );
+
+
+        cancel.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                cancelInlineEdit();
+            }
+        );
+
+
+        input.addEventListener(
+            "keydown",
+            async event => {
+
+                if (
+                    event.key === "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    await saveInlineEdit(
+                        td,
+                        lead,
+                        logicalField,
+                        input.value,
+                        original,
+                        editor
+                    );
+                }
+
+
+                if (
+                    event.key === "Escape"
+                ) {
+
+                    event.preventDefault();
+
+                    cancelInlineEdit();
+                }
+            }
+        );
+
+
+        setTimeout(
+            () => {
+
+                input.focus();
+
+                if (
+                    input.select
+                ) {
+                    input.select();
+                }
+
+            },
+            0
+        );
     }
 
-    editor.className =
-        "crm-inline-editor";
 
-    editor.setAttribute(
-        "aria-label",
-        `Edit ${logicalField}`
-    );
-
-    display.replaceWith(
+    async function saveInlineEdit(
+        td,
+        lead,
+        logicalField,
+        value,
+        original,
         editor
-    );
-
-    editor.focus();
-
-    if (
-        editor.tagName ===
-            "INPUT" &&
-        editor.type !==
-            "date" &&
-        editor.type !==
-            "number"
     ) {
 
-        try {
-            editor.select();
-        } catch (e) {}
-    }
+        const cleanValue =
+            value.trim();
 
-    let finished =
-        false;
 
-    async function finish(
-        save = true
-    ) {
+        const id =
+            getId(lead);
 
-        if (finished) {
+
+        if (!id) {
+
+            showToast(
+                "Lead ID is missing.",
+                "error"
+            );
+
             return;
         }
 
-        finished = true;
 
-        if (save) {
-
-            const newValue =
-                editor.value;
-
-            if (
-                String(newValue) !==
-                String(originalValue)
-            ) {
-
-                await saveInlineField(
-                    leadId,
-                    actualField,
-                    newValue
-                );
-
-                return;
-            }
-        }
-
-        restoreInlineDisplay(
-            element,
-            lead,
-            actualField,
-            logicalField
-        );
-    }
-
-
-    editor.addEventListener(
-        "blur",
-        () => {
-
-            setTimeout(
-                () => {
-                    finish(true);
-                },
-                100
+        const databaseField =
+            resolveDatabaseField(
+                lead,
+                logicalField
             );
 
+
+        if (!databaseField) {
+
+            showToast(
+                `Could not find database field for ${logicalField}.`,
+                "error"
+            );
+
+            return;
         }
-    );
 
 
-    editor.addEventListener(
-        "keydown",
-        (event) => {
+        try {
 
-            if (
-                event.key ===
-                "Enter"
-            ) {
+            const update = {};
 
-                event.preventDefault();
+            update[databaseField] =
+                cleanValue || null;
 
-                editor.blur();
 
-                return;
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from(
+                        getTableName()
+                    )
+                    .update(update)
+                    .eq(
+                        getIdField(lead),
+                        id
+                    )
+                    .select()
+                    .single();
+
+
+            if (error) {
+                throw error;
             }
 
-            if (
-                event.key ===
-                "Escape"
-            ) {
 
-                event.preventDefault();
+            /*
+             * Update local record.
+             */
 
-                finish(false);
-            }
-        }
-    );
-}
-
-
-/* =========================================================
-   SELECT EDITOR
-   ========================================================= */
-
-function createSelectEditor(
-    options,
-    selectedValue
-) {
-
-    const select =
-        document.createElement(
-            "select"
-        );
-
-    select.className =
-        "crm-inline-editor";
-
-    options.forEach(
-        option => {
-
-            const opt =
-                document.createElement(
-                    "option"
+            const index =
+                allLeads.findIndex(
+                    row =>
+                        String(
+                            getId(row)
+                        ) ===
+                        String(id)
                 );
 
-            opt.value =
-                option.value;
-
-            opt.textContent =
-                option.label;
 
             if (
-                String(
-                    option.value
-                ) ===
-                String(
-                    selectedValue
-                )
+                index !== -1
             ) {
 
-                opt.selected =
-                    true;
+                allLeads[index] =
+                    data ||
+                    {
+                        ...allLeads[index],
+                        [databaseField]:
+                            cleanValue ||
+                            null
+                    };
+
+                lead =
+                    allLeads[index];
             }
 
-            select.appendChild(
-                opt
+
+            if (original) {
+
+                let display =
+                    cleanValue ||
+                    "—";
+
+
+                if (
+                    logicalField ===
+                    "event_date"
+                ) {
+
+                    display =
+                        formatDate(
+                            cleanValue
+                        );
+                }
+
+
+                if (
+                    logicalField ===
+                    "status" ||
+                    logicalField ===
+                    "priority"
+                ) {
+
+                    display =
+                        prettyStatus(
+                            cleanValue
+                        );
+                }
+
+
+                original.textContent =
+                    display;
+            }
+
+
+            removeInlineEditor(
+                td,
+                editor,
+                original
             );
-        }
-    );
-
-    return select;
-}
 
 
-/* =========================================================
-   SAVE INLINE FIELD
-   ========================================================= */
+            updateStatistics();
 
-async function saveInlineField(
-    leadId,
-    field,
-    newValue
-) {
+            showToast(
+                "Updated successfully.",
+                "success"
+            );
 
-    const client =
-        getSupabaseClient();
 
-    if (!client) {
-        return;
-    }
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-
-        showToast(
-            "Enquiry not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    const oldValue =
-        lead[field] ?? "";
-
-    const updateData = {};
-
-    updateData[field] =
-        newValue === ""
-            ? null
-            : newValue;
-
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
-                .update(
-                    updateData
-                )
-                .eq(
-                    "id",
-                    leadId
-                )
-                .select()
-                .single();
-
-        if (error) {
+        } catch (error) {
 
             console.error(
-                "Inline update failed:",
+                "Inline update error:",
                 error
             );
 
             showToast(
-                error.message ||
-                    "Unable to save this change.",
+                "Unable to save this change.",
                 "error"
             );
+        }
+    }
 
-            lead[field] =
-                oldValue;
 
-            refreshLeadRow(
-                leadId
-            );
+    function cancelInlineEdit() {
 
+        if (!editingCell) {
             return;
         }
 
-        Object.assign(
-            lead,
-            data ||
-                updateData
-        );
 
-        showToast(
-            "Updated successfully."
-        );
+        const td =
+            editingCell;
 
-        refreshLeadRow(
-            leadId
-        );
 
-        updateStats();
-
-        if (
-            currentLead &&
-            String(
-                currentLead.id
-            ) ===
-            String(
-                leadId
-            )
-        ) {
-
-            currentLead =
-                lead;
-
-            populateLeadModal(
-                currentLead
+        const editor =
+            td.querySelector(
+                ".clean-inline-editor"
             );
+
+
+        const original =
+            td.querySelector(
+                ".cell-value"
+            );
+
+
+        removeInlineEditor(
+            td,
+            editor,
+            original
+        );
+    }
+
+
+    function removeInlineEditor(
+        td,
+        editor,
+        original
+    ) {
+
+        if (editor) {
+            editor.remove();
         }
 
-    } catch (error) {
 
-        console.error(
-            error
+        if (original) {
+            original.style.display =
+                "";
+        }
+
+
+        td.classList.remove(
+            "editing"
         );
 
-        lead[field] =
-            oldValue;
 
-        refreshLeadRow(
-            leadId
-        );
-
-        showToast(
-            "Unable to save this change.",
-            "error"
-        );
-    }
-}
-
-
-/* =========================================================
-   RESTORE INLINE DISPLAY
-   ========================================================= */
-
-function restoreInlineDisplay(
-    element,
-    lead,
-    field,
-    logicalField
-) {
-
-    if (!element) {
-        return;
+        editingCell = null;
     }
 
-    const editor =
-        element.querySelector(
-            ".crm-inline-editor"
+
+    /* =====================================================
+       DETAILS MODAL
+    ===================================================== */
+
+    function openLeadDetails(lead) {
+
+        currentLead =
+            lead;
+
+
+        setValue(
+            "detailCustomerName",
+            getCustomerName(lead)
         );
 
-    if (!editor) {
-        return;
-    }
-
-    const display =
-        document.createElement(
-            "span"
+        setValue(
+            "detailPhone",
+            getPhone(lead)
         );
 
-    display.className =
-        "inline-display";
-
-    let value =
-        lead[field];
-
-    if (
-        logicalField ===
-        "status"
-    ) {
-
-        value =
-            formatStatus(
-                value
-            );
-
-    } else if (
-        logicalField ===
-        "priority"
-    ) {
-
-        value =
-            formatPriority(
-                value
-            );
-
-    } else if (
-        logicalField ===
-        "event_date"
-    ) {
-
-        value =
-            formatDate(
-                value
-            );
-    }
-
-    if (
-        value === null ||
-        value === undefined ||
-        value === ""
-    ) {
-
-        value =
-            "—";
-    }
-
-    display.textContent =
-        value;
-
-    editor.replaceWith(
-        display
-    );
-
-    element.classList.remove(
-        "editing"
-    );
-}
-
-
-/* =========================================================
-   REFRESH LEAD ROW
-   ========================================================= */
-
-function refreshLeadRow(
-    leadId
-) {
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
+        setValue(
+            "detailEmail",
+            getEmail(lead)
         );
 
-    if (!lead) {
-        return;
-    }
-
-    const rows =
-        $all(
-            "tr[data-lead-id]"
+        setValue(
+            "detailSource",
+            getSource(lead)
         );
 
-    const row =
-        rows.find(
-            item =>
-                String(
-                    item.dataset.leadId
-                ) ===
-                String(leadId)
+
+        setValue(
+            "detailVenue",
+            getVenue(lead)
         );
 
-    if (!row) {
-
-        renderLeads();
-
-        return;
-    }
-
-    const temp =
-        document.createElement(
-            "tbody"
+        setValue(
+            "detailGuests",
+            getGuests(lead)
         );
 
-    temp.innerHTML =
-        createLeadRow(
+        setValue(
+            "detailEventDate",
+            getEventDate(lead)
+        );
+
+        setValue(
+            "detailAssignedTo",
+            getAssignedTo(lead)
+        );
+
+        setValue(
+            "detailRemarks",
+            getRemarks(lead)
+        );
+
+
+        setValue(
+            "detailMessage",
+            getMessage(lead)
+        );
+
+
+        setSelectValue(
+            "detailEventType",
+            getEventType(lead)
+        );
+
+        setSelectValue(
+            "detailStatus",
+            normalizeStatus(
+                getStatus(lead)
+            )
+        );
+
+        setSelectValue(
+            "detailPriority",
+            normalizePriority(
+                getPriority(lead)
+            )
+        );
+
+
+        const followUp =
+            getFollowUp(lead);
+
+
+        setValue(
+            "detailFollowUp",
+            formatDateTimeLocal(
+                followUp
+            )
+        );
+
+
+        /*
+         * Phone/email action buttons
+         */
+
+        setupContactActions(
             lead
         );
 
-    const newRow =
-        temp.firstElementChild;
 
-    if (newRow) {
-
-        row.replaceWith(
-            newRow
-        );
-    }
-}
-
-
-/* =========================================================
-   VIEW DETAILS MODAL
-   ========================================================= */
-
-function openLeadModal(
-    leadId
-) {
-
-    const lead =
-        allLeads.find(
-            item =>
-                String(item.id) ===
-                String(leadId)
-        );
-
-    if (!lead) {
-
-        showToast(
-            "Enquiry not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    currentLead =
-        lead;
-
-    const modal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (!modal) {
-
-        console.warn(
-            "leadModal not found."
-        );
-
-        return;
-    }
-
-    populateLeadModal(
-        lead
-    );
-
-    modal.hidden =
-        false;
-
-    document.body.style.overflow =
-        "hidden";
-}
-
-
-/* =========================================================
-   POPULATE MODAL
-   ---------------------------------------------------------
-   Uses the EXACT IDs from your dashboard.html.
-   ========================================================= */
-
-function populateLeadModal(
-    lead
-) {
-
-    /* CUSTOMER */
-
-    setText(
-        "detailCustomerName",
-        getLeadValue(
-            lead,
-            "name",
-            "Customer"
-        )
-    );
-
-
-    /* PHONE */
-
-    const phone =
-        getLeadValue(
-            lead,
-            "phone",
-            "—"
-        );
-
-    setText(
-        "detailPhone",
-        phone
-    );
-
-
-    /* EMAIL */
-
-    const email =
-        getLeadValue(
-            lead,
-            "email",
-            "—"
-        );
-
-    setText(
-        "detailEmail",
-        email
-    );
-
-
-    /* SOURCE */
-
-    setText(
-        "detailSource",
-        getLeadValue(
-            lead,
-            "source",
-            "—"
-        )
-    );
-
-
-    /* EVENT TYPE */
-
-    setControl(
-        "detailEventType",
-        getLeadValue(
-            lead,
-            "event_type",
-            ""
-        )
-    );
-
-
-    /* VENUE */
-
-    setControl(
-        "detailVenue",
-        getLeadValue(
-            lead,
-            "venue",
-            ""
-        )
-    );
-
-
-    /* EVENT DATE */
-
-    setControl(
-        "detailEventDate",
-        normalizeDateInput(
-            getLeadValue(
-                lead,
-                "event_date",
-                ""
-            )
-        )
-    );
-
-
-    /* GUESTS */
-
-    setControl(
-        "detailGuests",
-        getLeadValue(
-            lead,
-            "guests",
-            ""
-        )
-    );
-
-
-    /* STATUS */
-
-    setControl(
-        "detailStatus",
-        getLeadValue(
-            lead,
-            "status",
-            "new"
-        )
-    );
-
-
-    /* PRIORITY */
-
-    setControl(
-        "detailPriority",
-        getLeadValue(
-            lead,
-            "priority",
-            "normal"
-        )
-    );
-
-
-    /* FOLLOW UP */
-
-    setControl(
-        "detailFollowUp",
-        normalizeDateTimeInput(
-            getLeadValue(
-                lead,
-                "follow_up_at",
-                ""
-            )
-        )
-    );
-
-
-    /* ASSIGNED TO */
-
-    setControl(
-        "detailAssignedTo",
-        getLeadValue(
-            lead,
-            "assigned_to",
-            ""
-        )
-    );
-
-
-    /* MESSAGE */
-
-    setText(
-        "detailMessage",
-        getLeadValue(
-            lead,
-            "message",
-            "No customer message."
-        )
-    );
-
-
-    /* REMARKS */
-
-    setControl(
-        "detailRemarks",
-        getLeadValue(
-            lead,
-            "remarks",
-            ""
-        )
-    );
-
-
-    setupContactActions(
-        lead
-    );
-}
-
-
-/* =========================================================
-   SET TEXT
-   ========================================================= */
-
-function setText(
-    id,
-    value
-) {
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-    if (!element) {
-        return;
-    }
-
-    element.textContent =
-        safeValue(value) ||
-        "—";
-}
-
-
-/* =========================================================
-   SET CONTROL
-   ========================================================= */
-
-function setControl(
-    id,
-    value
-) {
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-    if (!element) {
-        return;
-    }
-
-    element.value =
-        safeValue(value);
-}
-
-
-/* =========================================================
-   NORMALIZE DATE
-   ========================================================= */
-
-function normalizeDateInput(
-    value
-) {
-
-    if (!value) {
-        return "";
-    }
-
-    const text =
-        String(value);
-
-    if (
-        /^\d{4}-\d{2}-\d{2}$/
-            .test(text)
-    ) {
-        return text;
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return "";
-    }
-
-    return [
-        date.getFullYear(),
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0"),
-        String(
-            date.getDate()
-        ).padStart(2, "0")
-    ].join("-");
-}
-
-
-/* =========================================================
-   NORMALIZE DATETIME
-   ========================================================= */
-
-function normalizeDateTimeInput(
-    value
-) {
-
-    if (!value) {
-        return "";
-    }
-
-    const text =
-        String(value);
-
-    if (
-        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/
-            .test(text)
-    ) {
-
-        return text.slice(
-            0,
-            16
-        );
-    }
-
-    const date =
-        new Date(value);
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return "";
-    }
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const hours =
-        String(
-            date.getHours()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const minutes =
-        String(
-            date.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-}
-
-
-/* =========================================================
-   REFRESH MODAL
-   ========================================================= */
-
-function refreshModalData() {
-
-    if (!currentLead) {
-        return;
-    }
-
-    populateLeadModal(
-        currentLead
-    );
-}
-
-
-/* =========================================================
-   CLOSE LEAD MODAL
-   ========================================================= */
-
-function closeLeadModal() {
-
-    const modal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (!modal) {
-        return;
-    }
-
-    modal.hidden =
-        true;
-
-    document.body.style.overflow =
-        "";
-
-    currentLead =
-        null;
-}
-
-
-/* =========================================================
-   SAVE MODAL CHANGES
-   ========================================================= */
-
-async function saveModalChanges() {
-
-    if (!currentLead) {
-
-        showToast(
-            "No enquiry selected.",
-            "error"
-        );
-
-        return;
-    }
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) {
-        return;
-    }
-
-    const lead =
-        currentLead;
-
-    const updateData = {};
-
-
-    /* EVENT TYPE */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "event_type",
-        getControl(
-            "detailEventType"
-        )
-    );
-
-
-    /* VENUE */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "venue",
-        getControl(
-            "detailVenue"
-        )
-    );
-
-
-    /* EVENT DATE */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "event_date",
-        getControl(
-            "detailEventDate"
-        )
-    );
-
-
-    /* GUESTS */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "guests",
-        getControl(
-            "detailGuests"
-        )
-    );
-
-
-    /* STATUS */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "status",
-        getControl(
-            "detailStatus"
-        )
-    );
-
-
-    /* PRIORITY */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "priority",
-        getControl(
-            "detailPriority"
-        )
-    );
-
-
-    /* FOLLOW UP */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "follow_up_at",
-        getControl(
-            "detailFollowUp"
-        )
-    );
-
-
-    /* ASSIGNED TO */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "assigned_to",
-        getControl(
-            "detailAssignedTo"
-        )
-    );
-
-
-    /* REMARKS */
-
-    addModalUpdate(
-        updateData,
-        lead,
-        "remarks",
-        getControl(
-            "detailRemarks"
-        )
-    );
-
-
-    if (
-        !Object.keys(
-            updateData
-        ).length
-    ) {
-
-        showToast(
-            "Nothing to save.",
-            "warning"
-        );
-
-        return;
+        showLeadModal();
     }
 
 
-    const saveButton =
-        document.getElementById(
-            "saveLeadBtn"
-        );
+    function showLeadModal() {
 
-    if (saveButton) {
-
-        saveButton.disabled =
-            true;
-
-        saveButton.textContent =
-            "Saving...";
-    }
+        const modal =
+            findLeadModal();
 
 
-    try {
+        if (!modal) {
 
-        const {
-            data,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
-                .update(
-                    updateData
-                )
-                .eq(
-                    "id",
-                    lead.id
-                )
-                .select()
-                .single();
-
-        if (error) {
-
-            console.error(
-                "Modal save error:",
-                error
+            console.warn(
+                "Lead modal container not found."
             );
 
-            showToast(
-                error.message ||
-                    "Unable to save enquiry.",
+            return;
+        }
+
+
+        modal.hidden = false;
+
+        modal.style.display =
+            "flex";
+
+
+        document.body.classList.add(
+            "modal-open"
+        );
+    }
+
+
+    function closeLeadModal() {
+
+        const modal =
+            findLeadModal();
+
+
+        if (modal) {
+
+            modal.hidden = true;
+
+            modal.style.display =
+                "none";
+        }
+
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+
+        currentLead =
+            null;
+    }
+
+
+    function findLeadModal() {
+
+        return (
+            document.getElementById(
+                "leadModal"
+            ) ||
+            document.querySelector(
+                ".lead-modal"
+            ) ||
+            document.querySelector(
+                ".lead-modal-overlay"
+            )
+        );
+    }
+
+
+    /* =====================================================
+       SAVE DETAILS
+    ===================================================== */
+
+    async function saveLeadDetails() {
+
+        if (!currentLead) {
+
+            showModalMessage(
+                "No enquiry selected.",
                 "error"
             );
 
@@ -2518,492 +2085,496 @@ async function saveModalChanges() {
         }
 
 
-        Object.assign(
-            lead,
-            data ||
-                updateData
-        );
+        const id =
+            getId(currentLead);
 
 
-        const index =
-            allLeads.findIndex(
-                item =>
-                    String(item.id) ===
-                    String(lead.id)
+        if (!id) {
+
+            showModalMessage(
+                "Lead ID is missing.",
+                "error"
             );
 
-        if (index !== -1) {
-
-            Object.assign(
-                allLeads[index],
-                data ||
-                    updateData
-            );
-
-            currentLead =
-                allLeads[index];
+            return;
         }
 
 
-        renderLeads();
-        updateStats();
+        const update =
+            {};
 
-        populateLeadModal(
-            currentLead
+
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "event_type",
+            "detailEventType"
         );
 
-        showToast(
-            "Enquiry updated successfully."
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "venue",
+            "detailVenue"
         );
 
-    } catch (error) {
-
-        console.error(
-            error
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "event_date",
+            "detailEventDate"
         );
 
-        showToast(
-            "Unable to save enquiry.",
-            "error"
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "guests",
+            "detailGuests"
         );
 
-    } finally {
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "status",
+            "detailStatus"
+        );
 
-        if (saveButton) {
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "priority",
+            "detailPriority"
+        );
 
-            saveButton.disabled =
-                false;
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "follow_up_at",
+            "detailFollowUp"
+        );
 
-            saveButton.textContent =
-                "Save Changes";
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "assigned_to",
+            "detailAssignedTo"
+        );
+
+        addUpdateIfAvailable(
+            update,
+            currentLead,
+            "remarks",
+            "detailRemarks"
+        );
+
+
+        const table =
+            getTableName();
+
+
+        try {
+
+            const saveBtn =
+                document.getElementById(
+                    "saveLeadBtn"
+                );
+
+
+            if (saveBtn) {
+
+                saveBtn.disabled =
+                    true;
+
+                saveBtn.textContent =
+                    "Saving...";
+            }
+
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient
+                    .from(table)
+                    .update(update)
+                    .eq(
+                        getIdField(
+                            currentLead
+                        ),
+                        id
+                    )
+                    .select()
+                    .single();
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            const index =
+                allLeads.findIndex(
+                    row =>
+                        String(
+                            getId(row)
+                        ) ===
+                        String(id)
+                );
+
+
+            if (
+                index !== -1
+            ) {
+
+                allLeads[index] =
+                    data ||
+                    {
+                        ...allLeads[index],
+                        ...update
+                    };
+
+                currentLead =
+                    allLeads[index];
+            }
+
+
+            updateStatistics();
+
+            applyFilters();
+
+
+            showModalMessage(
+                "Changes saved successfully.",
+                "success"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    closeLeadModal();
+
+                },
+                700
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Save lead error:",
+                error
+            );
+
+            showModalMessage(
+                "Unable to save changes. Please try again.",
+                "error"
+            );
+
+        } finally {
+
+            const saveBtn =
+                document.getElementById(
+                    "saveLeadBtn"
+                );
+
+
+            if (saveBtn) {
+
+                saveBtn.disabled =
+                    false;
+
+                saveBtn.textContent =
+                    "Save Changes";
+            }
         }
     }
-}
 
 
-/* =========================================================
-   ADD MODAL UPDATE
-   ---------------------------------------------------------
-   Uses the real existing database key if it exists.
-   ========================================================= */
-
-function addModalUpdate(
-    updateData,
-    lead,
-    logicalField,
-    value
-) {
-
-    if (value === undefined) {
-        return;
-    }
-
-    const actualField =
-        getFieldKey(
-            lead,
-            logicalField
-        );
-
-    if (!actualField) {
-        return;
-    }
-
-    const oldValue =
-        lead[actualField] ??
-        "";
-
-    const normalizedNew =
-        value === ""
-            ? null
-            : value;
-
-    if (
-        String(
-            oldValue ?? ""
-        ) !==
-        String(
-            normalizedNew ?? ""
-        )
+    function addUpdateIfAvailable(
+        update,
+        lead,
+        logicalField,
+        elementId
     ) {
 
-        updateData[
-            actualField
-        ] =
-            normalizedNew;
-    }
-}
-
-
-/* =========================================================
-   GET CONTROL
-   ========================================================= */
-
-function getControl(
-    id
-) {
-
-    const element =
-        document.getElementById(
-            id
-        );
-
-    if (!element) {
-        return undefined;
-    }
-
-    return element.value;
-}
-
-
-/* =========================================================
-   CONTACT ACTIONS
-   ========================================================= */
-
-function setupContactActions(
-    lead
-) {
-
-    const phone =
-        getLeadValue(
-            lead,
-            "phone",
-            ""
-        );
-
-    const email =
-        getLeadValue(
-            lead,
-            "email",
-            ""
-        );
-
-
-    const call =
-        document.getElementById(
-            "modalCallBtn"
-        ) ||
-        document.querySelector(
-            "[data-action='call']"
-        );
-
-
-    const whatsapp =
-        document.getElementById(
-            "modalWhatsappBtn"
-        ) ||
-        document.querySelector(
-            "[data-action='whatsapp']"
-        );
-
-
-    const emailButton =
-        document.getElementById(
-            "modalEmailBtn"
-        ) ||
-        document.querySelector(
-            "[data-action='email']"
-        );
-
-
-    if (call) {
-
-        if (phone) {
-
-            call.href =
-                `tel:${phone}`;
-
-            call.style.pointerEvents =
-                "auto";
-
-            call.style.opacity =
-                "1";
-
-        } else {
-
-            call.removeAttribute(
-                "href"
+        const field =
+            resolveDatabaseField(
+                lead,
+                logicalField
             );
 
-            call.style.pointerEvents =
-                "none";
 
-            call.style.opacity =
-                "0.5";
-        }
-    }
-
-
-    if (whatsapp) {
-
-        if (phone) {
-
-            const cleanPhone =
-                String(phone)
-                    .replace(
-                        /\D/g,
-                        ""
-                    );
-
-            whatsapp.href =
-                `https://wa.me/${cleanPhone}`;
-
-            whatsapp.target =
-                "_blank";
-
-            whatsapp.rel =
-                "noopener noreferrer";
-
-            whatsapp.style.pointerEvents =
-                "auto";
-
-            whatsapp.style.opacity =
-                "1";
-
-        } else {
-
-            whatsapp.removeAttribute(
-                "href"
+        const element =
+            document.getElementById(
+                elementId
             );
 
-            whatsapp.style.pointerEvents =
-                "none";
 
-            whatsapp.style.opacity =
-                "0.5";
+        if (
+            !field ||
+            !element
+        ) {
+            return;
         }
-    }
 
 
-    if (emailButton) {
+        let value =
+            element.value;
 
-        if (email) {
 
-            emailButton.href =
-                `mailto:${email}`;
+        if (
+            element.type ===
+            "number"
+        ) {
 
-            emailButton.style.pointerEvents =
-                "auto";
-
-            emailButton.style.opacity =
-                "1";
-
-        } else {
-
-            emailButton.removeAttribute(
-                "href"
-            );
-
-            emailButton.style.pointerEvents =
-                "none";
-
-            emailButton.style.opacity =
-                "0.5";
+            value =
+                value === ""
+                    ? null
+                    : Number(value);
         }
-    }
-}
 
 
-/* =========================================================
-   ADD ENQUIRY MODAL
-   ========================================================= */
-
-function openAddEnquiryModal() {
-
-    const modal =
-        document.getElementById(
-            "addEnquiryModal"
-        );
-
-    if (!modal) {
-
-        showToast(
-            "Add enquiry form not found.",
-            "error"
-        );
-
-        return;
-    }
-
-    modal.hidden =
-        false;
-
-    document.body.style.overflow =
-        "hidden";
-
-    const form =
-        modal.querySelector(
-            "form"
-        );
-
-    if (form) {
-        form.reset();
-    }
-
-    const message =
-        modal.querySelector(
-            ".form-message"
-        );
-
-    if (message) {
-        message.textContent =
-            "";
-    }
-}
-
-
-/* =========================================================
-   CLOSE ADD ENQUIRY
-   ========================================================= */
-
-function closeAddEnquiryModal() {
-
-    const modal =
-        document.getElementById(
-            "addEnquiryModal"
-        );
-
-    if (!modal) {
-        return;
-    }
-
-    modal.hidden =
-        true;
-
-    document.body.style.overflow =
-        "";
-}
-
-
-/* =========================================================
-   SUBMIT ADD ENQUIRY
-   ========================================================= */
-
-async function submitAddEnquiry(
-    event
-) {
-
-    event.preventDefault();
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) {
-        return;
-    }
-
-    const form =
-        event.target;
-
-    if (!form) {
-        return;
-    }
-
-    const formData =
-        new FormData(
-            form
-        );
-
-    const data = {};
-
-    for (
-        const [
-            key,
-            value
-        ]
-        of formData.entries()
-    ) {
-
-        data[key] =
-            typeof value ===
-            "string"
-                ? value.trim()
+        update[field] =
+            value === ""
+                ? null
                 : value;
     }
 
 
-    if (!data.status) {
-        data.status =
-            "new";
-    }
+    /* =====================================================
+       CONTACT ACTIONS
+    ===================================================== */
 
-    if (!data.priority) {
-        data.priority =
-            "normal";
-    }
+    function setupContactActions(
+        lead
+    ) {
 
-
-    /* Convert empty optional values to null. */
-
-    Object.keys(
-        data
-    ).forEach(
-        key => {
-
-            if (
-                data[key] === ""
-            ) {
-
-                data[key] =
-                    null;
-            }
-        }
-    );
-
-
-    const submitButton =
-        document.getElementById(
-            "submitEnquiryBtn"
-        );
-
-    if (submitButton) {
-
-        submitButton.disabled =
-            true;
-
-        submitButton.textContent =
-            "Adding...";
-    }
-
-
-    try {
-
-        const {
-            data: created,
-            error
-        } =
-            await client
-                .from(
-                    "customer_enquiries"
-                )
-                .insert(
-                    [data]
-                )
-                .select()
-                .single();
-
-
-        if (error) {
-
-            console.error(
-                "Create enquiry error:",
-                error
+        const phoneActions =
+            document.getElementById(
+                "detailPhoneActions"
             );
 
-            const message =
-                form.querySelector(
-                    ".form-message"
+        const emailActions =
+            document.getElementById(
+                "detailEmailActions"
+            );
+
+
+        if (phoneActions) {
+
+            phoneActions.innerHTML =
+                "";
+
+            const phone =
+                getPhone(lead);
+
+
+            if (phone) {
+
+                const call =
+                    document.createElement(
+                        "a"
+                    );
+
+                call.href =
+                    `tel:${phone}`;
+
+                call.textContent =
+                    "Call";
+
+                call.className =
+                    "contact-action";
+
+                phoneActions.appendChild(
+                    call
                 );
-
-            if (message) {
-
-                message.textContent =
-                    error.message ||
-                    "Unable to create enquiry.";
             }
+        }
 
-            showToast(
-                error.message ||
-                    "Unable to create enquiry.",
+
+        if (emailActions) {
+
+            emailActions.innerHTML =
+                "";
+
+            const email =
+                getEmail(lead);
+
+
+            if (email) {
+
+                const mail =
+                    document.createElement(
+                        "a"
+                    );
+
+                mail.href =
+                    `mailto:${email}`;
+
+                mail.textContent =
+                    "Email";
+
+                mail.className =
+                    "contact-action";
+
+                emailActions.appendChild(
+                    mail
+                );
+            }
+        }
+    }
+
+
+    /* =====================================================
+       ADD ENQUIRY
+    ===================================================== */
+
+    function openAddEnquiryModal() {
+
+        const modal =
+            document.querySelector(
+                ".add-enquiry-modal"
+            ) ||
+            document.getElementById(
+                "addEnquiryModal"
+            );
+
+
+        if (!modal) {
+
+            console.warn(
+                "Add enquiry modal not found."
+            );
+
+            return;
+        }
+
+
+        modal.hidden = false;
+
+        modal.style.display =
+            "flex";
+
+
+        document.body.classList.add(
+            "modal-open"
+        );
+    }
+
+
+    function closeAddEnquiryModal() {
+
+        const modal =
+            document.querySelector(
+                ".add-enquiry-modal"
+            ) ||
+            document.getElementById(
+                "addEnquiryModal"
+            );
+
+
+        if (modal) {
+
+            modal.hidden = true;
+
+            modal.style.display =
+                "none";
+        }
+
+
+        const form =
+            document.getElementById(
+                "addEnquiryForm"
+            );
+
+
+        if (form) {
+            form.reset();
+        }
+    }
+
+
+    async function handleAddEnquiry(
+        event
+    ) {
+
+        event.preventDefault();
+
+
+        const form =
+            event.currentTarget;
+
+
+        const message =
+            document.getElementById(
+                "addEnquiryMessage"
+            );
+
+
+        const button =
+            document.getElementById(
+                "submitEnquiryBtn"
+            );
+
+
+        const get =
+            id =>
+                document.getElementById(
+                    id
+                )?.value?.trim() ||
+                "";
+
+
+        const customerName =
+            get("customerName");
+
+        const phone =
+            get("customerPhone");
+
+        const email =
+            get("customerEmail");
+
+        const source =
+            get("leadSource");
+
+        const eventType =
+            get("eventType");
+
+        const venue =
+            get("venueName");
+
+        const eventDate =
+            get("eventDate");
+
+        const guestsRaw =
+            get("guestCount");
+
+        const status =
+            get("newStatus") ||
+            "new";
+
+        const priority =
+            get("newPriority") ||
+            "normal";
+
+        const followUp =
+            get("newFollowUp");
+
+        const assignedTo =
+            get("newAssignedTo");
+
+        const customerMessage =
+            get("customerMessage");
+
+        const remarks =
+            get("newRemarks");
+
+
+        if (!customerName) {
+
+            showAddMessage(
+                "Customer name is required.",
                 "error"
             );
 
@@ -3011,275 +2582,509 @@ async function submitAddEnquiry(
         }
 
 
-        if (created) {
+        if (!phone) {
 
-            allLeads.unshift(
-                created
+            showAddMessage(
+                "Phone number is required.",
+                "error"
             );
+
+            return;
         }
 
 
-        applyFilters();
-        updateStats();
+        try {
 
-        closeAddEnquiryModal();
+            if (button) {
 
-        showToast(
-            "Customer enquiry added successfully."
-        );
+                button.disabled =
+                    true;
 
-    } catch (error) {
-
-        console.error(
-            error
-        );
-
-        showToast(
-            "Unable to create enquiry.",
-            "error"
-        );
-
-    } finally {
-
-        if (submitButton) {
-
-            submitButton.disabled =
-                false;
-
-            submitButton.textContent =
-                "Add Enquiry";
-        }
-    }
-}
+                button.textContent =
+                    "Adding...";
+            }
 
 
-/* =========================================================
-   STATISTICS
-   ========================================================= */
-
-function updateStats() {
-
-    const total =
-        allLeads.length;
+            const table =
+                getTableName();
 
 
-    const newCount =
-        allLeads.filter(
-            lead =>
-                String(
-                    getLeadValue(
-                        lead,
-                        "status",
-                        "new"
-                    )
-                )
-                    .toLowerCase() ===
-                "new"
-        ).length;
+            /*
+             * Build insert using the fields
+             * that actually exist in the
+             * current database.
+             */
+
+            const sample =
+                allLeads[0] ||
+                {};
 
 
-    const contactedCount =
-        allLeads.filter(
-            lead =>
-                String(
-                    getLeadValue(
-                        lead,
-                        "status",
-                        ""
-                    )
-                )
-                    .toLowerCase() ===
-                "contacted"
-        ).length;
+            const insert =
+                {};
 
 
-    const closedCount =
-        allLeads.filter(
-            lead => {
+            setInsertField(
+                insert,
+                sample,
+                "customer_name",
+                customerName
+            );
 
-                const status =
-                    String(
-                        getLeadValue(
-                            lead,
-                            "status",
-                            ""
-                        )
-                    )
-                        .toLowerCase();
+            setInsertField(
+                insert,
+                sample,
+                "phone",
+                phone
+            );
 
-                return (
-                    status ===
-                        "closed" ||
-                    status ===
-                        "converted" ||
-                    status ===
-                        "booked"
+            setInsertField(
+                insert,
+                sample,
+                "email",
+                email
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "source",
+                source
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "event_type",
+                eventType
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "venue",
+                venue
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "event_date",
+                eventDate
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "guests",
+                guestsRaw
+                    ? Number(guestsRaw)
+                    : null
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "status",
+                status
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "priority",
+                priority
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "follow_up_at",
+                followUp
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "assigned_to",
+                assignedTo
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "message",
+                customerMessage
+            );
+
+            setInsertField(
+                insert,
+                sample,
+                "remarks",
+                remarks
+            );
+
+
+            /*
+             * If database is empty, use the
+             * standard column names from
+             * the current dashboard form.
+             */
+
+            if (!Object.keys(insert).length) {
+
+                Object.assign(
+                    insert,
+                    {
+                        customer_name:
+                            customerName,
+
+                        phone:
+                            phone,
+
+                        email:
+                            email || null,
+
+                        source:
+                            source || null,
+
+                        event_type:
+                            eventType || null,
+
+                        venue:
+                            venue || null,
+
+                        event_date:
+                            eventDate || null,
+
+                        guests:
+                            guestsRaw
+                                ? Number(
+                                    guestsRaw
+                                )
+                                : null,
+
+                        status:
+                            status,
+
+                        priority:
+                            priority,
+
+                        follow_up_at:
+                            followUp || null,
+
+                        assigned_to:
+                            assignedTo || null,
+
+                        message:
+                            customerMessage ||
+                            null,
+
+                        remarks:
+                            remarks ||
+                            null
+                    }
                 );
             }
-        ).length;
 
 
-    setText(
-        "totalCount",
-        total
-    );
-
-    setText(
-        "newCount",
-        newCount
-    );
-
-    setText(
-        "contactedCount",
-        contactedCount
-    );
-
-    setText(
-        "closedCount",
-        closedCount
-    );
-}
+            const {
+                error
+            } =
+                await supabaseClient
+                    .from(table)
+                    .insert(insert);
 
 
-/* =========================================================
-   STAT FILTERS
-   ========================================================= */
+            if (error) {
+                throw error;
+            }
 
-function setupStatFilters() {
 
-    const cards =
-        $all(
-            ".stat-card"
-        );
+            showAddMessage(
+                "Enquiry added successfully.",
+                "success"
+            );
 
-    cards.forEach(
-        card => {
 
-            card.addEventListener(
-                "click",
+            await loadLeads();
+
+
+            setTimeout(
                 () => {
 
-                    cards.forEach(
-                        item =>
-                            item.classList.remove(
-                                "active"
-                            )
-                    );
+                    closeAddEnquiryModal();
 
-                    card.classList.add(
-                        "active"
-                    );
-
-                    const filter =
-                        card.dataset
-                            .statusFilter;
-
-                    currentStatusFilter =
-                        filter ||
-                        "all";
-
-                    const statusSelect =
-                        document.getElementById(
-                            "statusFilter"
-                        );
-
-                    if (statusSelect) {
-
-                        statusSelect.value =
-                            currentStatusFilter;
-                    }
-
-                    applyFilters();
-                }
+                },
+                700
             );
+
+
+        } catch (error) {
+
+            console.error(
+                "Add enquiry error:",
+                error
+            );
+
+            showAddMessage(
+                "Unable to add enquiry. Please try again.",
+                "error"
+            );
+
+        } finally {
+
+            if (button) {
+
+                button.disabled =
+                    false;
+
+                button.textContent =
+                    "Add Enquiry";
+            }
         }
-    );
-}
-
-
-/* =========================================================
-   FORMAT STATUS
-   ========================================================= */
-
-function formatStatus(
-    status
-) {
-
-    if (!status) {
-        return "New";
     }
 
-    return String(status)
-        .replace(
-            /[-_]/g,
-            " "
-        )
-        .replace(
-            /\b\w/g,
-            char =>
-                char.toUpperCase()
-        );
-}
 
+    /* =====================================================
+       DATABASE HELPERS
+    ===================================================== */
 
-/* =========================================================
-   FORMAT PRIORITY
-   ========================================================= */
-
-function formatPriority(
-    priority
-) {
-
-    if (!priority) {
-        return "Normal";
-    }
-
-    return String(priority)
-        .replace(
-            /[-_]/g,
-            " "
-        )
-        .replace(
-            /\b\w/g,
-            char =>
-                char.toUpperCase()
-        );
-}
-
-
-/* =========================================================
-   FORMAT DATE
-   ========================================================= */
-
-function formatDate(
-    value
-) {
-
-    if (!value) {
-        return "—";
-    }
-
-    const text =
-        String(value);
-
-    if (
-        /^\d{4}-\d{2}-\d{2}$/
-            .test(text)
+    function resolveDatabaseField(
+        row,
+        logicalField
     ) {
 
-        const [
-            year,
-            month,
-            day
-        ] =
-            text.split("-");
+        const map = {
+
+            customer_name: [
+                "customer_name",
+                "name",
+                "full_name",
+                "customer"
+            ],
+
+            phone: [
+                "phone",
+                "mobile",
+                "phone_number",
+                "mobile_number",
+                "customer_phone",
+                "contact_phone"
+            ],
+
+            email: [
+                "email",
+                "customer_email",
+                "email_address",
+                "contact_email"
+            ],
+
+            event_type: [
+                "event_type",
+                "event",
+                "event_name"
+            ],
+
+            venue: [
+                "venue",
+                "venue_name",
+                "location"
+            ],
+
+            event_date: [
+                "event_date",
+                "date"
+            ],
+
+            guests: [
+                "guests",
+                "guest_count",
+                "number_of_guests"
+            ],
+
+            status: [
+                "status",
+                "lead_status"
+            ],
+
+            priority: [
+                "priority",
+                "lead_priority"
+            ],
+
+            source: [
+                "source",
+                "lead_source"
+            ],
+
+            message: [
+                "message",
+                "customer_message",
+                "comment",
+                "comments"
+            ],
+
+            remarks: [
+                "remarks",
+                "internal_remarks",
+                "notes",
+                "internal_notes"
+            ],
+
+            follow_up_at: [
+                "follow_up_at",
+                "followup_at",
+                "follow_up",
+                "followup_date"
+            ],
+
+            assigned_to: [
+                "assigned_to",
+                "assigned",
+                "employee"
+            ]
+        };
+
+
+        return findField(
+            row,
+            map[logicalField] ||
+            []
+        );
+    }
+
+
+    function setInsertField(
+        target,
+        sample,
+        logicalField,
+        value
+    ) {
+
+        const field =
+            resolveDatabaseField(
+                sample,
+                logicalField
+            );
+
+
+        if (field) {
+
+            target[field] =
+                value;
+        }
+    }
+
+
+    function getTableName() {
+
+        /*
+         * We remember which table loaded
+         * successfully.
+         */
+
+        return window.__CRM_TABLE__ ||
+            (
+                allLeads.length
+                    ? window.__CRM_TABLE__ ||
+                      "enquiries"
+                    : "enquiries"
+            );
+    }
+
+
+    function getIdField(row) {
+
+        return findField(
+            row,
+            [
+                "id",
+                "enquiry_id",
+                "lead_id"
+            ]
+        ) || "id";
+    }
+
+
+    /* =====================================================
+       FORMATTING
+    ===================================================== */
+
+    function normalizeStatus(
+        value
+    ) {
+
+        return String(
+            value || ""
+        )
+            .trim()
+            .toLowerCase()
+            .replace(
+                /\s+/g,
+                "-"
+            );
+    }
+
+
+    function normalizePriority(
+        value
+    ) {
+
+        return String(
+            value || ""
+        )
+            .trim()
+            .toLowerCase();
+    }
+
+
+    function prettyStatus(
+        value
+    ) {
+
+        const text =
+            String(
+                value || ""
+            )
+                .trim()
+                .replace(
+                    /-/g,
+                    " "
+                );
+
+
+        return text
+            .replace(
+                /\b\w/g,
+                letter =>
+                    letter.toUpperCase()
+            );
+    }
+
+
+    function formatDate(
+        value
+    ) {
+
+        if (!value) {
+            return "—";
+        }
+
 
         const date =
-            new Date(
-                Number(year),
-                Number(month) - 1,
-                Number(day)
-            );
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return String(value);
+        }
+
 
         return date.toLocaleDateString(
             "en-IN",
@@ -3291,819 +3096,555 @@ function formatDate(
         );
     }
 
-    const date =
-        new Date(value);
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
+    function formatDateTimeLocal(
+        value
     ) {
+
+        if (!value) {
+            return "";
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+            return String(value)
+                .slice(0, 16);
+        }
+
+
+        const pad =
+            number =>
+                String(number)
+                    .padStart(
+                        2,
+                        "0"
+                    );
+
+
+        return (
+            date.getFullYear() +
+            "-" +
+            pad(
+                date.getMonth() + 1
+            ) +
+            "-" +
+            pad(
+                date.getDate()
+            ) +
+            "T" +
+            pad(
+                date.getHours()
+            ) +
+            ":" +
+            pad(
+                date.getMinutes()
+            )
+        );
+    }
+
+
+    function getLogicalValue(
+        row,
+        logicalField
+    ) {
+
+        switch (
+            logicalField
+        ) {
+
+            case "phone":
+                return getPhone(row);
+
+            case "email":
+                return getEmail(row);
+
+            case "event_type":
+                return getEventType(row);
+
+            case "venue":
+                return getVenue(row);
+
+            case "event_date":
+                return getEventDate(row);
+
+            case "guests":
+                return getGuests(row);
+
+            case "status":
+                return getStatus(row);
+
+            case "priority":
+                return getPriority(row);
+
+            case "source":
+                return getSource(row);
+
+            case "message":
+                return getMessage(row);
+
+            case "remarks":
+                return getRemarks(row);
+
+            case "follow_up_at":
+                return getFollowUp(row);
+
+            case "assigned_to":
+                return getAssignedTo(row);
+
+            default:
+                return "";
+        }
+    }
+
+
+    /* =====================================================
+       UI HELPERS
+    ===================================================== */
+
+    function setText(
+        id,
+        value
+    ) {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+
+            element.textContent =
+                value ?? "—";
+        }
+    }
+
+
+    function setValue(
+        id,
+        value
+    ) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return;
+        }
+
+
+        if (
+            element.tagName ===
+            "INPUT" ||
+            element.tagName ===
+            "TEXTAREA" ||
+            element.tagName ===
+            "SELECT"
+        ) {
+
+            element.value =
+                value ?? "";
+
+        } else {
+
+            element.textContent =
+                safeDisplay(
+                    value,
+                    "—"
+                );
+        }
+    }
+
+
+    function setSelectValue(
+        id,
+        value
+    ) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return;
+        }
+
+
+        const normalized =
+            normalizeStatus(
+                value
+            );
+
+
+        const option =
+            Array.from(
+                element.options
+            ).find(
+                item =>
+                    normalizeStatus(
+                        item.value
+                    ) === normalized
+            );
+
+
+        if (option) {
+
+            element.value =
+                option.value;
+
+        } else {
+
+            element.value =
+                value || "";
+        }
+    }
+
+
+    function safeDisplay(
+        value,
+        fallback = "—"
+    ) {
+
+        if (
+            value === null ||
+            value === undefined ||
+            String(value).trim() === ""
+        ) {
+
+            return fallback;
+        }
+
 
         return String(value);
     }
 
-    return date.toLocaleDateString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
+
+    function setLoadingState() {
+
+        const tbody =
+            document.getElementById(
+                "leadsTableBody"
+            );
+
+
+        if (!tbody) {
+            return;
         }
-    );
-}
 
 
-/* =========================================================
-   FORMAT DATETIME
-   ========================================================= */
-
-function formatDateTime(
-    value
-) {
-
-    if (!value) {
-        return "—";
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="9"
+                    class="loading-cell"
+                >
+                    Loading customer enquiries...
+                </td>
+            </tr>
+        `;
     }
 
-    const date =
-        new Date(value);
 
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
+    function showTableMessage(
+        message
     ) {
 
-        return String(value);
-    }
-
-    return date.toLocaleString(
-        "en-IN",
-        {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        }
-    );
-}
+        const tbody =
+            document.getElementById(
+                "leadsTableBody"
+            );
 
 
-/* =========================================================
-   STATUS OPTIONS
-   ========================================================= */
-
-function getStatusOptions() {
-
-    return [
-
-        {
-            value: "new",
-            label: "New"
-        },
-
-        {
-            value: "contacted",
-            label: "Contacted"
-        },
-
-        {
-            value: "follow-up",
-            label: "Follow-up"
-        },
-
-        {
-            value: "qualified",
-            label: "Qualified"
-        },
-
-        {
-            value: "converted",
-            label: "Converted"
-        },
-
-        {
-            value: "closed",
-            label: "Closed"
-        },
-
-        {
-            value: "lost",
-            label: "Lost"
+        if (!tbody) {
+            return;
         }
 
-    ];
-}
 
-
-/* =========================================================
-   PRIORITY OPTIONS
-   ========================================================= */
-
-function getPriorityOptions() {
-
-    return [
-
-        {
-            value: "normal",
-            label: "Normal"
-        },
-
-        {
-            value: "low",
-            label: "Low"
-        },
-
-        {
-            value: "medium",
-            label: "Medium"
-        },
-
-        {
-            value: "high",
-            label: "High"
-        },
-
-        {
-            value: "urgent",
-            label: "Urgent"
-        }
-
-    ];
-}
-
-
-/* =========================================================
-   EVENT OPTIONS
-   ========================================================= */
-
-function getEventOptions() {
-
-    return [
-
-        {
-            value: "",
-            label: "Select Event"
-        },
-
-        {
-            value: "Wedding",
-            label: "Wedding"
-        },
-
-        {
-            value: "Engagement",
-            label: "Engagement"
-        },
-
-        {
-            value: "Birthday",
-            label: "Birthday"
-        },
-
-        {
-            value: "Corporate",
-            label: "Corporate"
-        },
-
-        {
-            value: "Anniversary",
-            label: "Anniversary"
-        },
-
-        {
-            value: "Party",
-            label: "Party"
-        },
-
-        {
-            value: "Other",
-            label: "Other"
-        }
-
-    ];
-}
-
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-function setupSearch() {
-
-    const input =
-        document.getElementById(
-            "searchInput"
-        );
-
-    if (!input) {
-        return;
-    }
-
-    input.addEventListener(
-        "input",
-        event => {
-
-            currentSearch =
-                event.target.value;
-
-            applyFilters();
-        }
-    );
-}
-
-
-/* =========================================================
-   FILTERS
-   ========================================================= */
-
-function setupFilters() {
-
-    const status =
-        document.getElementById(
-            "statusFilter"
-        );
-
-    const priority =
-        document.getElementById(
-            "priorityFilter"
-        );
-
-
-    if (status) {
-
-        status.addEventListener(
-            "change",
-            () => {
-
-                currentStatusFilter =
-                    status.value ||
-                    "all";
-
-                updateActiveStatCard();
-
-                applyFilters();
-            }
-        );
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="9"
+                    class="loading-cell"
+                >
+                    ${escapeHtml(message)}
+                </td>
+            </tr>
+        `;
     }
 
 
-    if (priority) {
+    function showModalMessage(
+        message,
+        type = ""
+    ) {
 
-        priority.addEventListener(
-            "change",
-            () => {
+        const element =
+            document.getElementById(
+                "leadModalMessage"
+            );
 
-                currentPriorityFilter =
-                    priority.value ||
-                    "all";
 
-                applyFilters();
-            }
-        );
+        if (!element) {
+            return;
+        }
+
+
+        element.textContent =
+            message;
+
+
+        element.className =
+            `form-message ${type}`;
     }
-}
 
 
-/* =========================================================
-   ACTIVE STAT CARD
-   ========================================================= */
+    function showAddMessage(
+        message,
+        type = ""
+    ) {
 
-function updateActiveStatCard() {
+        const element =
+            document.getElementById(
+                "addEnquiryMessage"
+            );
 
-    $all(
-        ".stat-card"
-    ).forEach(
-        card => {
 
-            const filter =
-                card.dataset
-                    .statusFilter ||
-                "all";
+        if (!element) {
+            return;
+        }
 
-            card.classList.toggle(
-                "active",
-                filter ===
-                    currentStatusFilter
+
+        element.textContent =
+            message;
+
+
+        element.className =
+            `form-message ${type}`;
+    }
+
+
+    function showToast(
+        message,
+        type = "success"
+    ) {
+
+        let toast =
+            document.getElementById(
+                "crmToast"
+            );
+
+
+        if (!toast) {
+
+            toast =
+                document.createElement(
+                    "div"
+                );
+
+            toast.id =
+                "crmToast";
+
+            document.body.appendChild(
+                toast
             );
         }
-    );
-}
 
 
-/* =========================================================
-   REFRESH BUTTON
-   ========================================================= */
+        toast.textContent =
+            message;
 
-function setupRefreshButton() {
 
-    const button =
-        document.getElementById(
-            "refreshBtn"
+        toast.className =
+            `crm-toast ${type}`;
+
+
+        requestAnimationFrame(
+            () => {
+
+                toast.classList.add(
+                    "show"
+                );
+            }
         );
 
-    if (!button) {
-        return;
-    }
 
-    button.addEventListener(
-        "click",
-        async () => {
+        setTimeout(
+            () => {
 
-            if (button.disabled) {
-                return;
-            }
-
-            button.disabled =
-                true;
-
-            const original =
-                button.textContent;
-
-            button.textContent =
-                "Refreshing...";
-
-            await loadEnquiries();
-
-            button.disabled =
-                false;
-
-            button.textContent =
-                original ||
-                "↻ Refresh";
-        }
-    );
-}
-
-
-/* =========================================================
-   ADD BUTTON
-   ========================================================= */
-
-function setupAddButton() {
-
-    const button =
-        document.getElementById(
-            "addEnquiryBtn"
-        );
-
-    if (!button) {
-        return;
-    }
-
-    button.addEventListener(
-        "click",
-        openAddEnquiryModal
-    );
-}
-
-
-/* =========================================================
-   GLOBAL CLICKS
-   ========================================================= */
-
-function setupGlobalClicks() {
-
-    document.addEventListener(
-        "click",
-        event => {
-
-
-            /* =============================================
-               INLINE CLICK TO EDIT
-               ============================================= */
-
-            const inlineField =
-                event.target.closest(
-                    ".crm-inline-field"
+                toast.classList.remove(
+                    "show"
                 );
 
-            if (
-                inlineField &&
-                !inlineField.classList.contains(
-                    "editing"
-                ) &&
-                !inlineField.classList.contains(
-                    "crm-inline-disabled"
-                )
-            ) {
-
-                startInlineEdit(
-                    inlineField
-                );
-
-                return;
-            }
-
-
-            /* =============================================
-               VIEW DETAILS
-               ============================================= */
-
-            const viewButton =
-                event.target.closest(
-                    "[data-action='view']"
-                );
-
-            if (viewButton) {
-
-                openLeadModal(
-                    viewButton.dataset.id
-                );
-
-                return;
-            }
-
-
-            /* =============================================
-               CLOSE LEAD MODAL
-               ============================================= */
-
-            const closeButton =
-                event.target.closest(
-                    "#closeLeadModal"
-                );
-
-            if (closeButton) {
-
-                closeLeadModal();
-
-                return;
-            }
-
-
-            /* =============================================
-               CLOSE ADD MODAL
-               ============================================= */
-
-            const closeAdd =
-                event.target.closest(
-                    "#closeAddEnquiry"
-                );
-
-            if (closeAdd) {
-
-                closeAddEnquiryModal();
-
-                return;
-            }
-
-
-            /* =============================================
-               CANCEL LEAD MODAL
-               ============================================= */
-
-            const cancelLead =
-                event.target.closest(
-                    "#cancelLeadEdit"
-                );
-
-            if (cancelLead) {
-
-                closeLeadModal();
-
-                return;
-            }
-
-
-            /* =============================================
-               CANCEL ADD MODAL
-               ============================================= */
-
-            const cancelAdd =
-                event.target.closest(
-                    "#cancelAddEnquiry"
-                );
-
-            if (cancelAdd) {
-
-                closeAddEnquiryModal();
-
-                return;
-            }
-
-
-            /* =============================================
-               SAVE LEAD MODAL
-               ============================================= */
-
-            const saveButton =
-                event.target.closest(
-                    "#saveLeadBtn"
-                );
-
-            if (saveButton) {
-
-                saveModalChanges();
-
-                return;
-            }
-
-        }
-    );
-
-
-    /* =============================================
-       LEAD MODAL BACKDROP
-       ============================================= */
-
-    const leadModal =
-        document.getElementById(
-            "leadModal"
-        );
-
-    if (leadModal) {
-
-        leadModal.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target ===
-                    leadModal
-                ) {
-
-                    closeLeadModal();
-                }
-            }
+            },
+            2200
         );
     }
 
 
-    /* =============================================
-       ADD MODAL BACKDROP
-       ============================================= */
+    function showFatalError(
+        message
+    ) {
 
-    const addModal =
-        document.getElementById(
-            "addEnquiryModal"
-        );
+        document.body.innerHTML = `
+            <div
+                style="
+                    min-height:100vh;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    padding:30px;
+                    background:#f4f7fb;
+                    font-family:Arial,sans-serif;
+                "
+            >
+                <div
+                    style="
+                        max-width:520px;
+                        width:100%;
+                        background:#fff;
+                        border:1px solid #e5e7eb;
+                        border-radius:18px;
+                        padding:35px;
+                        box-shadow:0 15px 50px rgba(0,0,0,.08);
+                    "
+                >
+                    <h2
+                        style="
+                            margin:0 0 10px;
+                            color:#172554;
+                        "
+                    >
+                        Select My Venue CRM
+                    </h2>
 
-    if (addModal) {
-
-        addModal.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target ===
-                    addModal
-                ) {
-
-                    closeAddEnquiryModal();
-                }
-            }
-        );
-    }
-}
-
-
-/* =========================================================
-   KEYBOARD
-   ========================================================= */
-
-function setupKeyboard() {
-
-    document.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key !==
-                "Escape"
-            ) {
-                return;
-            }
-
-            const leadModal =
-                document.getElementById(
-                    "leadModal"
-                );
-
-            const addModal =
-                document.getElementById(
-                    "addEnquiryModal"
-                );
-
-            if (
-                leadModal &&
-                !leadModal.hidden
-            ) {
-
-                closeLeadModal();
-            }
-
-            if (
-                addModal &&
-                !addModal.hidden
-            ) {
-
-                closeAddEnquiryModal();
-            }
-        }
-    );
-}
-
-
-/* =========================================================
-   AUTH STATE LISTENER
-   ========================================================= */
-
-function setupAuthListener() {
-
-    const client =
-        getSupabaseClient();
-
-    if (!client) {
-        return;
+                    <p
+                        style="
+                            margin:0;
+                            color:#64748b;
+                        "
+                    >
+                        ${escapeHtml(message)}
+                    </p>
+                </div>
+            </div>
+        `;
     }
 
-    client.auth.onAuthStateChange(
-        (
-            event,
-            session
-        ) => {
 
-            if (
-                event ===
-                "SIGNED_OUT"
-            ) {
+    function escapeHtml(
+        value
+    ) {
 
-                window.location.href =
-                    "login.html";
-
-                return;
-            }
-
-            if (session) {
-
-                updateStaffName(
-                    session.user
-                );
-            }
-        }
-    );
-}
-
-
-/* =========================================================
-   ADD FORM LISTENER
-   ========================================================= */
-
-function setupAddForm() {
-
-    const form =
-        document.getElementById(
-            "addEnquiryForm"
-        );
-
-    if (!form) {
-        return;
-    }
-
-    form.addEventListener(
-        "submit",
-        submitAddEnquiry
-    );
-}
-
-
-/* =========================================================
-   LOGOUT
-   ========================================================= */
-
-function setupLogout() {
-
-    const buttons =
-        $all(
-            ".logout-btn"
-        );
-
-    buttons.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                logoutCRM
+        return String(
+            value ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
             );
-        }
-    );
-}
-
-
-/* =========================================================
-   INITIALIZE CRM
-   ========================================================= */
-
-async function initializeCRM() {
-
-    console.log(
-        "Select My Venue CRM initializing..."
-    );
-
-
-    const session =
-        await checkCRMAuth();
-
-    if (!session) {
-        return;
     }
 
 
-    setupSearch();
+    /* =====================================================
+       TABLE DETECTION
+    ===================================================== */
 
-    setupFilters();
+    /*
+     * We try enquiries first.
+     * If enquiries is successful, remember it.
+     * If not, try leads.
+     */
 
-    setupRefreshButton();
+    async function detectTable() {
 
-    setupAddButton();
+        if (
+            window.__CRM_TABLE__
+        ) {
 
-    setupGlobalClicks();
-
-    setupKeyboard();
-
-    setupAuthListener();
-
-    setupAddForm();
-
-    setupLogout();
-
-    setupStatFilters();
-
-
-    await loadEnquiries();
+            return window.__CRM_TABLE__;
+        }
 
 
-    console.log(
-        "Select My Venue CRM ready."
-    );
-}
+        const enquiries =
+            await supabaseClient
+                .from("enquiries")
+                .select("*")
+                .limit(1);
 
 
-/* =========================================================
-   DOM READY
-   ========================================================= */
+        if (!enquiries.error) {
 
-if (
-    document.readyState ===
-    "loading"
-) {
+            window.__CRM_TABLE__ =
+                "enquiries";
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeCRM
-    );
-
-} else {
-
-    initializeCRM();
-}
+            return "enquiries";
+        }
 
 
-/* =========================================================
-   GLOBAL CRM API
-   ========================================================= */
-
-window.crm = {
-
-    loadEnquiries,
-
-    openLeadModal,
-
-    closeLeadModal,
-
-    openAddEnquiryModal,
-
-    closeAddEnquiryModal,
-
-    saveModalChanges,
-
-    logoutCRM,
-
-    startInlineEdit
-
-};
+        const leads =
+            await supabaseClient
+                .from("leads")
+                .select("*")
+                .limit(1);
 
 
-window.loadEnquiries =
-    loadEnquiries;
+        if (!leads.error) {
 
-window.openLeadModal =
-    openLeadModal;
+            window.__CRM_TABLE__ =
+                "leads";
 
-window.closeLeadModal =
-    closeLeadModal;
+            return "leads";
+        }
 
-window.openAddEnquiryModal =
-    openAddEnquiryModal;
 
-window.closeAddEnquiryModal =
-    closeAddEnquiryModal;
+        return "enquiries";
+    }
 
-window.saveModalChanges =
-    saveModalChanges;
 
-window.logoutCRM =
-    logoutCRM;
+    /*
+     * Replace loadLeads table selection with
+     * automatic table detection.
+     */
+
+    const originalLoadLeads =
+        loadLeads;
+
+
+    loadLeads = async function() {
+
+        await detectTable();
+
+        return originalLoadLeads();
+    };
+
+
+    /* =====================================================
+       PATCH loadLeads TABLE NAME
+    ===================================================== */
+
+    /*
+     * The function above uses the remembered table.
+     * This keeps existing Supabase data untouched.
+     */
+
+})();
