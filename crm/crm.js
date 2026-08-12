@@ -1,60 +1,42 @@
-```javascript
 /* =========================================================
    SELECT MY VENUE — CRM
    crm.js
    COMPLETE REPLACEMENT
-   VERSION 2 — STABLE CRM
-   =========================================================
 
-   FEATURES
-   ---------------------------------------------------------
-   ✓ Supabase authentication
-   ✓ Customer enquiries loading
-   ✓ Phone number
-   ✓ Email
-   ✓ Lead source
-   ✓ Event type
-   ✓ Venue
-   ✓ Event date
-   ✓ Guests
-   ✓ Location
-   ✓ Status
-   ✓ Priority
-   ✓ Follow-up
-   ✓ Assigned employee
-   ✓ Customer message
-   ✓ Internal remarks
-   ✓ View Details modal
-   ✓ Inline editing
-   ✓ Dropdown editing
-   ✓ Automatic save
-   ✓ Modal save
-   ✓ Add enquiry
-   ✓ Search
-   ✓ Filters
-   ✓ Dashboard statistics
-   ✓ WhatsApp / Call / Email
+   Features:
+   - Supabase Auth
+   - Customer enquiries
+   - Correct phone/email mapping
+   - No pencil/edit icons
+   - Click-to-edit clean table
+   - View Details modal
+   - Modal editing + saving
+   - Add Enquiry
+   - Search
+   - Status / Priority filters
+   - Refresh
    ========================================================= */
 
 
 /* =========================================================
-   SUPABASE CONFIGURATION
+   SUPABASE CONFIG
+   dashboard.html provides these values BEFORE crm.js loads.
+
+   DO NOT put another Supabase URL/key here.
    ========================================================= */
 
 const CRM_SUPABASE_URL =
-    window.SUPABASE_URL ||
-    "https://uajqwyoqbbswkfiwosyw.supabase.co";
+    window.SUPABASE_URL || "";
 
 const CRM_SUPABASE_ANON_KEY =
-    window.SUPABASE_ANON_KEY ||
-    "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+    window.SUPABASE_ANON_KEY || "";
+
+let supabaseClient = null;
 
 
 /* =========================================================
    SUPABASE CLIENT
    ========================================================= */
-
-let supabaseClient = null;
 
 function getSupabaseClient() {
 
@@ -90,30 +72,13 @@ function getSupabaseClient() {
         return null;
     }
 
-    try {
-
-        supabaseClient =
-            window.supabase.createClient(
-                CRM_SUPABASE_URL,
-                CRM_SUPABASE_ANON_KEY
-            );
-
-        return supabaseClient;
-
-    } catch (error) {
-
-        console.error(
-            "Supabase client creation failed:",
-            error
+    supabaseClient =
+        window.supabase.createClient(
+            CRM_SUPABASE_URL,
+            CRM_SUPABASE_ANON_KEY
         );
 
-        showToast(
-            "Unable to connect to Supabase.",
-            "error"
-        );
-
-        return null;
-    }
+    return supabaseClient;
 }
 
 
@@ -147,6 +112,11 @@ function $all(selector, parent = document) {
     );
 }
 
+
+/* =========================================================
+   SAFE HELPERS
+   ========================================================= */
+
 function safeValue(value) {
 
     if (
@@ -159,6 +129,7 @@ function safeValue(value) {
     return String(value);
 }
 
+
 function escapeHTML(value) {
 
     return safeValue(value)
@@ -167,6 +138,216 @@ function escapeHTML(value) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   FIELD RESOLUTION
+   ---------------------------------------------------------
+   This is the important fix for Phone / Email.
+
+   The CRM will look for the first existing/populated
+   column from the supplied aliases.
+   ========================================================= */
+
+const FIELD_ALIASES = {
+
+    name: [
+        "name",
+        "customer_name",
+        "customer",
+        "full_name"
+    ],
+
+    phone: [
+        "phone",
+        "mobile",
+        "phone_number",
+        "mobile_number",
+        "contact_number",
+        "customer_phone",
+        "customer_mobile",
+        "contact_phone"
+    ],
+
+    email: [
+        "email",
+        "email_address",
+        "email_id",
+        "customer_email",
+        "customer_email_address",
+        "contact_email"
+    ],
+
+    event_type: [
+        "event_type",
+        "event",
+        "event_name"
+    ],
+
+    event_date: [
+        "event_date",
+        "date",
+        "eventDate"
+    ],
+
+    guests: [
+        "guests",
+        "guest_count",
+        "number_of_guests",
+        "no_of_guests",
+        "guest_number"
+    ],
+
+    location: [
+        "location",
+        "city",
+        "area",
+        "customer_location"
+    ],
+
+    venue: [
+        "venue",
+        "venue_name"
+    ],
+
+    source: [
+        "source",
+        "lead_source",
+        "enquiry_source"
+    ],
+
+    message: [
+        "message",
+        "enquiry",
+        "requirements",
+        "customer_message",
+        "customer_requirement",
+        "comment"
+    ],
+
+    remarks: [
+        "remarks",
+        "internal_notes",
+        "notes",
+        "internal_remarks"
+    ],
+
+    follow_up_at: [
+        "follow_up_at",
+        "followup_at",
+        "follow_up",
+        "followup",
+        "follow_up_date"
+    ],
+
+    assigned_to: [
+        "assigned_to",
+        "assigned",
+        "employee",
+        "employee_name"
+    ],
+
+    status: [
+        "status"
+    ],
+
+    priority: [
+        "priority"
+    ]
+};
+
+
+/* =========================================================
+   GET FIELD KEY
+   ---------------------------------------------------------
+   IMPORTANT:
+
+   If the database has:
+       email = null
+       customer_email = "abc@email.com"
+
+   this function returns customer_email.
+
+   That prevents the Email column from appearing blank.
+   ========================================================= */
+
+function getFieldKey(lead, logicalField) {
+
+    if (!lead) {
+        return null;
+    }
+
+    const aliases =
+        FIELD_ALIASES[logicalField] || [];
+
+    /* First prefer a populated value. */
+
+    for (const key of aliases) {
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                lead,
+                key
+            ) &&
+            lead[key] !== null &&
+            lead[key] !== undefined &&
+            String(lead[key]).trim() !== ""
+        ) {
+            return key;
+        }
+    }
+
+    /* Then use the first existing database column. */
+
+    for (const key of aliases) {
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                lead,
+                key
+            )
+        ) {
+            return key;
+        }
+    }
+
+    return null;
+}
+
+
+/* =========================================================
+   GET FIELD VALUE
+   ========================================================= */
+
+function getLeadValue(
+    lead,
+    logicalField,
+    fallback = ""
+) {
+
+    const key =
+        getFieldKey(
+            lead,
+            logicalField
+        );
+
+    if (!key) {
+        return fallback;
+    }
+
+    const value =
+        lead[key];
+
+    if (
+        value === null ||
+        value === undefined ||
+        String(value).trim() === ""
+    ) {
+        return fallback;
+    }
+
+    return value;
 }
 
 
@@ -192,47 +373,17 @@ function showToast(
         toast.id =
             "toastMessage";
 
-        toast.style.position =
-            "fixed";
-
-        toast.style.right =
-            "24px";
-
-        toast.style.bottom =
-            "24px";
-
-        toast.style.zIndex =
-            "99999";
-
-        toast.style.padding =
-            "13px 18px";
-
-        toast.style.borderRadius =
-            "12px";
-
-        toast.style.color =
-            "#ffffff";
-
-        toast.style.fontSize =
-            "14px";
-
-        toast.style.fontWeight =
-            "600";
-
-        toast.style.boxShadow =
-            "0 15px 40px rgba(0,0,0,.30)";
-
-        toast.style.opacity =
-            "0";
-
-        toast.style.transform =
-            "translateY(10px)";
-
-        toast.style.transition =
-            "all .22s ease";
-
-        document.body.appendChild(toast);
+        document.body.appendChild(
+            toast
+        );
     }
+
+    toast.textContent =
+        message;
+
+    toast.classList.remove(
+        "show"
+    );
 
     if (type === "error") {
 
@@ -247,31 +398,27 @@ function showToast(
     } else {
 
         toast.style.background =
-            "#087f73";
+            "#20283d";
     }
-
-    toast.textContent =
-        message;
-
-    clearTimeout(toastTimer);
 
     requestAnimationFrame(() => {
 
-        toast.style.opacity =
-            "1";
+        toast.classList.add(
+            "show"
+        );
 
-        toast.style.transform =
-            "translateY(0)";
     });
+
+    clearTimeout(
+        toastTimer
+    );
 
     toastTimer =
         setTimeout(() => {
 
-            toast.style.opacity =
-                "0";
-
-            toast.style.transform =
-                "translateY(10px)";
+            toast.classList.remove(
+                "show"
+            );
 
         }, 2800);
 }
@@ -301,7 +448,7 @@ async function checkCRMAuth() {
         if (error) {
 
             console.error(
-                "Authentication error:",
+                "Auth error:",
                 error
             );
 
@@ -328,7 +475,7 @@ async function checkCRMAuth() {
     } catch (error) {
 
         console.error(
-            "Authentication failed:",
+            "Authentication check failed:",
             error
         );
 
@@ -348,6 +495,9 @@ function updateStaffName(user) {
     }
 
     const element =
+        document.getElementById(
+            "staffName"
+        ) ||
         document.querySelector(
             ".staff-name"
         );
@@ -364,7 +514,7 @@ function updateStaffName(user) {
         metadata.name ||
         metadata.display_name ||
         user.email ||
-        "CRM User";
+        "Employee";
 
     element.textContent =
         name;
@@ -411,27 +561,15 @@ async function logoutCRM() {
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
         showToast(
             "Unable to logout.",
             "error"
         );
     }
-}
-
-
-/* =========================================================
-   FIND LEAD
-   ========================================================= */
-
-function findLead(leadId) {
-
-    return allLeads.find(
-        lead =>
-            String(lead.id) ===
-            String(leadId)
-    );
 }
 
 
@@ -493,13 +631,12 @@ async function loadEnquiries() {
                 : [];
 
         applyFilters();
-
         updateStats();
 
     } catch (error) {
 
         console.error(
-            "Loading enquiries failed:",
+            "Load enquiries failed:",
             error
         );
 
@@ -519,25 +656,15 @@ async function loadEnquiries() {
    TABLE LOADING
    ========================================================= */
 
-function getTableBody() {
-
-    return (
-        document.querySelector(
-            "#leadsTableBody"
-        ) ||
-        document.querySelector(
-            ".leads-table tbody"
-        ) ||
-        document.querySelector(
-            "tbody"
-        )
-    );
-}
-
 function setTableLoading() {
 
     const tbody =
-        getTableBody();
+        document.getElementById(
+            "leadsTableBody"
+        ) ||
+        document.querySelector(
+            ".leads-table tbody"
+        );
 
     if (!tbody) {
         return;
@@ -546,7 +673,7 @@ function setTableLoading() {
     tbody.innerHTML = `
         <tr>
             <td
-                colspan="20"
+                colspan="9"
                 class="loading-cell"
             >
                 Loading customer enquiries...
@@ -555,10 +682,16 @@ function setTableLoading() {
     `;
 }
 
+
 function renderTableError(message) {
 
     const tbody =
-        getTableBody();
+        document.getElementById(
+            "leadsTableBody"
+        ) ||
+        document.querySelector(
+            ".leads-table tbody"
+        );
 
     if (!tbody) {
         return;
@@ -567,7 +700,7 @@ function renderTableError(message) {
     tbody.innerHTML = `
         <tr>
             <td
-                colspan="20"
+                colspan="9"
                 class="loading-cell"
             >
                 ${escapeHTML(message)}
@@ -578,93 +711,57 @@ function renderTableError(message) {
 
 
 /* =========================================================
-   NORMALIZE LEAD DATA
-   Handles different existing column names.
+   SEARCH TEXT
    ========================================================= */
 
-function normalizeLead(lead) {
+function getSearchableText(lead) {
 
-    return {
+    return [
 
-        ...lead,
+        getLeadValue(
+            lead,
+            "name"
+        ),
 
-        customer_name:
-            lead.customer_name ||
-            lead.name ||
-            "",
+        getLeadValue(
+            lead,
+            "phone"
+        ),
 
-        phone:
-            lead.phone ||
-            lead.mobile ||
-            lead.contact_number ||
-            "",
+        getLeadValue(
+            lead,
+            "email"
+        ),
 
-        email:
-            lead.email ||
-            "",
+        getLeadValue(
+            lead,
+            "venue"
+        ),
 
-        lead_source:
-            lead.lead_source ||
-            lead.source ||
-            "",
+        getLeadValue(
+            lead,
+            "location"
+        ),
 
-        event_type:
-            lead.event_type ||
-            lead.event ||
-            "",
+        getLeadValue(
+            lead,
+            "event_type"
+        ),
 
-        venue:
-            lead.venue ||
-            lead.venue_name ||
-            "",
+        getLeadValue(
+            lead,
+            "message"
+        ),
 
-        event_date:
-            lead.event_date ||
-            lead.date ||
-            "",
+        getLeadValue(
+            lead,
+            "source"
+        )
 
-        guests:
-            lead.guests ??
-            lead.guest_count ??
-            lead.number_of_guests ??
-            "",
-
-        location:
-            lead.location ||
-            lead.city ||
-            "",
-
-        status:
-            lead.status ||
-            "new",
-
-        priority:
-            lead.priority ||
-            "normal",
-
-        follow_up_at:
-            lead.follow_up_at ||
-            lead.followup_at ||
-            "",
-
-        assigned_to:
-            lead.assigned_to ||
-            lead.assigned_employee ||
-            lead.employee ||
-            "",
-
-        message:
-            lead.message ||
-            lead.enquiry ||
-            lead.requirements ||
-            "",
-
-        internal_notes:
-            lead.internal_notes ||
-            lead.notes ||
-            lead.remarks ||
-            ""
-    };
+    ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 }
 
 
@@ -681,88 +778,48 @@ function applyFilters() {
 
     filteredLeads =
         allLeads.filter(
-            originalLead => {
+            (lead) => {
 
-                const lead =
-                    normalizeLead(
-                        originalLead
+                const searchable =
+                    getSearchableText(
+                        lead
                     );
-
-                const searchableText = [
-
-                    lead.customer_name,
-                    lead.phone,
-                    lead.email,
-                    lead.lead_source,
-                    lead.event_type,
-                    lead.venue,
-                    lead.location,
-                    lead.assigned_to,
-                    lead.message
-
-                ]
-                    .filter(Boolean)
-                    .join(" ")
-                    .toLowerCase();
 
                 const matchesSearch =
                     !search ||
-                    searchableText.includes(
+                    searchable.includes(
                         search
                     );
 
                 const status =
                     safeValue(
-                        lead.status
-                    ).toLowerCase();
+                        getLeadValue(
+                            lead,
+                            "status",
+                            "new"
+                        )
+                    )
+                        .toLowerCase();
 
                 const priority =
                     safeValue(
-                        lead.priority
-                    ).toLowerCase();
+                        getLeadValue(
+                            lead,
+                            "priority",
+                            "normal"
+                        )
+                    )
+                        .toLowerCase();
 
-                let matchesStatus =
-                    true;
+                const matchesStatus =
+                    currentStatusFilter === "all" ||
+                    status ===
+                        currentStatusFilter;
 
-                let matchesPriority =
-                    true;
-
-                if (
-                    currentStatusFilter !==
-                    "all"
-                ) {
-
-                    if (
-                        currentStatusFilter ===
-                        "converted"
-                    ) {
-
-                        matchesStatus =
-                            [
-                                "converted",
-                                "closed",
-                                "booked"
-                            ].includes(
-                                status
-                            );
-
-                    } else {
-
-                        matchesStatus =
-                            status ===
-                            currentStatusFilter;
-                    }
-                }
-
-                if (
-                    currentPriorityFilter !==
-                    "all"
-                ) {
-
-                    matchesPriority =
-                        priority ===
+                const matchesPriority =
+                    currentPriorityFilter === "all" ||
+                    priority ===
                         currentPriorityFilter;
-                }
 
                 return (
                     matchesSearch &&
@@ -783,14 +840,14 @@ function applyFilters() {
 function renderLeads() {
 
     const tbody =
-        getTableBody();
-
-    if (!tbody) {
-
-        console.warn(
-            "CRM table body not found."
+        document.getElementById(
+            "leadsTableBody"
+        ) ||
+        document.querySelector(
+            ".leads-table tbody"
         );
 
+    if (!tbody) {
         return;
     }
 
@@ -798,7 +855,10 @@ function renderLeads() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="20">
+                <td
+                    colspan="9"
+                    class="loading-cell"
+                >
                     <div class="empty-state">
                         <div class="empty-icon">
                             ⌕
@@ -821,25 +881,125 @@ function renderLeads() {
 
     tbody.innerHTML =
         filteredLeads
-            .map(createLeadRow)
+            .map(
+                createLeadRow
+            )
             .join("");
 }
 
 
 /* =========================================================
    CREATE LEAD ROW
+   ---------------------------------------------------------
+   IMPORTANT:
+   CUSTOMER, PHONE and EMAIL are now separate columns.
+   No pencil is generated anywhere.
    ========================================================= */
 
-function createLeadRow(originalLead) {
-
-    const lead =
-        normalizeLead(
-            originalLead
-        );
+function createLeadRow(lead) {
 
     const id =
         safeValue(
             lead.id
+        );
+
+    const name =
+        getLeadValue(
+            lead,
+            "name",
+            "Unknown Customer"
+        );
+
+    const phone =
+        getLeadValue(
+            lead,
+            "phone",
+            "—"
+        );
+
+    const email =
+        getLeadValue(
+            lead,
+            "email",
+            "—"
+        );
+
+    const eventType =
+        getLeadValue(
+            lead,
+            "event_type",
+            "—"
+        );
+
+    const eventDate =
+        getLeadValue(
+            lead,
+            "event_date",
+            ""
+        );
+
+    const guests =
+        getLeadValue(
+            lead,
+            "guests",
+            "—"
+        );
+
+    const location =
+        getLeadValue(
+            lead,
+            "location",
+            "—"
+        );
+
+    const status =
+        getLeadValue(
+            lead,
+            "status",
+            "new"
+        );
+
+    const priority =
+        getLeadValue(
+            lead,
+            "priority",
+            "normal"
+        );
+
+    const phoneField =
+        getFieldKey(
+            lead,
+            "phone"
+        );
+
+    const emailField =
+        getFieldKey(
+            lead,
+            "email"
+        );
+
+    const eventField =
+        getFieldKey(
+            lead,
+            "event_type"
+        );
+
+    const dateField =
+        getFieldKey(
+            lead,
+            "event_date"
+        );
+
+    const guestsField =
+        getFieldKey(
+            lead,
+            "guests"
+        );
+
+    const locationField =
+        getFieldKey(
+            lead,
+            "location"
         );
 
     return `
@@ -848,141 +1008,151 @@ function createLeadRow(originalLead) {
         >
 
             <!-- CUSTOMER -->
-            <td class="customer-cell">
 
-                <div class="customer-main">
-
-                    <strong>
-                        ${escapeHTML(
-                            lead.customer_name ||
-                            "Unknown Customer"
-                        )}
-                    </strong>
-
-                    ${
-                        lead.phone
-                            ? `
-                                <a
-                                    class="customer-phone"
-                                    href="tel:${escapeHTML(
-                                        lead.phone
-                                    )}"
-                                    onclick="event.stopPropagation()"
-                                >
-                                    ${escapeHTML(
-                                        lead.phone
-                                    )}
-                                </a>
-                              `
-                            : `
-                                <span class="customer-phone muted">
-                                    No phone
-                                </span>
-                              `
-                    }
-
+            <td>
+                <div class="crm-table-value">
+                    ${escapeHTML(name)}
                 </div>
+            </td>
 
+
+            <!-- PHONE -->
+
+            <td>
+                ${createInlineField(
+                    lead,
+                    phoneField,
+                    phone,
+                    "text",
+                    {
+                        logicalField: "phone"
+                    }
+                )}
             </td>
 
 
             <!-- EMAIL -->
+
             <td>
                 ${createInlineField(
-                    originalLead,
+                    lead,
+                    emailField,
+                    email,
                     "email",
-                    lead.email ||
-                    "—",
-                    "text"
+                    {
+                        logicalField: "email"
+                    }
                 )}
             </td>
 
 
             <!-- EVENT -->
+
             <td>
                 ${createInlineField(
-                    originalLead,
-                    "event_type",
-                    lead.event_type ||
-                    "—",
+                    lead,
+                    eventField,
+                    eventType,
                     "select",
-                    getEventOptions()
+                    {
+                        options:
+                            getEventOptions(),
+                        logicalField:
+                            "event_type"
+                    }
                 )}
             </td>
 
 
             <!-- EVENT DATE -->
+
             <td>
                 ${createInlineField(
-                    originalLead,
-                    "event_date",
-                    lead.event_date
-                        ? formatDate(
-                            lead.event_date
-                        )
-                        : "—",
+                    lead,
+                    dateField,
+                    formatDate(eventDate),
                     "date",
-                    null,
-                    lead.event_date
+                    {
+                        rawValue:
+                            eventDate,
+                        logicalField:
+                            "event_date"
+                    }
                 )}
             </td>
 
 
             <!-- GUESTS -->
+
             <td>
                 ${createInlineField(
-                    originalLead,
-                    "guests",
-                    lead.guests ||
-                    "—",
-                    "number"
+                    lead,
+                    guestsField,
+                    guests,
+                    "number",
+                    {
+                        logicalField:
+                            "guests"
+                    }
                 )}
             </td>
 
 
             <!-- LOCATION -->
+
             <td>
                 ${createInlineField(
-                    originalLead,
-                    "location",
-                    lead.location ||
-                    "—",
-                    "text"
+                    lead,
+                    locationField,
+                    location,
+                    "text",
+                    {
+                        logicalField:
+                            "location"
+                    }
                 )}
             </td>
 
 
             <!-- STATUS -->
+
             <td>
                 ${createInlineField(
-                    originalLead,
+                    lead,
                     "status",
-                    formatStatus(
-                        lead.status
-                    ),
+                    formatStatus(status),
                     "select",
-                    getStatusOptions()
+                    {
+                        options:
+                            getStatusOptions(),
+                        logicalField:
+                            "status"
+                    }
                 )}
             </td>
 
 
             <!-- PRIORITY -->
+
             <td>
                 ${createInlineField(
-                    originalLead,
+                    lead,
                     "priority",
-                    formatPriority(
-                        lead.priority
-                    ),
+                    formatPriority(priority),
                     "select",
-                    getPriorityOptions()
+                    {
+                        options:
+                            getPriorityOptions(),
+                        logicalField:
+                            "priority"
+                    }
                 )}
             </td>
 
 
             <!-- ACTION -->
-            <td class="action-cell">
 
+            <td>
                 <button
                     type="button"
                     class="view-lead-btn"
@@ -991,7 +1161,6 @@ function createLeadRow(originalLead) {
                 >
                     View Details
                 </button>
-
             </td>
 
         </tr>
@@ -1001,7 +1170,10 @@ function createLeadRow(originalLead) {
 
 /* =========================================================
    INLINE FIELD
-   Pencil is hidden until hover.
+   ---------------------------------------------------------
+   DISPLAY ONLY.
+   No pencil.
+   Click anywhere on the value to edit.
    ========================================================= */
 
 function createInlineField(
@@ -1009,51 +1181,52 @@ function createInlineField(
     field,
     displayValue,
     type = "text",
-    options = null,
-    rawValue = null
+    config = {}
 ) {
+
+    if (!field) {
+
+        return `
+            <div
+                class="crm-inline-field crm-inline-disabled"
+            >
+                <span class="inline-display">
+                    ${escapeHTML(
+                        displayValue || "—"
+                    )}
+                </span>
+            </div>
+        `;
+    }
 
     const id =
         safeValue(
             lead.id
         );
 
-    const value =
-        rawValue !== null &&
-        rawValue !== undefined
-            ? rawValue
+    const rawValue =
+        config.rawValue !== undefined
+            ? config.rawValue
             : lead[field];
 
-    const shownValue =
-        displayValue === "" ||
-        displayValue === null ||
-        displayValue === undefined
-            ? "—"
-            : displayValue;
+    const logicalField =
+        config.logicalField ||
+        field;
 
     return `
         <div
             class="crm-inline-field"
             data-inline-field="${escapeHTML(field)}"
+            data-logical-field="${escapeHTML(logicalField)}"
             data-lead-id="${escapeHTML(id)}"
-            data-value="${escapeHTML(
-                safeValue(value)
-            )}"
             tabindex="0"
             title="Click to edit"
         >
 
             <span class="inline-display">
                 ${escapeHTML(
-                    shownValue
+                    displayValue || "—"
                 )}
-            </span>
-
-            <span
-                class="inline-edit-icon"
-                aria-hidden="true"
-            >
-                ✎
             </span>
 
         </div>
@@ -1079,15 +1252,21 @@ function startInlineEdit(element) {
     const field =
         element.dataset.inlineField;
 
+    const logicalField =
+        element.dataset.logicalField ||
+        field;
+
     const leadId =
         element.dataset.leadId;
 
-    const originalLead =
-        findLead(
-            leadId
+    const lead =
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
-    if (!originalLead) {
+    if (!lead) {
 
         showToast(
             "Enquiry not found.",
@@ -1097,17 +1276,26 @@ function startInlineEdit(element) {
         return;
     }
 
-    const lead =
-        normalizeLead(
-            originalLead
+    const actualField =
+        field ||
+        getFieldKey(
+            lead,
+            logicalField
         );
 
-    const originalValue =
-        lead[field] ?? "";
+    if (!actualField) {
 
-    element.classList.add(
-        "editing"
-    );
+        showToast(
+            "This field is not available.",
+            "warning"
+        );
+
+        return;
+    }
+
+    const originalValue =
+        lead[actualField] ??
+        "";
 
     const display =
         element.querySelector(
@@ -1118,69 +1306,65 @@ function startInlineEdit(element) {
         return;
     }
 
-    let editor;
+    element.classList.add(
+        "editing"
+    );
 
+    let editor = null;
 
-    /* SELECT */
     if (
-        field === "status" ||
-        field === "priority" ||
-        field === "event_type"
+        logicalField ===
+        "status"
     ) {
-
-        let options =
-            getStatusOptions();
-
-        if (
-            field ===
-            "priority"
-        ) {
-            options =
-                getPriorityOptions();
-        }
-
-        if (
-            field ===
-            "event_type"
-        ) {
-            options =
-                getEventOptions();
-        }
 
         editor =
             createSelectEditor(
-                options,
-                originalValue
+                getStatusOptions(),
+                originalValue ||
+                    "new"
             );
 
-    }
+    } else if (
+        logicalField ===
+        "priority"
+    ) {
 
-    /* INPUT */
-    else {
+        editor =
+            createSelectEditor(
+                getPriorityOptions(),
+                originalValue ||
+                    "normal"
+            );
+
+    } else if (
+        logicalField ===
+        "event_type"
+    ) {
+
+        editor =
+            createSelectEditor(
+                getEventOptions(),
+                originalValue ||
+                    ""
+            );
+
+    } else {
 
         editor =
             document.createElement(
                 "input"
             );
 
-        editor.className =
-            "crm-inline-editor";
-
         if (
-            field ===
+            logicalField ===
             "event_date"
         ) {
 
             editor.type =
                 "date";
 
-            editor.value =
-                normalizeDateInput(
-                    originalValue
-                );
-
         } else if (
-            field ===
+            logicalField ===
             "guests"
         ) {
 
@@ -1190,48 +1374,52 @@ function startInlineEdit(element) {
             editor.min =
                 "0";
 
-            editor.value =
-                safeValue(
-                    originalValue
-                );
+        } else if (
+            logicalField ===
+            "email"
+        ) {
+
+            editor.type =
+                "email";
 
         } else {
 
             editor.type =
                 "text";
-
-            editor.value =
-                safeValue(
-                    originalValue
-                );
         }
+
+        editor.value =
+            safeValue(
+                originalValue
+            );
     }
+
+    editor.className =
+        "crm-inline-editor";
+
+    editor.setAttribute(
+        "aria-label",
+        `Edit ${logicalField}`
+    );
 
     display.replaceWith(
         editor
     );
 
-    const icon =
-        element.querySelector(
-            ".inline-edit-icon"
-        );
-
-    if (icon) {
-        icon.textContent =
-            "✓";
-    }
-
     editor.focus();
 
     if (
         editor.tagName ===
-        "INPUT" &&
+            "INPUT" &&
         editor.type !==
-        "date" &&
+            "date" &&
         editor.type !==
-        "number"
+            "number"
     ) {
-        editor.select();
+
+        try {
+            editor.select();
+        } catch (e) {}
     }
 
     let finished =
@@ -1259,7 +1447,7 @@ function startInlineEdit(element) {
 
                 await saveInlineField(
                     leadId,
-                    field,
+                    actualField,
                     newValue
                 );
 
@@ -1269,8 +1457,9 @@ function startInlineEdit(element) {
 
         restoreInlineDisplay(
             element,
-            originalLead,
-            field
+            lead,
+            actualField,
+            logicalField
         );
     }
 
@@ -1283,15 +1472,16 @@ function startInlineEdit(element) {
                 () => {
                     finish(true);
                 },
-                150
+                100
             );
+
         }
     );
 
 
     editor.addEventListener(
         "keydown",
-        event => {
+        (event) => {
 
             if (
                 event.key ===
@@ -1301,6 +1491,8 @@ function startInlineEdit(element) {
                 event.preventDefault();
 
                 editor.blur();
+
+                return;
             }
 
             if (
@@ -1356,6 +1548,7 @@ function createSelectEditor(
                     selectedValue
                 )
             ) {
+
                 opt.selected =
                     true;
             }
@@ -1387,12 +1580,14 @@ async function saveInlineField(
         return;
     }
 
-    const originalLead =
-        findLead(
-            leadId
+    const lead =
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
-    if (!originalLead) {
+    if (!lead) {
 
         showToast(
             "Enquiry not found.",
@@ -1402,57 +1597,15 @@ async function saveInlineField(
         return;
     }
 
-    const normalized =
-        normalizeLead(
-            originalLead
-        );
-
     const oldValue =
-        normalized[field] ?? "";
-
-    let databaseField =
-        field;
-
-    let value =
-        newValue;
-
-
-    /* Empty values */
-    if (
-        value ===
-        ""
-    ) {
-        value =
-            null;
-    }
-
-
-    /* Make sure guests is numeric */
-    if (
-        field ===
-        "guests" &&
-        value !== null
-    ) {
-
-        value =
-            Number(value);
-
-        if (
-            Number.isNaN(value)
-        ) {
-            value =
-                null;
-        }
-    }
-
+        lead[field] ?? "";
 
     const updateData = {};
 
-    updateData[
-        databaseField
-    ] =
-        value;
-
+    updateData[field] =
+        newValue === ""
+            ? null
+            : newValue;
 
     try {
 
@@ -1483,13 +1636,11 @@ async function saveInlineField(
 
             showToast(
                 error.message ||
-                "Unable to save this change.",
+                    "Unable to save this change.",
                 "error"
             );
 
-            originalLead[
-                field
-            ] =
+            lead[field] =
                 oldValue;
 
             refreshLeadRow(
@@ -1499,27 +1650,15 @@ async function saveInlineField(
             return;
         }
 
+        Object.assign(
+            lead,
+            data ||
+                updateData
+        );
 
-        /*
-          Update local object with
-          returned Supabase record.
-        */
-
-        if (data) {
-
-            Object.assign(
-                originalLead,
-                data
-            );
-
-        } else {
-
-            originalLead[
-                databaseField
-            ] =
-                value;
-        }
-
+        showToast(
+            "Updated successfully."
+        );
 
         refreshLeadRow(
             leadId
@@ -1532,20 +1671,18 @@ async function saveInlineField(
             String(
                 currentLead.id
             ) ===
-            String(leadId)
+            String(
+                leadId
+            )
         ) {
 
             currentLead =
-                originalLead;
+                lead;
 
             populateLeadModal(
                 currentLead
             );
         }
-
-        showToast(
-            "Updated successfully."
-        );
 
     } catch (error) {
 
@@ -1553,18 +1690,16 @@ async function saveInlineField(
             error
         );
 
-        showToast(
-            "Unable to save this change.",
-            "error"
-        );
-
-        originalLead[
-            field
-        ] =
+        lead[field] =
             oldValue;
 
         refreshLeadRow(
             leadId
+        );
+
+        showToast(
+            "Unable to save this change.",
+            "error"
         );
     }
 }
@@ -1576,8 +1711,9 @@ async function saveInlineField(
 
 function restoreInlineDisplay(
     element,
-    originalLead,
-    field
+    lead,
+    field,
+    logicalField
 ) {
 
     if (!element) {
@@ -1593,17 +1729,19 @@ function restoreInlineDisplay(
         return;
     }
 
-    const lead =
-        normalizeLead(
-            originalLead
+    const display =
+        document.createElement(
+            "span"
         );
+
+    display.className =
+        "inline-display";
 
     let value =
         lead[field];
 
-
     if (
-        field ===
+        logicalField ===
         "status"
     ) {
 
@@ -1613,7 +1751,7 @@ function restoreInlineDisplay(
             );
 
     } else if (
-        field ===
+        logicalField ===
         "priority"
     ) {
 
@@ -1623,7 +1761,7 @@ function restoreInlineDisplay(
             );
 
     } else if (
-        field ===
+        logicalField ===
         "event_date"
     ) {
 
@@ -1632,7 +1770,6 @@ function restoreInlineDisplay(
                 value
             );
     }
-
 
     if (
         value === null ||
@@ -1644,15 +1781,6 @@ function restoreInlineDisplay(
             "—";
     }
 
-
-    const display =
-        document.createElement(
-            "span"
-        );
-
-    display.className =
-        "inline-display";
-
     display.textContent =
         value;
 
@@ -1663,16 +1791,6 @@ function restoreInlineDisplay(
     element.classList.remove(
         "editing"
     );
-
-    const icon =
-        element.querySelector(
-            ".inline-edit-icon"
-        );
-
-    if (icon) {
-        icon.textContent =
-            "✎";
-    }
 }
 
 
@@ -1685,8 +1803,10 @@ function refreshLeadRow(
 ) {
 
     const lead =
-        findLead(
-            leadId
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
     if (!lead) {
@@ -1704,9 +1824,7 @@ function refreshLeadRow(
                 String(
                     item.dataset.leadId
                 ) ===
-                String(
-                    leadId
-                )
+                String(leadId)
         );
 
     if (!row) {
@@ -1715,7 +1833,6 @@ function refreshLeadRow(
 
         return;
     }
-
 
     const temp =
         document.createElement(
@@ -1731,6 +1848,7 @@ function refreshLeadRow(
         temp.firstElementChild;
 
     if (newRow) {
+
         row.replaceWith(
             newRow
         );
@@ -1739,7 +1857,7 @@ function refreshLeadRow(
 
 
 /* =========================================================
-   OPEN LEAD MODAL
+   VIEW DETAILS MODAL
    ========================================================= */
 
 function openLeadModal(
@@ -1747,8 +1865,10 @@ function openLeadModal(
 ) {
 
     const lead =
-        findLead(
-            leadId
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
         );
 
     if (!lead) {
@@ -1785,10 +1905,6 @@ function openLeadModal(
     modal.hidden =
         false;
 
-    modal.classList.add(
-        "show"
-    );
-
     document.body.style.overflow =
         "hidden";
 }
@@ -1796,206 +1912,188 @@ function openLeadModal(
 
 /* =========================================================
    POPULATE MODAL
+   ---------------------------------------------------------
+   Uses the EXACT IDs from your dashboard.html.
    ========================================================= */
 
 function populateLeadModal(
-    originalLead
+    lead
 ) {
 
-    const lead =
-        normalizeLead(
-            originalLead
-        );
-
-
     /* CUSTOMER */
-    setModalText(
-        [
-            "#modalLeadName",
-            "#leadName",
-            "[data-modal='name']"
-        ],
-        lead.customer_name ||
-        "Customer"
+
+    setText(
+        "detailCustomerName",
+        getLeadValue(
+            lead,
+            "name",
+            "Customer"
+        )
     );
 
 
     /* PHONE */
-    setModalText(
-        [
-            "#modalPhone",
-            "#leadPhone",
-            "[data-modal='phone']"
-        ],
-        lead.phone ||
-        "—"
+
+    const phone =
+        getLeadValue(
+            lead,
+            "phone",
+            "—"
+        );
+
+    setText(
+        "detailPhone",
+        phone
     );
 
 
     /* EMAIL */
-    setModalText(
-        [
-            "#modalEmail",
-            "#leadEmail",
-            "[data-modal='email']"
-        ],
-        lead.email ||
-        "—"
+
+    const email =
+        getLeadValue(
+            lead,
+            "email",
+            "—"
+        );
+
+    setText(
+        "detailEmail",
+        email
     );
 
 
-    /* LEAD SOURCE */
-    setModalText(
-        [
-            "#modalLeadSource",
-            "#leadSource",
-            "[data-modal='lead_source']"
-        ],
-        lead.lead_source ||
-        "—"
+    /* SOURCE */
+
+    setText(
+        "detailSource",
+        getLeadValue(
+            lead,
+            "source",
+            "—"
+        )
     );
 
 
-    /* EVENT */
-    setModalControl(
-        [
-            "#modalEventType",
-            "#leadEventType",
-            "[data-control='event_type']"
-        ],
-        lead.event_type
+    /* EVENT TYPE */
+
+    setControl(
+        "detailEventType",
+        getLeadValue(
+            lead,
+            "event_type",
+            ""
+        )
     );
 
 
     /* VENUE */
-    setModalControl(
-        [
-            "#modalVenue",
-            "#leadVenue",
-            "[data-control='venue']"
-        ],
-        lead.venue
+
+    setControl(
+        "detailVenue",
+        getLeadValue(
+            lead,
+            "venue",
+            ""
+        )
     );
 
 
-    /* DATE */
-    setModalControl(
-        [
-            "#modalEventDate",
-            "#leadEventDate",
-            "[data-control='event_date']"
-        ],
+    /* EVENT DATE */
+
+    setControl(
+        "detailEventDate",
         normalizeDateInput(
-            lead.event_date
+            getLeadValue(
+                lead,
+                "event_date",
+                ""
+            )
         )
     );
 
 
     /* GUESTS */
-    setModalControl(
-        [
-            "#modalGuests",
-            "#leadGuests",
-            "[data-control='guests']"
-        ],
-        lead.guests
-    );
 
-
-    /* LOCATION */
-    setModalText(
-        [
-            "#modalLocation",
-            "#leadLocation",
-            "[data-modal='location']"
-        ],
-        lead.location ||
-        "—"
+    setControl(
+        "detailGuests",
+        getLeadValue(
+            lead,
+            "guests",
+            ""
+        )
     );
 
 
     /* STATUS */
-    setModalControl(
-        [
-            "#modalStatus",
-            "#leadStatus",
-            "[data-control='status']"
-        ],
-        lead.status ||
-        "new"
+
+    setControl(
+        "detailStatus",
+        getLeadValue(
+            lead,
+            "status",
+            "new"
+        )
     );
 
 
     /* PRIORITY */
-    setModalControl(
-        [
-            "#modalPriority",
-            "#leadPriority",
-            "[data-control='priority']"
-        ],
-        lead.priority ||
-        "normal"
+
+    setControl(
+        "detailPriority",
+        getLeadValue(
+            lead,
+            "priority",
+            "normal"
+        )
     );
 
 
     /* FOLLOW UP */
-    setModalControl(
-        [
-            "#modalFollowUp",
-            "#leadFollowUp",
-            "[data-control='follow_up_at']"
-        ],
-        normalizeDateTimeLocal(
-            lead.follow_up_at
+
+    setControl(
+        "detailFollowUp",
+        normalizeDateTimeInput(
+            getLeadValue(
+                lead,
+                "follow_up_at",
+                ""
+            )
         )
     );
 
 
     /* ASSIGNED TO */
-    setModalControl(
-        [
-            "#modalAssignedTo",
-            "#leadAssignedTo",
-            "[data-control='assigned_to']"
-        ],
-        lead.assigned_to
+
+    setControl(
+        "detailAssignedTo",
+        getLeadValue(
+            lead,
+            "assigned_to",
+            ""
+        )
     );
 
 
     /* MESSAGE */
-    setModalText(
-        [
-            "#modalMessage",
-            "#leadMessage",
-            "#detailMessage",
-            "[data-modal='message']"
-        ],
-        lead.message ||
-        "No customer message."
+
+    setText(
+        "detailMessage",
+        getLeadValue(
+            lead,
+            "message",
+            "No customer message."
+        )
     );
 
 
-    /* INTERNAL NOTES */
-    setModalControl(
-        [
-            "#modalNotes",
-            "#leadNotes",
-            "#modalInternalNotes",
-            "[data-control='internal_notes']"
-        ],
-        lead.internal_notes
-    );
+    /* REMARKS */
 
-
-    /* CREATED */
-    setModalText(
-        [
-            "#modalCreatedAt",
-            "#leadCreatedAt",
-            "[data-modal='created_at']"
-        ],
-        formatDateTime(
-            lead.created_at
+    setControl(
+        "detailRemarks",
+        getLeadValue(
+            lead,
+            "remarks",
+            ""
         )
     );
 
@@ -2007,83 +2105,175 @@ function populateLeadModal(
 
 
 /* =========================================================
-   MODAL TEXT
+   SET TEXT
    ========================================================= */
 
-function setModalText(
-    selectors,
+function setText(
+    id,
     value
 ) {
 
-    for (
-        const selector
-        of selectors
-    ) {
+    const element =
+        document.getElementById(
+            id
+        );
 
-        const element =
-            document.querySelector(
-                selector
-            );
-
-        if (element) {
-
-            element.textContent =
-                safeValue(
-                    value
-                ) ||
-                "—";
-
-            return;
-        }
-    }
-}
-
-
-/* =========================================================
-   MODAL CONTROL
-   ========================================================= */
-
-function setModalControl(
-    selectors,
-    value
-) {
-
-    for (
-        const selector
-        of selectors
-    ) {
-
-        const element =
-            document.querySelector(
-                selector
-            );
-
-        if (!element) {
-            continue;
-        }
-
-        if (
-            element.tagName ===
-                "INPUT" ||
-            element.tagName ===
-                "SELECT" ||
-            element.tagName ===
-                "TEXTAREA"
-        ) {
-
-            element.value =
-                safeValue(
-                    value
-                );
-        }
-
+    if (!element) {
         return;
     }
+
+    element.textContent =
+        safeValue(value) ||
+        "—";
 }
 
 
 /* =========================================================
-   CURRENT MODAL
+   SET CONTROL
+   ========================================================= */
+
+function setControl(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+    if (!element) {
+        return;
+    }
+
+    element.value =
+        safeValue(value);
+}
+
+
+/* =========================================================
+   NORMALIZE DATE
+   ========================================================= */
+
+function normalizeDateInput(
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+    const text =
+        String(value);
+
+    if (
+        /^\d{4}-\d{2}-\d{2}$/
+            .test(text)
+    ) {
+        return text;
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    return [
+        date.getFullYear(),
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0"),
+        String(
+            date.getDate()
+        ).padStart(2, "0")
+    ].join("-");
+}
+
+
+/* =========================================================
+   NORMALIZE DATETIME
+   ========================================================= */
+
+function normalizeDateTimeInput(
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+    const text =
+        String(value);
+
+    if (
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/
+            .test(text)
+    ) {
+
+        return text.slice(
+            0,
+            16
+        );
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const hours =
+        String(
+            date.getHours()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const minutes =
+        String(
+            date.getMinutes()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+
+/* =========================================================
+   REFRESH MODAL
    ========================================================= */
 
 function refreshModalData() {
@@ -2116,10 +2306,6 @@ function closeLeadModal() {
     modal.hidden =
         true;
 
-    modal.classList.remove(
-        "show"
-    );
-
     document.body.style.overflow =
         "";
 
@@ -2151,205 +2337,118 @@ async function saveModalChanges() {
         return;
     }
 
+    const lead =
+        currentLead;
 
-    const leadId =
-        currentLead.id;
-
-    const updateData =
-        {};
+    const updateData = {};
 
 
-    /* STATUS */
-    const status =
-        getControlValue(
-            [
-                "#modalStatus",
-                "#leadStatus",
-                "[data-control='status']"
-            ]
-        );
+    /* EVENT TYPE */
 
-    if (
-        status !==
-        undefined
-    ) {
-
-        updateData.status =
-            status ||
-            "new";
-    }
-
-
-    /* PRIORITY */
-    const priority =
-        getControlValue(
-            [
-                "#modalPriority",
-                "#leadPriority",
-                "[data-control='priority']"
-            ]
-        );
-
-    if (
-        priority !==
-        undefined
-    ) {
-
-        updateData.priority =
-            priority ||
-            "normal";
-    }
-
-
-    /* EVENT */
-    const eventType =
-        getControlValue(
-            [
-                "#modalEventType",
-                "#leadEventType",
-                "[data-control='event_type']"
-            ]
-        );
-
-    if (
-        eventType !==
-        undefined
-    ) {
-
-        updateData.event_type =
-            eventType ||
-            null;
-    }
+    addModalUpdate(
+        updateData,
+        lead,
+        "event_type",
+        getControl(
+            "detailEventType"
+        )
+    );
 
 
     /* VENUE */
-    const venue =
-        getControlValue(
-            [
-                "#modalVenue",
-                "#leadVenue",
-                "[data-control='venue']"
-            ]
-        );
 
-    if (
-        venue !==
-        undefined
-    ) {
-
-        updateData.venue =
-            venue ||
-            null;
-    }
+    addModalUpdate(
+        updateData,
+        lead,
+        "venue",
+        getControl(
+            "detailVenue"
+        )
+    );
 
 
     /* EVENT DATE */
-    const eventDate =
-        getControlValue(
-            [
-                "#modalEventDate",
-                "#leadEventDate",
-                "[data-control='event_date']"
-            ]
-        );
 
-    if (
-        eventDate !==
-        undefined
-    ) {
-
-        updateData.event_date =
-            eventDate ||
-            null;
-    }
+    addModalUpdate(
+        updateData,
+        lead,
+        "event_date",
+        getControl(
+            "detailEventDate"
+        )
+    );
 
 
     /* GUESTS */
-    const guests =
-        getControlValue(
-            [
-                "#modalGuests",
-                "#leadGuests",
-                "[data-control='guests']"
-            ]
-        );
 
-    if (
-        guests !==
-        undefined
-    ) {
+    addModalUpdate(
+        updateData,
+        lead,
+        "guests",
+        getControl(
+            "detailGuests"
+        )
+    );
 
-        updateData.guests =
-            guests === ""
-                ? null
-                : Number(
-                    guests
-                );
-    }
+
+    /* STATUS */
+
+    addModalUpdate(
+        updateData,
+        lead,
+        "status",
+        getControl(
+            "detailStatus"
+        )
+    );
+
+
+    /* PRIORITY */
+
+    addModalUpdate(
+        updateData,
+        lead,
+        "priority",
+        getControl(
+            "detailPriority"
+        )
+    );
 
 
     /* FOLLOW UP */
-    const followUp =
-        getControlValue(
-            [
-                "#modalFollowUp",
-                "#leadFollowUp",
-                "[data-control='follow_up_at']"
-            ]
-        );
 
-    if (
-        followUp !==
-        undefined
-    ) {
-
-        updateData.follow_up_at =
-            followUp ||
-            null;
-    }
+    addModalUpdate(
+        updateData,
+        lead,
+        "follow_up_at",
+        getControl(
+            "detailFollowUp"
+        )
+    );
 
 
     /* ASSIGNED TO */
-    const assignedTo =
-        getControlValue(
-            [
-                "#modalAssignedTo",
-                "#leadAssignedTo",
-                "[data-control='assigned_to']"
-            ]
-        );
 
-    if (
-        assignedTo !==
-        undefined
-    ) {
-
-        updateData.assigned_to =
-            assignedTo ||
-            null;
-    }
+    addModalUpdate(
+        updateData,
+        lead,
+        "assigned_to",
+        getControl(
+            "detailAssignedTo"
+        )
+    );
 
 
-    /* INTERNAL NOTES */
-    const notes =
-        getControlValue(
-            [
-                "#modalNotes",
-                "#leadNotes",
-                "#modalInternalNotes",
-                "[data-control='internal_notes']"
-            ]
-        );
+    /* REMARKS */
 
-    if (
-        notes !==
-        undefined
-    ) {
-
-        updateData.internal_notes =
-            notes ||
-            null;
-    }
+    addModalUpdate(
+        updateData,
+        lead,
+        "remarks",
+        getControl(
+            "detailRemarks"
+        )
+    );
 
 
     if (
@@ -2364,6 +2463,21 @@ async function saveModalChanges() {
         );
 
         return;
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            "saveLeadBtn"
+        );
+
+    if (saveButton) {
+
+        saveButton.disabled =
+            true;
+
+        saveButton.textContent =
+            "Saving...";
     }
 
 
@@ -2382,11 +2496,10 @@ async function saveModalChanges() {
                 )
                 .eq(
                     "id",
-                    leadId
+                    lead.id
                 )
                 .select()
                 .single();
-
 
         if (error) {
 
@@ -2397,7 +2510,7 @@ async function saveModalChanges() {
 
             showToast(
                 error.message ||
-                "Unable to save enquiry.",
+                    "Unable to save enquiry.",
                 "error"
             );
 
@@ -2405,43 +2518,26 @@ async function saveModalChanges() {
         }
 
 
-        if (data) {
-
-            Object.assign(
-                currentLead,
-                data
-            );
-
-        } else {
-
-            Object.assign(
-                currentLead,
+        Object.assign(
+            lead,
+            data ||
                 updateData
-            );
-        }
+        );
 
 
         const index =
             allLeads.findIndex(
-                lead =>
-                    String(
-                        lead.id
-                    ) ===
-                    String(
-                        leadId
-                    )
+                item =>
+                    String(item.id) ===
+                    String(lead.id)
             );
 
-
-        if (
-            index !==
-            -1
-        ) {
+        if (index !== -1) {
 
             Object.assign(
                 allLeads[index],
                 data ||
-                updateData
+                    updateData
             );
 
             currentLead =
@@ -2450,7 +2546,6 @@ async function saveModalChanges() {
 
 
         renderLeads();
-
         updateStats();
 
         populateLeadModal(
@@ -2471,35 +2566,92 @@ async function saveModalChanges() {
             "Unable to save enquiry.",
             "error"
         );
+
+    } finally {
+
+        if (saveButton) {
+
+            saveButton.disabled =
+                false;
+
+            saveButton.textContent =
+                "Save Changes";
+        }
     }
 }
 
 
 /* =========================================================
-   GET CONTROL VALUE
+   ADD MODAL UPDATE
+   ---------------------------------------------------------
+   Uses the real existing database key if it exists.
    ========================================================= */
 
-function getControlValue(
-    selectors
+function addModalUpdate(
+    updateData,
+    lead,
+    logicalField,
+    value
 ) {
 
-    for (
-        const selector
-        of selectors
-    ) {
-
-        const element =
-            document.querySelector(
-                selector
-            );
-
-        if (element) {
-
-            return element.value;
-        }
+    if (value === undefined) {
+        return;
     }
 
-    return undefined;
+    const actualField =
+        getFieldKey(
+            lead,
+            logicalField
+        );
+
+    if (!actualField) {
+        return;
+    }
+
+    const oldValue =
+        lead[actualField] ??
+        "";
+
+    const normalizedNew =
+        value === ""
+            ? null
+            : value;
+
+    if (
+        String(
+            oldValue ?? ""
+        ) !==
+        String(
+            normalizedNew ?? ""
+        )
+    ) {
+
+        updateData[
+            actualField
+        ] =
+            normalizedNew;
+    }
+}
+
+
+/* =========================================================
+   GET CONTROL
+   ========================================================= */
+
+function getControl(
+    id
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+    if (!element) {
+        return undefined;
+    }
+
+    return element.value;
 }
 
 
@@ -2512,15 +2664,23 @@ function setupContactActions(
 ) {
 
     const phone =
-        lead.phone;
+        getLeadValue(
+            lead,
+            "phone",
+            ""
+        );
 
     const email =
-        lead.email;
+        getLeadValue(
+            lead,
+            "email",
+            ""
+        );
 
 
     const call =
-        document.querySelector(
-            "#modalCallBtn"
+        document.getElementById(
+            "modalCallBtn"
         ) ||
         document.querySelector(
             "[data-action='call']"
@@ -2528,8 +2688,8 @@ function setupContactActions(
 
 
     const whatsapp =
-        document.querySelector(
-            "#modalWhatsappBtn"
+        document.getElementById(
+            "modalWhatsappBtn"
         ) ||
         document.querySelector(
             "[data-action='whatsapp']"
@@ -2537,15 +2697,14 @@ function setupContactActions(
 
 
     const emailButton =
-        document.querySelector(
-            "#modalEmailBtn"
+        document.getElementById(
+            "modalEmailBtn"
         ) ||
         document.querySelector(
             "[data-action='email']"
         );
 
 
-    /* CALL */
     if (call) {
 
         if (phone) {
@@ -2574,32 +2733,16 @@ function setupContactActions(
     }
 
 
-    /* WHATSAPP */
     if (whatsapp) {
 
         if (phone) {
 
-            let cleanPhone =
-                String(
-                    phone
-                ).replace(
-                    /\D/g,
-                    ""
-                );
-
-            /*
-              India number handling.
-            */
-
-            if (
-                cleanPhone.length ===
-                10
-            ) {
-
-                cleanPhone =
-                    "91" +
-                    cleanPhone;
-            }
+            const cleanPhone =
+                String(phone)
+                    .replace(
+                        /\D/g,
+                        ""
+                    );
 
             whatsapp.href =
                 `https://wa.me/${cleanPhone}`;
@@ -2631,7 +2774,6 @@ function setupContactActions(
     }
 
 
-    /* EMAIL */
     if (emailButton) {
 
         if (email) {
@@ -2685,10 +2827,6 @@ function openAddEnquiryModal() {
     modal.hidden =
         false;
 
-    modal.classList.add(
-        "show"
-    );
-
     document.body.style.overflow =
         "hidden";
 
@@ -2731,40 +2869,8 @@ function closeAddEnquiryModal() {
     modal.hidden =
         true;
 
-    modal.classList.remove(
-        "show"
-    );
-
     document.body.style.overflow =
         "";
-}
-
-
-/* =========================================================
-   FORM FIELD HELPER
-   ========================================================= */
-
-function getFormField(
-    form,
-    names
-) {
-
-    for (
-        const name
-        of names
-    ) {
-
-        const field =
-            form.elements[
-                name
-            ];
-
-        if (field) {
-            return field;
-        }
-    }
-
-    return null;
 }
 
 
@@ -2776,9 +2882,7 @@ async function submitAddEnquiry(
     event
 ) {
 
-    if (event) {
-        event.preventDefault();
-    }
+    event.preventDefault();
 
     const client =
         getSupabaseClient();
@@ -2788,261 +2892,47 @@ async function submitAddEnquiry(
     }
 
     const form =
-        event?.target ||
-        document.querySelector(
-            "#addEnquiryModal form"
-        );
+        event.target;
 
     if (!form) {
-
-        showToast(
-            "Enquiry form not found.",
-            "error"
-        );
-
         return;
     }
 
-
-    /*
-      Build the object explicitly.
-      This avoids sending wrong field names.
-    */
-
-    const customerNameField =
-        getFormField(
-            form,
-            [
-                "customer_name",
-                "name",
-                "customerName"
-            ]
+    const formData =
+        new FormData(
+            form
         );
 
-    const phoneField =
-        getFormField(
-            form,
-            [
-                "phone",
-                "mobile",
-                "contact_number"
-            ]
-        );
+    const data = {};
 
-    const emailField =
-        getFormField(
-            form,
-            [
-                "email"
-            ]
-        );
+    for (
+        const [
+            key,
+            value
+        ]
+        of formData.entries()
+    ) {
 
-    const leadSourceField =
-        getFormField(
-            form,
-            [
-                "lead_source",
-                "source"
-            ]
-        );
-
-    const eventTypeField =
-        getFormField(
-            form,
-            [
-                "event_type",
-                "event"
-            ]
-        );
-
-    const venueField =
-        getFormField(
-            form,
-            [
-                "venue",
-                "venue_name"
-            ]
-        );
-
-    const eventDateField =
-        getFormField(
-            form,
-            [
-                "event_date",
-                "date"
-            ]
-        );
-
-    const guestsField =
-        getFormField(
-            form,
-            [
-                "guests",
-                "guest_count",
-                "number_of_guests"
-            ]
-        );
-
-    const locationField =
-        getFormField(
-            form,
-            [
-                "location",
-                "city"
-            ]
-        );
-
-    const statusField =
-        getFormField(
-            form,
-            [
-                "status"
-            ]
-        );
-
-    const priorityField =
-        getFormField(
-            form,
-            [
-                "priority"
-            ]
-        );
-
-    const followUpField =
-        getFormField(
-            form,
-            [
-                "follow_up_at",
-                "followup_at"
-            ]
-        );
-
-    const assignedField =
-        getFormField(
-            form,
-            [
-                "assigned_to",
-                "assigned_employee",
-                "employee"
-            ]
-        );
-
-    const messageField =
-        getFormField(
-            form,
-            [
-                "message",
-                "enquiry",
-                "requirements"
-            ]
-        );
-
-    const notesField =
-        getFormField(
-            form,
-            [
-                "internal_notes",
-                "notes",
-                "remarks"
-            ]
-        );
+        data[key] =
+            typeof value ===
+            "string"
+                ? value.trim()
+                : value;
+    }
 
 
-    const data = {
+    if (!data.status) {
+        data.status =
+            "new";
+    }
 
-        customer_name:
-            customerNameField
-                ?.value
-                ?.trim() ||
-            null,
-
-        phone:
-            phoneField
-                ?.value
-                ?.trim() ||
-            null,
-
-        email:
-            emailField
-                ?.value
-                ?.trim() ||
-            null,
-
-        lead_source:
-            leadSourceField
-                ?.value
-                ?.trim() ||
-            null,
-
-        event_type:
-            eventTypeField
-                ?.value
-                ?.trim() ||
-            null,
-
-        venue:
-            venueField
-                ?.value
-                ?.trim() ||
-            null,
-
-        event_date:
-            eventDateField
-                ?.value ||
-            null,
-
-        guests:
-            guestsField?.value
-                ? Number(
-                    guestsField.value
-                )
-                : null,
-
-        location:
-            locationField
-                ?.value
-                ?.trim() ||
-            null,
-
-        status:
-            statusField
-                ?.value ||
-            "new",
-
-        priority:
-            priorityField
-                ?.value ||
-            "normal",
-
-        follow_up_at:
-            followUpField
-                ?.value ||
-            null,
-
-        assigned_to:
-            assignedField
-                ?.value
-                ?.trim() ||
-            null,
-
-        message:
-            messageField
-                ?.value
-                ?.trim() ||
-            null,
-
-        internal_notes:
-            notesField
-                ?.value
-                ?.trim() ||
-            null
-    };
+    if (!data.priority) {
+        data.priority =
+            "normal";
+    }
 
 
-    /*
-      Remove fields that may not exist
-      in the current form.
-    */
+    /* Convert empty optional values to null. */
 
     Object.keys(
         data
@@ -3050,14 +2940,29 @@ async function submitAddEnquiry(
         key => {
 
             if (
-                data[key] ===
-                undefined
+                data[key] === ""
             ) {
 
-                delete data[key];
+                data[key] =
+                    null;
             }
         }
     );
+
+
+    const submitButton =
+        document.getElementById(
+            "submitEnquiryBtn"
+        );
+
+    if (submitButton) {
+
+        submitButton.disabled =
+            true;
+
+        submitButton.textContent =
+            "Adding...";
+    }
 
 
     try {
@@ -3098,7 +3003,7 @@ async function submitAddEnquiry(
 
             showToast(
                 error.message ||
-                "Unable to create enquiry.",
+                    "Unable to create enquiry.",
                 "error"
             );
 
@@ -3115,7 +3020,6 @@ async function submitAddEnquiry(
 
 
         applyFilters();
-
         updateStats();
 
         closeAddEnquiryModal();
@@ -3134,6 +3038,17 @@ async function submitAddEnquiry(
             "Unable to create enquiry.",
             "error"
         );
+
+    } finally {
+
+        if (submitButton) {
+
+            submitButton.disabled =
+                false;
+
+            submitButton.textContent =
+                "Add Enquiry";
+        }
     }
 }
 
@@ -3152,9 +3067,13 @@ function updateStats() {
         allLeads.filter(
             lead =>
                 String(
-                    lead.status ||
-                    "new"
-                ).toLowerCase() ===
+                    getLeadValue(
+                        lead,
+                        "status",
+                        "new"
+                    )
+                )
+                    .toLowerCase() ===
                 "new"
         ).length;
 
@@ -3163,9 +3082,13 @@ function updateStats() {
         allLeads.filter(
             lead =>
                 String(
-                    lead.status ||
-                    ""
-                ).toLowerCase() ===
+                    getLeadValue(
+                        lead,
+                        "status",
+                        ""
+                    )
+                )
+                    .toLowerCase() ===
                 "contacted"
         ).length;
 
@@ -3176,9 +3099,13 @@ function updateStats() {
 
                 const status =
                     String(
-                        lead.status ||
-                        ""
-                    ).toLowerCase();
+                        getLeadValue(
+                            lead,
+                            "status",
+                            ""
+                        )
+                    )
+                        .toLowerCase();
 
                 return (
                     status ===
@@ -3192,125 +3119,25 @@ function updateStats() {
         ).length;
 
 
-    /*
-      Match existing four stat cards
-      on dashboard.html.
-    */
-
-    const cards =
-        document.querySelectorAll(
-            ".stat-card"
-        );
-
-
-    const values = [
-
-        total,
-        newCount,
-        contactedCount,
-        closedCount
-
-    ];
-
-
-    cards.forEach(
-        (
-            card,
-            index
-        ) => {
-
-            const valueElement =
-                card.querySelector(
-                    "strong"
-                ) ||
-                card.querySelector(
-                    ".stat-value"
-                ) ||
-                card.querySelector(
-                    "[data-stat-value]"
-                );
-
-            if (
-                valueElement &&
-                values[index] !==
-                    undefined
-            ) {
-
-                valueElement.textContent =
-                    values[index];
-            }
-        }
-    );
-
-
-    /*
-      Explicit IDs if available.
-    */
-
-    setStatValue(
-        [
-            "#totalLeads",
-            "#totalEnquiries",
-            "[data-stat='total']"
-        ],
+    setText(
+        "totalCount",
         total
     );
 
-
-    setStatValue(
-        [
-            "#newLeads",
-            "#newEnquiries",
-            "[data-stat='new']"
-        ],
+    setText(
+        "newCount",
         newCount
     );
 
-
-    setStatValue(
-        [
-            "#contactedLeads",
-            "#contactedEnquiries",
-            "[data-stat='contacted']"
-        ],
+    setText(
+        "contactedCount",
         contactedCount
     );
 
-
-    setStatValue(
-        [
-            "#closedLeads",
-            "#closedEnquiries",
-            "[data-stat='closed']"
-        ],
+    setText(
+        "closedCount",
         closedCount
     );
-}
-
-
-function setStatValue(
-    selectors,
-    value
-) {
-
-    for (
-        const selector
-        of selectors
-    ) {
-
-        const element =
-            document.querySelector(
-                selector
-            );
-
-        if (element) {
-
-            element.textContent =
-                value;
-
-            return;
-        }
-    }
 }
 
 
@@ -3321,15 +3148,12 @@ function setStatValue(
 function setupStatFilters() {
 
     const cards =
-        document.querySelectorAll(
+        $all(
             ".stat-card"
         );
 
     cards.forEach(
-        (
-            card,
-            index
-        ) => {
+        card => {
 
             card.addEventListener(
                 "click",
@@ -3346,55 +3170,24 @@ function setupStatFilters() {
                         "active"
                     );
 
+                    const filter =
+                        card.dataset
+                            .statusFilter;
 
-                    if (
-                        index ===
-                        0
-                    ) {
-
-                        currentStatusFilter =
-                            "all";
-
-                    } else if (
-                        index ===
-                        1
-                    ) {
-
-                        currentStatusFilter =
-                            "new";
-
-                    } else if (
-                        index ===
-                        2
-                    ) {
-
-                        currentStatusFilter =
-                            "contacted";
-
-                    } else if (
-                        index ===
-                        3
-                    ) {
-
-                        currentStatusFilter =
-                            "closed";
-                    }
-
+                    currentStatusFilter =
+                        filter ||
+                        "all";
 
                     const statusSelect =
-                        document.querySelector(
-                            "#statusFilter"
+                        document.getElementById(
+                            "statusFilter"
                         );
 
-
-                    if (
-                        statusSelect
-                    ) {
+                    if (statusSelect) {
 
                         statusSelect.value =
                             currentStatusFilter;
                     }
-
 
                     applyFilters();
                 }
@@ -3416,9 +3209,7 @@ function formatStatus(
         return "New";
     }
 
-    return String(
-        status
-    )
+    return String(status)
         .replace(
             /[-_]/g,
             " "
@@ -3443,9 +3234,7 @@ function formatPriority(
         return "Normal";
     }
 
-    return String(
-        priority
-    )
+    return String(priority)
         .replace(
             /[-_]/g,
             " "
@@ -3470,10 +3259,40 @@ function formatDate(
         return "—";
     }
 
-    const date =
-        new Date(
-            value
+    const text =
+        String(value);
+
+    if (
+        /^\d{4}-\d{2}-\d{2}$/
+            .test(text)
+    ) {
+
+        const [
+            year,
+            month,
+            day
+        ] =
+            text.split("-");
+
+        const date =
+            new Date(
+                Number(year),
+                Number(month) - 1,
+                Number(day)
+            );
+
+        return date.toLocaleDateString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric"
+            }
         );
+    }
+
+    const date =
+        new Date(value);
 
     if (
         Number.isNaN(
@@ -3481,22 +3300,15 @@ function formatDate(
         )
     ) {
 
-        return String(
-            value
-        );
+        return String(value);
     }
 
     return date.toLocaleDateString(
         "en-IN",
         {
-            day:
-                "2-digit",
-
-            month:
-                "short",
-
-            year:
-                "numeric"
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
         }
     );
 }
@@ -3515,9 +3327,7 @@ function formatDateTime(
     }
 
     const date =
-        new Date(
-            value
-        );
+        new Date(value);
 
     if (
         Number.isNaN(
@@ -3525,164 +3335,24 @@ function formatDateTime(
         )
     ) {
 
-        return String(
-            value
-        );
+        return String(value);
     }
 
     return date.toLocaleString(
         "en-IN",
         {
-            day:
-                "2-digit",
-
-            month:
-                "short",
-
-            year:
-                "numeric",
-
-            hour:
-                "2-digit",
-
-            minute:
-                "2-digit"
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         }
     );
 }
 
 
 /* =========================================================
-   DATE INPUT NORMALIZER
-   ========================================================= */
-
-function normalizeDateInput(
-    value
-) {
-
-    if (!value) {
-        return "";
-    }
-
-    const text =
-        String(
-            value
-        );
-
-    /*
-      Already YYYY-MM-DD
-    */
-
-    if (
-        /^\d{4}-\d{2}-\d{2}$/
-            .test(text)
-    ) {
-
-        return text;
-    }
-
-    const date =
-        new Date(
-            value
-        );
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "";
-    }
-
-    return [
-        date.getFullYear(),
-        String(
-            date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        ),
-        String(
-            date.getDate()
-        ).padStart(
-            2,
-            "0"
-        )
-    ].join("-");
-}
-
-
-/* =========================================================
-   DATETIME LOCAL NORMALIZER
-   ========================================================= */
-
-function normalizeDateTimeLocal(
-    value
-) {
-
-    if (!value) {
-        return "";
-    }
-
-    const date =
-        new Date(
-            value
-        );
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-
-        return "";
-    }
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const hours =
-        String(
-            date.getHours()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    const minutes =
-        String(
-            date.getMinutes()
-        ).padStart(
-            2,
-            "0"
-        );
-
-    return (
-        `${year}-${month}-${day}` +
-        `T${hours}:${minutes}`
-    );
-}
-
-
-/* =========================================================
-   DROPDOWN OPTIONS
+   STATUS OPTIONS
    ========================================================= */
 
 function getStatusOptions() {
@@ -3690,178 +3360,129 @@ function getStatusOptions() {
     return [
 
         {
-            value:
-                "new",
-
-            label:
-                "New"
+            value: "new",
+            label: "New"
         },
 
         {
-            value:
-                "contacted",
-
-            label:
-                "Contacted"
+            value: "contacted",
+            label: "Contacted"
         },
 
         {
-            value:
-                "follow-up",
-
-            label:
-                "Follow-up"
+            value: "follow-up",
+            label: "Follow-up"
         },
 
         {
-            value:
-                "qualified",
-
-            label:
-                "Qualified"
+            value: "qualified",
+            label: "Qualified"
         },
 
         {
-            value:
-                "converted",
-
-            label:
-                "Converted"
+            value: "converted",
+            label: "Converted"
         },
 
         {
-            value:
-                "closed",
-
-            label:
-                "Closed"
+            value: "closed",
+            label: "Closed"
         },
 
         {
-            value:
-                "lost",
-
-            label:
-                "Lost"
+            value: "lost",
+            label: "Lost"
         }
+
     ];
 }
 
+
+/* =========================================================
+   PRIORITY OPTIONS
+   ========================================================= */
 
 function getPriorityOptions() {
 
     return [
 
         {
-            value:
-                "low",
-
-            label:
-                "Low"
+            value: "normal",
+            label: "Normal"
         },
 
         {
-            value:
-                "normal",
-
-            label:
-                "Normal"
+            value: "low",
+            label: "Low"
         },
 
         {
-            value:
-                "medium",
-
-            label:
-                "Medium"
+            value: "medium",
+            label: "Medium"
         },
 
         {
-            value:
-                "high",
-
-            label:
-                "High"
+            value: "high",
+            label: "High"
         },
 
         {
-            value:
-                "urgent",
-
-            label:
-                "Urgent"
+            value: "urgent",
+            label: "Urgent"
         }
+
     ];
 }
 
+
+/* =========================================================
+   EVENT OPTIONS
+   ========================================================= */
 
 function getEventOptions() {
 
     return [
 
         {
-            value:
-                "",
-
-            label:
-                "Select Event"
+            value: "",
+            label: "Select Event"
         },
 
         {
-            value:
-                "Wedding",
-
-            label:
-                "Wedding"
+            value: "Wedding",
+            label: "Wedding"
         },
 
         {
-            value:
-                "Engagement",
-
-            label:
-                "Engagement"
+            value: "Engagement",
+            label: "Engagement"
         },
 
         {
-            value:
-                "Birthday",
-
-            label:
-                "Birthday"
+            value: "Birthday",
+            label: "Birthday"
         },
 
         {
-            value:
-                "Corporate",
-
-            label:
-                "Corporate"
+            value: "Corporate",
+            label: "Corporate"
         },
 
         {
-            value:
-                "Anniversary",
-
-            label:
-                "Anniversary"
+            value: "Anniversary",
+            label: "Anniversary"
         },
 
         {
-            value:
-                "Party",
-
-            label:
-                "Party"
+            value: "Party",
+            label: "Party"
         },
 
         {
-            value:
-                "Other",
-
-            label:
-                "Other"
+            value: "Other",
+            label: "Other"
         }
+
     ];
 }
 
@@ -3872,22 +3493,16 @@ function getEventOptions() {
 
 function setupSearch() {
 
-    const searchInput =
-        document.querySelector(
-            "#searchInput"
-        ) ||
-        document.querySelector(
-            ".search-box input"
-        ) ||
-        document.querySelector(
-            "input[type='search']"
+    const input =
+        document.getElementById(
+            "searchInput"
         );
 
-    if (!searchInput) {
+    if (!input) {
         return;
     }
 
-    searchInput.addEventListener(
+    input.addEventListener(
         "input",
         event => {
 
@@ -3906,26 +3521,28 @@ function setupSearch() {
 
 function setupFilters() {
 
-    const statusFilter =
-        document.querySelector(
-            "#statusFilter"
+    const status =
+        document.getElementById(
+            "statusFilter"
         );
 
-    const priorityFilter =
-        document.querySelector(
-            "#priorityFilter"
+    const priority =
+        document.getElementById(
+            "priorityFilter"
         );
 
 
-    if (statusFilter) {
+    if (status) {
 
-        statusFilter.addEventListener(
+        status.addEventListener(
             "change",
             () => {
 
                 currentStatusFilter =
-                    statusFilter.value ||
+                    status.value ||
                     "all";
+
+                updateActiveStatCard();
 
                 applyFilters();
             }
@@ -3933,68 +3550,46 @@ function setupFilters() {
     }
 
 
-    if (priorityFilter) {
+    if (priority) {
 
-        priorityFilter.addEventListener(
+        priority.addEventListener(
             "change",
             () => {
 
                 currentPriorityFilter =
-                    priorityFilter.value ||
+                    priority.value ||
                     "all";
 
                 applyFilters();
             }
         );
     }
+}
 
 
-    /*
-      Fallback for existing filter bar.
-    */
+/* =========================================================
+   ACTIVE STAT CARD
+   ========================================================= */
 
-    if (
-        !statusFilter &&
-        !priorityFilter
-    ) {
+function updateActiveStatCard() {
 
-        const selects =
-            document.querySelectorAll(
-                ".filter-bar select"
+    $all(
+        ".stat-card"
+    ).forEach(
+        card => {
+
+            const filter =
+                card.dataset
+                    .statusFilter ||
+                "all";
+
+            card.classList.toggle(
+                "active",
+                filter ===
+                    currentStatusFilter
             );
-
-        selects.forEach(
-            (
-                select,
-                index
-            ) => {
-
-                select.addEventListener(
-                    "change",
-                    () => {
-
-                        if (
-                            index ===
-                            0
-                        ) {
-
-                            currentStatusFilter =
-                                select.value ||
-                                "all";
-
-                        } else {
-
-                            currentPriorityFilter =
-                                select.value ||
-                                "all";
-                        }
-
-                        applyFilters();
-                    }
-                );
-            }
-        );
-    }
+        }
+    );
 }
 
 
@@ -4005,22 +3600,21 @@ function setupFilters() {
 function setupRefreshButton() {
 
     const button =
-        document.querySelector(
-            "#refreshBtn"
-        ) ||
-        document.querySelector(
-            ".refresh-btn"
+        document.getElementById(
+            "refreshBtn"
         );
-
 
     if (!button) {
         return;
     }
 
-
     button.addEventListener(
         "click",
         async () => {
+
+            if (button.disabled) {
+                return;
+            }
 
             button.disabled =
                 true;
@@ -4031,16 +3625,14 @@ function setupRefreshButton() {
             button.textContent =
                 "Refreshing...";
 
-
             await loadEnquiries();
-
 
             button.disabled =
                 false;
 
             button.textContent =
                 original ||
-                "Refresh";
+                "↻ Refresh";
         }
     );
 }
@@ -4053,18 +3645,13 @@ function setupRefreshButton() {
 function setupAddButton() {
 
     const button =
-        document.querySelector(
-            "#addEnquiryBtn"
-        ) ||
-        document.querySelector(
-            ".add-enquiry-btn"
+        document.getElementById(
+            "addEnquiryBtn"
         );
-
 
     if (!button) {
         return;
     }
-
 
     button.addEventListener(
         "click",
@@ -4084,9 +3671,9 @@ function setupGlobalClicks() {
         event => {
 
 
-            /*
-              INLINE FIELD
-            */
+            /* =============================================
+               INLINE CLICK TO EDIT
+               ============================================= */
 
             const inlineField =
                 event.target.closest(
@@ -4097,6 +3684,9 @@ function setupGlobalClicks() {
                 inlineField &&
                 !inlineField.classList.contains(
                     "editing"
+                ) &&
+                !inlineField.classList.contains(
+                    "crm-inline-disabled"
                 )
             ) {
 
@@ -4108,9 +3698,9 @@ function setupGlobalClicks() {
             }
 
 
-            /*
-              VIEW DETAILS
-            */
+            /* =============================================
+               VIEW DETAILS
+               ============================================= */
 
             const viewButton =
                 event.target.closest(
@@ -4119,32 +3709,24 @@ function setupGlobalClicks() {
 
             if (viewButton) {
 
-                const id =
-                    viewButton.dataset.id;
-
                 openLeadModal(
-                    id
+                    viewButton.dataset.id
                 );
 
                 return;
             }
 
 
-            /*
-              CLOSE LEAD MODAL
-            */
+            /* =============================================
+               CLOSE LEAD MODAL
+               ============================================= */
 
             const closeButton =
                 event.target.closest(
-                    ".close-modal"
+                    "#closeLeadModal"
                 );
 
-            if (
-                closeButton &&
-                closeButton.closest(
-                    "#leadModal"
-                )
-            ) {
+            if (closeButton) {
 
                 closeLeadModal();
 
@@ -4152,21 +3734,16 @@ function setupGlobalClicks() {
             }
 
 
-            /*
-              CLOSE ADD MODAL
-            */
+            /* =============================================
+               CLOSE ADD MODAL
+               ============================================= */
 
-            const cancelButton =
+            const closeAdd =
                 event.target.closest(
-                    ".cancel-btn"
+                    "#closeAddEnquiry"
                 );
 
-            if (
-                cancelButton &&
-                cancelButton.closest(
-                    "#addEnquiryModal"
-                )
-            ) {
+            if (closeAdd) {
 
                 closeAddEnquiryModal();
 
@@ -4174,33 +3751,63 @@ function setupGlobalClicks() {
             }
 
 
-            /*
-              SAVE MODAL
-            */
+            /* =============================================
+               CANCEL LEAD MODAL
+               ============================================= */
+
+            const cancelLead =
+                event.target.closest(
+                    "#cancelLeadEdit"
+                );
+
+            if (cancelLead) {
+
+                closeLeadModal();
+
+                return;
+            }
+
+
+            /* =============================================
+               CANCEL ADD MODAL
+               ============================================= */
+
+            const cancelAdd =
+                event.target.closest(
+                    "#cancelAddEnquiry"
+                );
+
+            if (cancelAdd) {
+
+                closeAddEnquiryModal();
+
+                return;
+            }
+
+
+            /* =============================================
+               SAVE LEAD MODAL
+               ============================================= */
 
             const saveButton =
                 event.target.closest(
-                    ".save-btn"
+                    "#saveLeadBtn"
                 );
 
-            if (
-                saveButton &&
-                saveButton.closest(
-                    "#leadModal"
-                )
-            ) {
+            if (saveButton) {
 
                 saveModalChanges();
 
                 return;
             }
+
         }
     );
 
 
-    /*
-      LEAD MODAL BACKDROP
-    */
+    /* =============================================
+       LEAD MODAL BACKDROP
+       ============================================= */
 
     const leadModal =
         document.getElementById(
@@ -4225,9 +3832,9 @@ function setupGlobalClicks() {
     }
 
 
-    /*
-      ADD MODAL BACKDROP
-    */
+    /* =============================================
+       ADD MODAL BACKDROP
+       ============================================= */
 
     const addModal =
         document.getElementById(
@@ -4270,7 +3877,6 @@ function setupKeyboard() {
                 return;
             }
 
-
             const leadModal =
                 document.getElementById(
                     "leadModal"
@@ -4281,7 +3887,6 @@ function setupKeyboard() {
                     "addEnquiryModal"
                 );
 
-
             if (
                 leadModal &&
                 !leadModal.hidden
@@ -4289,7 +3894,6 @@ function setupKeyboard() {
 
                 closeLeadModal();
             }
-
 
             if (
                 addModal &&
@@ -4316,7 +3920,6 @@ function setupAuthListener() {
         return;
     }
 
-
     client.auth.onAuthStateChange(
         (
             event,
@@ -4334,16 +3937,7 @@ function setupAuthListener() {
                 return;
             }
 
-
-            if (
-                session &&
-                (
-                    event ===
-                        "SIGNED_IN" ||
-                    event ===
-                        "TOKEN_REFRESHED"
-                )
-            ) {
+            if (session) {
 
                 updateStaffName(
                     session.user
@@ -4361,14 +3955,13 @@ function setupAuthListener() {
 function setupAddForm() {
 
     const form =
-        document.querySelector(
-            "#addEnquiryModal form"
+        document.getElementById(
+            "addEnquiryForm"
         );
 
     if (!form) {
         return;
     }
-
 
     form.addEventListener(
         "submit",
@@ -4378,28 +3971,22 @@ function setupAddForm() {
 
 
 /* =========================================================
-   LOGOUT LISTENER
+   LOGOUT
    ========================================================= */
 
 function setupLogout() {
 
     const buttons =
-        document.querySelectorAll(
+        $all(
             ".logout-btn"
         );
-
 
     buttons.forEach(
         button => {
 
             button.addEventListener(
                 "click",
-                event => {
-
-                    event.preventDefault();
-
-                    logoutCRM();
-                }
+                logoutCRM
             );
         }
     );
@@ -4419,7 +4006,6 @@ async function initializeCRM() {
 
     const session =
         await checkCRMAuth();
-
 
     if (!session) {
         return;
@@ -4477,7 +4063,7 @@ if (
 
 
 /* =========================================================
-   GLOBAL API
+   GLOBAL CRM API
    ========================================================= */
 
 window.crm = {
@@ -4521,7 +4107,3 @@ window.saveModalChanges =
 
 window.logoutCRM =
     logoutCRM;
-
-window.startInlineEdit =
-    startInlineEdit;
-```
