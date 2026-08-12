@@ -1,7 +1,7 @@
 /* =========================================================
    SELECT MY VENUE — CRM
    FINAL CRM.JS
-   Supabase + Employee CRM
+   Matches actual Supabase customer_enquiries columns
    ========================================================= */
 
 /* =========================================================
@@ -16,12 +16,12 @@ const CRM_SUPABASE_ANON_KEY =
     window.SUPABASE_ANON_KEY ||
     "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
-let supabaseClient = null;
-
 
 /* =========================================================
    SUPABASE CLIENT
    ========================================================= */
+
+let supabaseClient = null;
 
 function getSupabaseClient() {
 
@@ -31,24 +31,21 @@ function getSupabaseClient() {
 
     if (
         !window.supabase ||
-        typeof window.supabase.createClient !== "function"
+        !window.supabase.createClient
     ) {
         console.error("Supabase library not loaded.");
+        showToast(
+            "Supabase library is not loaded.",
+            "error"
+        );
         return null;
     }
 
-    if (
-        !CRM_SUPABASE_URL ||
-        !CRM_SUPABASE_ANON_KEY
-    ) {
-        console.error("Supabase configuration missing.");
-        return null;
-    }
-
-    supabaseClient = window.supabase.createClient(
-        CRM_SUPABASE_URL,
-        CRM_SUPABASE_ANON_KEY
-    );
+    supabaseClient =
+        window.supabase.createClient(
+            CRM_SUPABASE_URL,
+            CRM_SUPABASE_ANON_KEY
+        );
 
     return supabaseClient;
 }
@@ -66,26 +63,25 @@ let currentStatusFilter = "all";
 let currentPriorityFilter = "all";
 let currentSearch = "";
 
-let databaseColumns = new Set();
+let toastTimer = null;
 
 
 /* =========================================================
    HELPERS
    ========================================================= */
 
-function $(selector) {
-    return document.querySelector(selector);
+function $(selector, parent = document) {
+    return parent.querySelector(selector);
 }
-
 
 function safeValue(value) {
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value);
+    return (
+        value === null ||
+        value === undefined
+    )
+        ? ""
+        : String(value);
 }
-
 
 function escapeHTML(value) {
 
@@ -98,57 +94,94 @@ function escapeHTML(value) {
 }
 
 
-function escapeAttribute(value) {
-    return escapeHTML(value);
-}
-
-
 /* =========================================================
    TOAST
    ========================================================= */
 
-function showToast(message, type = "success") {
+function showToast(
+    message,
+    type = "success"
+) {
 
-    let toast = document.getElementById("crmToast");
+    let toast =
+        document.getElementById(
+            "toastMessage"
+        );
 
     if (!toast) {
 
-        toast = document.createElement("div");
+        toast =
+            document.createElement("div");
 
-        toast.id = "crmToast";
+        toast.id =
+            "toastMessage";
 
-        toast.style.position = "fixed";
-        toast.style.right = "24px";
-        toast.style.bottom = "24px";
-        toast.style.zIndex = "99999";
-        toast.style.padding = "12px 18px";
-        toast.style.borderRadius = "10px";
-        toast.style.color = "#fff";
-        toast.style.fontSize = "14px";
-        toast.style.fontWeight = "600";
+        toast.style.position =
+            "fixed";
+
+        toast.style.bottom =
+            "25px";
+
+        toast.style.right =
+            "25px";
+
+        toast.style.zIndex =
+            "99999";
+
+        toast.style.padding =
+            "13px 18px";
+
+        toast.style.borderRadius =
+            "10px";
+
+        toast.style.color =
+            "#fff";
+
+        toast.style.fontSize =
+            "14px";
+
+        toast.style.fontWeight =
+            "600";
+
         toast.style.boxShadow =
             "0 10px 30px rgba(0,0,0,.25)";
-        toast.style.transition = "opacity .2s ease";
+
+        toast.style.transition =
+            "all .2s ease";
 
         document.body.appendChild(toast);
     }
 
-    toast.textContent = message;
+    if (type === "error") {
+        toast.style.background =
+            "#b42318";
+    }
 
-    toast.style.background =
-        type === "error"
-            ? "#b42318"
-            : type === "warning"
-                ? "#9a6700"
-                : "#147d64";
+    else if (type === "warning") {
+        toast.style.background =
+            "#9a6700";
+    }
 
-    toast.style.opacity = "1";
+    else {
+        toast.style.background =
+            "#167c6a";
+    }
 
-    clearTimeout(window.crmToastTimer);
+    toast.textContent =
+        message;
 
-    window.crmToastTimer = setTimeout(() => {
-        toast.style.opacity = "0";
-    }, 2800);
+    toast.style.opacity =
+        "1";
+
+    clearTimeout(toastTimer);
+
+    toastTimer =
+        setTimeout(() => {
+
+            toast.style.opacity =
+                "0";
+
+        }, 2800);
 }
 
 
@@ -158,7 +191,8 @@ function showToast(message, type = "success") {
 
 async function checkCRMAuth() {
 
-    const client = getSupabaseClient();
+    const client =
+        getSupabaseClient();
 
     if (!client) {
         return null;
@@ -167,27 +201,41 @@ async function checkCRMAuth() {
     try {
 
         const {
-            data: { session },
+            data,
             error
-        } = await client.auth.getSession();
+        } =
+            await client.auth.getSession();
 
         if (error) {
-            console.error("Auth error:", error);
+
+            console.error(
+                "Auth error:",
+                error
+            );
+
             return null;
         }
+
+        const session =
+            data.session;
 
         if (!session) {
 
-            window.location.href = "login.html";
+            window.location.href =
+                "login.html";
 
             return null;
         }
 
-        updateStaffName(session.user);
+        updateStaffName(
+            session.user
+        );
 
         return session;
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "Authentication error:",
@@ -202,7 +250,9 @@ async function checkCRMAuth() {
 function updateStaffName(user) {
 
     const element =
-        document.getElementById("staffName");
+        document.getElementById(
+            "staffName"
+        );
 
     if (!element || !user) {
         return;
@@ -211,12 +261,15 @@ function updateStaffName(user) {
     const metadata =
         user.user_metadata || {};
 
-    element.textContent =
+    const name =
         metadata.full_name ||
         metadata.name ||
         metadata.display_name ||
         user.email ||
-        "Employee";
+        "CRM User";
+
+    element.textContent =
+        name;
 }
 
 
@@ -226,7 +279,8 @@ function updateStaffName(user) {
 
 async function logoutCRM() {
 
-    const client = getSupabaseClient();
+    const client =
+        getSupabaseClient();
 
     if (!client) {
         return;
@@ -234,7 +288,9 @@ async function logoutCRM() {
 
     try {
 
-        const { error } =
+        const {
+            error
+        } =
             await client.auth.signOut();
 
         if (error) {
@@ -252,9 +308,12 @@ async function logoutCRM() {
             return;
         }
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(error);
 
@@ -272,7 +331,8 @@ async function logoutCRM() {
 
 async function loadEnquiries() {
 
-    const client = getSupabaseClient();
+    const client =
+        getSupabaseClient();
 
     if (!client) {
         return;
@@ -285,29 +345,30 @@ async function loadEnquiries() {
         const {
             data,
             error
-        } = await client
-            .from("customer_enquiries")
-            .select("*")
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            );
+        } =
+            await client
+                .from("customer_enquiries")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                );
 
         if (error) {
 
             console.error(
-                "Supabase load error:",
+                "Supabase error:",
                 error
             );
 
             renderTableError(
-                error.message ||
                 "Unable to load enquiries."
             );
 
             showToast(
+                error.message ||
                 "Unable to load enquiries.",
                 "error"
             );
@@ -320,39 +381,25 @@ async function loadEnquiries() {
                 ? data
                 : [];
 
-        /*
-          Remember the actual columns returned
-          by Supabase.
-        */
-
-        databaseColumns.clear();
-
-        if (allLeads.length) {
-
-            Object.keys(
-                allLeads[0]
-            ).forEach(column => {
-                databaseColumns.add(column);
-            });
-        }
-
-        console.log(
-            "CRM database columns:",
-            Array.from(databaseColumns)
-        );
-
         applyFilters();
         updateStats();
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
-            "Load enquiries failed:",
+            "Load error:",
             error
         );
 
         renderTableError(
             "Something went wrong while loading enquiries."
+        );
+
+        showToast(
+            "Unable to load enquiries.",
+            "error"
         );
     }
 }
@@ -405,244 +452,6 @@ function renderTableError(message) {
 
 
 /* =========================================================
-   DATABASE COLUMN DETECTION
-   ========================================================= */
-
-function findExistingColumn(
-    lead,
-    possibleColumns
-) {
-
-    for (const column of possibleColumns) {
-
-        if (
-            Object.prototype.hasOwnProperty.call(
-                lead,
-                column
-            )
-        ) {
-            return column;
-        }
-    }
-
-    return null;
-}
-
-
-/* =========================================================
-   FIELD MAPPINGS
-   ========================================================= */
-
-function getCustomerName(lead) {
-
-    return (
-        lead.customer_name ||
-        lead.name ||
-        lead.full_name ||
-        "Unknown Customer"
-    );
-}
-
-
-function getPhone(lead) {
-
-    return (
-        lead.phone ||
-        lead.mobile ||
-        lead.contact_number ||
-        lead.phone_number ||
-        ""
-    );
-}
-
-
-function getEmail(lead) {
-
-    return (
-        lead.email ||
-        lead.customer_email ||
-        ""
-    );
-}
-
-
-function getEventColumn(lead) {
-
-    /*
-      IMPORTANT:
-      Do NOT assume event_type.
-
-      Your Supabase table appears to use
-      another column name.
-
-      We detect the actual one.
-    */
-
-    return findExistingColumn(
-        lead,
-        [
-            "event",
-            "event_name",
-            "event_type",
-            "eventType",
-            "eventname"
-        ]
-    );
-}
-
-
-function getEventValue(lead) {
-
-    const column =
-        getEventColumn(lead);
-
-    if (!column) {
-        return "";
-    }
-
-    return lead[column] || "";
-}
-
-
-function getVenueColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "venue",
-            "location",
-            "city",
-            "venue_name",
-            "venue_location"
-        ]
-    );
-}
-
-
-function getVenueValue(lead) {
-
-    const column =
-        getVenueColumn(lead);
-
-    return column
-        ? lead[column] || ""
-        : "";
-}
-
-
-function getEventDateColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "event_date",
-            "date",
-            "eventDate"
-        ]
-    );
-}
-
-
-function getEventDateValue(lead) {
-
-    const column =
-        getEventDateColumn(lead);
-
-    return column
-        ? lead[column] || ""
-        : "";
-}
-
-
-function getGuestsColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "guests",
-            "guest_count",
-            "number_of_guests",
-            "guestCount"
-        ]
-    );
-}
-
-
-function getGuestsValue(lead) {
-
-    const column =
-        getGuestsColumn(lead);
-
-    return column
-        ? lead[column] ?? ""
-        : "";
-}
-
-
-function getStatusColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "status"
-        ]
-    );
-}
-
-
-function getPriorityColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "priority"
-        ]
-    );
-}
-
-
-function getFollowUpColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "follow_up_at",
-            "followup_at",
-            "follow_up",
-            "followup"
-        ]
-    );
-}
-
-
-function getAssignedColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "assigned_to",
-            "assigned",
-            "assignedTo"
-        ]
-    );
-}
-
-
-function getRemarksColumn(lead) {
-
-    return findExistingColumn(
-        lead,
-        [
-            "remarks",
-            "internal_notes",
-            "notes",
-            "internal_remarks"
-        ]
-    );
-}
-
-
-/* =========================================================
    FILTERS
    ========================================================= */
 
@@ -654,54 +463,58 @@ function applyFilters() {
             .toLowerCase();
 
     filteredLeads =
-        allLeads.filter(lead => {
+        allLeads.filter(
+            lead => {
 
-            const searchable = [
+                const searchable = [
+                    lead.customer_name,
+                    lead.mobile,
+                    lead.email,
+                    lead.location,
+                    lead.occasion,
+                    lead.source,
+                    lead.requirements,
+                    lead.internal_notes
+                ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase();
 
-                getCustomerName(lead),
-                getPhone(lead),
-                getEmail(lead),
-                getEventValue(lead),
-                getVenueValue(lead),
-                getEventDateValue(lead),
-                getGuestsValue(lead),
-                lead.message,
-                lead.status,
-                lead.priority
+                const matchesSearch =
+                    !search ||
+                    searchable.includes(search);
 
-            ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
+                const status =
+                    safeValue(
+                        lead.status ||
+                        "new"
+                    ).toLowerCase();
 
-            const matchesSearch =
-                !search ||
-                searchable.includes(search);
+                const priority =
+                    safeValue(
+                        lead.priority ||
+                        "normal"
+                    ).toLowerCase();
 
-            const status =
-                safeValue(
-                    lead.status || "new"
-                ).toLowerCase();
+                const matchesStatus =
+                    currentStatusFilter ===
+                        "all" ||
+                    status ===
+                        currentStatusFilter;
 
-            const priority =
-                safeValue(
-                    lead.priority || "normal"
-                ).toLowerCase();
+                const matchesPriority =
+                    currentPriorityFilter ===
+                        "all" ||
+                    priority ===
+                        currentPriorityFilter;
 
-            const matchesStatus =
-                currentStatusFilter === "all" ||
-                status === currentStatusFilter;
-
-            const matchesPriority =
-                currentPriorityFilter === "all" ||
-                priority === currentPriorityFilter;
-
-            return (
-                matchesSearch &&
-                matchesStatus &&
-                matchesPriority
-            );
-        });
+                return (
+                    matchesSearch &&
+                    matchesStatus &&
+                    matchesPriority
+                );
+            }
+        );
 
     renderLeads();
 }
@@ -727,12 +540,12 @@ function renderLeads() {
         tbody.innerHTML = `
             <tr>
                 <td colspan="10">
-                    <div class="empty-state">
-                        <div class="empty-icon">⌕</div>
-                        <h3>No enquiries found</h3>
-                        <p>
-                            Try changing your search or filters.
-                        </p>
+                    <div class="crm-empty-inline">
+                        <div>⌕</div>
+                        <strong>No enquiries found</strong>
+                        <span>
+                            Try changing your search or filter.
+                        </span>
                     </div>
                 </td>
             </tr>
@@ -749,7 +562,19 @@ function renderLeads() {
 
 
 /* =========================================================
-   LEAD ROW
+   CREATE LEAD ROW
+
+   IMPORTANT:
+   Actual DB columns:
+   customer_name
+   mobile
+   email
+   occasion
+   event_date
+   guests
+   location
+   status
+   priority
    ========================================================= */
 
 function createLeadRow(lead) {
@@ -757,158 +582,151 @@ function createLeadRow(lead) {
     const id =
         safeValue(lead.id);
 
-    const name =
-        getCustomerName(lead);
+    const customerName =
+        lead.customer_name ||
+        "Unknown Customer";
 
     const phone =
-        getPhone(lead);
+        lead.mobile ||
+        "—";
 
     const email =
-        getEmail(lead);
+        lead.email ||
+        "—";
 
-    const event =
-        getEventValue(lead);
+    const occasion =
+        lead.occasion ||
+        "—";
 
     const eventDate =
-        getEventDateValue(lead);
+        lead.event_date ||
+        "";
 
     const guests =
-        getGuestsValue(lead);
+        lead.guests ??
+        "";
 
-    const venue =
-        getVenueValue(lead);
+    const location =
+        lead.location ||
+        "—";
 
     const status =
-        lead.status || "new";
+        lead.status ||
+        "new";
 
     const priority =
-        lead.priority || "normal";
+        lead.priority ||
+        "normal";
+
 
     return `
-        <tr data-lead-id="${escapeAttribute(id)}">
+        <tr
+            data-lead-id="${escapeHTML(id)}"
+        >
 
-            <!-- CUSTOMER : NOT EDITABLE -->
-            <td>
+            <!-- CUSTOMER -->
+            <td class="customer-cell">
                 <strong>
-                    ${escapeHTML(name)}
+                    ${escapeHTML(customerName)}
                 </strong>
             </td>
 
-            <!-- PHONE : NOT EDITABLE -->
-            <td>
-                ${escapeHTML(phone || "—")}
+
+            <!-- PHONE -->
+            <td class="phone-cell">
+                ${
+                    phone !== "—"
+                        ? escapeHTML(phone)
+                        : "—"
+                }
             </td>
 
-            <!-- EMAIL : EDITABLE -->
+
+            <!-- EMAIL -->
             <td>
                 ${createInlineField(
                     lead,
                     "email",
                     email,
-                    "text",
-                    {
-                        column: findExistingColumn(
-                            lead,
-                            [
-                                "email",
-                                "customer_email"
-                            ]
-                        )
-                    }
+                    "text"
                 )}
             </td>
 
-            <!-- EVENT : EDITABLE -->
+
+            <!-- OCCASION -->
             <td>
                 ${createInlineField(
                     lead,
-                    "event",
-                    event,
+                    "occasion",
+                    occasion,
                     "select",
-                    {
-                        column:
-                            getEventColumn(lead),
-                        options:
-                            getEventOptions()
-                    }
+                    getEventOptions()
                 )}
             </td>
 
-            <!-- EVENT DATE : EDITABLE -->
+
+            <!-- EVENT DATE -->
             <td>
                 ${createInlineField(
                     lead,
                     "event_date",
-                    formatDate(eventDate),
+                    eventDate
+                        ? formatDate(eventDate)
+                        : "—",
                     "date",
-                    {
-                        column:
-                            getEventDateColumn(lead),
-                        rawValue:
-                            eventDate
-                    }
+                    null,
+                    eventDate
                 )}
             </td>
 
-            <!-- GUESTS : EDITABLE -->
+
+            <!-- GUESTS -->
             <td>
                 ${createInlineField(
                     lead,
                     "guests",
-                    guests,
-                    "number",
-                    {
-                        column:
-                            getGuestsColumn(lead)
-                    }
+                    guests === ""
+                        ? "—"
+                        : guests,
+                    "number"
                 )}
             </td>
 
-            <!-- LOCATION : EDITABLE -->
+
+            <!-- LOCATION -->
             <td>
                 ${createInlineField(
                     lead,
                     "location",
-                    venue,
-                    "text",
-                    {
-                        column:
-                            getVenueColumn(lead)
-                    }
+                    location,
+                    "text"
                 )}
             </td>
 
-            <!-- STATUS : EDITABLE -->
+
+            <!-- STATUS -->
             <td>
                 ${createInlineField(
                     lead,
                     "status",
                     formatStatus(status),
                     "select",
-                    {
-                        column:
-                            getStatusColumn(lead),
-                        options:
-                            getStatusOptions()
-                    }
+                    getStatusOptions()
                 )}
             </td>
 
-            <!-- PRIORITY : EDITABLE -->
+
+            <!-- PRIORITY -->
             <td>
                 ${createInlineField(
                     lead,
                     "priority",
                     formatPriority(priority),
                     "select",
-                    {
-                        column:
-                            getPriorityColumn(lead),
-                        options:
-                            getPriorityOptions()
-                    }
+                    getPriorityOptions()
                 )}
             </td>
+
 
             <!-- ACTION -->
             <td class="action-column">
@@ -917,7 +735,7 @@ function createLeadRow(lead) {
                     type="button"
                     class="view-lead-btn"
                     data-action="view"
-                    data-id="${escapeAttribute(id)}"
+                    data-id="${escapeHTML(id)}"
                 >
                     View Details
                 </button>
@@ -931,47 +749,48 @@ function createLeadRow(lead) {
 
 /* =========================================================
    INLINE FIELD
-   NO PENCIL SHOWN
+
+   NO PENCIL DISPLAY.
+
+   User clicks normal text.
+   Then it becomes editable.
    ========================================================= */
 
 function createInlineField(
     lead,
-    logicalField,
+    field,
     displayValue,
-    type,
-    config = {}
+    type = "text",
+    options = null,
+    rawValue = null
 ) {
 
     const id =
         safeValue(lead.id);
 
-    const column =
-        config.column;
-
-    /*
-      If a database column does not exist,
-      don't make the field editable.
-    */
-
-    const editable =
-        !!column;
+    const value =
+        rawValue !== null &&
+        rawValue !== undefined
+            ? rawValue
+            : lead[field];
 
     const shown =
+        displayValue === "" ||
         displayValue === null ||
-        displayValue === undefined ||
-        displayValue === ""
+        displayValue === undefined
             ? "—"
             : displayValue;
 
     return `
         <div
-            class="crm-inline-field${editable ? "" : " not-editable"}"
-            data-inline-field="${escapeAttribute(logicalField)}"
-            data-db-column="${escapeAttribute(column || "")}"
-            data-lead-id="${escapeAttribute(id)}"
-            data-editable="${editable ? "true" : "false"}"
-            tabindex="${editable ? "0" : "-1"}"
-            title="${editable ? "Click to edit" : ""}"
+            class="crm-inline-field"
+            data-inline-field="${escapeHTML(field)}"
+            data-lead-id="${escapeHTML(id)}"
+            data-value="${escapeHTML(
+                safeValue(value)
+            )}"
+            tabindex="0"
+            title="Click to edit"
         >
             <span class="inline-display">
                 ${escapeHTML(shown)}
@@ -992,35 +811,18 @@ function startInlineEdit(element) {
     }
 
     if (
-        element.dataset.editable !== "true"
+        element.classList.contains(
+            "editing"
+        )
     ) {
         return;
     }
 
-    if (
-        element.classList.contains("editing")
-    ) {
-        return;
-    }
+    const field =
+        element.dataset.inlineField;
 
     const leadId =
         element.dataset.leadId;
-
-    const logicalField =
-        element.dataset.inlineField;
-
-    const dbColumn =
-        element.dataset.dbColumn;
-
-    if (!dbColumn) {
-
-        showToast(
-            "This field is not available in the database.",
-            "error"
-        );
-
-        return;
-    }
 
     const lead =
         allLeads.find(
@@ -1034,20 +836,7 @@ function startInlineEdit(element) {
     }
 
     const originalValue =
-        lead[dbColumn] ?? "";
-
-    /*
-      Remember page position.
-      This prevents the annoying page jumping.
-    */
-
-    const scrollX =
-        window.scrollX;
-
-    const scrollY =
-        window.scrollY;
-
-    element.classList.add("editing");
+        lead[field] ?? "";
 
     const display =
         element.querySelector(
@@ -1058,187 +847,244 @@ function startInlineEdit(element) {
         return;
     }
 
+    element.classList.add(
+        "editing"
+    );
+
     let editor;
 
-    if (logicalField === "event") {
+
+    /* =========================
+       DROPDOWNS
+       ========================= */
+
+    if (
+        field === "occasion"
+    ) {
 
         editor =
             createSelectEditor(
                 getEventOptions(),
                 originalValue
             );
+    }
 
-    } else if (logicalField === "status") {
+    else if (
+        field === "status"
+    ) {
 
         editor =
             createSelectEditor(
                 getStatusOptions(),
-                originalValue || "new"
+                originalValue ||
+                "new"
             );
+    }
 
-    } else if (logicalField === "priority") {
+    else if (
+        field === "priority"
+    ) {
 
         editor =
             createSelectEditor(
                 getPriorityOptions(),
-                originalValue || "normal"
+                originalValue ||
+                "normal"
             );
+    }
 
-    } else {
+
+    /* =========================
+       NORMAL INPUT
+       ========================= */
+
+    else {
 
         editor =
             document.createElement(
                 "input"
             );
 
-        editor.className =
-            "crm-inline-editor";
-
-        if (
-            logicalField === "event_date"
-        ) {
-            editor.type = "date";
-
-        } else if (
-            logicalField === "guests"
-        ) {
-            editor.type = "number";
-            editor.min = "0";
-
-        } else {
-            editor.type = "text";
-        }
+        editor.type =
+            field === "event_date"
+                ? "date"
+                : field === "guests"
+                    ? "number"
+                    : "text";
 
         editor.value =
-            safeValue(originalValue);
+            safeValue(
+                originalValue
+            );
 
-        editor.style.width = "100%";
-        editor.style.boxSizing =
-            "border-box";
+        editor.className =
+            "crm-inline-editor";
     }
 
-    display.replaceWith(editor);
 
-    /*
-      Restore scroll position immediately.
-    */
+    /* =====================================================
+       PREVENT TABLE JUMPING
 
-    window.scrollTo(
-        scrollX,
-        scrollY
+       Keep editor exactly inside cell.
+       ===================================================== */
+
+    editor.style.width =
+        "100%";
+
+    editor.style.maxWidth =
+        "100%";
+
+    editor.style.minWidth =
+        "0";
+
+    editor.style.boxSizing =
+        "border-box";
+
+    editor.style.margin =
+        "0";
+
+    editor.style.display =
+        "block";
+
+    editor.style.height =
+        "34px";
+
+
+    display.replaceWith(
+        editor
     );
 
-    setTimeout(() => {
+    editor.focus();
 
-        try {
-            editor.focus();
-        } catch (e) {}
 
-        window.scrollTo(
-            scrollX,
-            scrollY
-        );
-
-    }, 0);
-
-    let completed = false;
-
-    async function finish(
-        shouldSave = true
+    if (
+        editor.tagName === "INPUT" &&
+        editor.type !== "date" &&
+        editor.type !== "number"
     ) {
 
-        if (completed) {
+        try {
+            editor.select();
+        }
+        catch (e) {}
+    }
+
+
+    let finished =
+        false;
+
+
+    async function finish(
+        save = true
+    ) {
+
+        if (finished) {
             return;
         }
 
-        completed = true;
-
-        if (!shouldSave) {
-
-            restoreInlineDisplay(
-                element,
-                lead,
-                logicalField,
-                dbColumn
-            );
-
-            window.scrollTo(
-                scrollX,
-                scrollY
-            );
-
-            return;
-        }
+        finished = true;
 
         const newValue =
             editor.value;
 
+
         if (
-            String(newValue) ===
-            String(originalValue)
+            save &&
+            String(newValue) !==
+                String(originalValue)
         ) {
 
-            restoreInlineDisplay(
-                element,
-                lead,
-                logicalField,
-                dbColumn
-            );
-
-            window.scrollTo(
-                scrollX,
-                scrollY
+            await saveInlineField(
+                leadId,
+                field,
+                newValue
             );
 
             return;
         }
 
-        await saveInlineField(
+        restoreInlineDisplay(
+            element,
             lead,
-            dbColumn,
-            newValue,
-            element
-        );
-
-        window.scrollTo(
-            scrollX,
-            scrollY
+            field
         );
     }
 
-    editor.addEventListener(
-        "blur",
-        () => {
 
-            setTimeout(
-                () => finish(true),
-                150
-            );
-        }
-    );
+    /* SELECT:
+       Save immediately after selection.
+    */
 
-    editor.addEventListener(
-        "keydown",
-        event => {
+    if (
+        editor.tagName ===
+        "SELECT"
+    ) {
 
-            if (
-                event.key === "Enter"
-            ) {
+        editor.addEventListener(
+            "change",
+            () => {
 
-                event.preventDefault();
+                finish(true);
 
-                editor.blur();
-
-            } else if (
-                event.key === "Escape"
-            ) {
-
-                event.preventDefault();
-
-                finish(false);
             }
-        }
-    );
+        );
+
+        editor.addEventListener(
+            "blur",
+            () => {
+
+                setTimeout(
+                    () => finish(true),
+                    100
+                );
+
+            }
+        );
+    }
+
+
+    /* INPUT */
+
+    else {
+
+        editor.addEventListener(
+            "blur",
+            () => {
+
+                setTimeout(
+                    () => finish(true),
+                    100
+                );
+
+            }
+        );
+
+        editor.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+
+                    event.preventDefault();
+
+                    editor.blur();
+                }
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    event.preventDefault();
+
+                    finish(false);
+                }
+            }
+        );
+    }
 }
 
 
@@ -1259,32 +1105,34 @@ function createSelectEditor(
     select.className =
         "crm-inline-editor";
 
-    select.style.width = "100%";
-    select.style.boxSizing =
-        "border-box";
+    options.forEach(
+        option => {
 
-    options.forEach(option => {
+            const opt =
+                document.createElement(
+                    "option"
+                );
 
-        const item =
-            document.createElement(
-                "option"
+            opt.value =
+                option.value;
+
+            opt.textContent =
+                option.label;
+
+            if (
+                String(option.value) ===
+                String(selectedValue)
+            ) {
+
+                opt.selected =
+                    true;
+            }
+
+            select.appendChild(
+                opt
             );
-
-        item.value =
-            option.value;
-
-        item.textContent =
-            option.label;
-
-        if (
-            String(option.value) ===
-            String(selectedValue)
-        ) {
-            item.selected = true;
         }
-
-        select.appendChild(item);
-    });
+    );
 
     return select;
 }
@@ -1295,10 +1143,9 @@ function createSelectEditor(
    ========================================================= */
 
 async function saveInlineField(
-    lead,
-    dbColumn,
-    newValue,
-    element
+    leadId,
+    field,
+    newValue
 ) {
 
     const client =
@@ -1308,113 +1155,178 @@ async function saveInlineField(
         return;
     }
 
+    const lead =
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
+        );
+
+    if (!lead) {
+        return;
+    }
+
     const oldValue =
-        lead[dbColumn];
+        lead[field] ?? "";
+
+
+    /* =====================================================
+       ONLY REAL DATABASE COLUMNS ALLOWED
+       ===================================================== */
+
+    const allowedFields = [
+        "email",
+        "occasion",
+        "event_date",
+        "guests",
+        "location",
+        "status",
+        "priority"
+    ];
+
+    if (
+        !allowedFields.includes(
+            field
+        )
+    ) {
+
+        showToast(
+            "This field cannot be edited here.",
+            "error"
+        );
+
+        refreshLeadRow(
+            leadId
+        );
+
+        return;
+    }
+
+
+    let value =
+        newValue;
+
+    if (
+        value === ""
+    ) {
+        value = null;
+    }
+
+    if (
+        field === "guests" &&
+        value !== null
+    ) {
+        value =
+            Number(value);
+    }
+
 
     const updateData = {};
 
-    updateData[dbColumn] =
-        newValue === ""
-            ? null
-            : newValue;
+    updateData[field] =
+        value;
+
 
     try {
 
         const {
             data,
             error
-        } = await client
-            .from("customer_enquiries")
-            .update(updateData)
-            .eq("id", lead.id)
-            .select()
-            .single();
+        } =
+            await client
+                .from(
+                    "customer_enquiries"
+                )
+                .update(
+                    updateData
+                )
+                .eq(
+                    "id",
+                    leadId
+                )
+                .select("*")
+                .single();
+
 
         if (error) {
 
             console.error(
-                "Inline save error:",
+                "Save error:",
                 error
             );
 
-            /*
-              Specifically handle schema cache
-              problem.
-            */
-
-            if (
-                error.message &&
-                error.message
-                    .toLowerCase()
-                    .includes(
-                        "schema cache"
-                    )
-            ) {
-
-                showToast(
-                    `Database column "${dbColumn}" is not available.`,
-                    "error"
-                );
-
-            } else {
-
-                showToast(
-                    error.message ||
-                    "Unable to save change.",
-                    "error"
-                );
-            }
-
-            lead[dbColumn] =
+            lead[field] =
                 oldValue;
 
-            restoreInlineDisplay(
-                element,
-                lead,
-                null,
-                dbColumn
+            refreshLeadRow(
+                leadId
+            );
+
+            showToast(
+                error.message ||
+                "Unable to save change.",
+                "error"
             );
 
             return;
         }
 
-        if (data) {
 
-            Object.assign(
-                lead,
-                data
-            );
-        } else {
+        /* =================================================
+           UPDATE LOCAL DATA
+           ================================================= */
 
-            lead[dbColumn] =
-                updateData[dbColumn];
-        }
-
-        showToast(
-            "Change saved successfully."
+        Object.assign(
+            lead,
+            data ||
+            updateData
         );
 
-        restoreInlineDisplay(
-            element,
-            lead,
-            null,
-            dbColumn
+
+        /* =================================================
+           REFRESH ONLY THE ROW
+           NO FULL TABLE JUMP
+           ================================================= */
+
+        refreshLeadRow(
+            leadId
         );
 
         updateStats();
 
-    } catch (error) {
 
-        console.error(error);
+        if (
+            currentLead &&
+            String(currentLead.id) ===
+                String(leadId)
+        ) {
 
-        lead[dbColumn] =
+            currentLead =
+                lead;
+
+            populateLeadModal(
+                currentLead
+            );
+        }
+
+
+        showToast(
+            "Saved successfully."
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            error
+        );
+
+        lead[field] =
             oldValue;
 
-        restoreInlineDisplay(
-            element,
-            lead,
-            null,
-            dbColumn
+        refreshLeadRow(
+            leadId
         );
 
         showToast(
@@ -1426,14 +1338,13 @@ async function saveInlineField(
 
 
 /* =========================================================
-   RESTORE INLINE FIELD
+   RESTORE INLINE DISPLAY
    ========================================================= */
 
 function restoreInlineDisplay(
     element,
     lead,
-    logicalField,
-    dbColumn
+    field
 ) {
 
     if (!element) {
@@ -1450,43 +1361,50 @@ function restoreInlineDisplay(
     }
 
     let value =
-        dbColumn
-            ? lead[dbColumn]
-            : "";
+        lead[field];
+
 
     if (
-        logicalField === "status" ||
-        dbColumn === "status"
+        field === "status"
     ) {
 
         value =
-            formatStatus(value);
-
-    } else if (
-        logicalField === "priority" ||
-        dbColumn === "priority"
-    ) {
-
-        value =
-            formatPriority(value);
-
-    } else if (
-        logicalField === "event_date" ||
-        dbColumn === "event_date" ||
-        dbColumn === "date"
-    ) {
-
-        value =
-            formatDate(value);
+            formatStatus(
+                value
+            );
     }
+
+    else if (
+        field === "priority"
+    ) {
+
+        value =
+            formatPriority(
+                value
+            );
+    }
+
+    else if (
+        field === "event_date"
+    ) {
+
+        value =
+            value
+                ? formatDate(value)
+                : "—";
+    }
+
 
     if (
         value === null ||
         value === undefined ||
         value === ""
     ) {
-        value = "—";
+
+        value =
+            "—";
     }
+
 
     const display =
         document.createElement(
@@ -1499,7 +1417,10 @@ function restoreInlineDisplay(
     display.textContent =
         value;
 
-    editor.replaceWith(display);
+
+    editor.replaceWith(
+        display
+    );
 
     element.classList.remove(
         "editing"
@@ -1508,10 +1429,80 @@ function restoreInlineDisplay(
 
 
 /* =========================================================
-   VIEW DETAILS
+   REFRESH ONE ROW
    ========================================================= */
 
-function openLeadModal(leadId) {
+function refreshLeadRow(
+    leadId
+) {
+
+    const lead =
+        allLeads.find(
+            item =>
+                String(item.id) ===
+                String(leadId)
+        );
+
+    if (!lead) {
+        return;
+    }
+
+    const rows =
+        document.querySelectorAll(
+            "tr[data-lead-id]"
+        );
+
+    let row = null;
+
+    rows.forEach(
+        item => {
+
+            if (
+                String(
+                    item.dataset.leadId
+                ) ===
+                String(leadId)
+            ) {
+
+                row = item;
+            }
+        }
+    );
+
+    if (!row) {
+        renderLeads();
+        return;
+    }
+
+
+    const temp =
+        document.createElement(
+            "tbody"
+        );
+
+    temp.innerHTML =
+        createLeadRow(
+            lead
+        );
+
+    const newRow =
+        temp.firstElementChild;
+
+    if (newRow) {
+        row.replaceWith(
+            newRow
+        );
+    }
+}
+
+
+/* =========================================================
+   VIEW LEAD MODAL
+   ========================================================= */
+
+function openLeadModal(
+    leadId
+) {
 
     const lead =
         allLeads.find(
@@ -1530,9 +1521,8 @@ function openLeadModal(leadId) {
         return;
     }
 
-    currentLead = lead;
-
-    populateLeadModal(lead);
+    currentLead =
+        lead;
 
     const modal =
         document.getElementById(
@@ -1549,7 +1539,12 @@ function openLeadModal(leadId) {
         return;
     }
 
-    modal.hidden = false;
+    populateLeadModal(
+        lead
+    );
+
+    modal.hidden =
+        false;
 
     document.body.style.overflow =
         "hidden";
@@ -1558,127 +1553,138 @@ function openLeadModal(leadId) {
 
 /* =========================================================
    POPULATE MODAL
+
+   Maps dashboard fields to REAL DB fields.
    ========================================================= */
 
-function populateLeadModal(lead) {
+function populateLeadModal(
+    lead
+) {
 
     setText(
-        "detailCustomerName",
-        getCustomerName(lead)
+        "#detailCustomerName",
+        lead.customer_name ||
+        "—"
     );
 
     setText(
-        "detailPhone",
-        getPhone(lead) || "—"
+        "#detailPhone",
+        lead.mobile ||
+        "—"
     );
 
     setText(
-        "detailEmail",
-        getEmail(lead) || "—"
+        "#detailEmail",
+        lead.email ||
+        "—"
     );
 
     setText(
-        "detailSource",
+        "#detailSource",
         lead.source ||
-        lead.lead_source ||
         "—"
     );
 
     setControl(
-        "detailEventType",
-        getEventValue(lead)
+        "#detailEventType",
+        lead.occasion ||
+        ""
     );
 
     setControl(
-        "detailVenue",
-        getVenueValue(lead)
+        "#detailVenue",
+        lead.location ||
+        ""
     );
 
     setControl(
-        "detailEventDate",
-        getEventDateValue(lead)
+        "#detailEventDate",
+        lead.event_date ||
+        ""
     );
 
     setControl(
-        "detailGuests",
-        getGuestsValue(lead)
+        "#detailGuests",
+        lead.guests ??
+        ""
     );
 
     setControl(
-        "detailStatus",
-        lead.status || "new"
+        "#detailStatus",
+        lead.status ||
+        "new"
     );
 
     setControl(
-        "detailPriority",
-        lead.priority || "normal"
+        "#detailPriority",
+        lead.priority ||
+        "normal"
     );
 
     setControl(
-        "detailFollowUp",
-        getFollowUpColumn(lead)
-            ? lead[
-                getFollowUpColumn(lead)
-            ] || ""
-            : ""
+        "#detailFollowUp",
+        convertDateTimeLocal(
+            lead.follow_up_at
+        )
     );
 
     setControl(
-        "detailAssignedTo",
-        getAssignedColumn(lead)
-            ? lead[
-                getAssignedColumn(lead)
-            ] || ""
-            : ""
+        "#detailAssignedTo",
+        lead.assigned_to ||
+        ""
     );
 
     setText(
-        "detailMessage",
-        lead.message ||
-        lead.enquiry ||
+        "#detailMessage",
         lead.requirements ||
         "No customer message."
     );
 
     setControl(
-        "detailRemarks",
-        getRemarksColumn(lead)
-            ? lead[
-                getRemarksColumn(lead)
-            ] || ""
-            : ""
+        "#detailRemarks",
+        lead.internal_notes ||
+        ""
     );
 }
 
 
 /* =========================================================
-   MODAL HELPERS
+   TEXT HELPER
    ========================================================= */
 
 function setText(
-    id,
+    selector,
     value
 ) {
 
     const element =
-        document.getElementById(id);
+        document.querySelector(
+            selector
+        );
 
     if (!element) {
         return;
     }
 
     element.textContent =
-        safeValue(value) || "—";
+        safeValue(value) ||
+        "—";
 }
 
 
+/* =========================================================
+   CONTROL HELPER
+   ========================================================= */
+
 function setControl(
-    id,
+    selector,
     value
 ) {
 
     const element =
-        document.getElementById(id);
+        document.querySelector(
+            selector
+        );
 
     if (!element) {
         return;
@@ -1690,7 +1696,86 @@ function setControl(
 
 
 /* =========================================================
-   SAVE MODAL CHANGES
+   DATE LOCAL
+   ========================================================= */
+
+function convertDateTimeLocal(
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    const pad =
+        number =>
+            String(number)
+                .padStart(
+                    2,
+                    "0"
+                );
+
+    return (
+        date.getFullYear() +
+        "-" +
+        pad(
+            date.getMonth() + 1
+        ) +
+        "-" +
+        pad(
+            date.getDate()
+        ) +
+        "T" +
+        pad(
+            date.getHours()
+        ) +
+        ":" +
+        pad(
+            date.getMinutes()
+        )
+    );
+}
+
+
+/* =========================================================
+   CLOSE LEAD MODAL
+   ========================================================= */
+
+function closeLeadModal() {
+
+    const modal =
+        document.getElementById(
+            "leadModal"
+        );
+
+    if (!modal) {
+        return;
+    }
+
+    modal.hidden =
+        true;
+
+    document.body.style.overflow =
+        "";
+
+    currentLead =
+        null;
+}
+
+
+/* =========================================================
+   SAVE MODAL
    ========================================================= */
 
 async function saveModalChanges() {
@@ -1712,150 +1797,80 @@ async function saveModalChanges() {
         return;
     }
 
-    const lead =
-        currentLead;
+    const leadId =
+        currentLead.id;
 
-    const updateData = {};
 
-    /*
-      EVENT
-    */
+    /* =====================================================
+       REAL DATABASE COLUMN MAPPING
+       ===================================================== */
 
-    const eventColumn =
-        getEventColumn(lead);
+    const updateData = {
 
-    if (eventColumn) {
+        occasion:
+            getValue(
+                "#detailEventType"
+            ),
 
-        updateData[eventColumn] =
-            $("#detailEventType")?.value ||
-            null;
-    }
+        location:
+            getValue(
+                "#detailVenue"
+            ),
 
-    /*
-      VENUE / LOCATION
-    */
+        event_date:
+            getValue(
+                "#detailEventDate"
+            ) || null,
 
-    const venueColumn =
-        getVenueColumn(lead);
+        guests:
+            getNumberValue(
+                "#detailGuests"
+            ),
 
-    if (venueColumn) {
+        status:
+            getValue(
+                "#detailStatus"
+            ) ||
+            "new",
 
-        updateData[venueColumn] =
-            $("#detailVenue")?.value ||
-            null;
-    }
+        priority:
+            getValue(
+                "#detailPriority"
+            ) ||
+            "normal",
 
-    /*
-      EVENT DATE
-    */
+        follow_up_at:
+            getValue(
+                "#detailFollowUp"
+            ) || null,
 
-    const dateColumn =
-        getEventDateColumn(lead);
+        internal_notes:
+            getValue(
+                "#detailRemarks"
+            ) || null
+    };
 
-    if (dateColumn) {
 
-        updateData[dateColumn] =
-            $("#detailEventDate")?.value ||
-            null;
-    }
+    /* =====================================================
+       assigned_to is UUID in your database.
 
-    /*
-      GUESTS
-    */
+       Therefore we only send it when it is a valid UUID.
+       ===================================================== */
 
-    const guestsColumn =
-        getGuestsColumn(lead);
-
-    if (guestsColumn) {
-
-        const value =
-            $("#detailGuests")?.value;
-
-        updateData[guestsColumn] =
-            value === ""
-                ? null
-                : Number(value);
-    }
-
-    /*
-      STATUS
-    */
-
-    const statusColumn =
-        getStatusColumn(lead);
-
-    if (statusColumn) {
-
-        updateData[statusColumn] =
-            $("#detailStatus")?.value ||
-            "new";
-    }
-
-    /*
-      PRIORITY
-    */
-
-    const priorityColumn =
-        getPriorityColumn(lead);
-
-    if (priorityColumn) {
-
-        updateData[priorityColumn] =
-            $("#detailPriority")?.value ||
-            "normal";
-    }
-
-    /*
-      FOLLOW UP
-    */
-
-    const followColumn =
-        getFollowUpColumn(lead);
-
-    if (followColumn) {
-
-        updateData[followColumn] =
-            $("#detailFollowUp")?.value ||
-            null;
-    }
-
-    /*
-      ASSIGNED TO
-    */
-
-    const assignedColumn =
-        getAssignedColumn(lead);
-
-    if (assignedColumn) {
-
-        updateData[assignedColumn] =
-            $("#detailAssignedTo")?.value ||
-            null;
-    }
-
-    /*
-      REMARKS
-    */
-
-    const remarksColumn =
-        getRemarksColumn(lead);
-
-    if (remarksColumn) {
-
-        updateData[remarksColumn] =
-            $("#detailRemarks")?.value ||
-            null;
-    }
-
-    if (!Object.keys(updateData).length) {
-
-        showToast(
-            "No editable database fields found.",
-            "error"
+    const assigned =
+        getValue(
+            "#detailAssignedTo"
         );
 
-        return;
+    if (
+        assigned &&
+        isUUID(assigned)
+    ) {
+
+        updateData.assigned_to =
+            assigned;
     }
+
 
     const saveButton =
         document.getElementById(
@@ -1864,23 +1879,34 @@ async function saveModalChanges() {
 
     if (saveButton) {
 
-        saveButton.disabled = true;
+        saveButton.disabled =
+            true;
 
         saveButton.textContent =
             "Saving...";
     }
+
 
     try {
 
         const {
             data,
             error
-        } = await client
-            .from("customer_enquiries")
-            .update(updateData)
-            .eq("id", lead.id)
-            .select()
-            .single();
+        } =
+            await client
+                .from(
+                    "customer_enquiries"
+                )
+                .update(
+                    updateData
+                )
+                .eq(
+                    "id",
+                    leadId
+                )
+                .select("*")
+                .single();
+
 
         if (error) {
 
@@ -1889,111 +1915,84 @@ async function saveModalChanges() {
                 error
             );
 
-            showModalMessage(
-                error.message ||
-                "Unable to save changes.",
-                true
-            );
-
             showToast(
                 error.message ||
-                "Unable to save changes.",
+                "Unable to save enquiry.",
                 "error"
             );
 
             return;
         }
 
-        if (data) {
 
-            Object.assign(
-                lead,
-                data
-            );
-        } else {
+        /* =================================================
+           UPDATE LOCAL LEAD
+           ================================================= */
 
-            Object.assign(
-                lead,
-                updateData
-            );
-        }
+        Object.assign(
+            currentLead,
+            data ||
+            updateData
+        );
 
-        /*
-          Update main array too.
-        */
 
         const index =
             allLeads.findIndex(
                 item =>
                     String(item.id) ===
-                    String(lead.id)
+                    String(leadId)
             );
 
         if (index !== -1) {
 
             Object.assign(
                 allLeads[index],
-                lead
+                data ||
+                updateData
             );
 
             currentLead =
                 allLeads[index];
         }
 
-        showModalMessage(
-            "Changes saved successfully.",
-            false
+
+        /* =================================================
+           REFRESH TABLE
+           ================================================= */
+
+        applyFilters();
+
+        updateStats();
+
+        populateLeadModal(
+            currentLead
         );
+
 
         showToast(
             "Changes saved successfully."
         );
 
-        updateStats();
+    }
 
-        /*
-          Refresh table while preserving
-          current page position.
-        */
-
-        const scrollX =
-            window.scrollX;
-
-        const scrollY =
-            window.scrollY;
-
-        applyFilters();
-
-        requestAnimationFrame(() => {
-
-            window.scrollTo(
-                scrollX,
-                scrollY
-            );
-        });
-
-    } catch (error) {
+    catch (error) {
 
         console.error(
-            "Modal save exception:",
             error
-        );
-
-        showModalMessage(
-            "Unable to save changes.",
-            true
         );
 
         showToast(
             "Unable to save changes.",
             "error"
         );
+    }
 
-    } finally {
+    finally {
 
         if (saveButton) {
 
-            saveButton.disabled = false;
+            saveButton.disabled =
+                false;
 
             saveButton.textContent =
                 "Save Changes";
@@ -2003,59 +2002,65 @@ async function saveModalChanges() {
 
 
 /* =========================================================
-   MODAL MESSAGE
+   GET VALUE
    ========================================================= */
 
-function showModalMessage(
-    message,
-    isError
+function getValue(
+    selector
 ) {
 
     const element =
-        document.getElementById(
-            "leadModalMessage"
+        document.querySelector(
+            selector
         );
 
     if (!element) {
-        return;
+        return "";
     }
 
-    element.textContent =
-        message;
-
-    element.style.color =
-        isError
-            ? "#ff6b6b"
-            : "#36d399";
+    return safeValue(
+        element.value
+    ).trim();
 }
 
 
-/* =========================================================
-   CLOSE LEAD MODAL
-   ========================================================= */
+function getNumberValue(
+    selector
+) {
 
-function closeLeadModal() {
-
-    const modal =
-        document.getElementById(
-            "leadModal"
+    const value =
+        getValue(
+            selector
         );
 
-    if (!modal) {
-        return;
+    if (value === "") {
+        return null;
     }
 
-    modal.hidden = true;
+    const number =
+        Number(value);
 
-    document.body.style.overflow =
-        "";
-
-    currentLead = null;
+    return Number.isFinite(
+        number
+    )
+        ? number
+        : null;
 }
 
 
 /* =========================================================
-   ADD ENQUIRY
+   UUID CHECK
+   ========================================================= */
+
+function isUUID(value) {
+
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+        .test(value);
+}
+
+
+/* =========================================================
+   ADD ENQUIRY MODAL
    ========================================================= */
 
 function openAddEnquiryModal() {
@@ -2075,7 +2080,8 @@ function openAddEnquiryModal() {
         return;
     }
 
-    modal.hidden = false;
+    modal.hidden =
+        false;
 
     document.body.style.overflow =
         "hidden";
@@ -2095,10 +2101,15 @@ function openAddEnquiryModal() {
         );
 
     if (message) {
-        message.textContent = "";
+        message.textContent =
+            "";
     }
 }
 
+
+/* =========================================================
+   CLOSE ADD MODAL
+   ========================================================= */
 
 function closeAddEnquiryModal() {
 
@@ -2111,7 +2122,8 @@ function closeAddEnquiryModal() {
         return;
     }
 
-    modal.hidden = true;
+    modal.hidden =
+        true;
 
     document.body.style.overflow =
         "";
@@ -2119,7 +2131,7 @@ function closeAddEnquiryModal() {
 
 
 /* =========================================================
-   ADD ENQUIRY SUBMIT
+   ADD ENQUIRY
    ========================================================= */
 
 async function submitAddEnquiry(
@@ -2149,52 +2161,86 @@ async function submitAddEnquiry(
 
     const data = {};
 
-    formData.forEach(
-        (value, key) => {
 
-            data[key] =
-                typeof value === "string"
-                    ? value.trim()
-                    : value;
-        }
-    );
+    for (
+        const [key, value]
+        of formData.entries()
+    ) {
+
+        data[key] =
+            typeof value ===
+                "string"
+                ? value.trim()
+                : value;
+    }
+
+
+    /* =====================================================
+       IMPORTANT:
+
+       Dashboard uses event_type name,
+       but database uses occasion.
+       ===================================================== */
+
+    if (
+        data.event_type !==
+        undefined
+    ) {
+
+        data.occasion =
+            data.event_type;
+
+        delete data.event_type;
+    }
+
 
     if (!data.status) {
-        data.status = "new";
+        data.status =
+            "new";
     }
 
     if (!data.priority) {
-        data.priority = "normal";
+        data.priority =
+            "normal";
     }
 
-    const button =
-        document.getElementById(
-            "submitEnquiryBtn"
-        );
 
-    if (button) {
+    /* assigned_to is UUID.
+       Don't send employee text into UUID column.
+    */
 
-        button.disabled = true;
+    if (
+        data.assigned_to &&
+        !isUUID(
+            data.assigned_to
+        )
+    ) {
 
-        button.textContent =
-            "Adding...";
+        delete data.assigned_to;
     }
+
 
     try {
 
         const {
             data: created,
             error
-        } = await client
-            .from("customer_enquiries")
-            .insert([data])
-            .select()
-            .single();
+        } =
+            await client
+                .from(
+                    "customer_enquiries"
+                )
+                .insert([
+                    data
+                ])
+                .select("*")
+                .single();
+
 
         if (error) {
 
             console.error(
-                "Create enquiry error:",
+                "Create error:",
                 error
             );
 
@@ -2207,11 +2253,17 @@ async function submitAddEnquiry(
             return;
         }
 
+
         if (created) {
-            allLeads.unshift(created);
+
+            allLeads.unshift(
+                created
+            );
         }
 
+
         applyFilters();
+
         updateStats();
 
         closeAddEnquiryModal();
@@ -2220,24 +2272,18 @@ async function submitAddEnquiry(
             "Customer enquiry added successfully."
         );
 
-    } catch (error) {
+    }
 
-        console.error(error);
+    catch (error) {
+
+        console.error(
+            error
+        );
 
         showToast(
             "Unable to add enquiry.",
             "error"
         );
-
-    } finally {
-
-        if (button) {
-
-            button.disabled = false;
-
-            button.textContent =
-                "Add Enquiry";
-        }
     }
 }
 
@@ -2255,15 +2301,18 @@ function updateStats() {
         allLeads.filter(
             lead =>
                 String(
-                    lead.status || "new"
-                ).toLowerCase() === "new"
+                    lead.status ||
+                    "new"
+                ).toLowerCase() ===
+                "new"
         ).length;
 
     const contactedCount =
         allLeads.filter(
             lead =>
                 String(
-                    lead.status || ""
+                    lead.status ||
+                    ""
                 ).toLowerCase() ===
                 "contacted"
         ).length;
@@ -2274,35 +2323,56 @@ function updateStats() {
 
                 const status =
                     String(
-                        lead.status || ""
+                        lead.status ||
+                        ""
                     ).toLowerCase();
 
                 return (
-                    status === "closed" ||
-                    status === "converted"
+                    status ===
+                        "closed" ||
+                    status ===
+                        "converted"
                 );
             }
         ).length;
 
-    setText(
-        "totalCount",
+
+    setStat(
+        "#totalCount",
         total
     );
 
-    setText(
-        "newCount",
+    setStat(
+        "#newCount",
         newCount
     );
 
-    setText(
-        "contactedCount",
+    setStat(
+        "#contactedCount",
         contactedCount
     );
 
-    setText(
-        "closedCount",
+    setStat(
+        "#closedCount",
         closedCount
     );
+}
+
+
+function setStat(
+    selector,
+    value
+) {
+
+    const element =
+        document.querySelector(
+            selector
+        );
+
+    if (element) {
+        element.textContent =
+            value;
+    }
 }
 
 
@@ -2335,7 +2405,7 @@ function setupSearch() {
 
 
 /* =========================================================
-   FILTERS
+   FILTER DROPDOWNS
    ========================================================= */
 
 function setupFilters() {
@@ -2350,6 +2420,7 @@ function setupFilters() {
             "priorityFilter"
         );
 
+
     if (status) {
 
         status.addEventListener(
@@ -2357,12 +2428,14 @@ function setupFilters() {
             () => {
 
                 currentStatusFilter =
-                    status.value || "all";
+                    status.value ||
+                    "all";
 
                 applyFilters();
             }
         );
     }
+
 
     if (priority) {
 
@@ -2371,7 +2444,8 @@ function setupFilters() {
             () => {
 
                 currentPriorityFilter =
-                    priority.value || "all";
+                    priority.value ||
+                    "all";
 
                 applyFilters();
             }
@@ -2381,37 +2455,39 @@ function setupFilters() {
 
 
 /* =========================================================
-   STAT FILTERS
+   STAT CARDS
    ========================================================= */
 
 function setupStatFilters() {
 
-    document
-        .querySelectorAll(
+    const cards =
+        document.querySelectorAll(
             ".stat-card"
-        )
-        .forEach(card => {
+        );
+
+    cards.forEach(
+        card => {
 
             card.addEventListener(
                 "click",
                 () => {
 
-                    document
-                        .querySelectorAll(
-                            ".stat-card"
-                        )
-                        .forEach(item =>
+                    cards.forEach(
+                        item =>
                             item.classList.remove(
                                 "active"
                             )
-                        );
+                    );
 
                     card.classList.add(
                         "active"
                     );
 
+                    const filter =
+                        card.dataset.statusFilter;
+
                     currentStatusFilter =
-                        card.dataset.statusFilter ||
+                        filter ||
                         "all";
 
                     const status =
@@ -2427,7 +2503,8 @@ function setupStatFilters() {
                     applyFilters();
                 }
             );
-        });
+        }
+    );
 }
 
 
@@ -2450,20 +2527,22 @@ function setupRefresh() {
         "click",
         async () => {
 
-            const oldText =
+            button.disabled =
+                true;
+
+            const original =
                 button.innerHTML;
 
-            button.disabled = true;
-
-            button.textContent =
+            button.innerHTML =
                 "Refreshing...";
 
             await loadEnquiries();
 
-            button.disabled = false;
+            button.disabled =
+                false;
 
             button.innerHTML =
-                oldText;
+                original;
         }
     );
 }
@@ -2492,7 +2571,7 @@ function setupAddButton() {
 
 
 /* =========================================================
-   GLOBAL CLICK HANDLER
+   GLOBAL CLICKS
    ========================================================= */
 
 function setupGlobalClicks() {
@@ -2501,9 +2580,10 @@ function setupGlobalClicks() {
         "click",
         event => {
 
-            /*
-              INLINE EDIT
-            */
+
+            /* =========================
+               INLINE EDIT
+               ========================= */
 
             const inline =
                 event.target.closest(
@@ -2512,14 +2592,10 @@ function setupGlobalClicks() {
 
             if (
                 inline &&
-                inline.dataset.editable ===
-                "true" &&
                 !inline.classList.contains(
                     "editing"
                 )
             ) {
-
-                event.preventDefault();
 
                 startInlineEdit(
                     inline
@@ -2529,9 +2605,9 @@ function setupGlobalClicks() {
             }
 
 
-            /*
-              VIEW DETAILS
-            */
+            /* =========================
+               VIEW DETAILS
+               ========================= */
 
             const view =
                 event.target.closest(
@@ -2539,8 +2615,6 @@ function setupGlobalClicks() {
                 );
 
             if (view) {
-
-                event.preventDefault();
 
                 openLeadModal(
                     view.dataset.id
@@ -2550,63 +2624,49 @@ function setupGlobalClicks() {
             }
 
 
-            /*
-              CLOSE LEAD MODAL
-            */
+            /* =========================
+               CLOSE MODAL
+               ========================= */
 
-            if (
+            const close =
                 event.target.closest(
-                    "#closeLeadModal"
-                )
-            ) {
+                    ".close-modal"
+                );
 
-                closeLeadModal();
+            if (close) {
 
-                return;
+                if (
+                    close.closest(
+                        "#leadModal"
+                    )
+                ) {
+
+                    closeLeadModal();
+                    return;
+                }
+
+                if (
+                    close.closest(
+                        "#addEnquiryModal"
+                    )
+                ) {
+
+                    closeAddEnquiryModal();
+                    return;
+                }
             }
 
 
-            /*
-              CANCEL LEAD MODAL
-            */
+            /* =========================
+               CANCEL ADD
+               ========================= */
 
-            if (
-                event.target.closest(
-                    "#cancelLeadEdit"
-                )
-            ) {
-
-                closeLeadModal();
-
-                return;
-            }
-
-
-            /*
-              CLOSE ADD MODAL
-            */
-
-            if (
-                event.target.closest(
-                    "#closeAddEnquiry"
-                )
-            ) {
-
-                closeAddEnquiryModal();
-
-                return;
-            }
-
-
-            /*
-              CANCEL ADD
-            */
-
-            if (
+            const cancel =
                 event.target.closest(
                     "#cancelAddEnquiry"
-                )
-            ) {
+                );
+
+            if (cancel) {
 
                 closeAddEnquiryModal();
 
@@ -2614,29 +2674,29 @@ function setupGlobalClicks() {
             }
 
 
-            /*
-              SAVE MODAL
-            */
+            /* =========================
+               SAVE MODAL
+               ========================= */
 
-            if (
+            const save =
                 event.target.closest(
                     "#saveLeadBtn"
-                )
-            ) {
+                );
 
-                event.preventDefault();
+            if (save) {
 
                 saveModalChanges();
 
                 return;
             }
+
         }
     );
 
 
-    /*
-      Lead modal backdrop
-    */
+    /* =========================
+       LEAD MODAL BACKDROP
+       ========================= */
 
     const leadModal =
         document.getElementById(
@@ -2661,9 +2721,9 @@ function setupGlobalClicks() {
     }
 
 
-    /*
-      Add modal backdrop
-    */
+    /* =========================
+       ADD MODAL BACKDROP
+       ========================= */
 
     const addModal =
         document.getElementById(
@@ -2744,7 +2804,8 @@ function setupKeyboard() {
         event => {
 
             if (
-                event.key !== "Escape"
+                event.key !==
+                "Escape"
             ) {
                 return;
             }
@@ -2763,6 +2824,7 @@ function setupKeyboard() {
                 leadModal &&
                 !leadModal.hidden
             ) {
+
                 closeLeadModal();
             }
 
@@ -2770,6 +2832,7 @@ function setupKeyboard() {
                 addModal &&
                 !addModal.hidden
             ) {
+
                 closeAddEnquiryModal();
             }
         }
@@ -2778,7 +2841,7 @@ function setupKeyboard() {
 
 
 /* =========================================================
-   AUTH LISTENER
+   AUTH STATE
    ========================================================= */
 
 function setupAuthListener() {
@@ -2819,19 +2882,22 @@ function setupAuthListener() {
 
 
 /* =========================================================
-   FORMATTING
+   FORMATTERS
    ========================================================= */
 
 function formatStatus(
-    value
+    status
 ) {
 
-    if (!value) {
+    if (!status) {
         return "New";
     }
 
-    return String(value)
-        .replace(/[-_]/g, " ")
+    return String(status)
+        .replace(
+            /[-_]/g,
+            " "
+        )
         .replace(
             /\b\w/g,
             char =>
@@ -2841,15 +2907,18 @@ function formatStatus(
 
 
 function formatPriority(
-    value
+    priority
 ) {
 
-    if (!value) {
+    if (!priority) {
         return "Normal";
     }
 
-    return String(value)
-        .replace(/[-_]/g, " ")
+    return String(priority)
+        .replace(
+            /[-_]/g,
+            " "
+        )
         .replace(
             /\b\w/g,
             char =>
@@ -2866,28 +2935,6 @@ function formatDate(
         return "—";
     }
 
-    /*
-      Date-only values should not be
-      shifted by timezone.
-    */
-
-    const stringValue =
-        String(value);
-
-    if (
-        /^\d{4}-\d{2}-\d{2}$/.test(
-            stringValue
-        )
-    ) {
-
-        const parts =
-            stringValue.split("-");
-
-        return `${parts[2]} ${getMonthName(
-            Number(parts[1])
-        )} ${parts[0]}`;
-    }
-
     const date =
         new Date(value);
 
@@ -2897,7 +2944,7 @@ function formatDate(
         )
     ) {
 
-        return stringValue;
+        return String(value);
     }
 
     return date.toLocaleDateString(
@@ -2911,63 +2958,91 @@ function formatDate(
 }
 
 
-function getMonthName(
-    month
-) {
-
-    const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"
-    ];
-
-    return (
-        months[month - 1] ||
-        ""
-    );
-}
-
-
 /* =========================================================
    OPTIONS
    ========================================================= */
 
+function getEventOptions() {
+
+    return [
+
+        {
+            value: "",
+            label: "Select Event"
+        },
+
+        {
+            value: "Wedding",
+            label: "Wedding"
+        },
+
+        {
+            value: "Engagement",
+            label: "Engagement"
+        },
+
+        {
+            value: "Birthday",
+            label: "Birthday"
+        },
+
+        {
+            value: "Corporate",
+            label: "Corporate"
+        },
+
+        {
+            value: "Anniversary",
+            label: "Anniversary"
+        },
+
+        {
+            value: "Party",
+            label: "Party"
+        },
+
+        {
+            value: "Other",
+            label: "Other"
+        }
+    ];
+}
+
+
 function getStatusOptions() {
 
     return [
+
         {
             value: "new",
             label: "New"
         },
+
         {
             value: "contacted",
             label: "Contacted"
         },
+
         {
             value: "follow-up",
             label: "Follow-up"
         },
+
         {
             value: "qualified",
             label: "Qualified"
         },
+
         {
             value: "converted",
             label: "Converted"
         },
+
         {
             value: "closed",
             label: "Closed"
         },
+
         {
             value: "lost",
             label: "Lost"
@@ -2979,64 +3054,30 @@ function getStatusOptions() {
 function getPriorityOptions() {
 
     return [
+
         {
-            value: "normal",
-            label: "Normal"
+            value: "urgent",
+            label: "Urgent"
         },
-        {
-            value: "low",
-            label: "Low"
-        },
-        {
-            value: "medium",
-            label: "Medium"
-        },
+
         {
             value: "high",
             label: "High"
         },
-        {
-            value: "urgent",
-            label: "Urgent"
-        }
-    ];
-}
 
+        {
+            value: "medium",
+            label: "Medium"
+        },
 
-function getEventOptions() {
+        {
+            value: "normal",
+            label: "Normal"
+        },
 
-    return [
         {
-            value: "",
-            label: "Select Event"
-        },
-        {
-            value: "Wedding",
-            label: "Wedding"
-        },
-        {
-            value: "Engagement",
-            label: "Engagement"
-        },
-        {
-            value: "Birthday",
-            label: "Birthday"
-        },
-        {
-            value: "Corporate",
-            label: "Corporate"
-        },
-        {
-            value: "Anniversary",
-            label: "Anniversary"
-        },
-        {
-            value: "Party",
-            label: "Party"
-        },
-        {
-            value: "Other",
-            label: "Other"
+            value: "low",
+            label: "Low"
         }
     ];
 }
@@ -3049,7 +3090,7 @@ function getEventOptions() {
 async function initializeCRM() {
 
     console.log(
-        "Select My Venue CRM starting..."
+        "Select My Venue CRM initializing..."
     );
 
     const session =
@@ -3060,14 +3101,23 @@ async function initializeCRM() {
     }
 
     setupSearch();
+
     setupFilters();
+
     setupStatFilters();
+
     setupRefresh();
+
     setupAddButton();
+
     setupGlobalClicks();
+
     setupAddForm();
+
     setupLogout();
+
     setupKeyboard();
+
     setupAuthListener();
 
     await loadEnquiries();
@@ -3092,14 +3142,16 @@ if (
         initializeCRM
     );
 
-} else {
+}
+
+else {
 
     initializeCRM();
 }
 
 
 /* =========================================================
-   PUBLIC API
+   GLOBAL ACCESS
    ========================================================= */
 
 window.crm = {
