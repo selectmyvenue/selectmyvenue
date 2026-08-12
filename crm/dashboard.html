@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -11,6 +13,7 @@
     <title>Select My Venue CRM — Lead Management</title>
 
     <link rel="stylesheet" href="crm.css">
+
 
     <!-- =====================================================
          SUPABASE CONFIG
@@ -24,6 +27,7 @@
             "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
     </script>
 
+
     <!-- =====================================================
          SUPABASE JS
     ====================================================== -->
@@ -32,11 +36,16 @@
         src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
     ></script>
 
+
     <!-- =====================================================
-         CRM JAVASCRIPT
+         CRM JS
     ====================================================== -->
 
-    <script src="crm.js" defer></script>
+    <script
+        src="crm.js"
+        defer
+    ></script>
+
 </head>
 
 
@@ -60,9 +69,11 @@
             >
 
             <div class="crm-brand-text">
+
                 <strong>
                     Select My Venue CRM
                 </strong>
+
             </div>
 
         </div>
@@ -152,6 +163,7 @@
         ================================================== -->
 
         <section class="stats-grid">
+
 
             <!-- TOTAL -->
 
@@ -274,9 +286,7 @@
         <section class="leads-section">
 
 
-            <!-- =================================================
-                 FILTER BAR
-            ================================================== -->
+            <!-- FILTER BAR -->
 
             <div class="filter-bar">
 
@@ -289,7 +299,7 @@
                     <input
                         type="search"
                         id="searchInput"
-                        placeholder="Search customer, phone, email, source, location or event..."
+                        placeholder="Search customer, phone, email, source, venue or event..."
                         autocomplete="off"
                     >
 
@@ -315,10 +325,6 @@
 
                     <option value="follow-up">
                         Follow-up
-                    </option>
-
-                    <option value="detail-shared">
-                        Detail Shared
                     </option>
 
                     <option value="interested">
@@ -443,9 +449,7 @@
             </div>
 
 
-            <!-- =================================================
-                 EMPTY STATE
-            ================================================== -->
+            <!-- EMPTY STATE -->
 
             <div
                 id="emptyState"
@@ -489,6 +493,7 @@
             aria-labelledby="leadModalTitle"
         >
 
+
             <!-- MODAL HEADER -->
 
             <div class="modal-header">
@@ -521,6 +526,7 @@
             <!-- CUSTOMER SUMMARY -->
 
             <div class="lead-info-grid">
+
 
                 <!-- CUSTOMER -->
 
@@ -555,11 +561,6 @@
                         —
                     </strong>
 
-                    <div
-                        id="detailPhoneActions"
-                        class="contact-actions"
-                    ></div>
-
                 </div>
 
 
@@ -577,11 +578,6 @@
                         class="detail-edit-input"
                         placeholder="Email address"
                     >
-
-                    <div
-                        id="detailEmailActions"
-                        class="contact-actions"
-                    ></div>
 
                 </div>
 
@@ -606,7 +602,9 @@
             </div>
 
 
-            <!-- ENQUIRY INFORMATION -->
+            <!-- =================================================
+                 ENQUIRY INFORMATION
+            ================================================== -->
 
             <div class="detail-section-title">
                 ENQUIRY INFORMATION
@@ -614,6 +612,7 @@
 
 
             <div class="crm-controls">
+
 
                 <!-- EVENT TYPE -->
 
@@ -735,10 +734,6 @@
                             Follow-up
                         </option>
 
-                        <option value="detail-shared">
-                            Detail Shared
-                        </option>
-
                         <option value="interested">
                             Interested
                         </option>
@@ -832,7 +827,7 @@
             </div>
 
 
-            <!-- INTERNAL COMMENT -->
+            <!-- COMMENT -->
 
             <div class="detail-block">
 
@@ -842,7 +837,7 @@
 
                 <textarea
                     id="detailRemarks"
-                    placeholder="Add internal comment..."
+                    placeholder="Add comment..."
                 ></textarea>
 
             </div>
@@ -902,6 +897,7 @@
             aria-labelledby="addEnquiryTitle"
         >
 
+
             <!-- MODAL HEADER -->
 
             <div class="modal-header">
@@ -931,12 +927,15 @@
             </div>
 
 
-            <!-- ADD FORM -->
+            <!-- =================================================
+                 ADD FORM
+            ================================================== -->
 
             <form
                 id="addEnquiryForm"
                 class="add-enquiry-form"
             >
+
 
                 <!-- CUSTOMER DETAILS -->
 
@@ -946,6 +945,9 @@
 
 
                 <div class="form-grid">
+
+
+                    <!-- CUSTOMER -->
 
                     <div class="control-group">
 
@@ -964,6 +966,8 @@
                     </div>
 
 
+                    <!-- PHONE -->
+
                     <div class="control-group">
 
                         <label for="customerPhone">
@@ -981,6 +985,8 @@
                     </div>
 
 
+                    <!-- EMAIL -->
+
                     <div class="control-group">
 
                         <label for="customerEmail">
@@ -996,6 +1002,8 @@
 
                     </div>
 
+
+                    <!-- SOURCE -->
 
                     <div class="control-group">
 
@@ -1056,6 +1064,9 @@
 
                 <div class="form-grid">
 
+
+                    <!-- EVENT -->
+
                     <div class="control-group">
 
                         <label for="eventType">
@@ -1104,6 +1115,8 @@
                     </div>
 
 
+                    <!-- LOCATION -->
+
                     <div class="control-group">
 
                         <label for="venueName">
@@ -1120,6 +1133,8 @@
                     </div>
 
 
+                    <!-- EVENT DATE -->
+
                     <div class="control-group">
 
                         <label for="eventDate">
@@ -1134,6 +1149,8 @@
 
                     </div>
 
+
+                    <!-- GUESTS -->
 
                     <div class="control-group">
 
@@ -1151,6 +1168,8 @@
 
                     </div>
 
+
+                    <!-- STATUS -->
 
                     <div class="control-group">
 
@@ -1173,10 +1192,6 @@
 
                             <option value="follow-up">
                                 Follow-up
-                            </option>
-
-                            <option value="detail-shared">
-                                Detail Shared
                             </option>
 
                             <option value="interested">
@@ -1230,6 +1245,7 @@
 
 
                 <div class="form-grid">
+
 
                     <div class="control-group">
 
@@ -1292,12 +1308,17 @@
 
                 <!-- COMMENT -->
 
+                <div class="form-section-title">
+                    COMMENT
+                </div>
+
+
                 <div class="full-width">
 
                     <div class="control-group">
 
                         <label for="newRemarks">
-                            COMMENT
+                            INTERNAL COMMENT
                         </label>
 
                         <textarea
@@ -1353,4 +1374,5 @@
 </div>
 
 </body>
+
 </html>
