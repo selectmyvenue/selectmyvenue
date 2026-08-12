@@ -1674,3 +1674,211 @@ img {
         min-height: 78px;
     }
 }
+
+/* =========================================================
+   CRM — STATUS COLORS
+========================================================= */
+
+.crm-status-field {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 92px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: .2s ease;
+}
+
+.crm-status-field:hover {
+    transform: translateY(-1px);
+    filter: brightness(.98);
+}
+
+
+/* NEW */
+
+.status-new {
+    background: #eef2f7;
+    color: #475467;
+}
+
+
+/* CONTACTED */
+
+.status-contacted {
+    background: #dcfce7;
+    color: #166534;
+}
+
+
+/* FOLLOW-UP */
+
+.status-follow-up {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+
+/* INTERESTED */
+
+.status-interested {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+
+/* QUALIFIED */
+
+.status-qualified {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+
+/* SITE VISIT */
+
+.status-site-visit {
+    background: #cffafe;
+    color: #155e75;
+}
+
+
+/* NEGOTIATION */
+
+.status-negotiation {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+
+/* BOOKED */
+
+.status-booked {
+    background: #dcfce7;
+    color: #166534;
+}
+
+
+/* CONVERTED */
+
+.status-converted {
+    background: #d1fae5;
+    color: #047857;
+}
+
+
+/* CLOSED */
+
+.status-closed {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+
+/* LOST */
+
+.status-lost {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+
+/* NOT INTERESTED */
+
+.status-not-interested {
+    background: #fecaca;
+    color: #991b1b;
+}
+
+
+/* =========================================================
+   STATUS EDITOR
+========================================================= */
+
+.crm-status-field.editing {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    min-width: 120px;
+}
+
+.crm-status-editor {
+    width: 100%;
+    min-width: 120px;
+    height: 34px;
+}
+
+
+/* =========================================================
+   COMMENT CELL
+========================================================= */
+
+.comment-cell {
+    white-space: nowrap;
+    text-align: center;
+}
+
+.crm-comment-actions {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 32px;
+}
+
+.comment-action-btn {
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: .2s ease;
+}
+
+.comment-action-btn:hover {
+    background: rgba(22, 124, 106, .10);
+    transform: translateY(-1px);
+}
+
+.comment-exists-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #167c6a;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   SOURCE / TABLE
+========================================================= */
+
+.leads-table th,
+.leads-table td {
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   COMMENT TEXTAREA
+========================================================= */
+
+#detailRemarks,
+#detailMessage {
+    min-height: 100px;
+    resize: vertical;
+}
