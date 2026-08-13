@@ -1,8 +1,16 @@
 // =====================================================
 // SELECT MY VENUE
 // CUSTOMER WEBSITE
-// Website → Supabase → CRM
-// MOBILE-SAFE VERSION
+// SMART EVENT DISCOVERY ENGINE
+//
+// Website → Smart Processing → Supabase → CRM
+//
+// IMPORTANT:
+// - Uses existing Supabase table/columns only
+// - Public website performs INSERT only
+// - No public SELECT
+// - Top search prepares the enquiry instead of creating
+//   an incomplete database record
 // =====================================================
 
 "use strict";
@@ -38,7 +46,7 @@ try {
         SUPABASE_ANON_KEY
       );
 
-    console.log("Supabase client initialized.");
+    console.log("✓ Supabase client initialized.");
 
   } else {
 
@@ -59,6 +67,20 @@ try {
 
 
 // =====================================================
+// CONSTANTS
+// =====================================================
+
+const DRAFT_STORAGE_KEY =
+  "smv_customer_enquiry_draft_v2";
+
+const LAST_ENQUIRY_KEY =
+  "smv_last_enquiry_reference";
+
+const WEBSITE_SOURCE =
+  "Website";
+
+
+// =====================================================
 // PAGE READY
 // =====================================================
 
@@ -66,11 +88,27 @@ document.addEventListener(
   "DOMContentLoaded",
   function () {
 
+    injectSmartStyles();
+
     setupMobileMenu();
 
     setupHeroSearch();
 
     setupCustomerEnquiry();
+
+    setupDraftSaving();
+
+    setupDateProtection();
+
+    setupSmartFieldEnhancements();
+
+    setupNavigationHelpers();
+
+    restoreSavedDraft();
+
+    console.log(
+      "✓ Select My Venue Smart Discovery Engine ready."
+    );
 
   }
 );
@@ -137,7 +175,17 @@ function setupMobileMenu() {
 
 
 // =====================================================
-// HERO SEARCH
+// HERO SMART SEARCH
+//
+// IMPORTANT CHANGE:
+//
+// The top form does NOT directly insert an incomplete
+// enquiry into Supabase.
+//
+// It prepares a smart requirement and moves the customer
+// to the full enquiry form.
+//
+// This prevents the current top-form submission error.
 // =====================================================
 
 function setupHeroSearch() {
@@ -186,166 +234,643 @@ function setupHeroSearch() {
       clearInlineMessage(message);
 
 
-      if (!eventType || !location) {
+      // -------------------------------------------------
+      // VALIDATION
+      // -------------------------------------------------
+
+      if (!eventType) {
 
         showInlineMessage(
           message,
-          "Please select an event type and enter your location.",
+          "Please select your event type.",
           "error"
         );
+
+        focusField("eventType");
 
         return;
 
       }
 
 
-      setButtonLoading(
-        submitButton,
-        "Submitting..."
-      );
-
-
-      try {
-
-        if (!supabaseClient) {
-
-          throw new Error(
-            "Supabase client is not initialized."
-          );
-
-        }
-
-
-        const requirements =
-          buildRequirements(
-            eventType,
-            location,
-            guests,
-            eventDate
-          );
-
-
-        // =================================================
-        // IMPORTANT:
-        // DO NOT USE .select() HERE.
-        //
-        // Public website visitors have INSERT permission,
-        // but SELECT is restricted to authenticated CRM users.
-        // =================================================
-
-        const { error } =
-          await supabaseClient
-            .from("customer_enquiries")
-            .insert({
-
-              customer_name:
-                null,
-
-              mobile:
-                null,
-
-              email:
-                null,
-
-              location:
-                location,
-
-              occasion:
-                eventType,
-
-              event_date:
-                eventDate || null,
-
-              guests:
-                convertGuestRangeToNumber(
-                  guests
-                ),
-
-              budget_per_person:
-                null,
-
-              food_preference:
-                null,
-
-              requirements:
-                requirements,
-
-              source:
-                "Website",
-
-              status:
-                "new",
-
-              priority:
-                "normal",
-
-              assigned_to:
-                null,
-
-              follow_up_at:
-                null,
-
-              internal_notes:
-                null,
-
-              last_contacted_at:
-                null
-
-            });
-
-
-        if (error) {
-
-          console.error(
-            "HERO SUPABASE ERROR:",
-            error
-          );
-
-          throw error;
-
-        }
-
-
-        console.log(
-          "Hero enquiry submitted successfully."
-        );
-
-
-        searchForm.reset();
-
+      if (!location) {
 
         showInlineMessage(
           message,
-          "✓ Enquiry submitted successfully! Our team will contact you shortly.",
-          "success"
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "HERO FORM ERROR:",
-          error
-        );
-
-
-        showInlineMessage(
-          message,
-          getFriendlySupabaseError(error),
+          "Please enter your city or location.",
           "error"
         );
 
+        focusField("location");
 
-      } finally {
-
-        restoreButton(
-          submitButton,
-          "Find Venues →"
-        );
+        return;
 
       }
 
+
+      if (
+        eventDate &&
+        isPastDate(eventDate)
+      ) {
+
+        showInlineMessage(
+          message,
+          "Please select today or a future event date.",
+          "error"
+        );
+
+        focusField("date");
+
+        return;
+
+      }
+
+
+      // -------------------------------------------------
+      // SMART ANALYSIS
+      // -------------------------------------------------
+
+      const smartProfile =
+        createSmartEventProfile({
+
+          eventType:
+            eventType,
+
+          location:
+            location,
+
+          guests:
+            guests,
+
+          eventDate:
+            eventDate
+
+        });
+
+
+      // -------------------------------------------------
+      // PREFILL FULL ENQUIRY
+      // -------------------------------------------------
+
+      prefillFullEnquiry({
+
+        eventType:
+          eventType,
+
+        location:
+          location,
+
+        guests:
+          convertGuestRangeToNumber(guests),
+
+        eventDate:
+          eventDate
+
+      });
+
+
+      // -------------------------------------------------
+      // SAVE SMART SEARCH AS DRAFT
+      // -------------------------------------------------
+
+      saveDraftData({
+
+        customerEventType:
+          eventType,
+
+        customerLocation:
+          location,
+
+        customerGuests:
+          convertGuestRangeToNumber(guests),
+
+        customerEventDate:
+          eventDate
+
+      });
+
+
+      // -------------------------------------------------
+      // SHOW SMART RESULT
+      // -------------------------------------------------
+
+      renderSmartSearchResult(
+        smartProfile
+      );
+
+
+      // -------------------------------------------------
+      // BUTTON
+      // -------------------------------------------------
+
+      setButtonLoading(
+        submitButton,
+        "Preparing..."
+      );
+
+
+      await wait(450);
+
+
+      restoreButton(
+        submitButton,
+        "Find Venues →"
+      );
+
+
+      // -------------------------------------------------
+      // MOVE CUSTOMER TO FULL ENQUIRY
+      // -------------------------------------------------
+
+      const enquirySection =
+        document.getElementById("enquiry");
+
+
+      if (enquirySection) {
+
+        enquirySection.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+      }
+
+
+      showInlineMessage(
+        message,
+        "✓ Smart search ready. We have prepared your enquiry below — add your contact details and submit.",
+        "success"
+      );
+
     }
+  );
+
+}
+
+
+// =====================================================
+// PREFILL FULL ENQUIRY
+// =====================================================
+
+function prefillFullEnquiry(data) {
+
+  setElementValue(
+    "customerEventType",
+    data.eventType
+  );
+
+
+  setElementValue(
+    "customerLocation",
+    data.location
+  );
+
+
+  if (data.guests) {
+
+    setElementValue(
+      "customerGuests",
+      data.guests
+    );
+
+  }
+
+
+  if (data.eventDate) {
+
+    setElementValue(
+      "customerEventDate",
+      data.eventDate
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// SMART EVENT PROFILE
+// =====================================================
+
+function createSmartEventProfile(data) {
+
+  const guests =
+    convertGuestRangeToNumber(
+      data.guests
+    );
+
+
+  const eventType =
+    String(
+      data.eventType || ""
+    ).toLowerCase();
+
+
+  const location =
+    normalizeLocation(
+      data.location
+    );
+
+
+  let venueTypes = [];
+
+  let planningFocus =
+    "Location + capacity + event suitability";
+
+
+  let priority =
+    "normal";
+
+
+  let score = 72;
+
+
+  // -------------------------------------------------
+  // EVENT INTELLIGENCE
+  // -------------------------------------------------
+
+  if (
+    eventType.includes("wedding") ||
+    eventType.includes("reception") ||
+    eventType.includes("engagement")
+  ) {
+
+    venueTypes = [
+      "Banquet Hall",
+      "Wedding Lawn",
+      "Hotel",
+      "Resort"
+    ];
+
+    planningFocus =
+      "Capacity + ambience + food + location";
+
+    score += 8;
+
+  }
+
+
+  else if (
+    eventType.includes("birthday") ||
+    eventType.includes("party")
+  ) {
+
+    venueTypes = [
+      "Party Venue",
+      "Banquet Hall",
+      "Restaurant",
+      "Lawn"
+    ];
+
+    planningFocus =
+      "Location + atmosphere + guest capacity";
+
+    score += 5;
+
+  }
+
+
+  else if (
+    eventType.includes("corporate")
+  ) {
+
+    venueTypes = [
+      "Hotel",
+      "Conference Venue",
+      "Banquet Hall",
+      "Business Event Space"
+    ];
+
+    planningFocus =
+      "Accessibility + capacity + professional facilities";
+
+    score += 6;
+
+  }
+
+
+  else {
+
+    venueTypes = [
+      "Banquet Hall",
+      "Hotel",
+      "Resort",
+      "Event Space"
+    ];
+
+  }
+
+
+  // -------------------------------------------------
+  // GUEST INTELLIGENCE
+  // -------------------------------------------------
+
+  let guestInsight =
+    "Standard capacity matching";
+
+  if (guests) {
+
+    if (guests >= 500) {
+
+      guestInsight =
+        "Large-event capacity required";
+
+      score += 7;
+
+    }
+
+    else if (guests >= 250) {
+
+      guestInsight =
+        "Medium-large venue capacity required";
+
+      score += 5;
+
+    }
+
+    else if (guests <= 50) {
+
+      guestInsight =
+        "Intimate venue options may be suitable";
+
+      score += 3;
+
+    }
+
+  }
+
+
+  // -------------------------------------------------
+  // DATE INTELLIGENCE
+  // -------------------------------------------------
+
+  let dateInsight =
+    "Flexible date matching";
+
+
+  if (data.eventDate) {
+
+    const days =
+      daysUntil(
+        data.eventDate
+      );
+
+
+    if (days <= 7) {
+
+      dateInsight =
+        "URGENT — event within 7 days";
+
+      priority =
+        "high";
+
+      score += 8;
+
+    }
+
+    else if (days <= 30) {
+
+      dateInsight =
+        "Priority — event within 30 days";
+
+      priority =
+        "high";
+
+      score += 6;
+
+    }
+
+    else if (days <= 90) {
+
+      dateInsight =
+        "Planned event — 1 to 3 months";
+
+      score += 4;
+
+    }
+
+    else {
+
+      dateInsight =
+        "Advance planning opportunity";
+
+    }
+
+  }
+
+
+  // -------------------------------------------------
+  // LOCATION INTELLIGENCE
+  // -------------------------------------------------
+
+  if (
+    location.length >= 3
+  ) {
+
+    score += 3;
+
+  }
+
+
+  // Keep score within 100
+  score =
+    Math.min(
+      99,
+      Math.max(
+        50,
+        score
+      )
+    );
+
+
+  return {
+
+    eventType:
+      data.eventType,
+
+    location:
+      location,
+
+    guests:
+      guests,
+
+    score:
+      score,
+
+    priority:
+      priority,
+
+    venueTypes:
+      venueTypes,
+
+    planningFocus:
+      planningFocus,
+
+    guestInsight:
+      guestInsight,
+
+    dateInsight:
+      dateInsight
+
+  };
+
+}
+
+
+// =====================================================
+// SMART SEARCH RESULT UI
+// =====================================================
+
+function renderSmartSearchResult(
+  profile
+) {
+
+  let box =
+    document.getElementById(
+      "smvSmartSearchResult"
+    );
+
+
+  if (!box) {
+
+    box =
+      document.createElement(
+        "div"
+      );
+
+    box.id =
+      "smvSmartSearchResult";
+
+    box.className =
+      "smv-smart-result";
+
+
+    const hero =
+      document.querySelector(
+        ".hero"
+      );
+
+
+    if (
+      hero &&
+      hero.querySelector(".search-card")
+    ) {
+
+      hero
+        .querySelector(".search-card")
+        .insertAdjacentElement(
+          "afterend",
+          box
+        );
+
+    }
+
+  }
+
+
+  box.innerHTML = `
+
+    <div class="smv-smart-header">
+
+      <div>
+
+        <span class="smv-smart-label">
+          ✦ SMART DISCOVERY
+        </span>
+
+        <h3>
+          Your event profile is ready
+        </h3>
+
+      </div>
+
+      <div class="smv-score">
+        <strong>${profile.score}%</strong>
+        <span>Match readiness</span>
+      </div>
+
+    </div>
+
+
+    <div class="smv-smart-grid">
+
+      <div>
+        <small>EVENT</small>
+        <b>${escapeHTML(profile.eventType)}</b>
+      </div>
+
+      <div>
+        <small>LOCATION</small>
+        <b>${escapeHTML(profile.location)}</b>
+      </div>
+
+      <div>
+        <small>GUESTS</small>
+        <b>
+          ${
+            profile.guests
+              ? profile.guests + " guests"
+              : "To be confirmed"
+          }
+        </b>
+      </div>
+
+      <div>
+        <small>PRIORITY</small>
+        <b class="smv-priority">
+          ${profile.priority.toUpperCase()}
+        </b>
+      </div>
+
+    </div>
+
+
+    <div class="smv-smart-insights">
+
+      <div>
+        <span>🎯</span>
+        <strong>Suggested venues</strong>
+        <p>
+          ${profile.venueTypes
+            .map(escapeHTML)
+            .join(" • ")}
+        </p>
+      </div>
+
+      <div>
+        <span>👥</span>
+        <strong>Capacity insight</strong>
+        <p>
+          ${escapeHTML(profile.guestInsight)}
+        </p>
+      </div>
+
+      <div>
+        <span>📅</span>
+        <strong>Planning insight</strong>
+        <p>
+          ${escapeHTML(profile.dateInsight)}
+        </p>
+      </div>
+
+    </div>
+
+
+    <div class="smv-smart-focus">
+
+      <span>AI-INSPIRED MATCHING FOCUS</span>
+
+      <strong>
+        ${escapeHTML(profile.planningFocus)}
+      </strong>
+
+    </div>
+
+  `;
+
+
+  box.classList.add(
+    "visible"
   );
 
 }
@@ -390,12 +915,9 @@ function setupCustomerEnquiry() {
     "submit",
     async function (event) {
 
-      // =================================================
-      // STOP NORMAL HTML FORM SUBMISSION
-      // =================================================
-
       event.preventDefault();
       event.stopPropagation();
+
 
       if (
         typeof event.stopImmediatePropagation ===
@@ -406,10 +928,6 @@ function setupCustomerEnquiry() {
 
       }
 
-
-      // =================================================
-      // PREVENT DOUBLE SUBMISSION
-      // =================================================
 
       if (
         submitButton &&
@@ -460,7 +978,7 @@ function setupCustomerEnquiry() {
 
       const leadSource =
         getValue("leadSource") ||
-        "Website";
+        WEBSITE_SOURCE;
 
 
       // =================================================
@@ -482,18 +1000,14 @@ function setupCustomerEnquiry() {
       }
 
 
-      // Remove spaces, hyphens and brackets from phone.
       const cleanMobile =
-        customerMobile.replace(
-          /[\s\-()+]/g,
-          ""
+        normalizeIndianMobile(
+          customerMobile
         );
 
 
       if (
-        !/^[0-9]{10}$/.test(
-          cleanMobile
-        )
+        !cleanMobile
       ) {
 
         showInlineMessage(
@@ -557,22 +1071,99 @@ function setupCustomerEnquiry() {
       }
 
 
+      if (
+        customerEventDate &&
+        isPastDate(customerEventDate)
+      ) {
+
+        showInlineMessage(
+          message,
+          "Please select today or a future event date.",
+          "error"
+        );
+
+        focusField("customerEventDate");
+
+        return;
+
+      }
+
+
+      if (
+        customerGuests &&
+        Number(customerGuests) < 1
+      ) {
+
+        showInlineMessage(
+          message,
+          "Please enter a valid guest count.",
+          "error"
+        );
+
+        focusField("customerGuests");
+
+        return;
+
+      }
+
+
+      if (
+        customerBudget &&
+        Number(customerBudget) < 0
+      ) {
+
+        showInlineMessage(
+          message,
+          "Please enter a valid budget per person.",
+          "error"
+        );
+
+        focusField("customerBudget");
+
+        return;
+
+      }
+
+
       // =================================================
-      // LOADING
+      // SMART PROFILE
       // =================================================
 
-      setButtonLoading(
-        submitButton,
-        "Submitting..."
-      );
+      const smartProfile =
+        createSmartEventProfile({
+
+          eventType:
+            customerEventType,
+
+          location:
+            customerLocation,
+
+          guests:
+            customerGuests,
+
+          eventDate:
+            customerEventDate
+
+        });
 
 
       // =================================================
-      // BUILD REQUIREMENTS
+      // GENERATE ENQUIRY REFERENCE
+      // =================================================
+
+      const enquiryReference =
+        createEnquiryReference();
+
+
+      // =================================================
+      // BUILD SMART REQUIREMENTS
       // =================================================
 
       const requirements =
         buildFullRequirements({
+
+          reference:
+            enquiryReference,
 
           eventType:
             customerEventType,
@@ -593,9 +1184,22 @@ function setupCustomerEnquiry() {
             customerFood,
 
           other:
-            customerRequirements
+            customerRequirements,
+
+          smartProfile:
+            smartProfile
 
         });
+
+
+      // =================================================
+      // LOADING
+      // =================================================
+
+      setButtonLoading(
+        submitButton,
+        "Submitting..."
+      );
 
 
       // =================================================
@@ -614,97 +1218,99 @@ function setupCustomerEnquiry() {
 
 
         console.log(
-          "Submitting customer enquiry..."
+          "Submitting smart customer enquiry..."
         );
 
 
-        // =================================================
-        // IMPORTANT MOBILE FIX
-        //
-        // NO .select()
-        //
-        // The anonymous website visitor only needs INSERT.
-        // CRM authenticated users have SELECT access.
-        // =================================================
+        const payload = {
 
-        const { error } =
-          await supabaseClient
-            .from("customer_enquiries")
-            .insert({
+          customer_name:
+            customerName,
 
-              customer_name:
-                customerName,
+          mobile:
+            cleanMobile,
 
-              mobile:
-                cleanMobile,
+          email:
+            customerEmail ||
+            null,
 
-              email:
-                customerEmail ||
-                null,
+          location:
+            customerLocation,
 
-              location:
-                customerLocation,
+          occasion:
+            customerEventType,
 
-              occasion:
-                customerEventType,
+          event_date:
+            customerEventDate ||
+            null,
 
-              event_date:
-                customerEventDate ||
-                null,
+          guests:
+            customerGuests
+              ? Number(customerGuests)
+              : null,
 
-              guests:
-                customerGuests
-                  ? Number(customerGuests)
-                  : null,
+          budget_per_person:
+            customerBudget
+              ? Number(customerBudget)
+              : null,
 
-              budget_per_person:
-                customerBudget
-                  ? Number(customerBudget)
-                  : null,
+          food_preference:
+            customerFood ||
+            null,
 
-              food_preference:
-                customerFood ||
-                null,
+          requirements:
+            requirements,
 
-              requirements:
-                requirements,
+          source:
+            leadSource,
 
-              source:
-                leadSource,
+          status:
+            "new",
 
-              status:
-                "new",
+          priority:
+            "normal",
 
-              priority:
-                "normal",
+          assigned_to:
+            null,
 
-              assigned_to:
-                null,
+          follow_up_at:
+            null,
 
-              follow_up_at:
-                null,
+          internal_notes:
+            null,
 
-              internal_notes:
-                null,
+          last_contacted_at:
+            null
 
-              last_contacted_at:
-                null
-
-            });
+        };
 
 
-        // =================================================
-        // DATABASE ERROR
-        // =================================================
+        console.log(
+          "CRM payload prepared:",
+          {
+            ...payload,
+            mobile: "***protected***"
+          }
+        );
 
-        if (error) {
+
+        const result =
+          await insertWithRetry(
+            payload
+          );
+
+
+        if (
+          result &&
+          result.error
+        ) {
 
           console.error(
             "SUPABASE DATABASE ERROR:",
-            error
+            result.error
           );
 
-          throw error;
+          throw result.error;
 
         }
 
@@ -714,22 +1320,44 @@ function setupCustomerEnquiry() {
         // =================================================
 
         console.log(
-          "CUSTOMER ENQUIRY INSERT SUCCESS"
+          "✓ CUSTOMER ENQUIRY INSERT SUCCESS"
         );
+
+
+        localStorage.setItem(
+          LAST_ENQUIRY_KEY,
+          enquiryReference
+        );
+
+
+        clearSavedDraft();
 
 
         form.reset();
 
 
-        showInlineMessage(
+        showSuccessWithReference(
           message,
-          "✓ Enquiry submitted successfully! Thank you for choosing Select My Venue. Our team will contact you shortly.",
-          "success"
+          enquiryReference,
+          {
+            name:
+              customerName,
+
+            mobile:
+              cleanMobile,
+
+            eventType:
+              customerEventType,
+
+            location:
+              customerLocation
+
+          }
         );
 
 
         // =================================================
-        // KEEP USER NEAR CONFIRMATION
+        // SCROLL TO CONFIRMATION
         // =================================================
 
         setTimeout(
@@ -781,72 +1409,100 @@ function setupCustomerEnquiry() {
 
 
 // =====================================================
-// GET VALUE
+// SUPABASE INSERT WITH SAFE RETRY
 // =====================================================
 
-function getValue(id) {
+async function insertWithRetry(
+  payload
+) {
 
-  const element =
-    document.getElementById(id);
-
-
-  if (!element) {
-    return "";
-  }
-
-
-  return String(
-    element.value || ""
-  ).trim();
-
-}
+  let result =
+    await supabaseClient
+      .from("customer_enquiries")
+      .insert(payload);
 
 
-// =====================================================
-// FOCUS FIELD
-// =====================================================
+  if (
+    result &&
+    result.error &&
+    isRetryableError(
+      result.error
+    )
+  ) {
 
-function focusField(id) {
-
-  const element =
-    document.getElementById(id);
-
-
-  if (element) {
-
-    setTimeout(
-      function () {
-
-        element.focus();
-
-      },
-      50
+    console.warn(
+      "Temporary submission error. Retrying once..."
     );
 
+
+    await wait(700);
+
+
+    result =
+      await supabaseClient
+        .from("customer_enquiries")
+        .insert(payload);
+
   }
 
-}
 
-
-// =====================================================
-// EMAIL VALIDATION
-// =====================================================
-
-function isValidEmail(email) {
-
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    .test(email);
+  return result;
 
 }
 
 
 // =====================================================
-// BUILD FULL REQUIREMENTS
+// RETRYABLE ERROR
+// =====================================================
+
+function isRetryableError(error) {
+
+  if (!error) {
+    return false;
+  }
+
+
+  const text =
+    (
+      String(error.message || "") +
+      " " +
+      String(error.details || "")
+    ).toLowerCase();
+
+
+  return (
+    text.includes("network") ||
+    text.includes("failed to fetch") ||
+    text.includes("fetch") ||
+    text.includes("timeout") ||
+    text.includes("temporarily")
+  );
+
+}
+
+
+// =====================================================
+// SMART REQUIREMENTS BUILDER
 // =====================================================
 
 function buildFullRequirements(details) {
 
   const lines = [];
+
+
+  if (details.reference) {
+
+    lines.push(
+      "Enquiry Reference: " +
+      details.reference
+    );
+
+  }
+
+
+  lines.push(
+    "--------------------------------"
+  );
 
 
   if (details.eventType) {
@@ -919,13 +1575,76 @@ function buildFullRequirements(details) {
   }
 
 
+  // =================================================
+  // SMART ANALYSIS
+  // =================================================
+
+  if (details.smartProfile) {
+
+    const profile =
+      details.smartProfile;
+
+
+    lines.push(
+      "",
+      "SMART DISCOVERY PROFILE",
+      "--------------------------------"
+    );
+
+
+    lines.push(
+      "Match Readiness: " +
+      profile.score +
+      "%"
+    );
+
+
+    lines.push(
+      "Suggested Venue Types: " +
+      profile.venueTypes.join(", ")
+    );
+
+
+    lines.push(
+      "Planning Focus: " +
+      profile.planningFocus
+    );
+
+
+    lines.push(
+      "Capacity Insight: " +
+      profile.guestInsight
+    );
+
+
+    lines.push(
+      "Date Insight: " +
+      profile.dateInsight
+    );
+
+
+    lines.push(
+      "Lead Priority Signal: " +
+      profile.priority
+    );
+
+  }
+
+
+  lines.push(
+    "",
+    "Source: Website"
+  );
+
+
   return lines.join("\n");
 
 }
 
 
 // =====================================================
-// HERO REQUIREMENTS
+// LEGACY HERO REQUIREMENTS
+// Kept for compatibility
 // =====================================================
 
 function buildRequirements(
@@ -986,8 +1705,12 @@ function convertGuestRangeToNumber(value) {
   }
 
 
+  const text =
+    String(value);
+
+
   if (
-    value.includes("500+")
+    text.includes("500+")
   ) {
 
     return 500;
@@ -996,7 +1719,7 @@ function convertGuestRangeToNumber(value) {
 
 
   const numbers =
-    value.match(/\d+/g);
+    text.match(/\d+/g);
 
 
   if (
@@ -1035,6 +1758,1000 @@ function convertGuestRangeToNumber(value) {
 
 
 // =====================================================
+// SMART DATE PROTECTION
+// =====================================================
+
+function setupDateProtection() {
+
+  const dateFields = [
+    "date",
+    "customerEventDate"
+  ];
+
+
+  const today =
+    getTodayISO();
+
+
+  dateFields.forEach(
+    function (id) {
+
+      const element =
+        document.getElementById(id);
+
+
+      if (element) {
+
+        element.min =
+          today;
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// SMART FIELD ENHANCEMENTS
+// =====================================================
+
+function setupSmartFieldEnhancements() {
+
+  const mobile =
+    document.getElementById(
+      "customerMobile"
+    );
+
+
+  if (mobile) {
+
+    mobile.addEventListener(
+      "input",
+      function () {
+
+        this.value =
+          this.value
+            .replace(/\D/g, "")
+            .slice(0, 10);
+
+      }
+    );
+
+  }
+
+
+  const budget =
+    document.getElementById(
+      "customerBudget"
+    );
+
+
+  if (budget) {
+
+    budget.addEventListener(
+      "input",
+      function () {
+
+        if (
+          Number(this.value) < 0
+        ) {
+
+          this.value = "";
+
+        }
+
+      }
+    );
+
+  }
+
+
+  const guests =
+    document.getElementById(
+      "customerGuests"
+    );
+
+
+  if (guests) {
+
+    guests.addEventListener(
+      "input",
+      function () {
+
+        if (
+          Number(this.value) < 1
+        ) {
+
+          this.value = "";
+
+        }
+
+      }
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// DRAFT SAVING
+// =====================================================
+
+function setupDraftSaving() {
+
+  const form =
+    document.getElementById(
+      "customerEnquiryForm"
+    );
+
+
+  if (!form) {
+    return;
+  }
+
+
+  const fieldIds = [
+    "customerName",
+    "customerMobile",
+    "customerEmail",
+    "customerLocation",
+    "customerEventType",
+    "customerEventDate",
+    "customerGuests",
+    "customerBudget",
+    "customerFood",
+    "customerRequirements"
+  ];
+
+
+  fieldIds.forEach(
+    function (id) {
+
+      const field =
+        document.getElementById(id);
+
+
+      if (!field) {
+        return;
+      }
+
+
+      field.addEventListener(
+        "input",
+        saveCurrentDraft
+      );
+
+
+      field.addEventListener(
+        "change",
+        saveCurrentDraft
+      );
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// SAVE CURRENT DRAFT
+// =====================================================
+
+function saveCurrentDraft() {
+
+  const form =
+    document.getElementById(
+      "customerEnquiryForm"
+    );
+
+
+  if (!form) {
+    return;
+  }
+
+
+  const data = {};
+
+
+  [
+    "customerName",
+    "customerMobile",
+    "customerEmail",
+    "customerLocation",
+    "customerEventType",
+    "customerEventDate",
+    "customerGuests",
+    "customerBudget",
+    "customerFood",
+    "customerRequirements"
+  ].forEach(
+    function (id) {
+
+      const element =
+        document.getElementById(id);
+
+
+      if (element) {
+
+        data[id] =
+          element.value;
+
+      }
+
+    }
+  );
+
+
+  try {
+
+    localStorage.setItem(
+      DRAFT_STORAGE_KEY,
+      JSON.stringify(data)
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "Draft could not be saved:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// SAVE DRAFT DATA
+// =====================================================
+
+function saveDraftData(data) {
+
+  try {
+
+    const existing =
+      JSON.parse(
+        localStorage.getItem(
+          DRAFT_STORAGE_KEY
+        ) ||
+        "{}"
+      );
+
+
+    const merged = {
+      ...existing,
+      ...data
+    };
+
+
+    localStorage.setItem(
+      DRAFT_STORAGE_KEY,
+      JSON.stringify(merged)
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "Smart draft save failed:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// RESTORE DRAFT
+// =====================================================
+
+function restoreSavedDraft() {
+
+  let data = null;
+
+
+  try {
+
+    data =
+      JSON.parse(
+        localStorage.getItem(
+          DRAFT_STORAGE_KEY
+        ) ||
+        "null"
+      );
+
+  } catch (error) {
+
+    console.warn(
+      "Saved draft could not be read."
+    );
+
+    return;
+
+  }
+
+
+  if (!data) {
+    return;
+  }
+
+
+  const hasUsefulData =
+    Object.values(data)
+      .some(
+        function (value) {
+
+          return (
+            value !== null &&
+            value !== undefined &&
+            String(value).trim() !== ""
+          );
+
+        }
+      );
+
+
+  if (!hasUsefulData) {
+    return;
+  }
+
+
+  let restored = false;
+
+
+  Object.keys(data)
+    .forEach(
+      function (id) {
+
+        const element =
+          document.getElementById(id);
+
+
+        if (
+          element &&
+          data[id] !== undefined &&
+          data[id] !== null &&
+          String(data[id]).trim() !== ""
+        ) {
+
+          element.value =
+            data[id];
+
+          restored = true;
+
+        }
+
+      }
+    );
+
+
+  if (!restored) {
+    return;
+  }
+
+
+  createDraftNotice();
+
+}
+
+
+// =====================================================
+// DRAFT NOTICE
+// =====================================================
+
+function createDraftNotice() {
+
+  if (
+    document.getElementById(
+      "smvDraftNotice"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const form =
+    document.getElementById(
+      "customerEnquiryForm"
+    );
+
+
+  if (!form) {
+    return;
+  }
+
+
+  const notice =
+    document.createElement(
+      "div"
+    );
+
+
+  notice.id =
+    "smvDraftNotice";
+
+  notice.className =
+    "smv-draft-notice";
+
+
+  notice.innerHTML = `
+
+    <span>
+      ✦ Your previous enquiry details have been restored.
+    </span>
+
+    <button type="button" id="smvClearDraft">
+      Clear
+    </button>
+
+  `;
+
+
+  form.insertBefore(
+    notice,
+    form.firstChild
+  );
+
+
+  const clearButton =
+    document.getElementById(
+      "smvClearDraft"
+    );
+
+
+  if (clearButton) {
+
+    clearButton.addEventListener(
+      "click",
+      function () {
+
+        clearSavedDraft();
+
+        form.reset();
+
+        notice.remove();
+
+      }
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// CLEAR DRAFT
+// =====================================================
+
+function clearSavedDraft() {
+
+  try {
+
+    localStorage.removeItem(
+      DRAFT_STORAGE_KEY
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "Could not clear draft."
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// SUCCESS MESSAGE + WHATSAPP
+// =====================================================
+
+function showSuccessWithReference(
+  element,
+  reference,
+  customer
+) {
+
+  if (!element) {
+    return;
+  }
+
+
+  const encodedMessage =
+    encodeURIComponent(
+      [
+        "Hello Select My Venue,",
+        "",
+        "I have submitted a venue enquiry.",
+        "",
+        "Reference: " + reference,
+        "Event: " + customer.eventType,
+        "Location: " + customer.location,
+        "",
+        "Please help me with suitable venue options."
+      ].join("\n")
+    );
+
+
+  element.innerHTML = `
+
+    <div class="smv-success-box">
+
+      <div class="smv-success-icon">
+        ✓
+      </div>
+
+      <div class="smv-success-content">
+
+        <strong>
+          Enquiry submitted successfully!
+        </strong>
+
+        <span>
+          Thank you, ${escapeHTML(customer.name)}.
+          Our team will contact you shortly.
+        </span>
+
+        <div class="smv-reference">
+          Enquiry ID:
+          <b>${escapeHTML(reference)}</b>
+        </div>
+
+        <div class="smv-success-actions">
+
+          <a
+            href="https://wa.me/919958716688?text=${encodedMessage}"
+            target="_blank"
+            rel="noopener"
+            class="smv-whatsapp-btn"
+          >
+            WhatsApp Our Team →
+          </a>
+
+          <button
+            type="button"
+            class="smv-copy-btn"
+            id="smvCopyReference"
+          >
+            Copy ID
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  element.classList.remove(
+    "success",
+    "error"
+  );
+
+
+  element.classList.add(
+    "success"
+  );
+
+
+  element.style.display =
+    "block";
+
+
+  const copyButton =
+    document.getElementById(
+      "smvCopyReference"
+    );
+
+
+  if (copyButton) {
+
+    copyButton.addEventListener(
+      "click",
+      async function () {
+
+        try {
+
+          await navigator.clipboard.writeText(
+            reference
+          );
+
+
+          copyButton.textContent =
+            "Copied ✓";
+
+
+          setTimeout(
+            function () {
+
+              copyButton.textContent =
+                "Copy ID";
+
+            },
+            1800
+          );
+
+        } catch (error) {
+
+          console.warn(
+            "Clipboard unavailable."
+          );
+
+        }
+
+      }
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// ENQUIRY REFERENCE
+// =====================================================
+
+function createEnquiryReference() {
+
+  const now =
+    new Date();
+
+
+  const datePart =
+    [
+      now.getFullYear(),
+      String(
+        now.getMonth() + 1
+      ).padStart(2, "0"),
+      String(
+        now.getDate()
+      ).padStart(2, "0")
+    ].join("");
+
+
+  const randomPart =
+    Math.random()
+      .toString(36)
+      .substring(2, 7)
+      .toUpperCase();
+
+
+  return (
+    "SMV-" +
+    datePart +
+    "-" +
+    randomPart
+  );
+
+}
+
+
+// =====================================================
+// NAVIGATION HELPERS
+// =====================================================
+
+function setupNavigationHelpers() {
+
+  document
+    .querySelectorAll(
+      'a[href="#enquiry"]'
+    )
+    .forEach(
+      function (link) {
+
+        link.addEventListener(
+          "click",
+          function () {
+
+            setTimeout(
+              function () {
+
+                const firstField =
+                  document.getElementById(
+                    "customerName"
+                  );
+
+
+                if (firstField) {
+
+                  firstField.focus();
+
+                }
+
+              },
+              500
+            );
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+// =====================================================
+// LOCATION NORMALIZATION
+// =====================================================
+
+function normalizeLocation(
+  location
+) {
+
+  const value =
+    String(
+      location || ""
+    ).trim();
+
+
+  if (!value) {
+    return "";
+  }
+
+
+  return value
+    .replace(/\s+/g, " ")
+    .replace(
+      /\b(gurgaon)\b/gi,
+      "Gurgaon"
+    )
+    .replace(
+      /\b(gurugram)\b/gi,
+      "Gurugram"
+    )
+    .replace(
+      /\b(delhi ncr)\b/gi,
+      "Delhi NCR"
+    )
+    .trim();
+
+}
+
+
+// =====================================================
+// INDIAN MOBILE NORMALIZATION
+// =====================================================
+
+function normalizeIndianMobile(
+  value
+) {
+
+  let mobile =
+    String(
+      value || ""
+    )
+    .replace(
+      /\D/g,
+      ""
+    );
+
+
+  if (
+    mobile.startsWith("91") &&
+    mobile.length === 12
+  ) {
+
+    mobile =
+      mobile.substring(2);
+
+  }
+
+
+  if (
+    mobile.length !== 10
+  ) {
+
+    return "";
+
+  }
+
+
+  if (
+    !/^[6-9][0-9]{9}$/.test(
+      mobile
+    )
+  ) {
+
+    return "";
+
+  }
+
+
+  return mobile;
+
+}
+
+
+// =====================================================
+// DATE HELPERS
+// =====================================================
+
+function getTodayISO() {
+
+  const now =
+    new Date();
+
+
+  const year =
+    now.getFullYear();
+
+
+  const month =
+    String(
+      now.getMonth() + 1
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  const day =
+    String(
+      now.getDate()
+    ).padStart(
+      2,
+      "0"
+    );
+
+
+  return (
+    year +
+    "-" +
+    month +
+    "-" +
+    day
+  );
+
+}
+
+
+function isPastDate(
+  dateString
+) {
+
+  if (!dateString) {
+    return false;
+  }
+
+
+  return (
+    dateString <
+    getTodayISO()
+  );
+
+}
+
+
+function daysUntil(
+  dateString
+) {
+
+  if (!dateString) {
+    return 9999;
+  }
+
+
+  const target =
+    new Date(
+      dateString +
+      "T00:00:00"
+    );
+
+
+  const today =
+    new Date(
+      getTodayISO() +
+      "T00:00:00"
+    );
+
+
+  const difference =
+    target.getTime() -
+    today.getTime();
+
+
+  return Math.ceil(
+    difference /
+    86400000
+  );
+
+}
+
+
+// =====================================================
+// VALUE HELPERS
+// =====================================================
+
+function getValue(id) {
+
+  const element =
+    document.getElementById(id);
+
+
+  if (!element) {
+    return "";
+  }
+
+
+  return String(
+    element.value || ""
+  ).trim();
+
+}
+
+
+function setElementValue(
+  id,
+  value
+) {
+
+  const element =
+    document.getElementById(id);
+
+
+  if (
+    element &&
+    value !== undefined &&
+    value !== null
+  ) {
+
+    element.value =
+      value;
+
+  }
+
+}
+
+
+// =====================================================
+// FOCUS FIELD
+// =====================================================
+
+function focusField(id) {
+
+  const element =
+    document.getElementById(id);
+
+
+  if (element) {
+
+    setTimeout(
+      function () {
+
+        element.focus();
+
+      },
+      50
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// EMAIL VALIDATION
+// =====================================================
+
+function isValidEmail(
+  email
+) {
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    .test(email);
+
+}
+
+
+// =====================================================
 // BUTTON LOADING
 // =====================================================
 
@@ -1048,7 +2765,8 @@ function setButtonLoading(
   }
 
 
-  button.disabled = true;
+  button.disabled =
+    true;
 
 
   button.dataset.oldText =
@@ -1081,7 +2799,8 @@ function restoreButton(
   }
 
 
-  button.disabled = false;
+  button.disabled =
+    false;
 
 
   button.textContent =
@@ -1089,118 +2808,11 @@ function restoreButton(
     fallbackText;
 
 
+  delete button.dataset.oldText;
+
+
   button.removeAttribute(
     "aria-busy"
-  );
-
-}
-
-
-// =====================================================
-// FRIENDLY SUPABASE ERROR
-// =====================================================
-
-function getFriendlySupabaseError(error) {
-
-  if (!error) {
-
-    return (
-      "Something went wrong. Please try again."
-    );
-
-  }
-
-
-  console.error(
-    "FULL SUPABASE ERROR:",
-    {
-      message:
-        error.message,
-
-      details:
-        error.details,
-
-      hint:
-        error.hint,
-
-      code:
-        error.code
-    }
-  );
-
-
-  const errorMessage =
-    String(
-      error.message ||
-      ""
-    ).toLowerCase();
-
-
-  const errorDetails =
-    String(
-      error.details ||
-      ""
-    ).toLowerCase();
-
-
-  const combined =
-    errorMessage +
-    " " +
-    errorDetails;
-
-
-  // -----------------------------------------------------
-  // RLS / PERMISSION
-  // -----------------------------------------------------
-
-  if (
-    combined.includes("row-level security") ||
-    combined.includes("rls") ||
-    combined.includes("permission denied") ||
-    combined.includes("not allowed")
-  ) {
-
-    return (
-      "We could not submit your enquiry right now. Please try again."
-    );
-
-  }
-
-
-  // -----------------------------------------------------
-  // CHECK CONSTRAINT
-  // -----------------------------------------------------
-
-  if (
-    combined.includes("check constraint")
-  ) {
-
-    return (
-      "There is a database validation issue. Please try again."
-    );
-
-  }
-
-
-  // -----------------------------------------------------
-  // NETWORK
-  // -----------------------------------------------------
-
-  if (
-    combined.includes("network") ||
-    combined.includes("failed to fetch") ||
-    combined.includes("fetch")
-  ) {
-
-    return (
-      "Please check your internet connection and try again."
-    );
-
-  }
-
-
-  return (
-    "We could not submit your enquiry right now. Please try again."
   );
 
 }
@@ -1336,6 +2948,741 @@ function clearInlineMessage(
 
 
 // =====================================================
+// WAIT
+// =====================================================
+
+function wait(
+  milliseconds
+) {
+
+  return new Promise(
+    function (resolve) {
+
+      setTimeout(
+        resolve,
+        milliseconds
+      );
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// HTML ESCAPE
+// =====================================================
+
+function escapeHTML(
+  value
+) {
+
+  return String(
+    value || ""
+  )
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+  .replace(
+    /</g,
+    "&lt;"
+  )
+  .replace(
+    />/g,
+    "&gt;"
+  )
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+
+// =====================================================
+// SMART UI STYLES
+//
+// These styles are injected by JS so NO HTML changes
+// are required for the new smart panel.
+// =====================================================
+
+function injectSmartStyles() {
+
+  if (
+    document.getElementById(
+      "smvSmartEngineStyles"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+
+  style.id =
+    "smvSmartEngineStyles";
+
+
+  style.textContent = `
+
+    /* -----------------------------------------------
+       SMART SEARCH RESULT
+    ----------------------------------------------- */
+
+    .smv-smart-result{
+
+      display:none;
+
+      max-width:1160px;
+
+      margin:12px auto 0;
+
+      padding:18px;
+
+      border:1px solid rgba(17,224,207,.28);
+
+      border-radius:16px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(4,29,29,.94),
+          rgba(2,15,15,.96)
+        );
+
+      box-shadow:
+        0 15px 45px rgba(0,0,0,.24),
+        inset 0 0 40px rgba(0,220,205,.025);
+
+    }
+
+
+    .smv-smart-result.visible{
+
+      display:block;
+
+      animation:
+        smvSmartAppear .35s ease;
+
+    }
+
+
+    @keyframes smvSmartAppear{
+
+      from{
+
+        opacity:0;
+
+        transform:
+          translateY(-8px);
+
+      }
+
+      to{
+
+        opacity:1;
+
+        transform:
+          translateY(0);
+
+      }
+
+    }
+
+
+    .smv-smart-header{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:20px;
+
+      margin-bottom:15px;
+
+    }
+
+
+    .smv-smart-label{
+
+      display:block;
+
+      color:#11e0cf;
+
+      font-size:9px;
+
+      font-weight:900;
+
+      letter-spacing:1.2px;
+
+      margin-bottom:4px;
+
+    }
+
+
+    .smv-smart-header h3{
+
+      color:#f5fbfa;
+
+      font-size:20px;
+
+      margin:0;
+
+    }
+
+
+    .smv-score{
+
+      min-width:88px;
+
+      text-align:center;
+
+      padding:9px 12px;
+
+      border:
+
+        1px solid
+
+        rgba(17,224,207,.24);
+
+      border-radius:12px;
+
+      background:
+
+        rgba(0,220,205,.06);
+
+    }
+
+
+    .smv-score strong{
+
+      display:block;
+
+      color:#11e0cf;
+
+      font-size:21px;
+
+      line-height:1;
+
+    }
+
+
+    .smv-score span{
+
+      display:block;
+
+      color:#73918f;
+
+      font-size:8px;
+
+      margin-top:4px;
+
+    }
+
+
+    .smv-smart-grid{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap:8px;
+
+    }
+
+
+    .smv-smart-grid > div{
+
+      padding:10px;
+
+      border:
+
+        1px solid
+
+        rgba(17,224,207,.10);
+
+      border-radius:9px;
+
+      background:
+
+        rgba(0,20,20,.5);
+
+    }
+
+
+    .smv-smart-grid small{
+
+      display:block;
+
+      color:#63817f;
+
+      font-size:8px;
+
+      font-weight:800;
+
+      letter-spacing:.7px;
+
+      margin-bottom:3px;
+
+    }
+
+
+    .smv-smart-grid b{
+
+      display:block;
+
+      color:#e9f7f6;
+
+      font-size:11px;
+
+    }
+
+
+    .smv-priority{
+
+      color:#ffc928!important;
+
+    }
+
+
+    .smv-smart-insights{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap:8px;
+
+      margin-top:8px;
+
+    }
+
+
+    .smv-smart-insights > div{
+
+      padding:11px;
+
+      border-radius:9px;
+
+      background:
+
+        rgba(4,26,26,.65);
+
+      border:
+
+        1px solid
+
+        rgba(17,224,207,.08);
+
+    }
+
+
+    .smv-smart-insights span{
+
+      display:block;
+
+      font-size:17px;
+
+      margin-bottom:5px;
+
+    }
+
+
+    .smv-smart-insights strong{
+
+      display:block;
+
+      color:#cfe8e6;
+
+      font-size:10px;
+
+    }
+
+
+    .smv-smart-insights p{
+
+      color:#75918f;
+
+      font-size:9px;
+
+      margin-top:3px;
+
+      line-height:1.4;
+
+    }
+
+
+    .smv-smart-focus{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:15px;
+
+      margin-top:8px;
+
+      padding:10px 12px;
+
+      border-radius:9px;
+
+      background:
+
+        linear-gradient(
+          90deg,
+          rgba(17,224,207,.08),
+          rgba(17,224,207,.025)
+        );
+
+      border-left:
+        2px solid #11e0cf;
+
+    }
+
+
+    .smv-smart-focus span{
+
+      color:#5e7c7a;
+
+      font-size:8px;
+
+      font-weight:900;
+
+      letter-spacing:.8px;
+
+    }
+
+
+    .smv-smart-focus strong{
+
+      color:#cfeceb;
+
+      font-size:9px;
+
+      text-align:right;
+
+    }
+
+
+    /* -----------------------------------------------
+       SUCCESS
+    ----------------------------------------------- */
+
+    .smv-success-box{
+
+      display:flex;
+
+      align-items:flex-start;
+
+      gap:13px;
+
+    }
+
+
+    .smv-success-icon{
+
+      width:34px;
+
+      height:34px;
+
+      flex:none;
+
+      border-radius:50%;
+
+      display:grid;
+
+      place-items:center;
+
+      background:#bbf7d0;
+
+      color:#15803d;
+
+      font-weight:900;
+
+    }
+
+
+    .smv-success-content{
+
+      display:flex;
+
+      flex-direction:column;
+
+      gap:4px;
+
+    }
+
+
+    .smv-success-content > strong{
+
+      color:#15803d;
+
+      font-size:15px;
+
+    }
+
+
+    .smv-success-content > span{
+
+      color:#3f6f53;
+
+      font-size:12px;
+
+    }
+
+
+    .smv-reference{
+
+      margin-top:4px;
+
+      color:#4d765c;
+
+      font-size:11px;
+
+    }
+
+
+    .smv-reference b{
+
+      color:#15803d;
+
+      letter-spacing:.5px;
+
+    }
+
+
+    .smv-success-actions{
+
+      display:flex;
+
+      flex-wrap:wrap;
+
+      gap:7px;
+
+      margin-top:8px;
+
+    }
+
+
+    .smv-whatsapp-btn,
+    .smv-copy-btn{
+
+      border-radius:8px;
+
+      padding:8px 11px;
+
+      font-size:10px;
+
+      font-weight:800;
+
+      cursor:pointer;
+
+      text-decoration:none;
+
+    }
+
+
+    .smv-whatsapp-btn{
+
+      background:#15803d;
+
+      color:#fff;
+
+    }
+
+
+    .smv-copy-btn{
+
+      border:
+        1px solid
+
+        rgba(21,128,61,.35);
+
+      background:#fff;
+
+      color:#15803d;
+
+    }
+
+
+    /* -----------------------------------------------
+       DRAFT
+    ----------------------------------------------- */
+
+    .smv-draft-notice{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:10px;
+
+      padding:9px 11px;
+
+      margin-bottom:12px;
+
+      border:
+
+        1px solid
+
+        rgba(17,224,207,.15);
+
+      border-radius:9px;
+
+      background:
+
+        rgba(17,224,207,.045);
+
+      color:#83aaa8;
+
+      font-size:9px;
+
+    }
+
+
+    .smv-draft-notice button{
+
+      border:
+
+        1px solid
+
+        rgba(17,224,207,.25);
+
+      border-radius:6px;
+
+      background:transparent;
+
+      color:#11e0cf;
+
+      padding:4px 8px;
+
+      cursor:pointer;
+
+      font-size:9px;
+
+    }
+
+
+    /* -----------------------------------------------
+       MOBILE
+    ----------------------------------------------- */
+
+    @media(max-width:700px){
+
+      .smv-smart-result{
+
+        margin-left:14px;
+
+        margin-right:14px;
+
+        padding:13px;
+
+      }
+
+
+      .smv-smart-header{
+
+        align-items:flex-start;
+
+      }
+
+
+      .smv-smart-header h3{
+
+        font-size:17px;
+
+      }
+
+
+      .smv-smart-grid{
+
+        grid-template-columns:
+          repeat(2,1fr);
+
+      }
+
+
+      .smv-smart-insights{
+
+        grid-template-columns:1fr;
+
+      }
+
+
+      .smv-smart-focus{
+
+        display:block;
+
+      }
+
+
+      .smv-smart-focus strong{
+
+        display:block;
+
+        text-align:left;
+
+        margin-top:4px;
+
+      }
+
+    }
+
+
+    @media(max-width:430px){
+
+      .smv-smart-grid{
+
+        grid-template-columns:1fr;
+
+      }
+
+
+      .smv-smart-header{
+
+        flex-direction:column;
+
+      }
+
+
+      .smv-score{
+
+        width:100%;
+
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
+
+}
+
+
+// =====================================================
 // GLOBAL JAVASCRIPT ERROR LOG
 // =====================================================
 
@@ -1371,6 +3718,172 @@ window.addEventListener(
 
 
 // =====================================================
+// FRIENDLY SUPABASE ERROR
+// =====================================================
+
+function getFriendlySupabaseError(
+  error
+) {
+
+  if (!error) {
+
+    return (
+      "Something went wrong. Please try again."
+    );
+
+  }
+
+
+  console.error(
+    "FULL SUPABASE ERROR:",
+    {
+      message:
+        error.message,
+
+      details:
+        error.details,
+
+      hint:
+        error.hint,
+
+      code:
+        error.code
+    }
+  );
+
+
+  const errorMessage =
+    String(
+      error.message ||
+      ""
+    ).toLowerCase();
+
+
+  const errorDetails =
+    String(
+      error.details ||
+      ""
+    ).toLowerCase();
+
+
+  const errorHint =
+    String(
+      error.hint ||
+      ""
+    ).toLowerCase();
+
+
+  const combined =
+    errorMessage +
+    " " +
+    errorDetails +
+    " " +
+    errorHint;
+
+
+  // -------------------------------------------------
+  // RLS / PERMISSION
+  // -------------------------------------------------
+
+  if (
+    combined.includes(
+      "row-level security"
+    ) ||
+    combined.includes(
+      "rls"
+    ) ||
+    combined.includes(
+      "permission denied"
+    ) ||
+    combined.includes(
+      "not allowed"
+    ) ||
+    combined.includes(
+      "violates row-level"
+    )
+  ) {
+
+    return (
+      "The enquiry could not be submitted because the website database permission needs attention. Please try again shortly."
+    );
+
+  }
+
+
+  // -------------------------------------------------
+  // CONSTRAINT
+  // -------------------------------------------------
+
+  if (
+    combined.includes(
+      "check constraint"
+    ) ||
+    combined.includes(
+      "violates check constraint"
+    )
+  ) {
+
+    return (
+      "The enquiry contains a database validation issue. Please check the entered details and try again."
+    );
+
+  }
+
+
+  // -------------------------------------------------
+  // NOT NULL
+  // -------------------------------------------------
+
+  if (
+    combined.includes(
+      "not-null"
+    ) ||
+    combined.includes(
+      "null value in column"
+    )
+  ) {
+
+    return (
+      "A required enquiry field is missing. Please complete the required fields and try again."
+    );
+
+  }
+
+
+  // -------------------------------------------------
+  // NETWORK
+  // -------------------------------------------------
+
+  if (
+    combined.includes(
+      "network"
+    ) ||
+    combined.includes(
+      "failed to fetch"
+    ) ||
+    combined.includes(
+      "fetch"
+    ) ||
+    combined.includes(
+      "timeout"
+    )
+  ) {
+
+    return (
+      "Please check your internet connection and try again."
+    );
+
+  }
+
+
+  return (
+    "We could not submit your enquiry right now. Please try again."
+  );
+
+}
+
+
+// =====================================================
 // STARTUP LOG
 // =====================================================
 
@@ -1379,15 +3892,39 @@ console.log(
 );
 
 console.log(
-  "Select My Venue website script loaded."
+  "SELECT MY VENUE"
 );
 
 console.log(
-  "Mobile-safe enquiry submission enabled."
+  "Smart Event Discovery Engine"
 );
 
 console.log(
-  "Public INSERT mode: ACTIVE"
+  "Website → Supabase → CRM"
+);
+
+console.log(
+  "========================================"
+);
+
+console.log(
+  "Smart search: ACTIVE"
+);
+
+console.log(
+  "AI-style requirement analysis: ACTIVE"
+);
+
+console.log(
+  "Draft protection: ACTIVE"
+);
+
+console.log(
+  "Enquiry reference IDs: ACTIVE"
+);
+
+console.log(
+  "WhatsApp follow-up: ACTIVE"
 );
 
 console.log(
@@ -1402,13 +3939,13 @@ console.log(
 if (supabaseClient) {
 
   console.log(
-    "Supabase client: READY"
+    "Supabase client: READY ✓"
   );
 
 } else {
 
   console.error(
-    "Supabase client: NOT READY"
+    "Supabase client: NOT READY ✕"
   );
 
 }
