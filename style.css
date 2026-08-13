@@ -47,60 +47,6 @@ textarea{
 
 
 /* =====================================================
-   GLOBAL CELEBRATION / EVENT ATMOSPHERE
-===================================================== */
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-5;
-  pointer-events:none;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(2,9,9,.88) 0%,
-      rgba(2,12,12,.94) 35%,
-      rgba(2,9,9,.97) 100%
-    ),
-    url("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2200&q=80");
-
-  background-size:cover;
-  background-position:center top;
-  background-attachment:fixed;
-
-  opacity:.42;
-}
-
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-4;
-  pointer-events:none;
-
-  background:
-    radial-gradient(
-      circle at 18% 25%,
-      rgba(255,201,40,.07),
-      transparent 22%
-    ),
-    radial-gradient(
-      circle at 82% 38%,
-      rgba(0,235,214,.08),
-      transparent 25%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(0,0,0,.25),
-      transparent 50%,
-      rgba(0,0,0,.30)
-    );
-}
-
-
-/* =====================================================
    HEADER
 ===================================================== */
 
@@ -192,6 +138,7 @@ nav a.active:after{
 
 /* =====================================================
    HERO
+   Premium celebration / wedding visual treatment
 ===================================================== */
 
 .hero{
@@ -199,6 +146,60 @@ nav a.active:after{
   margin:auto;
   padding:48px 20px 20px;
   position:relative;
+  isolation:isolate;
+}
+
+/* Large celebration visual layers */
+.hero:before{
+  content:"";
+  position:absolute;
+  z-index:-2;
+  top:0;
+  right:-8%;
+  width:72%;
+  height:570px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(2,11,11,1) 0%,
+      rgba(2,11,11,.78) 18%,
+      rgba(2,11,11,.30) 55%,
+      rgba(2,11,11,.58) 100%
+    ),
+    url("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1400&q=85")
+    center/cover no-repeat;
+
+  opacity:.25;
+  border-radius:0 0 0 90px;
+  filter:saturate(.9) contrast(1.05);
+  pointer-events:none;
+}
+
+/* Second celebration image layer */
+.hero:after{
+  content:"";
+  position:absolute;
+  z-index:-3;
+  left:-15%;
+  top:95px;
+  width:52%;
+  height:380px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(2,11,11,.88),
+      rgba(2,11,11,.42),
+      rgba(2,11,11,.88)
+    ),
+    url("https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1200&q=85")
+    center/cover no-repeat;
+
+  opacity:.12;
+  border-radius:70px;
+  filter:saturate(.8);
+  pointer-events:none;
 }
 
 .hero-inner{
@@ -226,8 +227,8 @@ nav a.active:after{
   font-size:11px;
   font-weight:800;
   letter-spacing:.9px;
-  background:rgba(3,18,18,.45);
-  backdrop-filter:blur(8px);
+  background:rgba(2,17,17,.32);
+  backdrop-filter:blur(5px);
 }
 
 .ai-badge span{
@@ -273,6 +274,11 @@ nav a.active:after{
   line-height:1.5;
 }
 
+
+/* =====================================================
+   HERO ORBIT
+===================================================== */
+
 .hero-orbit{
   height:310px;
   position:relative;
@@ -287,17 +293,9 @@ nav a.active:after{
   aspect-ratio:1;
 }
 
-.orbit-1{
-  width:275px;
-}
-
-.orbit-2{
-  width:210px;
-}
-
-.orbit-3{
-  width:140px;
-}
+.orbit-1{width:275px}
+.orbit-2{width:210px}
+.orbit-3{width:140px}
 
 .venue-core{
   width:75px;
@@ -357,14 +355,16 @@ nav a.active:after{
 
 .search-card{
   border:1px solid var(--line);
-  background:rgba(5,28,28,.86);
+  background:rgba(5,28,28,.82);
   border-radius:18px;
   padding:10px;
   display:grid;
   grid-template-columns:1.05fr 1.4fr .95fr .9fr auto;
   gap:10px;
   align-items:end;
-  backdrop-filter:blur(10px);
+  position:relative;
+  z-index:3;
+  backdrop-filter:blur(12px);
 }
 
 .field label{
@@ -437,10 +437,9 @@ nav a.active:after{
   padding:13px 15px;
   border:1px solid var(--line2);
   border-radius:15px;
-  background:rgba(5,27,27,.78);
+  background:rgba(5,27,27,.75);
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  backdrop-filter:blur(10px);
 }
 
 .trust-strip>div{
@@ -495,14 +494,14 @@ nav a.active:after{
   margin:auto;
 }
 
-.popular-section{
-  padding:0 10px 22px;
-}
-
 
 /* =====================================================
    POPULAR EVENTS
 ===================================================== */
+
+.popular-section{
+  padding:0 10px 22px;
+}
 
 .event-grid{
   display:grid;
@@ -518,8 +517,8 @@ nav a.active:after{
   background:
     linear-gradient(
       180deg,
-      rgba(9,30,30,.90),
-      rgba(3,18,18,.94)
+      rgba(9,30,30,.88),
+      rgba(3,18,18,.9)
     );
   display:flex;
   flex-direction:column;
@@ -528,7 +527,6 @@ nav a.active:after{
   text-align:center;
   position:relative;
   overflow:hidden;
-  backdrop-filter:blur(7px);
 }
 
 .event-card:before{
@@ -550,25 +548,11 @@ nav a.active:after{
   filter:drop-shadow(0 0 9px currentColor);
 }
 
-.wedding{
-  color:#ffd03d;
-}
-
-.birthday{
-  color:#16e8d6;
-}
-
-.engagement{
-  color:#ff6d9d;
-}
-
-.corporate{
-  color:#39a9ff;
-}
-
-.party{
-  color:#c78aff;
-}
+.wedding{color:#ffd03d}
+.birthday{color:#16e8d6}
+.engagement{color:#ff6d9d}
+.corporate{color:#39a9ff}
+.party{color:#c78aff}
 
 .event-card h3{
   font-size:14px;
@@ -619,13 +603,12 @@ nav a.active:after{
   background:
     linear-gradient(
       145deg,
-      rgba(7,31,31,.90),
-      rgba(2,17,17,.96)
+      rgba(7,31,31,.88),
+      rgba(2,17,17,.95)
     );
   padding:18px;
   position:relative;
   overflow:hidden;
-  backdrop-filter:blur(8px);
 }
 
 .feature-card h2{
@@ -771,7 +754,7 @@ nav a.active:after{
 
 
 /* =====================================================
-   CUSTOMER ENQUIRY
+   ENQUIRY
 ===================================================== */
 
 .enquiry-section{
@@ -804,11 +787,10 @@ nav a.active:after{
   background:
     linear-gradient(
       145deg,
-      rgba(6,30,30,.92),
-      rgba(2,16,16,.97)
+      rgba(6,30,30,.9),
+      rgba(2,16,16,.95)
     );
   padding:17px;
-  backdrop-filter:blur(10px);
 }
 
 .form-section-title{
@@ -896,6 +878,7 @@ nav a.active:after{
 
 /* =====================================================
    ABOUT
+   Celebration image treatment
 ===================================================== */
 
 .about-section{
@@ -940,14 +923,17 @@ nav a.active:after{
 
   background:
     linear-gradient(
-      180deg,
-      rgba(0,0,0,.18),
-      rgba(0,0,0,.72)
+      90deg,
+      rgba(2,11,11,.45),
+      rgba(2,11,11,.08),
+      rgba(2,11,11,.58)
     ),
-    url("https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1400&q=80");
+    url("https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1400&q=85")
+    center/cover no-repeat;
 
-  background-size:cover;
-  background-position:center;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,.35),
+    0 0 30px rgba(0,220,205,.06);
 }
 
 .about-image:before{
@@ -955,10 +941,10 @@ nav a.active:after{
   position:absolute;
   inset:0;
   background:
-    radial-gradient(
-      ellipse at 50% 25%,
-      rgba(255,222,151,.30),
-      transparent 30%
+    linear-gradient(
+      180deg,
+      rgba(0,0,0,.05),
+      rgba(0,0,0,.70)
     );
 }
 
@@ -967,10 +953,10 @@ nav a.active:after{
   position:absolute;
   inset:0;
   background:
-    linear-gradient(
-      180deg,
-      transparent 35%,
-      rgba(0,0,0,.65) 100%
+    radial-gradient(
+      circle at 75% 22%,
+      rgba(255,213,112,.20),
+      transparent 20%
     );
 }
 
@@ -1021,9 +1007,8 @@ nav a.active:after{
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  background:rgba(5,24,24,.76);
+  background:rgba(5,24,24,.7);
   transition:.2s;
-  backdrop-filter:blur(7px);
 }
 
 .contact-card:hover{
@@ -1054,8 +1039,7 @@ nav a.active:after{
 
 
 /* =====================================================
-   FINAL FOOTER
-   SAME HEADER LOGO — CENTERED AT VERY BOTTOM
+   FOOTER — CLEAN PREMIUM 3-COLUMN DESIGN
 ===================================================== */
 
 .site-footer{
@@ -1066,56 +1050,135 @@ nav a.active:after{
 }
 
 .footer-inner{
-  padding-top:20px;
+  padding-top:22px;
 }
 
-/*
-  New footer layout:
-  Only the logo is displayed at the bottom center.
-*/
-
-.footer-final-logo{
-  display:flex;
-  justify-content:center;
-  align-items:center;
+/* Main footer navigation */
+.footer-top{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
   width:100%;
-  padding:8px 0 4px;
 }
 
-.footer-final-logo a{
+/* Hide old footer brand area */
+.footer-brand-mini{
+  display:none!important;
+}
+
+/* Footer columns */
+.footer-links{
+  grid-column:1 / -1;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  width:100%;
+  max-width:760px;
+  margin:0 auto;
+}
+
+.footer-link-group{
   display:flex;
-  justify-content:center;
+  flex-direction:column;
   align-items:center;
+  text-align:center;
+  gap:7px;
+  min-width:0;
+  padding:4px 20px 6px;
+  position:relative;
 }
 
-.footer-final-logo img{
-  display:block;
-  width:285px;
-  max-width:72vw;
-  height:auto;
-  max-height:60px;
-  object-fit:contain;
-  filter:drop-shadow(0 0 8px rgba(0,230,210,.22));
+/* Vertical dividers */
+.footer-link-group:not(:last-child):after{
+  content:"";
+  position:absolute;
+  top:2px;
+  right:0;
+  width:1px;
+  height:92px;
+  background:var(--line2);
+}
+
+.footer-link-group h4{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1.15px;
+  color:var(--teal);
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+
+.footer-link-group a{
+  font-size:10px;
+  font-weight:700;
+  color:#a9c2c0;
   transition:.2s ease;
+  line-height:1.3;
 }
 
-.footer-final-logo img:hover{
-  filter:drop-shadow(0 0 13px rgba(0,230,210,.42));
+.footer-link-group a:hover{
+  color:#fff;
   transform:translateY(-1px);
 }
 
+
+/* =====================================================
+   FOOTER — FINAL CENTER LOGO
+===================================================== */
+
 .footer-bottom{
-  margin-top:12px;
-  padding-top:10px;
+  margin-top:22px;
+  padding-top:17px;
   border-top:1px solid var(--line2);
+
   display:flex;
-  justify-content:center;
+  flex-direction:column;
   align-items:center;
-  gap:15px;
+  justify-content:center;
+  gap:10px;
+
   color:#617c7a;
   font-size:8px;
   text-align:center;
 }
+
+/* Existing footer text */
+.footer-bottom span:first-child{
+  order:2;
+}
+
+/* Existing tagline */
+.footer-bottom span:last-child{
+  order:3;
+}
+
+/*
+   If your updated index.html contains
+   .footer-bottom-logo, this is the final
+   centered logo position.
+*/
+.footer-bottom-logo{
+  order:1;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:0 auto 2px;
+}
+
+.footer-bottom-logo img{
+  display:block;
+  width:170px;
+  max-width:70vw;
+  height:auto;
+  object-fit:contain;
+  filter:
+    drop-shadow(0 0 8px rgba(0,230,210,.20));
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
 
 .toast-message{
   position:fixed;
@@ -1202,8 +1265,8 @@ nav a.active:after{
     justify-content:stretch;
   }
 
-  .footer-final-logo img{
-    width:250px;
+  .footer-links{
+    max-width:680px;
   }
 }
 
@@ -1251,6 +1314,21 @@ nav a.active:after{
 
   .hero{
     padding-top:28px;
+  }
+
+  .hero:before{
+    right:-35%;
+    width:125%;
+    height:470px;
+    opacity:.19;
+    border-radius:0 0 0 50px;
+  }
+
+  .hero:after{
+    left:-30%;
+    width:100%;
+    height:300px;
+    opacity:.08;
   }
 
   .hero-inner{
@@ -1360,32 +1438,62 @@ nav a.active:after{
   }
 
   .about-image{
-    min-height:180px;
+    min-height:220px;
   }
 
   .contact-grid{
     grid-template-columns:1fr 1fr;
   }
 
+
+  /* ================================
+     MOBILE FOOTER
+  ================================= */
+
   .site-footer{
     padding-left:14px;
     padding-right:14px;
+    padding-bottom:22px;
   }
 
-  .footer-final-logo img{
-    width:220px;
-    max-width:82vw;
+  .footer-links{
+    grid-template-columns:repeat(3,1fr);
+    gap:5px;
+    max-width:100%;
+  }
+
+  .footer-link-group{
+    padding:4px 8px 6px;
+    gap:6px;
+  }
+
+  .footer-link-group:not(:last-child):after{
+    height:88px;
+  }
+
+  .footer-link-group h4{
+    font-size:9px;
+    letter-spacing:.8px;
+  }
+
+  .footer-link-group a{
+    font-size:8.5px;
+    font-weight:700;
   }
 
   .footer-bottom{
-    display:block;
-    line-height:1.8;
+    margin-top:18px;
+    padding-top:15px;
+  }
+
+  .footer-bottom-logo img{
+    width:150px;
   }
 }
 
 
 /* =====================================================
-   SMALL MOBILE
+   SMALL PHONES
 ===================================================== */
 
 @media(max-width:430px){
@@ -1410,7 +1518,32 @@ nav a.active:after{
     grid-column:auto;
   }
 
-  .footer-final-logo img{
-    width:195px;
+  .footer-links{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .footer-link-group{
+    padding:8px 5px;
+  }
+
+  .footer-link-group:not(:last-child):after{
+    top:auto;
+    right:15%;
+    bottom:-6px;
+    width:70%;
+    height:1px;
+  }
+
+  .footer-link-group h4{
+    font-size:10px;
+  }
+
+  .footer-link-group a{
+    font-size:9px;
+  }
+
+  .footer-bottom-logo img{
+    width:145px;
   }
 }
