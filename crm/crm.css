@@ -2465,3 +2465,569 @@ textarea:focus-visible {
     }
 
 }
+/* =========================================================
+   SELECT MY VENUE CRM — FINAL PREMIUM UI POLISH
+   Logo + View Details + Comment Controls
+   NO LAYOUT REPOSITIONING
+   ========================================================= */
+
+
+/* =========================================================
+   1. LOGO — SLIGHTLY LARGER
+   Keeps the existing header position stable
+   ========================================================= */
+
+.crm-header-logo {
+  width: 190px !important;
+  min-width: 190px !important;
+  max-width: 190px !important;
+
+  height: 46px !important;
+  max-height: 46px !important;
+
+  object-fit: contain !important;
+  object-position: left center !important;
+
+  display: block !important;
+  flex-shrink: 0 !important;
+}
+
+
+/* Keep brand spacing controlled */
+.crm-brand {
+  gap: 10px !important;
+  min-width: 0 !important;
+}
+
+
+/* =========================================================
+   2. VIEW DETAILS — PREMIUM BUTTON
+   No default HTML-button appearance
+   ========================================================= */
+
+.action-column {
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+
+/* Main button */
+.view-lead-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  min-width: 92px !important;
+  height: 30px !important;
+
+  padding: 0 11px !important;
+
+  border: 1px solid #b9ddd2 !important;
+  border-radius: 999px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f7fdfb 0%,
+      #eaf8f3 100%
+    ) !important;
+
+  color: #167763 !important;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif !important;
+
+  font-size: 10px !important;
+  font-weight: 850 !important;
+
+  line-height: 1 !important;
+  letter-spacing: .1px !important;
+
+  box-shadow:
+    0 2px 7px rgba(22,139,115,.07),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+
+  cursor: pointer !important;
+
+  transition:
+    transform .18s ease,
+    background .18s ease,
+    border-color .18s ease,
+    box-shadow .18s ease !important;
+}
+
+
+/* Small premium icon before View Details */
+.view-lead-btn::before {
+  content: "◉";
+
+  display: inline-block !important;
+
+  margin-right: 5px !important;
+
+  color: #168b73 !important;
+
+  font-size: 7px !important;
+  line-height: 1 !important;
+}
+
+
+/* Hover */
+.view-lead-btn:hover {
+  transform: translateY(-1px) !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eaf8f3 0%,
+      #dff4ec 100%
+    ) !important;
+
+  border-color: #8fc8ba !important;
+
+  color: #0f6755 !important;
+
+  box-shadow:
+    0 5px 12px rgba(22,139,115,.12),
+    inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+
+
+/* Click */
+.view-lead-btn:active {
+  transform: translateY(0) !important;
+
+  box-shadow:
+    0 2px 5px rgba(22,139,115,.08) !important;
+}
+
+
+/* Keyboard focus */
+.view-lead-btn:focus-visible {
+  outline: none !important;
+
+  border-color: #168b73 !important;
+
+  box-shadow:
+    0 0 0 3px rgba(22,139,115,.12) !important;
+}
+
+
+/* =========================================================
+   3. COMMENT CELL — STRICT COMPACT WIDTH
+   Prevents icons from going outside the box
+   ========================================================= */
+
+.comment-cell {
+  width: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+
+  padding-left: 5px !important;
+  padding-right: 5px !important;
+
+  text-align: center !important;
+
+  overflow: hidden !important;
+}
+
+
+/* =========================================================
+   4. COMMENT ACTION ROW
+   ========================================================= */
+
+.crm-comment-actions {
+  width: 100% !important;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 3px !important;
+
+  min-width: 0 !important;
+  max-width: 100% !important;
+
+  overflow: hidden !important;
+
+  white-space: nowrap !important;
+}
+
+
+/* =========================================================
+   5. PENCIL + EYE
+   Replace large emoji appearance with tiny premium icons
+   ========================================================= */
+
+.comment-action-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+
+  width: 19px !important;
+  height: 19px !important;
+
+  min-width: 19px !important;
+  max-width: 19px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  flex: 0 0 19px !important;
+
+  border: 1px solid #cfe4dd !important;
+
+  border-radius: 6px !important;
+
+  background: #f7fcfa !important;
+
+  color: #277a69 !important;
+
+  font-size: 0 !important;
+  line-height: 1 !important;
+
+  box-shadow:
+    0 1px 4px rgba(22,139,115,.05) !important;
+
+  overflow: hidden !important;
+
+  transition:
+    transform .16s ease,
+    background .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease !important;
+}
+
+
+/* =========================================================
+   6. PENCIL — CLEAN SMALL ICON
+   ========================================================= */
+
+.comment-edit-btn::before {
+  content: "✎";
+
+  display: block !important;
+
+  color: #168b73 !important;
+
+  font-family:
+    "Segoe UI Symbol",
+    "Arial Unicode MS",
+    Arial,
+    sans-serif !important;
+
+  font-size: 11px !important;
+
+  font-weight: 700 !important;
+
+  line-height: 1 !important;
+}
+
+
+/* =========================================================
+   7. EYE — CLEAN SMALL ICON
+   ========================================================= */
+
+.comment-view-btn::before {
+  content: "◉";
+
+  display: block !important;
+
+  color: #168b73 !important;
+
+  font-family:
+    "Segoe UI Symbol",
+    "Arial Unicode MS",
+    Arial,
+    sans-serif !important;
+
+  font-size: 8px !important;
+
+  font-weight: 900 !important;
+
+  line-height: 1 !important;
+}
+
+
+/* =========================================================
+   8. COMMENT BUTTON HOVER
+   ========================================================= */
+
+.comment-action-btn:hover {
+  transform: translateY(-1px) !important;
+
+  background: #eaf8f3 !important;
+
+  border-color: #9dcebf !important;
+
+  color: #0f6755 !important;
+
+  box-shadow:
+    0 3px 8px rgba(22,139,115,.10) !important;
+}
+
+
+.comment-action-btn:active {
+  transform: translateY(0) !important;
+}
+
+
+.comment-action-btn:focus-visible {
+  outline: none !important;
+
+  border-color: #168b73 !important;
+
+  box-shadow:
+    0 0 0 2px rgba(22,139,115,.10) !important;
+}
+
+
+/* =========================================================
+   9. Y INDICATOR — VERY SMALL PREMIUM DOT
+   ========================================================= */
+
+.comment-exists-indicator {
+  width: 17px !important;
+  height: 17px !important;
+
+  min-width: 17px !important;
+  max-width: 17px !important;
+
+  display: inline-flex !important;
+
+  align-items: center !important;
+  justify-content: center !important;
+
+  flex: 0 0 17px !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+
+  border-radius: 50% !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #168b73,
+      #0f705d
+    ) !important;
+
+  border: 1px solid #b9e2d0 !important;
+
+  color: #ffffff !important;
+
+  font-family:
+    Inter,
+    Arial,
+    sans-serif !important;
+
+  font-size: 7px !important;
+
+  font-weight: 950 !important;
+
+  line-height: 1 !important;
+
+  box-shadow:
+    0 2px 5px rgba(22,139,115,.10) !important;
+}
+
+
+/* =========================================================
+   10. COMMENT CELL — ONLY SHOW Y WHEN COMMENT EXISTS
+   Existing JS already controls whether Y appears.
+   ========================================================= */
+
+.comment-cell .crm-comment-actions > * {
+  flex-shrink: 0 !important;
+}
+
+
+/* =========================================================
+   11. TABLE CELL SAFETY
+   Prevent anything from spilling outside its cell
+   ========================================================= */
+
+.leads-table td.comment-cell,
+.leads-table td.action-column {
+  overflow: hidden !important;
+}
+
+
+/* =========================================================
+   12. DESKTOP — LOGO
+   ========================================================= */
+
+@media (min-width: 1151px) {
+
+  .crm-header-logo {
+    width: 190px !important;
+    min-width: 190px !important;
+    max-width: 190px !important;
+
+    height: 46px !important;
+    max-height: 46px !important;
+  }
+
+}
+
+
+/* =========================================================
+   13. TABLET
+   ========================================================= */
+
+@media (max-width: 1150px) {
+
+  .crm-header-logo {
+    width: 175px !important;
+    min-width: 175px !important;
+    max-width: 175px !important;
+
+    height: 44px !important;
+    max-height: 44px !important;
+  }
+
+}
+
+
+/* =========================================================
+   14. MOBILE
+   Keep logo larger without changing header structure
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .crm-header-logo {
+    width: 160px !important;
+    min-width: 160px !important;
+    max-width: 160px !important;
+
+    height: 42px !important;
+    max-height: 42px !important;
+  }
+
+  .comment-cell {
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+  }
+
+  .comment-action-btn {
+    width: 18px !important;
+    height: 18px !important;
+
+    min-width: 18px !important;
+    max-width: 18px !important;
+
+    flex-basis: 18px !important;
+  }
+
+  .comment-edit-btn::before {
+    font-size: 10px !important;
+  }
+
+  .comment-view-btn::before {
+    font-size: 7px !important;
+  }
+
+  .comment-exists-indicator {
+    width: 16px !important;
+    height: 16px !important;
+
+    min-width: 16px !important;
+    max-width: 16px !important;
+
+    flex-basis: 16px !important;
+
+    font-size: 6px !important;
+  }
+
+  .view-lead-btn {
+    min-width: 84px !important;
+    height: 29px !important;
+
+    padding: 0 8px !important;
+
+    font-size: 9px !important;
+  }
+
+}
+
+
+/* =========================================================
+   15. SMALL PHONE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+  .crm-header-logo {
+    width: 140px !important;
+    min-width: 140px !important;
+    max-width: 140px !important;
+
+    height: 38px !important;
+    max-height: 38px !important;
+  }
+
+  .comment-cell {
+    width: 64px !important;
+    min-width: 64px !important;
+    max-width: 64px !important;
+
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+  }
+
+  .crm-comment-actions {
+    gap: 2px !important;
+  }
+
+  .comment-action-btn {
+    width: 17px !important;
+    height: 17px !important;
+
+    min-width: 17px !important;
+    max-width: 17px !important;
+
+    flex-basis: 17px !important;
+  }
+
+  .comment-exists-indicator {
+    width: 15px !important;
+    height: 15px !important;
+
+    min-width: 15px !important;
+    max-width: 15px !important;
+
+    flex-basis: 15px !important;
+
+    font-size: 6px !important;
+  }
+
+  .view-lead-btn {
+    min-width: 80px !important;
+    height: 28px !important;
+
+    padding: 0 7px !important;
+
+    font-size: 9px !important;
+  }
+
+  .view-lead-btn::before {
+    font-size: 6px !important;
+    margin-right: 4px !important;
+  }
+
+}
