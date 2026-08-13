@@ -379,7 +379,7 @@ function setTableLoading() {
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="11" class="loading-cell">
+            <td colspan="12" class="loading-cell">
                 Loading customer enquiries...
             </td>
         </tr>
@@ -399,7 +399,7 @@ function renderTableError(message) {
 
     tbody.innerHTML = `
         <tr>
-            <td colspan="11" class="loading-cell">
+            <td colspan="12" class="loading-cell">
                 ${escapeHTML(message)}
             </td>
         </tr>
@@ -1025,13 +1025,18 @@ function createLeadRow(lead) {
         "Unknown Customer";
 
     const phone =
-        lead.mobile ||
-        "—";
+    lead.mobile ||
+    "—";
 
-    const email =
-        lead.email ||
-        "—";
+const createdDate =
+    lead.created_at
+        ? formatDateTime(lead.created_at)
+        : "—";
 
+const email =
+    lead.email ||
+    "—";
+   
     const source =
         lead.source ||
         "—";
@@ -1077,17 +1082,21 @@ function createLeadRow(lead) {
             </td>
 
             <td class="phone-cell">
-                ${escapeHTML(phone)}
-            </td>
+    ${escapeHTML(phone)}
+</td>
 
-            <td>
-                ${createInlineField(
-                    lead,
-                    "email",
-                    email,
-                    "text"
-                )}
-            </td>
+<td class="created-date-cell">
+    ${escapeHTML(createdDate)}
+</td>
+
+<td>
+    ${createInlineField(
+        lead,
+        "email",
+        email,
+        "text"
+    )}
+</td>
 
             <td>
                 ${createSourceField(
@@ -1193,7 +1202,7 @@ function renderLeads() {
 
         tbody.innerHTML = `
             <tr>
-                <td colspan="11">
+                <td colspan="12">
                     <div class="crm-empty-inline">
                         <div>⌕</div>
                         <strong>
@@ -4120,6 +4129,34 @@ function formatStatus(
 /* =========================================================
    FORMAT DATE
    ========================================================= */
+function formatDateTime(value) {
+
+    if (!value) {
+        return "—";
+    }
+
+    const date = new Date(value);
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return String(value);
+    }
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        }
+    );
+}
 
 function formatDate(
     value
