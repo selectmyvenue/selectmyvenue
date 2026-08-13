@@ -12,10 +12,15 @@
 
   <meta
     name="description"
-    content="Select My Venue helps you discover suitable venues for weddings, celebrations, corporate events and special occasions across India."
+    content="Select My Venue helps you discover suitable venues and plan weddings, celebrations, corporate events and special occasions across India."
   >
 
-  <title>Select My Venue | Smart Venue Discovery</title>
+  <meta
+    name="theme-color"
+    content="#071b1b"
+  >
+
+  <title>Select My Venue | Smart AI Event & Venue Discovery</title>
 
   <link
     rel="stylesheet"
@@ -76,6 +81,10 @@
         Smart Discovery
       </a>
 
+      <a href="#aiPlanner">
+        AI Planner
+      </a>
+
       <a
         href="#enquiry"
         class="nav-cta"
@@ -92,6 +101,7 @@
   </div>
 
 </header>
+
 
 
 <main>
@@ -113,7 +123,7 @@
 
       <div class="ai-badge">
         <span></span>
-        AI-INSPIRED VENUE DISCOVERY
+        AI-POWERED EVENT & VENUE DISCOVERY
       </div>
 
 
@@ -132,9 +142,8 @@
       <p class="hero-text">
 
         Tell us what you need. Select My Venue helps you
-        discover suitable venues for weddings, parties,
-        corporate events and celebrations — smarter,
-        faster and with less searching.
+        discover suitable venues and plan your event —
+        smarter, faster and with less searching.
 
       </p>
 
@@ -175,7 +184,10 @@
   </div>
 
 
-  <!-- HERO SEARCH FORM -->
+
+  <!-- ===================================================
+       HERO SEARCH
+  ==================================================== -->
 
   <form
     class="search-card"
@@ -282,7 +294,7 @@
 
   <p class="micro-note">
 
-    ✦ Smart matching concept • Requirement based • Built for India
+    ✦ Smart matching • AI event planning • Requirement based • Built for India
 
   </p>
 
@@ -368,11 +380,11 @@
     <span>
 
       <strong>
-        AI Inspired Matching
+        AI Event Planner
       </strong>
 
       <small>
-        Smarter. Faster. Better.
+        Plan smarter. Faster. Better.
       </small>
 
     </span>
@@ -396,7 +408,10 @@
 
   <div class="event-grid">
 
-    <article class="event-card">
+    <article
+      class="event-card"
+      data-event-shortcut="Wedding"
+    >
 
       <div class="event-symbol wedding">
         ◯◯
@@ -413,7 +428,10 @@
     </article>
 
 
-    <article class="event-card">
+    <article
+      class="event-card"
+      data-event-shortcut="Birthday"
+    >
 
       <div class="event-symbol birthday">
         ♨
@@ -430,7 +448,10 @@
     </article>
 
 
-    <article class="event-card">
+    <article
+      class="event-card"
+      data-event-shortcut="Engagement"
+    >
 
       <div class="event-symbol engagement">
         ♡
@@ -447,7 +468,10 @@
     </article>
 
 
-    <article class="event-card">
+    <article
+      class="event-card"
+      data-event-shortcut="Corporate Event"
+    >
 
       <div class="event-symbol corporate">
         ▣
@@ -464,7 +488,10 @@
     </article>
 
 
-    <article class="event-card">
+    <article
+      class="event-card"
+      data-event-shortcut="Party"
+    >
 
       <div class="event-symbol party">
         ✧
@@ -502,7 +529,7 @@
 <section class="feature-row">
 
 
-  <!-- CUSTOMER ENQUIRY MINI -->
+  <!-- CUSTOMER ENQUIRY -->
 
   <article class="feature-card enquiry-mini">
 
@@ -591,7 +618,7 @@
         </strong>
 
         <small>
-          Smart
+          AI
           <br>
           Matching
         </small>
@@ -625,9 +652,9 @@
 
     <a
       class="secondary-btn"
-      href="#enquiry"
+      href="#aiPlanner"
     >
-      Learn More →
+      Try AI Planner →
     </a>
 
   </article>
@@ -668,7 +695,7 @@
       </li>
 
       <li>
-        Faster venue shortlisting
+        AI-assisted event planning
       </li>
 
     </ul>
@@ -711,6 +738,815 @@
 
 
 <!-- =====================================================
+     AI EVENT PLANNER
+====================================================== -->
+
+<section
+  class="ai-planner-section"
+  id="aiPlanner"
+>
+
+
+  <div class="section-heading">
+
+    <div>
+
+      <div class="section-kicker">
+        🤖 AI EVENT PLANNER
+      </div>
+
+      <h2>
+        Plan your event.
+        <br>
+        <span>Let AI think with you.</span>
+      </h2>
+
+    </div>
+
+
+    <p>
+
+      Tell us about your event and our smart planner
+      will build recommendations around your guests,
+      budget, date, food, venue style and celebration.
+
+    </p>
+
+  </div>
+
+
+
+  <!-- ===================================================
+       PLANNER INPUT CARD
+  ==================================================== -->
+
+  <div class="ai-planner-card">
+
+
+    <div class="planner-header">
+
+      <div>
+
+        <span class="planner-live-dot"></span>
+
+        <strong>
+          AI PLANNER READY
+        </strong>
+
+      </div>
+
+
+      <span class="planner-status">
+        Requirement-based planning
+      </span>
+
+    </div>
+
+
+
+    <div class="planner-grid">
+
+
+      <!-- EVENT -->
+
+      <div class="planner-field">
+
+        <label for="plannerEventType">
+          EVENT TYPE
+        </label>
+
+        <select id="plannerEventType">
+
+          <option value="">
+            Select event
+          </option>
+
+          <option>Wedding</option>
+          <option>Engagement</option>
+          <option>Birthday</option>
+          <option>Anniversary</option>
+          <option>Corporate Event</option>
+          <option>Reception</option>
+          <option>Party</option>
+          <option>Baby Shower</option>
+          <option>Kitty Party</option>
+          <option>Other</option>
+
+        </select>
+
+      </div>
+
+
+
+      <!-- LOCATION -->
+
+      <div class="planner-field">
+
+        <label for="plannerLocation">
+          CITY / LOCATION
+        </label>
+
+        <input
+          id="plannerLocation"
+          type="text"
+          placeholder="Delhi, Gurgaon, Noida..."
+        >
+
+      </div>
+
+
+
+      <!-- DATE -->
+
+      <div class="planner-field">
+
+        <label for="plannerDate">
+          EVENT DATE
+        </label>
+
+        <input
+          id="plannerDate"
+          type="date"
+        >
+
+      </div>
+
+
+
+      <!-- GUESTS -->
+
+      <div class="planner-field">
+
+        <label for="plannerGuests">
+          GUESTS
+        </label>
+
+        <input
+          id="plannerGuests"
+          type="number"
+          min="1"
+          placeholder="e.g. 300"
+        >
+
+      </div>
+
+
+
+      <!-- BUDGET -->
+
+      <div class="planner-field">
+
+        <label for="plannerBudget">
+          BUDGET / PERSON
+        </label>
+
+        <input
+          id="plannerBudget"
+          type="number"
+          min="0"
+          placeholder="₹ per person"
+        >
+
+      </div>
+
+
+
+      <!-- FOOD -->
+
+      <div class="planner-field">
+
+        <label for="plannerFood">
+          FOOD
+        </label>
+
+        <select id="plannerFood">
+
+          <option value="">
+            Select preference
+          </option>
+
+          <option>Veg</option>
+          <option>Non-Veg</option>
+          <option>Both</option>
+          <option>Jain</option>
+          <option>Not Specified</option>
+
+        </select>
+
+      </div>
+
+
+
+      <!-- VENUE STYLE -->
+
+      <div class="planner-field">
+
+        <label for="plannerVenueType">
+          VENUE STYLE
+        </label>
+
+        <select id="plannerVenueType">
+
+          <option value="">
+            Let AI decide
+          </option>
+
+          <option>Banquet Hall</option>
+          <option>Hotel</option>
+          <option>Resort</option>
+          <option>Farmhouse</option>
+          <option>Lawn</option>
+          <option>Restaurant</option>
+          <option>Rooftop</option>
+          <option>Community Hall</option>
+
+        </select>
+
+      </div>
+
+
+
+      <!-- STYLE -->
+
+      <div class="planner-field">
+
+        <label for="plannerStyle">
+          EVENT STYLE
+        </label>
+
+        <select id="plannerStyle">
+
+          <option value="">
+            Let AI decide
+          </option>
+
+          <option>Premium</option>
+          <option>Elegant</option>
+          <option>Modern</option>
+          <option>Traditional</option>
+          <option>Minimal</option>
+          <option>Luxury</option>
+          <option>Fun & Colorful</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- EXTRA REQUIREMENTS -->
+
+    <div class="planner-extra">
+
+      <label for="plannerRequirements">
+        WHAT ELSE MATTERS TO YOU?
+      </label>
+
+      <textarea
+        id="plannerRequirements"
+        rows="3"
+        placeholder="Parking, rooms, decoration, DJ, photography, kids area, outdoor space, elderly-friendly access, special food, etc."
+      ></textarea>
+
+    </div>
+
+
+
+    <!-- PLANNER ACTIONS -->
+
+    <div class="planner-actions">
+
+      <button
+        type="button"
+        class="primary-btn"
+        id="generateEventPlan"
+      >
+        ✦ Generate My AI Event Plan
+      </button>
+
+
+      <button
+        type="button"
+        class="secondary-btn"
+        id="saveEventPlan"
+      >
+        💾 Save Plan
+      </button>
+
+
+      <button
+        type="button"
+        class="secondary-btn"
+        id="restoreEventPlan"
+      >
+        🔄 Restore Plan
+      </button>
+
+    </div>
+
+
+
+    <p
+      id="plannerMessage"
+      class="planner-message"
+      role="status"
+      aria-live="polite"
+    ></p>
+
+  </div>
+
+
+
+  <!-- ===================================================
+       AI RESULT AREA
+  ==================================================== -->
+
+  <div
+    class="ai-results"
+    id="aiPlannerResults"
+    aria-live="polite"
+  >
+
+
+    <!-- MATCH SCORE -->
+
+    <article class="ai-result-card match-score-card">
+
+      <div class="result-card-header">
+
+        <span>
+          🎯 EVENT MATCH SCORE
+        </span>
+
+        <span
+          id="eventMatchBadge"
+          class="score-badge"
+        >
+          —
+        </span>
+
+      </div>
+
+
+      <div class="score-display">
+
+        <div
+          id="eventMatchScore"
+          class="big-score"
+        >
+          —
+        </div>
+
+        <div>
+
+          <strong id="eventMatchLabel">
+            Complete your event details
+          </strong>
+
+          <p id="eventMatchReason">
+            AI will calculate your event fit score.
+          </p>
+
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- BUDGET -->
+
+    <article class="ai-result-card">
+
+      <div class="result-card-header">
+
+        <span>
+          💰 BUDGET ESTIMATOR
+        </span>
+
+      </div>
+
+
+      <div class="budget-result">
+
+        <strong id="budgetEstimate">
+          —
+        </strong>
+
+        <span id="budgetRange">
+          Enter guest count and budget
+        </span>
+
+      </div>
+
+
+      <div class="budget-breakdown">
+
+        <div>
+
+          <small>
+            FOOD
+          </small>
+
+          <strong id="budgetFood">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <small>
+            VENUE
+          </small>
+
+          <strong id="budgetVenue">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <small>
+            DECOR / OTHER
+          </small>
+
+          <strong id="budgetOther">
+            —
+          </strong>
+
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- GUEST INTELLIGENCE -->
+
+    <article class="ai-result-card">
+
+      <div class="result-card-header">
+
+        <span>
+          👥 GUEST INTELLIGENCE
+        </span>
+
+      </div>
+
+
+      <div
+        id="guestIntelligence"
+        class="recommendation-content"
+      >
+
+        <p>
+          Add your guest count to receive planning insights.
+        </p>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- VENUE RECOMMENDATIONS -->
+
+    <article class="ai-result-card">
+
+      <div class="result-card-header">
+
+        <span>
+          🏨 VENUE-TYPE RECOMMENDATIONS
+        </span>
+
+      </div>
+
+
+      <div
+        id="venueRecommendations"
+        class="recommendation-list"
+      >
+
+        <div class="recommendation-placeholder">
+          AI will recommend suitable venue types.
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- FOOD -->
+
+    <article class="ai-result-card">
+
+      <div class="result-card-header">
+
+        <span>
+          🍽️ FOOD RECOMMENDATIONS
+        </span>
+
+      </div>
+
+
+      <div
+        id="foodRecommendations"
+        class="recommendation-list"
+      >
+
+        <div class="recommendation-placeholder">
+          AI will suggest food planning ideas.
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- DECOR -->
+
+    <article class="ai-result-card">
+
+      <div class="result-card-header">
+
+        <span>
+          🎨 THEME & DECOR
+        </span>
+
+      </div>
+
+
+      <div
+        id="themeRecommendations"
+        class="recommendation-list"
+      >
+
+        <div class="recommendation-placeholder">
+          AI will suggest event themes and decor.
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- PHOTOGRAPHY -->
+
+    <article class="ai-result-card">
+
+      <div class="result-card-header">
+
+        <span>
+          📸 PHOTOGRAPHY
+        </span>
+
+      </div>
+
+
+      <div
+        id="photographyRecommendations"
+        class="recommendation-list"
+      >
+
+        <div class="recommendation-placeholder">
+          AI will suggest photography coverage.
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- ENTERTAINMENT -->
+
+    <article class="ai-result-card">
+
+      <div class="result-card-header">
+
+        <span>
+          🎵 ENTERTAINMENT
+        </span>
+
+      </div>
+
+
+      <div
+        id="entertainmentRecommendations"
+        class="recommendation-list"
+      >
+
+        <div class="recommendation-placeholder">
+          AI will suggest entertainment options.
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- LEAD INTENT -->
+
+    <article class="ai-result-card lead-intent-card">
+
+      <div class="result-card-header">
+
+        <span>
+          🔥 EVENT INTENT
+        </span>
+
+        <span
+          id="leadIntentBadge"
+          class="intent-badge"
+        >
+          —
+        </span>
+
+      </div>
+
+
+      <div class="intent-grid">
+
+        <div>
+
+          <small>
+            LEAD QUALITY
+          </small>
+
+          <strong id="leadQuality">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <small>
+            PLANNING STAGE
+          </small>
+
+          <strong id="planningStage">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <small>
+            DATE CONFIDENCE
+          </small>
+
+          <strong id="dateConfidence">
+            —
+          </strong>
+
+        </div>
+
+
+        <div>
+
+          <small>
+            BUDGET CONFIDENCE
+          </small>
+
+          <strong id="budgetConfidence">
+            —
+          </strong>
+
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- TIMELINE -->
+
+    <article class="ai-result-card timeline-card">
+
+      <div class="result-card-header">
+
+        <span>
+          📅 PLANNING TIMELINE
+        </span>
+
+        <span id="planningCountdown">
+          —
+        </span>
+
+      </div>
+
+
+      <div
+        id="planningTimeline"
+        class="timeline-list"
+      >
+
+        <div class="timeline-placeholder">
+          Add an event date to generate your planning timeline.
+        </div>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- CHECKLIST -->
+
+    <article class="ai-result-card checklist-card">
+
+      <div class="result-card-header">
+
+        <span>
+          ✅ EVENT CHECKLIST
+        </span>
+
+        <span id="checklistProgress">
+          0%
+        </span>
+
+      </div>
+
+
+      <div
+        id="eventChecklist"
+        class="event-checklist"
+      >
+
+        <label>
+          <input
+            type="checkbox"
+            disabled
+          >
+          <span>
+            Generate your event plan first
+          </span>
+        </label>
+
+      </div>
+
+    </article>
+
+
+
+    <!-- FINAL ACTION -->
+
+    <article class="ai-final-card">
+
+      <div>
+
+        <span class="section-kicker">
+          READY TO MOVE FORWARD?
+        </span>
+
+        <h3>
+          Let us find venues
+          <span>that fit your plan.</span>
+        </h3>
+
+        <p>
+          Your AI planning information can be sent to
+          our team along with your enquiry.
+        </p>
+
+      </div>
+
+
+      <button
+        type="button"
+        class="primary-btn"
+        id="plannerToEnquiry"
+      >
+        Find Matching Venues →
+      </button>
+
+    </article>
+
+
+  </div>
+
+</section>
+
+
+
+<!-- =====================================================
      FULL CUSTOMER ENQUIRY
 ====================================================== -->
 
@@ -739,9 +1575,9 @@
 
     <p>
 
-      Share your requirements once. We use them to
-      understand your event and help identify suitable
-      venue options.
+      Share your requirements once. Our smart planning
+      system can use your event information to help our
+      team understand exactly what you need.
 
     </p>
 
@@ -749,11 +1585,9 @@
 
 
 
-  <!-- IMPORTANT:
-       NO action
-       NO method
-       JavaScript handles submission
-  -->
+  <!-- ===================================================
+       CUSTOMER FORM
+  ==================================================== -->
 
   <form
     class="form-card"
@@ -873,6 +1707,8 @@
           <option>Corporate Event</option>
           <option>Reception</option>
           <option>Party</option>
+          <option>Baby Shower</option>
+          <option>Kitty Party</option>
           <option>Other</option>
 
         </select>
@@ -942,11 +1778,48 @@
           <option>Veg</option>
           <option>Non-Veg</option>
           <option>Both</option>
+          <option>Jain</option>
           <option>Not Specified</option>
 
         </select>
 
       </div>
+
+    </div>
+
+
+
+    <!-- AI PLANNER SUMMARY -->
+
+    <div class="planner-summary-box">
+
+      <div class="form-section-title">
+        🤖 AI PLANNER INFORMATION
+      </div>
+
+
+      <p>
+        Your AI event plan can automatically be attached
+        to this enquiry so our team can understand your
+        event priorities before contacting you.
+      </p>
+
+
+      <div
+        id="plannerSummaryPreview"
+        class="planner-summary-preview"
+      >
+        No AI event plan generated yet.
+      </div>
+
+
+      <button
+        type="button"
+        class="secondary-btn"
+        id="refreshPlannerSummary"
+      >
+        ↻ Update AI Plan Summary
+      </button>
 
     </div>
 
@@ -966,7 +1839,7 @@
 
         <textarea
           id="customerRequirements"
-          rows="2"
+          rows="4"
           placeholder="Decoration, parking, rooms, catering, special requests, etc."
         ></textarea>
 
@@ -995,7 +1868,7 @@
     </div>
 
 
-    <!-- CONFIRMATION / ERROR MESSAGE -->
+    <!-- CONFIRMATION / ERROR -->
 
     <p
       id="customerEnquiryMessage"
@@ -1244,7 +2117,6 @@
 
 <!-- =====================================================
      FOOTER
-     FINAL CLEAN VERSION
 ====================================================== -->
 
 <footer class="site-footer">
@@ -1272,6 +2144,10 @@
 
           <a href="#smart">
             Smart Discovery
+          </a>
+
+          <a href="#aiPlanner">
+            AI Event Planner
           </a>
 
           <a href="#enquiry">
@@ -1342,13 +2218,11 @@
       </span>
 
       <span>
-        Smart Venue Discovery • India
+        AI Event Planning • Smart Venue Discovery • India
       </span>
 
     </div>
 
-
-    <!-- SAME LOGO USED IN HEADER -->
 
     <div class="footer-final-logo">
 
@@ -1391,8 +2265,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 
+
 <!-- =====================================================
-     YOUR WEBSITE JAVASCRIPT
+     WEBSITE JAVASCRIPT
 ====================================================== -->
 
 <script src="script.js"></script>
