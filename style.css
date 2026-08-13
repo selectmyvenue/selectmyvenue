@@ -2059,3 +2059,173 @@ nav a.active:after{
   }
 
 }
+
+/* =====================================================
+   FINAL FULL-WIDTH LAYOUT FIX
+   Removes excessive left/right empty space
+===================================================== */
+
+/* Main page containers */
+.header-inner,
+.hero,
+.trust-strip,
+.popular-section,
+.feature-row,
+.enquiry-section,
+.about-section,
+.contact-section,
+.site-footer{
+  max-width:none;
+  width:100%;
+}
+
+/* Keep content comfortably inside the screen */
+.header-inner{
+  padding-left:32px;
+  padding-right:32px;
+}
+
+.hero{
+  padding-left:32px;
+  padding-right:32px;
+}
+
+.trust-strip{
+  margin-left:0;
+  margin-right:0;
+  padding-left:32px;
+  padding-right:32px;
+}
+
+.popular-section,
+.feature-row,
+.enquiry-section,
+.about-section,
+.contact-section{
+  padding-left:32px;
+  padding-right:32px;
+}
+
+.site-footer{
+  padding-left:32px;
+  padding-right:32px;
+}
+
+/* Make the main content sections wider */
+.hero-inner{
+  width:100%;
+}
+
+.search-card{
+  width:100%;
+}
+
+.event-grid{
+  width:100%;
+}
+
+.feature-row{
+  width:100%;
+}
+
+.form-card{
+  width:100%;
+}
+
+.contact-grid{
+  width:100%;
+}
+
+
+/* =====================================================
+   DESKTOP — USE MORE SCREEN WIDTH
+===================================================== */
+
+@media(min-width:901px){
+
+  .hero-inner{
+    grid-template-columns:1.15fr .85fr;
+    gap:40px;
+  }
+
+  .hero-copy{
+    padding-left:10px;
+  }
+
+  .hero h1{
+    font-size:62px;
+  }
+
+  .hero-orbit{
+    transform:scale(1.05);
+  }
+
+  .footer-links{
+    max-width:820px;
+  }
+
+}
+
+
+/* =====================================================
+   VERY LARGE SCREENS
+===================================================== */
+
+@media(min-width:1400px){
+
+  .header-inner{
+    padding-left:55px;
+    padding-right:55px;
+  }
+
+  .hero{
+    padding-left:55px;
+    padding-right:55px;
+  }
+
+  .trust-strip,
+  .popular-section,
+  .feature-row,
+  .enquiry-section,
+  .about-section,
+  .contact-section,
+  .site-footer{
+    padding-left:55px;
+    padding-right:55px;
+  }
+
+  .hero h1{
+    font-size:66px;
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE — KEEP MOBILE PADDING CLEAN
+===================================================== */
+
+@media(max-width:700px){
+
+  .header-inner{
+    padding-left:14px;
+    padding-right:14px;
+  }
+
+  .hero{
+    padding-left:14px;
+    padding-right:14px;
+  }
+
+  .trust-strip,
+  .popular-section,
+  .feature-row,
+  .enquiry-section,
+  .about-section,
+  .contact-section,
+  .site-footer{
+    padding-left:14px;
+    padding-right:14px;
+  }
+
+}
