@@ -3044,10 +3044,8 @@ textarea:focus-visible {
 
 /* Tighten spacing between statistics and Customer Enquiries */
 
-.stats-grid {
-    margin-bottom: 8px !important;
-}
+/* Reduce space above Customer Enquiries */
 
-.leads-section {
-    margin-top: 0 !important;
+.crm-main {
+    padding-top: 12px !important;
 }
