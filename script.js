@@ -3,7 +3,7 @@
 // AI EVENT PLANNER + CUSTOMER WEBSITE
 // Website → Supabase → CRM
 //
-// VERSION: AI EVENT PLANNER V1
+// VERSION: AI EVENT PLANNER V2
 //
 // IMPORTANT:
 // - No new Supabase columns required.
@@ -72,6 +72,9 @@ try {
 // =====================================================
 
 const SMV_AI_STORAGE_KEY =
+  "smv_ai_event_plan_v2";
+
+const SMV_AI_LEGACY_STORAGE_KEY =
   "smv_ai_event_plan_v1";
 
 let currentAIPlan = null;
@@ -386,7 +389,9 @@ function setupHeroSearch() {
                 "AI Planner Lead | Match Score: " +
                 aiPlan.matchScore +
                 "% | Intent: " +
-                aiPlan.intent,
+                aiPlan.intent +
+                " | Quality: " +
+                (aiPlan.leadQuality || "MEDIUM"),
 
               last_contacted_at:
                 null
@@ -807,7 +812,9 @@ function setupCustomerEnquiry() {
                 "AI Planner Qualified Lead | Match Score: " +
                 aiPlan.matchScore +
                 "% | Intent: " +
-                aiPlan.intent,
+                aiPlan.intent +
+                " | Quality: " +
+                (aiPlan.leadQuality || "MEDIUM"),
 
               last_contacted_at:
                 null
@@ -995,197 +1002,88 @@ function setupAIQuickActions() {
 function generateAIEventPlan(
   data
 ) {
+  data = data || {};
 
-  const eventType =
-    normalizeEventType(
-      data.eventType ||
-      "Event"
-    );
+  const eventType = normalizeEventType(data.eventType || "Event");
+  const location = String(data.location || "Your City").trim();
+  const guests = parseGuestNumber(data.guests);
+  const budget = parseBudget(data.budget);
+  const eventDate = data.eventDate || "";
+  const food = String(data.food || "").trim();
+  const other = String(data.other || "").trim();
 
+  const category = getEventCategory(eventType);
+  const venueTypes = getVenueRecommendations(category, guests);
+  const theme = getThemeRecommendations(category);
+  const foodRecommendations = getFoodRecommendations(category, food);
+  const vendorRecommendations = getVendorRecommendations(category);
+  const checklist = getEventChecklist(category);
+  const timeline = getPlanningTimeline(eventDate, category);
+  const budgetPlan = calculateSmartBudget(category, guests, budget);
 
-  const location =
-    data.location ||
-    "Your City";
+  const guestProfile = getGuestIntelligence(guests, category);
+  const countdown = getPlanningCountdown(eventDate);
+  const decorRecommendations = getDecorRecommendations(category, theme);
+  const photographyRecommendations = getPhotographyRecommendations(category);
+  const entertainmentRecommendations = getEntertainmentRecommendations(category);
 
+  const matchScore = calculateMatchScore({
+    eventType,
+    location,
+    guests,
+    date: eventDate,
+    budget,
+    food,
+    other
+  });
 
-  const guests =
-    parseGuestNumber(
-      data.guests
-    );
+  const intent = calculateLeadIntent({
+    eventType,
+    location,
+    guests,
+    date: eventDate,
+    budget,
+    food,
+    other
+  });
 
-
-  const budget =
-    parseBudget(
-      data.budget
-    );
-
-
-  const eventDate =
-    data.eventDate ||
-    "";
-
-
-  const food =
-    data.food ||
-    "";
-
-
-  const category =
-    getEventCategory(
-      eventType
-    );
-
-
-  const venueTypes =
-    getVenueRecommendations(
-      category,
-      guests
-    );
-
-
-  const theme =
-    getThemeRecommendations(
-      category
-    );
-
-
-  const foodRecommendations =
-    getFoodRecommendations(
-      category,
-      food
-    );
-
-
-  const vendorRecommendations =
-    getVendorRecommendations(
-      category
-    );
-
-
-  const checklist =
-    getEventChecklist(
-      category
-    );
-
-
-  const timeline =
-    getPlanningTimeline(
-      eventDate,
-      category
-    );
-
-
-  const budgetPlan =
-    calculateSmartBudget(
-      category,
-      guests,
-      budget
-    );
-
-
-  const matchScore =
-    calculateMatchScore({
-
-      eventType:
-        eventType,
-
-      location:
-        location,
-
-      guests:
-        guests,
-
-      date:
-        eventDate,
-
-      budget:
-        budget
-
-    });
-
-
-  const intent =
-    calculateLeadIntent({
-
-      eventType:
-        eventType,
-
-      location:
-        location,
-
-      guests:
-        guests,
-
-      date:
-        eventDate,
-
-      budget:
-        budget
-
-    });
-
+  const leadQuality = calculateLeadQuality({
+    matchScore,
+    intent,
+    eventDate,
+    guests,
+    budget,
+    other
+  });
 
   return {
-
-    eventType:
-      eventType,
-
-    category:
-      category,
-
-    location:
-      location,
-
-    guests:
-      guests,
-
-    eventDate:
-      eventDate,
-
-    budget:
-      budget,
-
-    food:
-      food,
-
-    matchScore:
-      matchScore,
-
-    intent:
-      intent,
-
-    venueTypes:
-      venueTypes,
-
-    theme:
-      theme,
-
-    foodRecommendations:
-      foodRecommendations,
-
-    vendorRecommendations:
-      vendorRecommendations,
-
-    checklist:
-      checklist,
-
-    timeline:
-      timeline,
-
-    budgetPlan:
-      budgetPlan,
-
-    generatedAt:
-      new Date().toISOString()
-
+    eventType,
+    category,
+    location,
+    guests,
+    eventDate,
+    budget,
+    food,
+    other,
+    matchScore,
+    intent,
+    leadQuality,
+    venueTypes,
+    theme,
+    decorRecommendations,
+    foodRecommendations,
+    photographyRecommendations,
+    entertainmentRecommendations,
+    vendorRecommendations,
+    guestProfile,
+    countdown,
+    checklist,
+    completedChecklist: [],
+    timeline,
+    budgetPlan,
+    generatedAt: new Date().toISOString()
   };
-
 }
-
-
-// =====================================================
-// EVENT CATEGORY
-// =====================================================
 
 function getEventCategory(
   eventType
@@ -1765,188 +1663,124 @@ function getPlanningTimeline(
   eventDate,
   category
 ) {
+  const base = [
+    {
+      period: "NOW",
+      task: "Confirm event vision, date, guest count and working budget."
+    },
+    {
+      period: "VENUE",
+      task: "Shortlist venues, compare packages and confirm availability."
+    },
+    {
+      period: "VENDORS",
+      task: "Book food, decor, photography and entertainment partners."
+    },
+    {
+      period: "FINAL WEEK",
+      task: "Confirm guests, payments, vendor timings and event-day schedule."
+    }
+  ];
 
   if (!eventDate) {
+    return base;
+  }
 
+  const date = new Date(eventDate + "T00:00:00");
+
+  if (Number.isNaN(date.getTime())) {
+    return base;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const days = Math.ceil((date - today) / 86400000);
+
+  if (days < 0) {
     return [
-
       {
-        period: "ASAP",
-        task: "Confirm date, budget and guest count."
+        period: "DATE PASSED",
+        task: "Please choose a future event date so the planner can build a countdown."
       },
-
-      {
-        period: "Next",
-        task: "Shortlist and compare venues."
-      },
-
-      {
-        period: "After venue",
-        task: "Book major vendors."
-      },
-
-      {
-        period: "Final week",
-        task: "Confirm guests, vendors and schedule."
-      }
-
+      ...base.slice(0, 2)
     ];
-
   }
 
-
-  const date =
-    new Date(
-      eventDate +
-      "T00:00:00"
-    );
-
-
-  if (
-    Number.isNaN(
-      date.getTime()
-    )
-  ) {
-
-    return [];
-
-  }
-
-
-  const today =
-    new Date();
-
-  today.setHours(
-    0,
-    0,
-    0,
-    0
-  );
-
-
-  const days =
-    Math.ceil(
-      (
-        date -
-        today
-      ) /
-      86400000
-    );
-
-
-  if (
-    days <= 7
-  ) {
-
+  if (days <= 7) {
     return [
-
       {
         period: "TODAY",
-        task: "Confirm venue, guests and all vendors."
+        task: "Confirm venue, guest count and all major vendors immediately."
       },
-
       {
         period: "48 HOURS",
-        task: "Confirm menu, decoration and event schedule."
+        task: "Lock menu, decoration, photography and entertainment timings."
       },
-
       {
         period: "EVENT DAY",
-        task: "Execute your final event plan."
+        task: "Use the final run sheet and keep vendor contacts ready."
       }
-
     ];
-
   }
 
-
-  if (
-    days <= 30
-  ) {
-
+  if (days <= 30) {
     return [
-
       {
         period: "THIS WEEK",
-        task: "Finalize venue and major vendors."
+        task: "Finalize venue and priority vendors."
       },
-
       {
         period: "NEXT 2 WEEKS",
         task: "Finalize food, decor, photography and entertainment."
       },
-
       {
         period: "FINAL WEEK",
-        task: "Confirm guests, payments and event schedule."
+        task: "Confirm guests, payments and the event schedule."
       }
-
     ];
-
   }
 
-
-  if (
-    days <= 90
-  ) {
-
+  if (days <= 90) {
     return [
-
       {
         period: "NOW",
         task: "Finalize venue, budget and guest estimate."
       },
-
       {
         period: "30–60 DAYS",
         task: "Book vendors and finalize event style."
       },
-
       {
         period: "FINAL 30 DAYS",
         task: "Invitations, menu, decor and logistics."
       },
-
       {
         period: "FINAL WEEK",
         task: "Final confirmations and event run sheet."
       }
-
     ];
-
   }
 
-
   return [
-
     {
       period: "NOW",
-      task: "Define your event vision and budget."
+      task: "Define your event vision, guest profile and budget."
     },
-
     {
       period: "NEXT 30 DAYS",
       task: "Shortlist venues and compare packages."
     },
-
     {
       period: "2–3 MONTHS",
-      task: "Book important vendors."
+      task: "Book important vendors and lock the event style."
     },
-
     {
       period: "FINAL MONTH",
-      task: "Finalize guests, food, decor and schedule."
+      task: "Finalize guests, food, decor, entertainment and schedule."
     }
-
   ];
-
 }
-
-
-// =====================================================
-// SMART BUDGET
-// =====================================================
 
 function calculateSmartBudget(
   category,
@@ -2089,31 +1923,41 @@ function getBudgetBreakdown(
   total,
   category
 ) {
+  let venuePct = 0.35;
+  let foodPct = 0.30;
+  let decorPct = 0.12;
+  let photoPct = 0.08;
+  let entertainmentPct = 0.06;
 
-  const venue =
-    Math.round(
-      total * .35
-    );
+  if (category === "corporate") {
+    venuePct = 0.30;
+    foodPct = 0.32;
+    decorPct = 0.10;
+    photoPct = 0.08;
+    entertainmentPct = 0.05;
+  }
 
-  const food =
-    Math.round(
-      total * .30
-    );
+  if (category === "birthday" || category === "party") {
+    venuePct = 0.30;
+    foodPct = 0.28;
+    decorPct = 0.15;
+    photoPct = 0.08;
+    entertainmentPct = 0.10;
+  }
 
-  const decor =
-    Math.round(
-      total * .12
-    );
+  if (category === "wedding" || category === "reception") {
+    venuePct = 0.34;
+    foodPct = 0.30;
+    decorPct = 0.14;
+    photoPct = 0.09;
+    entertainmentPct = 0.06;
+  }
 
-  const photo =
-    Math.round(
-      total * .08
-    );
-
-  const entertainment =
-    Math.round(
-      total * .06
-    );
+  const venue = Math.round(total * venuePct);
+  const food = Math.round(total * foodPct);
+  const decor = Math.round(total * decorPct);
+  const photo = Math.round(total * photoPct);
+  const entertainment = Math.round(total * entertainmentPct);
 
   const buffer =
     total -
@@ -2123,368 +1967,411 @@ function getBudgetBreakdown(
     photo -
     entertainment;
 
-
   return {
-
-    venue:
-      venue,
-
-    food:
-      food,
-
-    decor:
-      decor,
-
-    photography:
-      photo,
-
-    entertainment:
-      entertainment,
-
-    buffer:
-      buffer
-
+    venue,
+    food,
+    decor,
+    photography: photo,
+    entertainment,
+    buffer
   };
-
 }
-
-
-// =====================================================
-// MATCH SCORE
-// =====================================================
 
 function calculateMatchScore(
   data
 ) {
+  let score = 40;
 
-  let score =
-    55;
+  if (data.eventType) score += 12;
+  if (data.location) score += 12;
+  if (data.guests) score += 10;
+  if (data.date) score += 12;
+  if (data.budget) score += 8;
+  if (data.food) score += 3;
+  if (data.other) score += 3;
 
-
-  if (
-    data.eventType
-  ) {
-
-    score +=
-      10;
-
-  }
-
-
-  if (
-    data.location
-  ) {
-
-    score +=
-      10;
-
-  }
-
-
-  if (
-    data.guests
-  ) {
-
-    score +=
-      8;
-
-  }
-
-
-  if (
-    data.date
-  ) {
-
-    score +=
-      10;
-
-  }
-
-
-  if (
-    data.budget
-  ) {
-
-    score +=
-      7;
-
-  }
-
-
-  return Math.min(
-    99,
-    Math.max(
-      45,
-      score
-    )
-  );
-
+  return Math.min(99, Math.max(45, score));
 }
-
-
-// =====================================================
-// LEAD INTENT
-// =====================================================
 
 function calculateLeadIntent(
   data
 ) {
+  let score = 0;
 
-  let score =
-    0;
+  if (data.eventType) score += 15;
+  if (data.location) score += 15;
+  if (data.guests) score += 15;
+  if (data.date) score += 25;
+  if (data.budget) score += 20;
+  if (data.food) score += 5;
+  if (data.other) score += 5;
 
-
-  if (
-    data.eventType
-  ) {
-
-    score +=
-      20;
-
-  }
-
-
-  if (
-    data.location
-  ) {
-
-    score +=
-      20;
-
-  }
-
-
-  if (
-    data.guests
-  ) {
-
-    score +=
-      15;
-
-  }
-
-
-  if (
-    data.date
-  ) {
-
-    score +=
-      25;
-
-  }
-
-
-  if (
-    data.budget
-  ) {
-
-    score +=
-      20;
-
-  }
-
-
-  if (
-    score >=
-    85
-  ) {
-
-    return "HOT";
-
-  }
-
-
-  if (
-    score >=
-    60
-  ) {
-
-    return "WARM";
-
-  }
-
-
+  if (score >= 85) return "HOT";
+  if (score >= 60) return "WARM";
   return "EARLY PLANNER";
-
 }
-
-
-// =====================================================
-// LEAD PRIORITY
-// =====================================================
 
 function calculateLeadPriority(
   plan
 ) {
-
-  if (
-    plan.intent ===
-    "HOT"
-  ) {
-
+  if (plan.intent === "HOT" || plan.leadQuality === "HIGH") {
     return "high";
-
   }
 
-
-  if (
-    plan.intent ===
-    "WARM"
-  ) {
-
+  if (plan.intent === "WARM" || plan.leadQuality === "MEDIUM") {
     return "normal";
-
   }
-
 
   return "normal";
-
 }
 
 
 // =====================================================
-// AI REQUIREMENTS
+// GUEST INTELLIGENCE
 // =====================================================
+
+function getGuestIntelligence(
+  guests,
+  category
+) {
+  const count = Number(guests) || 0;
+
+  if (count >= 500) {
+    return {
+      band: "500+",
+      label: "Large-scale event",
+      note: "Prioritize large-capacity venues, guest flow, parking, power, catering throughput and dedicated event coordination."
+    };
+  }
+
+  if (count >= 300) {
+    return {
+      band: "300–499",
+      label: "Large event",
+      note: "Look for spacious venues with strong guest circulation, parking and scalable food service."
+    };
+  }
+
+  if (count >= 150) {
+    return {
+      band: "150–299",
+      label: "Medium-large event",
+      note: "Compare banquet/lawn capacity, stage space, dining layout and package inclusions."
+    };
+  }
+
+  if (count >= 80) {
+    return {
+      band: "80–149",
+      label: "Medium event",
+      note: "Flexible banquet halls, boutique venues and restaurants can offer a strong balance of space and budget."
+    };
+  }
+
+  if (count > 0) {
+    return {
+      band: "Under 80",
+      label: "Intimate event",
+      note: "Prioritize ambience, privacy, food quality and flexible minimum-spend packages."
+    };
+  }
+
+  return {
+    band: "Unknown",
+    label: "Guest count needed",
+    note: "Adding an estimated guest count will improve venue capacity and budget recommendations."
+  };
+}
+
+
+// =====================================================
+// PLANNING COUNTDOWN
+// =====================================================
+
+function getPlanningCountdown(
+  eventDate
+) {
+  if (!eventDate) {
+    return {
+      days: null,
+      label: "Add your event date for a live planning countdown."
+    };
+  }
+
+  const date = new Date(eventDate + "T00:00:00");
+
+  if (Number.isNaN(date.getTime())) {
+    return {
+      days: null,
+      label: "Event date needs attention."
+    };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const days = Math.ceil((date - today) / 86400000);
+
+  if (days < 0) {
+    return {
+      days,
+      label: "Event date has passed."
+    };
+  }
+
+  if (days === 0) {
+    return {
+      days: 0,
+      label: "Your event is today."
+    };
+  }
+
+  if (days === 1) {
+    return {
+      days: 1,
+      label: "1 day to go."
+    };
+  }
+
+  return {
+    days,
+    label: days + " days to go."
+  };
+}
+
+
+// =====================================================
+// DECOR / THEME INTELLIGENCE
+// =====================================================
+
+function getDecorRecommendations(
+  category,
+  themes
+) {
+  const map = {
+    wedding: [
+      "Floral stage backdrop",
+      "Warm ambient lighting",
+      "Entrance welcome installation",
+      "Mandap / ceremony decor"
+    ],
+    birthday: [
+      "Statement backdrop",
+      "Personalized cake table",
+      "Photo corner",
+      "Mood lighting"
+    ],
+    engagement: [
+      "Floral photo wall",
+      "Elegant stage",
+      "Candle / ambient lighting",
+      "Minimal luxury table styling"
+    ],
+    corporate: [
+      "Branded stage backdrop",
+      "Clean registration desk",
+      "Professional lighting",
+      "Directional signage"
+    ],
+    anniversary: [
+      "Candlelight styling",
+      "Floral table decor",
+      "Romantic backdrop",
+      "Warm ambient lighting"
+    ],
+    baby: [
+      "Pastel balloon installation",
+      "Floral / cloud backdrop",
+      "Welcome signage",
+      "Dessert table styling"
+    ],
+    party: [
+      "LED / neon backdrop",
+      "Mood lighting",
+      "Photo booth",
+      "Statement entrance"
+    ],
+    reception: [
+      "Elegant stage backdrop",
+      "Floral aisle / entrance",
+      "Ambient lighting",
+      "Premium table styling"
+    ],
+    general: [
+      "Elegant backdrop",
+      "Ambient lighting",
+      "Welcome signage",
+      "Photo corner"
+    ]
+  };
+
+  return (map[category] || map.general).concat(
+    themes && themes.length ? [] : []
+  );
+}
+
+
+// =====================================================
+// PHOTOGRAPHY INTELLIGENCE
+// =====================================================
+
+function getPhotographyRecommendations(
+  category
+) {
+  if (category === "wedding" || category === "reception") {
+    return [
+      "Candid photography",
+      "Traditional photography",
+      "Cinematic videography",
+      "Drone coverage where permitted"
+    ];
+  }
+
+  if (category === "corporate") {
+    return [
+      "Event coverage",
+      "Speaker / stage photography",
+      "Branding and networking shots",
+      "Short highlight video"
+    ];
+  }
+
+  return [
+    "Candid event photography",
+    "Highlight video",
+    "Group portraits",
+    "Dedicated photo corner"
+  ];
+}
+
+
+// =====================================================
+// ENTERTAINMENT INTELLIGENCE
+// =====================================================
+
+function getEntertainmentRecommendations(
+  category
+) {
+  if (category === "wedding" || category === "reception") {
+    return [
+      "DJ / live music",
+      "Family performances",
+      "Anchor / emcee",
+      "Dance floor"
+    ];
+  }
+
+  if (category === "corporate") {
+    return [
+      "Professional emcee",
+      "Background music",
+      "Team activities",
+      "AV presentation support"
+    ];
+  }
+
+  if (category === "birthday" || category === "party") {
+    return [
+      "DJ / music",
+      "Games / activities",
+      "Dance floor",
+      "Live entertainment"
+    ];
+  }
+
+  return [
+    "Music / DJ",
+    "Host / emcee",
+    "Interactive activities",
+    "Live entertainment"
+  ];
+}
+
+
+// =====================================================
+// LEAD QUALITY
+// =====================================================
+
+function calculateLeadQuality(
+  data
+) {
+  let score = Number(data.matchScore) || 0;
+
+  if (data.intent === "HOT") score += 10;
+  if (data.intent === "WARM") score += 5;
+  if (data.eventDate) score += 5;
+  if (data.guests) score += 3;
+  if (data.budget) score += 3;
+  if (data.other) score += 2;
+
+  if (score >= 90) return "HIGH";
+  if (score >= 70) return "MEDIUM";
+  return "LOW";
+}
 
 function buildAIRequirements(
   plan
 ) {
-
   const lines = [];
 
+  lines.push("=== SELECT MY VENUE AI LEAD PROFILE ===");
+  lines.push("Event: " + (plan.eventType || "Event"));
+  lines.push("Category: " + (plan.category || "general"));
+  lines.push("Location: " + (plan.location || ""));
+  lines.push("Guests: " + (plan.guests || "Not specified"));
+  lines.push("Event Date: " + (plan.eventDate || "Not specified"));
+  lines.push("Budget / Guest: " + (plan.budget ? "₹" + formatIndianNumber(plan.budget) : "Not specified"));
+  lines.push("AI Match Score: " + (plan.matchScore || 0) + "%");
+  lines.push("Lead Intent: " + (plan.intent || "EARLY PLANNER"));
+  lines.push("Lead Quality: " + (plan.leadQuality || "MEDIUM"));
 
-  lines.push(
-    "=== AI EVENT PLAN ==="
-  );
-
-
-  lines.push(
-    "Event: " +
-    plan.eventType
-  );
-
-
-  lines.push(
-    "Category: " +
-    plan.category
-  );
-
-
-  lines.push(
-    "Location: " +
-    plan.location
-  );
-
-
-  if (
-    plan.guests
-  ) {
-
-    lines.push(
-      "Guests: " +
-      plan.guests
-    );
-
+  if (plan.countdown) {
+    lines.push("Planning Countdown: " + plan.countdown.label);
   }
 
-
-  if (
-    plan.eventDate
-  ) {
-
-    lines.push(
-      "Event Date: " +
-      plan.eventDate
-    );
-
+  if (plan.guestProfile) {
+    lines.push("Guest Intelligence: " + plan.guestProfile.label);
+    lines.push("Guest Planning Note: " + plan.guestProfile.note);
   }
 
+  lines.push("Suggested Venue Types: " + (plan.venueTypes || []).join(", "));
+  lines.push("Theme Ideas: " + (plan.theme || []).join(", "));
+  lines.push("Decor Suggestions: " + (plan.decorRecommendations || []).join(", "));
+  lines.push("Food Recommendations: " + (plan.foodRecommendations || []).join(", "));
+  lines.push("Photography Suggestions: " + (plan.photographyRecommendations || []).join(", "));
+  lines.push("Entertainment Suggestions: " + (plan.entertainmentRecommendations || []).join(", "));
+  lines.push("Recommended Services: " + (plan.vendorRecommendations || []).join(", "));
 
-  lines.push(
-    "AI Match Score: " +
-    plan.matchScore +
-    "%"
-  );
+  if (plan.budgetPlan) {
+    lines.push(
+      "Indicative Budget: ₹" +
+      formatIndianNumber(plan.budgetPlan.total) +
+      " total / ₹" +
+      formatIndianNumber(plan.budgetPlan.perGuest) +
+      " per guest"
+    );
+  }
 
+  if (plan.other) {
+    lines.push("Planner Notes: " + plan.other);
+  }
 
-  lines.push(
-    "Lead Intent: " +
-    plan.intent
-  );
-
-
-  lines.push(
-    "Suggested Venues: " +
-    plan.venueTypes.join(
-      ", "
-    )
-  );
-
-
-  lines.push(
-    "Suggested Themes: " +
-    plan.theme.join(
-      ", "
-    )
-  );
-
-
-  lines.push(
-    "Food Ideas: " +
-    plan.foodRecommendations.join(
-      ", "
-    )
-  );
-
-
-  lines.push(
-    "Recommended Vendors: " +
-    plan.vendorRecommendations.join(
-      ", "
-    )
-  );
-
-
-  return lines.join(
-    "\n"
-  );
-
+  return lines.join("\n");
 }
-
-
-// =====================================================
-// FULL AI REQUIREMENTS
-// =====================================================
 
 function buildFullAIRequirements(
   data
 ) {
+  let result = buildAIRequirements(data.aiPlan);
 
-  let result =
-    buildAIRequirements(
-      data.aiPlan
-    );
-
-
-  if (
-    data.other
-  ) {
-
+  if (data.other) {
     result +=
       "\n\n=== CUSTOMER REQUIREMENTS ===\n" +
       data.other;
-
   }
 
-
   return result;
-
 }
-
-
-// =====================================================
-// INJECT AI PLANNER CONTAINER
-// =====================================================
 
 function injectAIPlannerContainer() {
 
@@ -2599,394 +2486,285 @@ function injectAIPlannerContainer() {
 function showAIPlannerPanel(
   plan
 ) {
+  if (!plan) return;
 
-  if (!plan) {
-    return;
+  currentAIPlan = plan;
+
+  if (!Array.isArray(plan.checklist)) {
+    plan.checklist = [];
   }
 
-
-  currentAIPlan =
-    plan;
-
-
-  const container =
-    document.getElementById(
-      "smvAIPlanner"
-    );
-
-
-  const content =
-    document.getElementById(
-      "smvAIContent"
-    );
-
-
-  if (
-    !container ||
-    !content
-  ) {
-
-    return;
-
+  if (!Array.isArray(plan.completedChecklist)) {
+    plan.completedChecklist = [];
   }
 
+  const container = document.getElementById("smvAIPlanner");
+  const content = document.getElementById("smvAIContent");
+
+  if (!container || !content) return;
+
+  const countdown = plan.countdown || {
+    days: null,
+    label: "Add your event date for a live planning countdown."
+  };
+
+  const guestProfile = plan.guestProfile || {
+    label: "Guest intelligence",
+    note: "Add your guest count for better recommendations."
+  };
+
+  const leadQuality = plan.leadQuality || "MEDIUM";
 
   content.innerHTML = `
-
     <div class="smv-ai-score-row">
-
       <div class="smv-ai-score">
-
         <div class="smv-ai-score-number">
-          ${plan.matchScore}%
+          ${escapeHTML(plan.matchScore)}%
         </div>
-
         <div>
-          <strong>AI Match</strong>
-          <small>Based on your requirements</small>
+          <strong>AI Event Match</strong>
+          <small>Based on your planning information</small>
         </div>
-
       </div>
-
 
       <div class="smv-ai-intent">
-        <span>Lead intent</span>
-        <strong>
-          ${escapeHTML(plan.intent)}
-        </strong>
+        <span>Lead quality · intent</span>
+        <strong>${escapeHTML(leadQuality)} · ${escapeHTML(plan.intent)}</strong>
       </div>
-
     </div>
 
+    <div class="smv-ai-countdown">
+      <div>
+        <span class="smv-ai-card-icon">⏳</span>
+        <div>
+          <strong>Planning Countdown</strong>
+          <small>${escapeHTML(countdown.label)}</small>
+        </div>
+      </div>
+      ${
+        countdown.days !== null && countdown.days >= 0
+          ? `<div class="smv-ai-countdown-number">${escapeHTML(countdown.days)}<small>days</small></div>`
+          : `<div class="smv-ai-countdown-number">—</div>`
+      }
+    </div>
 
     <div class="smv-ai-grid">
-
       <div class="smv-ai-card">
-
-        <span class="smv-ai-card-icon">
-          🏛️
-        </span>
-
-        <h3>
-          Venue Ideas
-        </h3>
-
+        <span class="smv-ai-card-icon">🏛️</span>
+        <h3>Recommended Venue Types</h3>
         <div class="smv-ai-tags">
-
-          ${plan.venueTypes
-            .map(
-              item =>
-                `<span>${escapeHTML(item)}</span>`
-            )
-            .join("")}
-
+          ${(plan.venueTypes || []).map(
+            item => `<span>${escapeHTML(item)}</span>`
+          ).join("")}
         </div>
-
       </div>
 
+      <div class="smv-ai-card">
+        <span class="smv-ai-card-icon">👥</span>
+        <h3>Guest Intelligence</h3>
+        <strong class="smv-ai-highlight">${escapeHTML(guestProfile.label)}</strong>
+        <p class="smv-ai-note">${escapeHTML(guestProfile.note)}</p>
+      </div>
 
       <div class="smv-ai-card">
-
-        <span class="smv-ai-card-icon">
-          ✨
-        </span>
-
-        <h3>
-          Event Style
-        </h3>
-
+        <span class="smv-ai-card-icon">✨</span>
+        <h3>Theme & Style</h3>
         <div class="smv-ai-tags">
-
-          ${plan.theme
-            .map(
-              item =>
-                `<span>${escapeHTML(item)}</span>`
-            )
-            .join("")}
-
+          ${(plan.theme || []).map(
+            item => `<span>${escapeHTML(item)}</span>`
+          ).join("")}
         </div>
-
       </div>
-
 
       <div class="smv-ai-card">
-
-        <span class="smv-ai-card-icon">
-          🍽️
-        </span>
-
-        <h3>
-          Food Ideas
-        </h3>
-
+        <span class="smv-ai-card-icon">🌸</span>
+        <h3>Decor Suggestions</h3>
         <div class="smv-ai-list">
-
-          ${plan.foodRecommendations
-            .map(
-              item =>
-                `<div>✓ ${escapeHTML(item)}</div>`
-            )
-            .join("")}
-
+          ${(plan.decorRecommendations || []).map(
+            item => `<div>✓ ${escapeHTML(item)}</div>`
+          ).join("")}
         </div>
-
       </div>
-
 
       <div class="smv-ai-card">
-
-        <span class="smv-ai-card-icon">
-          🎯
-        </span>
-
-        <h3>
-          Recommended Services
-        </h3>
-
+        <span class="smv-ai-card-icon">🍽️</span>
+        <h3>Food Recommendations</h3>
         <div class="smv-ai-list">
-
-          ${plan.vendorRecommendations
-            .slice(0, 6)
-            .map(
-              item =>
-                `<div>✓ ${escapeHTML(item)}</div>`
-            )
-            .join("")}
-
+          ${(plan.foodRecommendations || []).map(
+            item => `<div>✓ ${escapeHTML(item)}</div>`
+          ).join("")}
         </div>
-
       </div>
 
+      <div class="smv-ai-card">
+        <span class="smv-ai-card-icon">📸</span>
+        <h3>Photography</h3>
+        <div class="smv-ai-list">
+          ${(plan.photographyRecommendations || []).map(
+            item => `<div>✓ ${escapeHTML(item)}</div>`
+          ).join("")}
+        </div>
+      </div>
+
+      <div class="smv-ai-card">
+        <span class="smv-ai-card-icon">🎶</span>
+        <h3>Entertainment</h3>
+        <div class="smv-ai-list">
+          ${(plan.entertainmentRecommendations || []).map(
+            item => `<div>✓ ${escapeHTML(item)}</div>`
+          ).join("")}
+        </div>
+      </div>
+
+      <div class="smv-ai-card">
+        <span class="smv-ai-card-icon">🎯</span>
+        <h3>Recommended Services</h3>
+        <div class="smv-ai-list">
+          ${(plan.vendorRecommendations || []).slice(0, 6).map(
+            item => `<div>✓ ${escapeHTML(item)}</div>`
+          ).join("")}
+        </div>
+      </div>
     </div>
-
 
     <div class="smv-ai-budget">
-
       <div>
-
-        <span class="smv-ai-card-icon">
-          💰
-        </span>
-
+        <span class="smv-ai-card-icon">💰</span>
         <div>
-
-          <strong>
-            Smart Budget Starting Point
-          </strong>
-
+          <strong>Smart Budget Starting Point</strong>
           <small>
-            Indicative planning estimate — actual vendor
-            prices depend on location, package and requirements.
+            Indicative planning estimate. Actual prices depend on city,
+            venue, package, season and requirements.
           </small>
-
         </div>
-
       </div>
-
 
       <div class="smv-ai-budget-number">
-
-        ₹${formatIndianNumber(
-          plan.budgetPlan.total
-        )}
-
+        ₹${formatIndianNumber(plan.budgetPlan.total)}
       </div>
-
     </div>
 
+    <div class="smv-ai-budget-meta">
+      <span>₹${formatIndianNumber(plan.budgetPlan.perGuest)} / guest</span>
+      <span>${escapeHTML(plan.guests || "Guest count not set")} guests</span>
+      <span>${escapeHTML(plan.category || "general")} event</span>
+    </div>
 
     <div class="smv-ai-breakdown">
-
-      ${renderBudgetItem(
-        "Venue",
-        plan.budgetPlan.breakdown.venue
-      )}
-
-      ${renderBudgetItem(
-        "Food",
-        plan.budgetPlan.breakdown.food
-      )}
-
-      ${renderBudgetItem(
-        "Decor",
-        plan.budgetPlan.breakdown.decor
-      )}
-
-      ${renderBudgetItem(
-        "Photography",
-        plan.budgetPlan.breakdown.photography
-      )}
-
-      ${renderBudgetItem(
-        "Entertainment",
-        plan.budgetPlan.breakdown.entertainment
-      )}
-
-      ${renderBudgetItem(
-        "Buffer",
-        plan.budgetPlan.breakdown.buffer
-      )}
-
+      ${renderBudgetItem("Venue", plan.budgetPlan.breakdown.venue)}
+      ${renderBudgetItem("Food", plan.budgetPlan.breakdown.food)}
+      ${renderBudgetItem("Decor", plan.budgetPlan.breakdown.decor)}
+      ${renderBudgetItem("Photography", plan.budgetPlan.breakdown.photography)}
+      ${renderBudgetItem("Entertainment", plan.budgetPlan.breakdown.entertainment)}
+      ${renderBudgetItem("Buffer", plan.budgetPlan.breakdown.buffer)}
     </div>
-
 
     <div class="smv-ai-planning">
-
       <div class="smv-ai-planning-head">
-
         <div>
-
-          <div class="smv-ai-kicker">
-            YOUR ROADMAP
-          </div>
-
-          <h3>
-            Smart Planning Timeline
-          </h3>
-
+          <div class="smv-ai-kicker">YOUR ROADMAP</div>
+          <h3>Smart Planning Timeline</h3>
         </div>
-
       </div>
-
 
       <div class="smv-ai-timeline">
-
-        ${plan.timeline
-          .map(
-            (item, index) => `
-
-              <div class="smv-ai-timeline-item">
-
-                <div class="smv-ai-timeline-dot">
-                  ${index + 1}
-                </div>
-
-                <div>
-
-                  <strong>
-                    ${escapeHTML(item.period)}
-                  </strong>
-
-                  <p>
-                    ${escapeHTML(item.task)}
-                  </p>
-
-                </div>
-
+        ${(plan.timeline || []).map(
+          (item, index) => `
+            <div class="smv-ai-timeline-item">
+              <div class="smv-ai-timeline-dot">${index + 1}</div>
+              <div>
+                <strong>${escapeHTML(item.period)}</strong>
+                <p>${escapeHTML(item.task)}</p>
               </div>
-
-            `
-          )
-          .join("")}
-
+            </div>
+          `
+        ).join("")}
       </div>
-
     </div>
 
-
     <div class="smv-ai-checklist">
-
       <div class="smv-ai-planning-head">
-
         <div>
-
-          <div class="smv-ai-kicker">
-            SMART CHECKLIST
-          </div>
-
-          <h3>
-            Don't Miss The Important Things
-          </h3>
-
+          <div class="smv-ai-kicker">AUTOMATIC CHECKLIST</div>
+          <h3>Don't Miss The Important Things</h3>
         </div>
-
+        <small id="smvChecklistProgress"></small>
       </div>
 
-
       <div class="smv-ai-check-grid">
-
-        ${plan.checklist
-          .map(
-            item => `
-
+        ${(plan.checklist || []).map(
+          item => {
+            const checked = plan.completedChecklist.includes(item);
+            return `
               <label class="smv-ai-check-item">
-
                 <input
                   type="checkbox"
                   data-ai-check="${escapeHTML(item)}"
+                  ${checked ? "checked" : ""}
                 >
-
-                <span>
-                  ${escapeHTML(item)}
-                </span>
-
+                <span>${escapeHTML(item)}</span>
               </label>
-
-            `
-          )
-          .join("")}
-
+            `;
+          }
+        ).join("")}
       </div>
-
     </div>
 
-
     <div class="smv-ai-actions">
-
-      <button
-        type="button"
-        data-ai-action="save"
-        class="smv-ai-action primary"
-      >
-        💾 Save My Plan
+      <button type="button" data-ai-action="save" class="smv-ai-action primary">
+        💾 Save / Update My Plan
       </button>
 
-
-      <button
-        type="button"
-        data-ai-action="budget"
-        class="smv-ai-action"
-      >
+      <button type="button" data-ai-action="budget" class="smv-ai-action">
         💰 Recalculate Budget
       </button>
 
-
-      <button
-        type="button"
-        data-ai-action="clear"
-        class="smv-ai-action danger"
-      >
-        Clear Plan
+      <button type="button" data-ai-action="checklist" class="smv-ai-action">
+        ✓ Refresh Checklist
       </button>
 
+      <button type="button" data-ai-action="clear" class="smv-ai-action danger">
+        Clear Plan
+      </button>
     </div>
-
   `;
 
+  container.classList.add("active");
 
-  container.classList.add(
-    "active"
-  );
+  const checks = content.querySelectorAll("[data-ai-check]");
+  const progress = content.querySelector("#smvChecklistProgress");
 
+  const updateChecklist = function () {
+    plan.completedChecklist = Array.from(checks)
+      .filter(input => input.checked)
+      .map(input => input.getAttribute("data-ai-check"))
+      .filter(Boolean);
 
-  setTimeout(
-    function () {
+    if (progress) {
+      progress.textContent =
+        plan.completedChecklist.length +
+        " / " +
+        plan.checklist.length +
+        " completed";
+    }
 
-      container.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+    currentAIPlan = plan;
+    saveAIPlan(plan);
+  };
 
-    },
-    120
-  );
+  checks.forEach(function (input) {
+    input.addEventListener("change", updateChecklist);
+  });
 
+  updateChecklist();
+
+  setTimeout(function () {
+    container.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }, 120);
 }
-
-
-// =====================================================
-// BUDGET ESTIMATOR
-// =====================================================
 
 function showBudgetEstimator() {
 
@@ -3092,94 +2870,62 @@ function showBudgetEstimator() {
 function saveAIPlan(
   plan
 ) {
-
   if (!plan) {
     return;
   }
 
-
   try {
+    const normalized = {
+      ...plan,
+      completedChecklist: Array.isArray(plan.completedChecklist)
+        ? plan.completedChecklist
+        : [],
+      savedAt: new Date().toISOString()
+    };
+
+    currentAIPlan = normalized;
 
     localStorage.setItem(
       SMV_AI_STORAGE_KEY,
-      JSON.stringify(
-        plan
-      )
+      JSON.stringify(normalized)
     );
-
   } catch (error) {
-
     console.warn(
       "Could not save AI plan:",
       error
     );
-
   }
-
 }
 
-
-// =====================================================
-// RESTORE SAVED PLAN
-// =====================================================
-
 function restoreSavedAIPlan() {
-
   try {
-
     const saved =
-      localStorage.getItem(
-        SMV_AI_STORAGE_KEY
-      );
-
+      localStorage.getItem(SMV_AI_STORAGE_KEY) ||
+      localStorage.getItem(SMV_AI_LEGACY_STORAGE_KEY);
 
     if (!saved) {
       return;
     }
 
+    const plan = JSON.parse(saved);
 
-    const plan =
-      JSON.parse(
-        saved
-      );
-
-
-    if (
-      !plan ||
-      !plan.eventType
-    ) {
-
+    if (!plan || !plan.eventType) {
       return;
-
     }
 
+    if (!Array.isArray(plan.completedChecklist)) {
+      plan.completedChecklist = [];
+    }
 
-    currentAIPlan =
-      plan;
-
-
-    // Don't automatically open the large planner
-    // immediately. Show a small restore prompt.
-
-    createRestorePrompt(
-      plan
-    );
-
+    currentAIPlan = plan;
+    createRestorePrompt(plan);
   } catch (error) {
-
     console.warn(
       "Could not restore saved AI plan:",
       error
     );
-
   }
-
 }
-
-
-// =====================================================
-// RESTORE PROMPT
-// =====================================================
 
 function createRestorePrompt(
   plan
@@ -3309,6 +3055,10 @@ function clearSavedAIPlan() {
 
     localStorage.removeItem(
       SMV_AI_STORAGE_KEY
+    );
+
+    localStorage.removeItem(
+      SMV_AI_LEGACY_STORAGE_KEY
     );
 
   } catch (error) {
@@ -4473,6 +4223,97 @@ function injectAIPlannerStyles() {
     }
 
 
+
+    .smv-ai-countdown{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:15px;
+      margin-bottom:10px;
+      padding:14px 16px;
+      border:1px solid rgba(0,235,214,.14);
+      border-radius:12px;
+      background:rgba(0,235,214,.035);
+    }
+
+    .smv-ai-countdown > div:first-child{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .smv-ai-countdown strong,
+    .smv-ai-countdown small{
+      display:block;
+    }
+
+    .smv-ai-countdown strong{
+      font-size:11px;
+    }
+
+    .smv-ai-countdown small{
+      margin-top:3px;
+      color:#78928f;
+      font-size:8px;
+    }
+
+    .smv-ai-countdown-number{
+      min-width:60px;
+      text-align:center;
+      color:#11e0cf;
+      font-size:20px;
+      font-weight:900;
+    }
+
+    .smv-ai-countdown-number small{
+      font-size:7px;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+    }
+
+    .smv-ai-highlight{
+      display:block;
+      color:#b9fff8;
+      font-size:10px;
+      margin-bottom:5px;
+    }
+
+    .smv-ai-note{
+      color:#718b89;
+      font-size:8px;
+      line-height:1.5;
+    }
+
+    .smv-ai-budget-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:7px;
+      margin-top:7px;
+    }
+
+    .smv-ai-budget-meta span{
+      padding:5px 8px;
+      border-radius:20px;
+      background:rgba(255,201,40,.035);
+      border:1px solid rgba(255,201,40,.12);
+      color:#8f875e;
+      font-size:8px;
+    }
+
+    .smv-ai-planning-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .smv-ai-planning-head > small{
+      color:#698582;
+      font-size:8px;
+      white-space:nowrap;
+      margin-top:5px;
+    }
+
     @media(max-width:900px){
 
       .smv-ai-grid{
@@ -5431,7 +5272,7 @@ console.log(
 );
 
 console.log(
-  "AI EVENT PLANNER V1"
+  "AI EVENT PLANNER V2"
 );
 
 console.log(
@@ -5443,7 +5284,7 @@ console.log(
 );
 
 console.log(
-  "Smart matching: ACTIVE"
+  "Smart matching + lead scoring: ACTIVE"
 );
 
 console.log(
@@ -5455,7 +5296,7 @@ console.log(
 );
 
 console.log(
-  "Planning timeline: ACTIVE"
+  "Planning timeline + countdown: ACTIVE"
 );
 
 console.log(
