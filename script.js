@@ -1,16 +1,15 @@
 // =====================================================
 // SELECT MY VENUE
-// CUSTOMER WEBSITE
-// SMART EVENT DISCOVERY ENGINE
+// AI EVENT PLANNER + CUSTOMER WEBSITE
+// Website → Supabase → CRM
 //
-// Website → Smart Processing → Supabase → CRM
+// VERSION: AI EVENT PLANNER V1
 //
 // IMPORTANT:
-// - Uses existing Supabase table/columns only
-// - Public website performs INSERT only
-// - No public SELECT
-// - Top search prepares the enquiry instead of creating
-//   an incomplete database record
+// - No new Supabase columns required.
+// - Uses existing customer_enquiries table.
+// - Public website uses INSERT only.
+// - CRM continues to use authenticated SELECT.
 // =====================================================
 
 "use strict";
@@ -46,7 +45,9 @@ try {
         SUPABASE_ANON_KEY
       );
 
-    console.log("✓ Supabase client initialized.");
+    console.log(
+      "Select My Venue: Supabase READY"
+    );
 
   } else {
 
@@ -67,17 +68,13 @@ try {
 
 
 // =====================================================
-// CONSTANTS
+// GLOBAL AI PLANNER STATE
 // =====================================================
 
-const DRAFT_STORAGE_KEY =
-  "smv_customer_enquiry_draft_v2";
+const SMV_AI_STORAGE_KEY =
+  "smv_ai_event_plan_v1";
 
-const LAST_ENQUIRY_KEY =
-  "smv_last_enquiry_reference";
-
-const WEBSITE_SOURCE =
-  "Website";
+let currentAIPlan = null;
 
 
 // =====================================================
@@ -88,26 +85,24 @@ document.addEventListener(
   "DOMContentLoaded",
   function () {
 
-    injectSmartStyles();
-
     setupMobileMenu();
 
     setupHeroSearch();
 
     setupCustomerEnquiry();
 
-    setupDraftSaving();
+    setupAIEventPlanner();
 
-    setupDateProtection();
+    setupAIQuickActions();
 
-    setupSmartFieldEnhancements();
+    restoreSavedAIPlan();
 
-    setupNavigationHelpers();
+    setupSmartFormEnhancements();
 
-    restoreSavedDraft();
+    setupScrollAnimations();
 
     console.log(
-      "✓ Select My Venue Smart Discovery Engine ready."
+      "Select My Venue AI Event Planner initialized."
     );
 
   }
@@ -175,23 +170,14 @@ function setupMobileMenu() {
 
 
 // =====================================================
-// HERO SMART SEARCH
-//
-// IMPORTANT CHANGE:
-//
-// The top form does NOT directly insert an incomplete
-// enquiry into Supabase.
-//
-// It prepares a smart requirement and moves the customer
-// to the full enquiry form.
-//
-// This prevents the current top-form submission error.
+// HERO SEARCH
 // =====================================================
 
 function setupHeroSearch() {
 
   const searchForm =
     document.getElementById("searchForm");
+
 
   if (!searchForm) {
     return;
@@ -257,7 +243,7 @@ function setupHeroSearch() {
 
         showInlineMessage(
           message,
-          "Please enter your city or location.",
+          "Please enter your event location.",
           "error"
         );
 
@@ -268,30 +254,12 @@ function setupHeroSearch() {
       }
 
 
-      if (
-        eventDate &&
-        isPastDate(eventDate)
-      ) {
-
-        showInlineMessage(
-          message,
-          "Please select today or a future event date.",
-          "error"
-        );
-
-        focusField("date");
-
-        return;
-
-      }
-
-
       // -------------------------------------------------
-      // SMART ANALYSIS
+      // BUILD AI PLAN
       // -------------------------------------------------
 
-      const smartProfile =
-        createSmartEventProfile({
+      const aiPlan =
+        generateAIEventPlan({
 
           eventType:
             eventType,
@@ -303,574 +271,185 @@ function setupHeroSearch() {
             guests,
 
           eventDate:
-            eventDate
+            eventDate,
+
+          budget:
+            "",
+
+          food:
+            ""
 
         });
 
 
-      // -------------------------------------------------
-      // PREFILL FULL ENQUIRY
-      // -------------------------------------------------
-
-      prefillFullEnquiry({
-
-        eventType:
-          eventType,
-
-        location:
-          location,
-
-        guests:
-          convertGuestRangeToNumber(guests),
-
-        eventDate:
-          eventDate
-
-      });
+      currentAIPlan =
+        aiPlan;
 
 
-      // -------------------------------------------------
-      // SAVE SMART SEARCH AS DRAFT
-      // -------------------------------------------------
-
-      saveDraftData({
-
-        customerEventType:
-          eventType,
-
-        customerLocation:
-          location,
-
-        customerGuests:
-          convertGuestRangeToNumber(guests),
-
-        customerEventDate:
-          eventDate
-
-      });
-
-
-      // -------------------------------------------------
-      // SHOW SMART RESULT
-      // -------------------------------------------------
-
-      renderSmartSearchResult(
-        smartProfile
+      saveAIPlan(
+        aiPlan
       );
 
 
       // -------------------------------------------------
-      // BUTTON
+      // SHOW AI PLAN
+      // -------------------------------------------------
+
+      showAIPlannerPanel(
+        aiPlan
+      );
+
+
+      // -------------------------------------------------
+      // SUBMIT LEAD
       // -------------------------------------------------
 
       setButtonLoading(
         submitButton,
-        "Preparing..."
+        "Finding Matches..."
       );
 
 
-      await wait(450);
+      try {
+
+        if (!supabaseClient) {
+
+          throw new Error(
+            "Supabase client is not initialized."
+          );
+
+        }
 
 
-      restoreButton(
-        submitButton,
-        "Find Venues →"
-      );
+        const requirements =
+          buildAIRequirements(
+            aiPlan
+          );
 
 
-      // -------------------------------------------------
-      // MOVE CUSTOMER TO FULL ENQUIRY
-      // -------------------------------------------------
+        const { error } =
+          await supabaseClient
+            .from("customer_enquiries")
+            .insert({
 
-      const enquirySection =
-        document.getElementById("enquiry");
+              customer_name:
+                null,
+
+              mobile:
+                null,
+
+              email:
+                null,
+
+              location:
+                location,
+
+              occasion:
+                eventType,
+
+              event_date:
+                eventDate ||
+                null,
+
+              guests:
+                convertGuestRangeToNumber(
+                  guests
+                ),
+
+              budget_per_person:
+                null,
+
+              food_preference:
+                null,
+
+              requirements:
+                requirements,
+
+              source:
+                "Website - AI Search",
+
+              status:
+                "new",
+
+              priority:
+                calculateLeadPriority(
+                  aiPlan
+                ),
+
+              assigned_to:
+                null,
+
+              follow_up_at:
+                null,
+
+              internal_notes:
+                "AI Planner Lead | Match Score: " +
+                aiPlan.matchScore +
+                "% | Intent: " +
+                aiPlan.intent,
+
+              last_contacted_at:
+                null
+
+            });
 
 
-      if (enquirySection) {
+        if (error) {
 
-        enquirySection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
+          console.error(
+            "HERO SUPABASE ERROR:",
+            error
+          );
+
+          throw error;
+
+        }
+
+
+        console.log(
+          "Hero AI enquiry submitted successfully."
+        );
+
+
+        searchForm.reset();
+
+
+        showInlineMessage(
+          message,
+          "✓ Great! We've created your event plan. Our team will help you find suitable venues and options.",
+          "success"
+        );
+
+
+        // Keep AI panel visible.
+        scrollToAIPlanner();
+
+
+      } catch (error) {
+
+        console.error(
+          "HERO FORM ERROR:",
+          error
+        );
+
+
+        showInlineMessage(
+          message,
+          getFriendlySupabaseError(error),
+          "error"
+        );
+
+
+      } finally {
+
+        restoreButton(
+          submitButton,
+          "Find Venues →"
+        );
 
       }
 
-
-      showInlineMessage(
-        message,
-        "✓ Smart search ready. We have prepared your enquiry below — add your contact details and submit.",
-        "success"
-      );
-
     }
-  );
-
-}
-
-
-// =====================================================
-// PREFILL FULL ENQUIRY
-// =====================================================
-
-function prefillFullEnquiry(data) {
-
-  setElementValue(
-    "customerEventType",
-    data.eventType
-  );
-
-
-  setElementValue(
-    "customerLocation",
-    data.location
-  );
-
-
-  if (data.guests) {
-
-    setElementValue(
-      "customerGuests",
-      data.guests
-    );
-
-  }
-
-
-  if (data.eventDate) {
-
-    setElementValue(
-      "customerEventDate",
-      data.eventDate
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// SMART EVENT PROFILE
-// =====================================================
-
-function createSmartEventProfile(data) {
-
-  const guests =
-    convertGuestRangeToNumber(
-      data.guests
-    );
-
-
-  const eventType =
-    String(
-      data.eventType || ""
-    ).toLowerCase();
-
-
-  const location =
-    normalizeLocation(
-      data.location
-    );
-
-
-  let venueTypes = [];
-
-  let planningFocus =
-    "Location + capacity + event suitability";
-
-
-  let priority =
-    "normal";
-
-
-  let score = 72;
-
-
-  // -------------------------------------------------
-  // EVENT INTELLIGENCE
-  // -------------------------------------------------
-
-  if (
-    eventType.includes("wedding") ||
-    eventType.includes("reception") ||
-    eventType.includes("engagement")
-  ) {
-
-    venueTypes = [
-      "Banquet Hall",
-      "Wedding Lawn",
-      "Hotel",
-      "Resort"
-    ];
-
-    planningFocus =
-      "Capacity + ambience + food + location";
-
-    score += 8;
-
-  }
-
-
-  else if (
-    eventType.includes("birthday") ||
-    eventType.includes("party")
-  ) {
-
-    venueTypes = [
-      "Party Venue",
-      "Banquet Hall",
-      "Restaurant",
-      "Lawn"
-    ];
-
-    planningFocus =
-      "Location + atmosphere + guest capacity";
-
-    score += 5;
-
-  }
-
-
-  else if (
-    eventType.includes("corporate")
-  ) {
-
-    venueTypes = [
-      "Hotel",
-      "Conference Venue",
-      "Banquet Hall",
-      "Business Event Space"
-    ];
-
-    planningFocus =
-      "Accessibility + capacity + professional facilities";
-
-    score += 6;
-
-  }
-
-
-  else {
-
-    venueTypes = [
-      "Banquet Hall",
-      "Hotel",
-      "Resort",
-      "Event Space"
-    ];
-
-  }
-
-
-  // -------------------------------------------------
-  // GUEST INTELLIGENCE
-  // -------------------------------------------------
-
-  let guestInsight =
-    "Standard capacity matching";
-
-  if (guests) {
-
-    if (guests >= 500) {
-
-      guestInsight =
-        "Large-event capacity required";
-
-      score += 7;
-
-    }
-
-    else if (guests >= 250) {
-
-      guestInsight =
-        "Medium-large venue capacity required";
-
-      score += 5;
-
-    }
-
-    else if (guests <= 50) {
-
-      guestInsight =
-        "Intimate venue options may be suitable";
-
-      score += 3;
-
-    }
-
-  }
-
-
-  // -------------------------------------------------
-  // DATE INTELLIGENCE
-  // -------------------------------------------------
-
-  let dateInsight =
-    "Flexible date matching";
-
-
-  if (data.eventDate) {
-
-    const days =
-      daysUntil(
-        data.eventDate
-      );
-
-
-    if (days <= 7) {
-
-      dateInsight =
-        "URGENT — event within 7 days";
-
-      priority =
-        "high";
-
-      score += 8;
-
-    }
-
-    else if (days <= 30) {
-
-      dateInsight =
-        "Priority — event within 30 days";
-
-      priority =
-        "high";
-
-      score += 6;
-
-    }
-
-    else if (days <= 90) {
-
-      dateInsight =
-        "Planned event — 1 to 3 months";
-
-      score += 4;
-
-    }
-
-    else {
-
-      dateInsight =
-        "Advance planning opportunity";
-
-    }
-
-  }
-
-
-  // -------------------------------------------------
-  // LOCATION INTELLIGENCE
-  // -------------------------------------------------
-
-  if (
-    location.length >= 3
-  ) {
-
-    score += 3;
-
-  }
-
-
-  // Keep score within 100
-  score =
-    Math.min(
-      99,
-      Math.max(
-        50,
-        score
-      )
-    );
-
-
-  return {
-
-    eventType:
-      data.eventType,
-
-    location:
-      location,
-
-    guests:
-      guests,
-
-    score:
-      score,
-
-    priority:
-      priority,
-
-    venueTypes:
-      venueTypes,
-
-    planningFocus:
-      planningFocus,
-
-    guestInsight:
-      guestInsight,
-
-    dateInsight:
-      dateInsight
-
-  };
-
-}
-
-
-// =====================================================
-// SMART SEARCH RESULT UI
-// =====================================================
-
-function renderSmartSearchResult(
-  profile
-) {
-
-  let box =
-    document.getElementById(
-      "smvSmartSearchResult"
-    );
-
-
-  if (!box) {
-
-    box =
-      document.createElement(
-        "div"
-      );
-
-    box.id =
-      "smvSmartSearchResult";
-
-    box.className =
-      "smv-smart-result";
-
-
-    const hero =
-      document.querySelector(
-        ".hero"
-      );
-
-
-    if (
-      hero &&
-      hero.querySelector(".search-card")
-    ) {
-
-      hero
-        .querySelector(".search-card")
-        .insertAdjacentElement(
-          "afterend",
-          box
-        );
-
-    }
-
-  }
-
-
-  box.innerHTML = `
-
-    <div class="smv-smart-header">
-
-      <div>
-
-        <span class="smv-smart-label">
-          ✦ SMART DISCOVERY
-        </span>
-
-        <h3>
-          Your event profile is ready
-        </h3>
-
-      </div>
-
-      <div class="smv-score">
-        <strong>${profile.score}%</strong>
-        <span>Match readiness</span>
-      </div>
-
-    </div>
-
-
-    <div class="smv-smart-grid">
-
-      <div>
-        <small>EVENT</small>
-        <b>${escapeHTML(profile.eventType)}</b>
-      </div>
-
-      <div>
-        <small>LOCATION</small>
-        <b>${escapeHTML(profile.location)}</b>
-      </div>
-
-      <div>
-        <small>GUESTS</small>
-        <b>
-          ${
-            profile.guests
-              ? profile.guests + " guests"
-              : "To be confirmed"
-          }
-        </b>
-      </div>
-
-      <div>
-        <small>PRIORITY</small>
-        <b class="smv-priority">
-          ${profile.priority.toUpperCase()}
-        </b>
-      </div>
-
-    </div>
-
-
-    <div class="smv-smart-insights">
-
-      <div>
-        <span>🎯</span>
-        <strong>Suggested venues</strong>
-        <p>
-          ${profile.venueTypes
-            .map(escapeHTML)
-            .join(" • ")}
-        </p>
-      </div>
-
-      <div>
-        <span>👥</span>
-        <strong>Capacity insight</strong>
-        <p>
-          ${escapeHTML(profile.guestInsight)}
-        </p>
-      </div>
-
-      <div>
-        <span>📅</span>
-        <strong>Planning insight</strong>
-        <p>
-          ${escapeHTML(profile.dateInsight)}
-        </p>
-      </div>
-
-    </div>
-
-
-    <div class="smv-smart-focus">
-
-      <span>AI-INSPIRED MATCHING FOCUS</span>
-
-      <strong>
-        ${escapeHTML(profile.planningFocus)}
-      </strong>
-
-    </div>
-
-  `;
-
-
-  box.classList.add(
-    "visible"
   );
 
 }
@@ -890,7 +469,7 @@ function setupCustomerEnquiry() {
 
   if (!form) {
 
-    console.error(
+    console.warn(
       "customerEnquiryForm not found."
     );
 
@@ -939,12 +518,14 @@ function setupCustomerEnquiry() {
       }
 
 
-      clearInlineMessage(message);
+      clearInlineMessage(
+        message
+      );
 
 
-      // =================================================
-      // GET VALUES
-      // =================================================
+      // -------------------------------------------------
+      // VALUES
+      // -------------------------------------------------
 
       const customerName =
         getValue("customerName");
@@ -978,12 +559,12 @@ function setupCustomerEnquiry() {
 
       const leadSource =
         getValue("leadSource") ||
-        WEBSITE_SOURCE;
+        "Website";
 
 
-      // =================================================
+      // -------------------------------------------------
       // VALIDATION
-      // =================================================
+      // -------------------------------------------------
 
       if (!customerName) {
 
@@ -993,7 +574,9 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-        focusField("customerName");
+        focusField(
+          "customerName"
+        );
 
         return;
 
@@ -1001,13 +584,16 @@ function setupCustomerEnquiry() {
 
 
       const cleanMobile =
-        normalizeIndianMobile(
-          customerMobile
+        customerMobile.replace(
+          /[\s\-()+]/g,
+          ""
         );
 
 
       if (
-        !cleanMobile
+        !/^[0-9]{10}$/.test(
+          cleanMobile
+        )
       ) {
 
         showInlineMessage(
@@ -1016,7 +602,9 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-        focusField("customerMobile");
+        focusField(
+          "customerMobile"
+        );
 
         return;
 
@@ -1025,7 +613,9 @@ function setupCustomerEnquiry() {
 
       if (
         customerEmail &&
-        !isValidEmail(customerEmail)
+        !isValidEmail(
+          customerEmail
+        )
       ) {
 
         showInlineMessage(
@@ -1034,7 +624,9 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-        focusField("customerEmail");
+        focusField(
+          "customerEmail"
+        );
 
         return;
 
@@ -1049,7 +641,9 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-        focusField("customerLocation");
+        focusField(
+          "customerLocation"
+        );
 
         return;
 
@@ -1064,106 +658,21 @@ function setupCustomerEnquiry() {
           "error"
         );
 
-        focusField("customerEventType");
-
-        return;
-
-      }
-
-
-      if (
-        customerEventDate &&
-        isPastDate(customerEventDate)
-      ) {
-
-        showInlineMessage(
-          message,
-          "Please select today or a future event date.",
-          "error"
+        focusField(
+          "customerEventType"
         );
 
-        focusField("customerEventDate");
-
         return;
 
       }
 
 
-      if (
-        customerGuests &&
-        Number(customerGuests) < 1
-      ) {
+      // -------------------------------------------------
+      // AI PLAN
+      // -------------------------------------------------
 
-        showInlineMessage(
-          message,
-          "Please enter a valid guest count.",
-          "error"
-        );
-
-        focusField("customerGuests");
-
-        return;
-
-      }
-
-
-      if (
-        customerBudget &&
-        Number(customerBudget) < 0
-      ) {
-
-        showInlineMessage(
-          message,
-          "Please enter a valid budget per person.",
-          "error"
-        );
-
-        focusField("customerBudget");
-
-        return;
-
-      }
-
-
-      // =================================================
-      // SMART PROFILE
-      // =================================================
-
-      const smartProfile =
-        createSmartEventProfile({
-
-          eventType:
-            customerEventType,
-
-          location:
-            customerLocation,
-
-          guests:
-            customerGuests,
-
-          eventDate:
-            customerEventDate
-
-        });
-
-
-      // =================================================
-      // GENERATE ENQUIRY REFERENCE
-      // =================================================
-
-      const enquiryReference =
-        createEnquiryReference();
-
-
-      // =================================================
-      // BUILD SMART REQUIREMENTS
-      // =================================================
-
-      const requirements =
-        buildFullRequirements({
-
-          reference:
-            enquiryReference,
+      const aiPlan =
+        generateAIEventPlan({
 
           eventType:
             customerEventType,
@@ -1184,27 +693,29 @@ function setupCustomerEnquiry() {
             customerFood,
 
           other:
-            customerRequirements,
-
-          smartProfile:
-            smartProfile
+            customerRequirements
 
         });
 
 
-      // =================================================
-      // LOADING
-      // =================================================
+      currentAIPlan =
+        aiPlan;
 
-      setButtonLoading(
-        submitButton,
-        "Submitting..."
+
+      saveAIPlan(
+        aiPlan
       );
 
 
-      // =================================================
-      // SUPABASE INSERT
-      // =================================================
+      // -------------------------------------------------
+      // LOADING
+      // -------------------------------------------------
+
+      setButtonLoading(
+        submitButton,
+        "Creating Your Plan..."
+      );
+
 
       try {
 
@@ -1217,148 +728,119 @@ function setupCustomerEnquiry() {
         }
 
 
-        console.log(
-          "Submitting smart customer enquiry..."
-        );
+        const requirements =
+          buildFullAIRequirements({
+
+            aiPlan:
+              aiPlan,
+
+            other:
+              customerRequirements
+
+          });
 
 
-        const payload = {
+        const { error } =
+          await supabaseClient
+            .from("customer_enquiries")
+            .insert({
 
-          customer_name:
-            customerName,
+              customer_name:
+                customerName,
 
-          mobile:
-            cleanMobile,
+              mobile:
+                cleanMobile,
 
-          email:
-            customerEmail ||
-            null,
+              email:
+                customerEmail ||
+                null,
 
-          location:
-            customerLocation,
+              location:
+                customerLocation,
 
-          occasion:
-            customerEventType,
+              occasion:
+                customerEventType,
 
-          event_date:
-            customerEventDate ||
-            null,
+              event_date:
+                customerEventDate ||
+                null,
 
-          guests:
-            customerGuests
-              ? Number(customerGuests)
-              : null,
+              guests:
+                customerGuests
+                  ? Number(
+                      customerGuests
+                    )
+                  : null,
 
-          budget_per_person:
-            customerBudget
-              ? Number(customerBudget)
-              : null,
+              budget_per_person:
+                customerBudget
+                  ? Number(
+                      customerBudget
+                    )
+                  : null,
 
-          food_preference:
-            customerFood ||
-            null,
+              food_preference:
+                customerFood ||
+                null,
 
-          requirements:
-            requirements,
+              requirements:
+                requirements,
 
-          source:
-            leadSource,
+              source:
+                leadSource,
 
-          status:
-            "new",
+              status:
+                "new",
 
-          priority:
-            "normal",
+              priority:
+                calculateLeadPriority(
+                  aiPlan
+                ),
 
-          assigned_to:
-            null,
+              assigned_to:
+                null,
 
-          follow_up_at:
-            null,
+              follow_up_at:
+                null,
 
-          internal_notes:
-            null,
+              internal_notes:
+                "AI Planner Qualified Lead | Match Score: " +
+                aiPlan.matchScore +
+                "% | Intent: " +
+                aiPlan.intent,
 
-          last_contacted_at:
-            null
+              last_contacted_at:
+                null
 
-        };
-
-
-        console.log(
-          "CRM payload prepared:",
-          {
-            ...payload,
-            mobile: "***protected***"
-          }
-        );
-
-
-        const result =
-          await insertWithRetry(
-            payload
-          );
+            });
 
 
-        if (
-          result &&
-          result.error
-        ) {
+        if (error) {
 
           console.error(
             "SUPABASE DATABASE ERROR:",
-            result.error
+            error
           );
 
-          throw result.error;
+          throw error;
 
         }
-
-
-        // =================================================
-        // SUCCESS
-        // =================================================
-
-        console.log(
-          "✓ CUSTOMER ENQUIRY INSERT SUCCESS"
-        );
-
-
-        localStorage.setItem(
-          LAST_ENQUIRY_KEY,
-          enquiryReference
-        );
-
-
-        clearSavedDraft();
 
 
         form.reset();
 
 
-        showSuccessWithReference(
+        showInlineMessage(
           message,
-          enquiryReference,
-          {
-            name:
-              customerName,
-
-            mobile:
-              cleanMobile,
-
-            eventType:
-              customerEventType,
-
-            location:
-              customerLocation
-
-          }
+          "✓ Your event plan has been created successfully! Our team will contact you with suitable options.",
+          "success"
         );
 
 
-        // =================================================
-        // SCROLL TO CONFIRMATION
-        // =================================================
+        showAIPlannerPanel(
+          aiPlan
+        );
+
 
         setTimeout(
           function () {
@@ -1387,7 +869,9 @@ function setupCustomerEnquiry() {
 
         showInlineMessage(
           message,
-          getFriendlySupabaseError(error),
+          getFriendlySupabaseError(
+            error
+          ),
           "error"
         );
 
@@ -1409,39 +893,1586 @@ function setupCustomerEnquiry() {
 
 
 // =====================================================
-// SUPABASE INSERT WITH SAFE RETRY
+// AI EVENT PLANNER
 // =====================================================
 
-async function insertWithRetry(
-  payload
+function setupAIEventPlanner() {
+
+  injectAIPlannerStyles();
+
+  injectAIPlannerContainer();
+
+}
+
+
+// =====================================================
+// AI QUICK ACTIONS
+// =====================================================
+
+function setupAIQuickActions() {
+
+  document.addEventListener(
+    "click",
+    function (event) {
+
+      const target =
+        event.target.closest(
+          "[data-ai-action]"
+        );
+
+
+      if (!target) {
+        return;
+      }
+
+
+      const action =
+        target.dataset.aiAction;
+
+
+      if (
+        action ===
+        "budget"
+      ) {
+
+        showBudgetEstimator();
+
+      }
+
+
+      if (
+        action ===
+        "checklist"
+      ) {
+
+        showAIPlannerPanel(
+          currentAIPlan ||
+          generateAIEventPlan({})
+        );
+
+      }
+
+
+      if (
+        action ===
+        "save"
+      ) {
+
+        if (currentAIPlan) {
+
+          saveAIPlan(
+            currentAIPlan
+          );
+
+          showAIToast(
+            "✓ Your event plan has been saved."
+          );
+
+        }
+
+      }
+
+
+      if (
+        action ===
+        "clear"
+      ) {
+
+        clearSavedAIPlan();
+
+      }
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// GENERATE AI EVENT PLAN
+// =====================================================
+
+function generateAIEventPlan(
+  data
 ) {
 
-  let result =
-    await supabaseClient
-      .from("customer_enquiries")
-      .insert(payload);
-
-
-  if (
-    result &&
-    result.error &&
-    isRetryableError(
-      result.error
-    )
-  ) {
-
-    console.warn(
-      "Temporary submission error. Retrying once..."
+  const eventType =
+    normalizeEventType(
+      data.eventType ||
+      "Event"
     );
 
 
-    await wait(700);
+  const location =
+    data.location ||
+    "Your City";
 
 
-    result =
-      await supabaseClient
-        .from("customer_enquiries")
-        .insert(payload);
+  const guests =
+    parseGuestNumber(
+      data.guests
+    );
+
+
+  const budget =
+    parseBudget(
+      data.budget
+    );
+
+
+  const eventDate =
+    data.eventDate ||
+    "";
+
+
+  const food =
+    data.food ||
+    "";
+
+
+  const category =
+    getEventCategory(
+      eventType
+    );
+
+
+  const venueTypes =
+    getVenueRecommendations(
+      category,
+      guests
+    );
+
+
+  const theme =
+    getThemeRecommendations(
+      category
+    );
+
+
+  const foodRecommendations =
+    getFoodRecommendations(
+      category,
+      food
+    );
+
+
+  const vendorRecommendations =
+    getVendorRecommendations(
+      category
+    );
+
+
+  const checklist =
+    getEventChecklist(
+      category
+    );
+
+
+  const timeline =
+    getPlanningTimeline(
+      eventDate,
+      category
+    );
+
+
+  const budgetPlan =
+    calculateSmartBudget(
+      category,
+      guests,
+      budget
+    );
+
+
+  const matchScore =
+    calculateMatchScore({
+
+      eventType:
+        eventType,
+
+      location:
+        location,
+
+      guests:
+        guests,
+
+      date:
+        eventDate,
+
+      budget:
+        budget
+
+    });
+
+
+  const intent =
+    calculateLeadIntent({
+
+      eventType:
+        eventType,
+
+      location:
+        location,
+
+      guests:
+        guests,
+
+      date:
+        eventDate,
+
+      budget:
+        budget
+
+    });
+
+
+  return {
+
+    eventType:
+      eventType,
+
+    category:
+      category,
+
+    location:
+      location,
+
+    guests:
+      guests,
+
+    eventDate:
+      eventDate,
+
+    budget:
+      budget,
+
+    food:
+      food,
+
+    matchScore:
+      matchScore,
+
+    intent:
+      intent,
+
+    venueTypes:
+      venueTypes,
+
+    theme:
+      theme,
+
+    foodRecommendations:
+      foodRecommendations,
+
+    vendorRecommendations:
+      vendorRecommendations,
+
+    checklist:
+      checklist,
+
+    timeline:
+      timeline,
+
+    budgetPlan:
+      budgetPlan,
+
+    generatedAt:
+      new Date().toISOString()
+
+  };
+
+}
+
+
+// =====================================================
+// EVENT CATEGORY
+// =====================================================
+
+function getEventCategory(
+  eventType
+) {
+
+  const value =
+    String(
+      eventType ||
+      ""
+    ).toLowerCase();
+
+
+  if (
+    value.includes("wedding") ||
+    value.includes("marriage") ||
+    value.includes("shaadi")
+  ) {
+
+    return "wedding";
+
+  }
+
+
+  if (
+    value.includes("birthday")
+  ) {
+
+    return "birthday";
+
+  }
+
+
+  if (
+    value.includes("engagement") ||
+    value.includes("ring")
+  ) {
+
+    return "engagement";
+
+  }
+
+
+  if (
+    value.includes("corporate") ||
+    value.includes("conference") ||
+    value.includes("seminar") ||
+    value.includes("office")
+  ) {
+
+    return "corporate";
+
+  }
+
+
+  if (
+    value.includes("anniversary")
+  ) {
+
+    return "anniversary";
+
+  }
+
+
+  if (
+    value.includes("baby") ||
+    value.includes("shower")
+  ) {
+
+    return "baby";
+
+  }
+
+
+  if (
+    value.includes("party") ||
+    value.includes("celebration")
+  ) {
+
+    return "party";
+
+  }
+
+
+  if (
+    value.includes("reception")
+  ) {
+
+    return "reception";
+
+  }
+
+
+  return "general";
+
+}
+
+
+// =====================================================
+// NORMALIZE EVENT TYPE
+// =====================================================
+
+function normalizeEventType(
+  value
+) {
+
+  const clean =
+    String(
+      value ||
+      ""
+    ).trim();
+
+
+  if (!clean) {
+    return "Event";
+  }
+
+
+  return clean;
+
+}
+
+
+// =====================================================
+// VENUE RECOMMENDATIONS
+// =====================================================
+
+function getVenueRecommendations(
+  category,
+  guests
+) {
+
+  const large =
+    guests >= 300;
+
+  const medium =
+    guests >= 100 &&
+    guests < 300;
+
+
+  if (
+    category ===
+    "wedding"
+  ) {
+
+    if (large) {
+
+      return [
+        "Luxury Banquet",
+        "Wedding Lawn",
+        "Resort",
+        "5-Star Hotel"
+      ];
+
+    }
+
+
+    if (medium) {
+
+      return [
+        "Banquet Hall",
+        "Wedding Lawn",
+        "Boutique Hotel",
+        "Resort"
+      ];
+
+    }
+
+
+    return [
+      "Banquet Hall",
+      "Boutique Venue",
+      "Restaurant",
+      "Private Lawn"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "birthday"
+  ) {
+
+    if (large) {
+
+      return [
+        "Party Lawn",
+        "Banquet Hall",
+        "Resort",
+        "Club"
+      ];
+
+    }
+
+
+    return [
+      "Party Hall",
+      "Restaurant",
+      "Cafe",
+      "Private Venue"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "corporate"
+  ) {
+
+    return [
+      "Business Hotel",
+      "Conference Hall",
+      "Banquet Hall",
+      "Convention Centre"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "engagement"
+  ) {
+
+    return [
+      "Banquet Hall",
+      "Boutique Venue",
+      "Hotel",
+      "Lawn"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "anniversary"
+  ) {
+
+    return [
+      "Restaurant",
+      "Boutique Hotel",
+      "Private Dining",
+      "Rooftop Venue"
+    ];
+
+  }
+
+
+  return [
+    "Banquet Hall",
+    "Hotel",
+    "Restaurant",
+    "Lawn"
+  ];
+
+}
+
+
+// =====================================================
+// THEME RECOMMENDATIONS
+// =====================================================
+
+function getThemeRecommendations(
+  category
+) {
+
+  const themes = {
+
+    wedding: [
+      "Royal Elegant",
+      "Pastel Romance",
+      "Modern Luxury",
+      "Traditional Indian"
+    ],
+
+    birthday: [
+      "Luxury Birthday",
+      "Neon Party",
+      "Bollywood",
+      "Elegant Dinner"
+    ],
+
+    engagement: [
+      "Elegant Romance",
+      "Floral Luxury",
+      "Pastel Garden",
+      "Modern Minimal"
+    ],
+
+    corporate: [
+      "Modern Professional",
+      "Executive Luxury",
+      "Tech & Innovation",
+      "Classic Corporate"
+    ],
+
+    anniversary: [
+      "Romantic Dinner",
+      "Candlelight",
+      "Luxury Gold",
+      "Garden Romance"
+    ],
+
+    baby: [
+      "Pastel Dreams",
+      "Floral Baby Shower",
+      "Cute & Elegant",
+      "Minimal Modern"
+    ],
+
+    party: [
+      "Cocktail Night",
+      "Bollywood",
+      "Neon",
+      "Luxury Celebration"
+    ],
+
+    reception: [
+      "Royal Reception",
+      "Modern Luxury",
+      "Floral Elegance",
+      "Classic Indian"
+    ],
+
+    general: [
+      "Elegant Celebration",
+      "Modern Luxury",
+      "Classic Indian",
+      "Minimal Premium"
+    ]
+
+  };
+
+
+  return (
+    themes[category] ||
+    themes.general
+  );
+
+}
+
+
+// =====================================================
+// FOOD RECOMMENDATIONS
+// =====================================================
+
+function getFoodRecommendations(
+  category,
+  preference
+) {
+
+  if (preference) {
+
+    return [
+      preference,
+      "Live Food Counters",
+      "Welcome Drinks",
+      "Dessert Station"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "wedding"
+  ) {
+
+    return [
+      "Multi-Cuisine Buffet",
+      "Live Chaat Counter",
+      "North Indian",
+      "Dessert & Mithai Counter"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "corporate"
+  ) {
+
+    return [
+      "Executive Buffet",
+      "Tea & Coffee",
+      "Light Snacks",
+      "Working Lunch"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "birthday" ||
+    category ===
+    "party"
+  ) {
+
+    return [
+      "Multi-Cuisine Buffet",
+      "Live Counters",
+      "Mocktails",
+      "Dessert Station"
+    ];
+
+  }
+
+
+  return [
+    "Multi-Cuisine",
+    "Live Counters",
+    "Welcome Drinks",
+    "Desserts"
+  ];
+
+}
+
+
+// =====================================================
+// VENDOR RECOMMENDATIONS
+// =====================================================
+
+function getVendorRecommendations(
+  category
+) {
+
+  if (
+    category ===
+    "wedding"
+  ) {
+
+    return [
+      "Photographer & Videographer",
+      "Decorator",
+      "Caterer",
+      "DJ / Live Music",
+      "Makeup Artist",
+      "Mehndi Artist",
+      "Invitation Designer"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "corporate"
+  ) {
+
+    return [
+      "AV & Sound",
+      "Event Decor",
+      "Catering",
+      "Photography",
+      "Host / Anchor",
+      "Event Production"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "birthday" ||
+    category ===
+    "party"
+  ) {
+
+    return [
+      "Decorator",
+      "DJ / Music",
+      "Photographer",
+      "Cake",
+      "Entertainment",
+      "Catering"
+    ];
+
+  }
+
+
+  return [
+    "Decorator",
+    "Caterer",
+    "Photographer",
+    "Entertainment"
+  ];
+
+}
+
+
+// =====================================================
+// EVENT CHECKLIST
+// =====================================================
+
+function getEventChecklist(
+  category
+) {
+
+  const common = [
+    "Finalize event date",
+    "Set total budget",
+    "Shortlist venues",
+    "Compare venue packages",
+    "Confirm guest count",
+    "Finalize food menu",
+    "Confirm decoration",
+    "Book photographer",
+    "Confirm entertainment",
+    "Send invitations",
+    "Confirm final guest count",
+    "Create event-day schedule"
+  ];
+
+
+  if (
+    category ===
+    "wedding"
+  ) {
+
+    return [
+      "Finalize wedding date",
+      "Shortlist ceremony venue",
+      "Shortlist reception venue",
+      "Book photographer & videographer",
+      "Finalize decoration theme",
+      "Book caterer / food package",
+      "Book makeup artist",
+      "Book mehndi artist",
+      "Book DJ / music",
+      "Finalize invitations",
+      "Confirm guest accommodation",
+      "Plan transport",
+      "Confirm final guest list",
+      "Create wedding-day timeline"
+    ];
+
+  }
+
+
+  if (
+    category ===
+    "corporate"
+  ) {
+
+    return [
+      "Finalize event objective",
+      "Confirm attendee count",
+      "Book conference venue",
+      "Arrange AV equipment",
+      "Finalize catering",
+      "Confirm stage & branding",
+      "Arrange photography",
+      "Confirm host / anchor",
+      "Prepare presentation material",
+      "Send attendee communication",
+      "Confirm seating plan",
+      "Create event run sheet"
+    ];
+
+  }
+
+
+  return common;
+
+}
+
+
+// =====================================================
+// PLANNING TIMELINE
+// =====================================================
+
+function getPlanningTimeline(
+  eventDate,
+  category
+) {
+
+  if (!eventDate) {
+
+    return [
+
+      {
+        period: "ASAP",
+        task: "Confirm date, budget and guest count."
+      },
+
+      {
+        period: "Next",
+        task: "Shortlist and compare venues."
+      },
+
+      {
+        period: "After venue",
+        task: "Book major vendors."
+      },
+
+      {
+        period: "Final week",
+        task: "Confirm guests, vendors and schedule."
+      }
+
+    ];
+
+  }
+
+
+  const date =
+    new Date(
+      eventDate +
+      "T00:00:00"
+    );
+
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+
+    return [];
+
+  }
+
+
+  const today =
+    new Date();
+
+  today.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+
+  const days =
+    Math.ceil(
+      (
+        date -
+        today
+      ) /
+      86400000
+    );
+
+
+  if (
+    days <= 7
+  ) {
+
+    return [
+
+      {
+        period: "TODAY",
+        task: "Confirm venue, guests and all vendors."
+      },
+
+      {
+        period: "48 HOURS",
+        task: "Confirm menu, decoration and event schedule."
+      },
+
+      {
+        period: "EVENT DAY",
+        task: "Execute your final event plan."
+      }
+
+    ];
+
+  }
+
+
+  if (
+    days <= 30
+  ) {
+
+    return [
+
+      {
+        period: "THIS WEEK",
+        task: "Finalize venue and major vendors."
+      },
+
+      {
+        period: "NEXT 2 WEEKS",
+        task: "Finalize food, decor, photography and entertainment."
+      },
+
+      {
+        period: "FINAL WEEK",
+        task: "Confirm guests, payments and event schedule."
+      }
+
+    ];
+
+  }
+
+
+  if (
+    days <= 90
+  ) {
+
+    return [
+
+      {
+        period: "NOW",
+        task: "Finalize venue, budget and guest estimate."
+      },
+
+      {
+        period: "30–60 DAYS",
+        task: "Book vendors and finalize event style."
+      },
+
+      {
+        period: "FINAL 30 DAYS",
+        task: "Invitations, menu, decor and logistics."
+      },
+
+      {
+        period: "FINAL WEEK",
+        task: "Final confirmations and event run sheet."
+      }
+
+    ];
+
+  }
+
+
+  return [
+
+    {
+      period: "NOW",
+      task: "Define your event vision and budget."
+    },
+
+    {
+      period: "NEXT 30 DAYS",
+      task: "Shortlist venues and compare packages."
+    },
+
+    {
+      period: "2–3 MONTHS",
+      task: "Book important vendors."
+    },
+
+    {
+      period: "FINAL MONTH",
+      task: "Finalize guests, food, decor and schedule."
+    }
+
+  ];
+
+}
+
+
+// =====================================================
+// SMART BUDGET
+// =====================================================
+
+function calculateSmartBudget(
+  category,
+  guests,
+  suppliedBudget
+) {
+
+  const guestCount =
+    guests ||
+    100;
+
+
+  const defaultPerGuest =
+    getDefaultBudgetPerGuest(
+      category
+    );
+
+
+  const totalDefault =
+    guestCount *
+    defaultPerGuest;
+
+
+  if (
+    suppliedBudget &&
+    suppliedBudget > 0
+  ) {
+
+    const total =
+      suppliedBudget *
+      guestCount;
+
+
+    return {
+
+      perGuest:
+        suppliedBudget,
+
+      total:
+        total,
+
+      breakdown:
+        getBudgetBreakdown(
+          total,
+          category
+        )
+
+    };
+
+  }
+
+
+  return {
+
+    perGuest:
+      defaultPerGuest,
+
+    total:
+      totalDefault,
+
+    breakdown:
+      getBudgetBreakdown(
+        totalDefault,
+        category
+      )
+
+  };
+
+}
+
+
+// =====================================================
+// DEFAULT BUDGET
+// =====================================================
+
+function getDefaultBudgetPerGuest(
+  category
+) {
+
+  if (
+    category ===
+    "wedding"
+  ) {
+
+    return 1800;
+
+  }
+
+
+  if (
+    category ===
+    "corporate"
+  ) {
+
+    return 1200;
+
+  }
+
+
+  if (
+    category ===
+    "birthday"
+  ) {
+
+    return 900;
+
+  }
+
+
+  if (
+    category ===
+    "engagement"
+  ) {
+
+    return 1400;
+
+  }
+
+
+  if (
+    category ===
+    "anniversary"
+  ) {
+
+    return 1100;
+
+  }
+
+
+  return 1000;
+
+}
+
+
+// =====================================================
+// BUDGET BREAKDOWN
+// =====================================================
+
+function getBudgetBreakdown(
+  total,
+  category
+) {
+
+  const venue =
+    Math.round(
+      total * .35
+    );
+
+  const food =
+    Math.round(
+      total * .30
+    );
+
+  const decor =
+    Math.round(
+      total * .12
+    );
+
+  const photo =
+    Math.round(
+      total * .08
+    );
+
+  const entertainment =
+    Math.round(
+      total * .06
+    );
+
+  const buffer =
+    total -
+    venue -
+    food -
+    decor -
+    photo -
+    entertainment;
+
+
+  return {
+
+    venue:
+      venue,
+
+    food:
+      food,
+
+    decor:
+      decor,
+
+    photography:
+      photo,
+
+    entertainment:
+      entertainment,
+
+    buffer:
+      buffer
+
+  };
+
+}
+
+
+// =====================================================
+// MATCH SCORE
+// =====================================================
+
+function calculateMatchScore(
+  data
+) {
+
+  let score =
+    55;
+
+
+  if (
+    data.eventType
+  ) {
+
+    score +=
+      10;
+
+  }
+
+
+  if (
+    data.location
+  ) {
+
+    score +=
+      10;
+
+  }
+
+
+  if (
+    data.guests
+  ) {
+
+    score +=
+      8;
+
+  }
+
+
+  if (
+    data.date
+  ) {
+
+    score +=
+      10;
+
+  }
+
+
+  if (
+    data.budget
+  ) {
+
+    score +=
+      7;
+
+  }
+
+
+  return Math.min(
+    99,
+    Math.max(
+      45,
+      score
+    )
+  );
+
+}
+
+
+// =====================================================
+// LEAD INTENT
+// =====================================================
+
+function calculateLeadIntent(
+  data
+) {
+
+  let score =
+    0;
+
+
+  if (
+    data.eventType
+  ) {
+
+    score +=
+      20;
+
+  }
+
+
+  if (
+    data.location
+  ) {
+
+    score +=
+      20;
+
+  }
+
+
+  if (
+    data.guests
+  ) {
+
+    score +=
+      15;
+
+  }
+
+
+  if (
+    data.date
+  ) {
+
+    score +=
+      25;
+
+  }
+
+
+  if (
+    data.budget
+  ) {
+
+    score +=
+      20;
+
+  }
+
+
+  if (
+    score >=
+    85
+  ) {
+
+    return "HOT";
+
+  }
+
+
+  if (
+    score >=
+    60
+  ) {
+
+    return "WARM";
+
+  }
+
+
+  return "EARLY PLANNER";
+
+}
+
+
+// =====================================================
+// LEAD PRIORITY
+// =====================================================
+
+function calculateLeadPriority(
+  plan
+) {
+
+  if (
+    plan.intent ===
+    "HOT"
+  ) {
+
+    return "high";
+
+  }
+
+
+  if (
+    plan.intent ===
+    "WARM"
+  ) {
+
+    return "normal";
+
+  }
+
+
+  return "normal";
+
+}
+
+
+// =====================================================
+// AI REQUIREMENTS
+// =====================================================
+
+function buildAIRequirements(
+  plan
+) {
+
+  const lines = [];
+
+
+  lines.push(
+    "=== AI EVENT PLAN ==="
+  );
+
+
+  lines.push(
+    "Event: " +
+    plan.eventType
+  );
+
+
+  lines.push(
+    "Category: " +
+    plan.category
+  );
+
+
+  lines.push(
+    "Location: " +
+    plan.location
+  );
+
+
+  if (
+    plan.guests
+  ) {
+
+    lines.push(
+      "Guests: " +
+      plan.guests
+    );
+
+  }
+
+
+  if (
+    plan.eventDate
+  ) {
+
+    lines.push(
+      "Event Date: " +
+      plan.eventDate
+    );
+
+  }
+
+
+  lines.push(
+    "AI Match Score: " +
+    plan.matchScore +
+    "%"
+  );
+
+
+  lines.push(
+    "Lead Intent: " +
+    plan.intent
+  );
+
+
+  lines.push(
+    "Suggested Venues: " +
+    plan.venueTypes.join(
+      ", "
+    )
+  );
+
+
+  lines.push(
+    "Suggested Themes: " +
+    plan.theme.join(
+      ", "
+    )
+  );
+
+
+  lines.push(
+    "Food Ideas: " +
+    plan.foodRecommendations.join(
+      ", "
+    )
+  );
+
+
+  lines.push(
+    "Recommended Vendors: " +
+    plan.vendorRecommendations.join(
+      ", "
+    )
+  );
+
+
+  return lines.join(
+    "\n"
+  );
+
+}
+
+
+// =====================================================
+// FULL AI REQUIREMENTS
+// =====================================================
+
+function buildFullAIRequirements(
+  data
+) {
+
+  let result =
+    buildAIRequirements(
+      data.aiPlan
+    );
+
+
+  if (
+    data.other
+  ) {
+
+    result +=
+      "\n\n=== CUSTOMER REQUIREMENTS ===\n" +
+      data.other;
 
   }
 
@@ -1452,265 +2483,2320 @@ async function insertWithRetry(
 
 
 // =====================================================
-// RETRYABLE ERROR
+// INJECT AI PLANNER CONTAINER
 // =====================================================
 
-function isRetryableError(error) {
+function injectAIPlannerContainer() {
 
-  if (!error) {
-    return false;
-  }
+  if (
+    document.getElementById(
+      "smvAIPlanner"
+    )
+  ) {
 
-
-  const text =
-    (
-      String(error.message || "") +
-      " " +
-      String(error.details || "")
-    ).toLowerCase();
-
-
-  return (
-    text.includes("network") ||
-    text.includes("failed to fetch") ||
-    text.includes("fetch") ||
-    text.includes("timeout") ||
-    text.includes("temporarily")
-  );
-
-}
-
-
-// =====================================================
-// SMART REQUIREMENTS BUILDER
-// =====================================================
-
-function buildFullRequirements(details) {
-
-  const lines = [];
-
-
-  if (details.reference) {
-
-    lines.push(
-      "Enquiry Reference: " +
-      details.reference
-    );
+    return;
 
   }
 
 
-  lines.push(
-    "--------------------------------"
-  );
-
-
-  if (details.eventType) {
-
-    lines.push(
-      "Event: " +
-      details.eventType
-    );
-
-  }
-
-
-  if (details.location) {
-
-    lines.push(
-      "Location: " +
-      details.location
-    );
-
-  }
-
-
-  if (details.guests) {
-
-    lines.push(
-      "Guests: " +
-      details.guests
-    );
-
-  }
-
-
-  if (details.eventDate) {
-
-    lines.push(
-      "Event Date: " +
-      details.eventDate
-    );
-
-  }
-
-
-  if (details.budget) {
-
-    lines.push(
-      "Budget / Person: ₹" +
-      details.budget
-    );
-
-  }
-
-
-  if (details.food) {
-
-    lines.push(
-      "Food Preference: " +
-      details.food
-    );
-
-  }
-
-
-  if (details.other) {
-
-    lines.push(
-      "Other Requirements: " +
-      details.other
-    );
-
-  }
-
-
-  // =================================================
-  // SMART ANALYSIS
-  // =================================================
-
-  if (details.smartProfile) {
-
-    const profile =
-      details.smartProfile;
-
-
-    lines.push(
-      "",
-      "SMART DISCOVERY PROFILE",
-      "--------------------------------"
+  const container =
+    document.createElement(
+      "section"
     );
 
 
-    lines.push(
-      "Match Readiness: " +
-      profile.score +
-      "%"
+  container.id =
+    "smvAIPlanner";
+
+
+  container.className =
+    "smv-ai-planner";
+
+
+  container.innerHTML = `
+
+    <div class="smv-ai-header">
+
+      <div>
+
+        <div class="smv-ai-kicker">
+          SELECT MY VENUE AI
+        </div>
+
+        <h2>
+          Your Smart Event Planner
+        </h2>
+
+        <p>
+          Tell us what you're planning and we'll build
+          a personalized starting plan for your celebration.
+        </p>
+
+      </div>
+
+      <div class="smv-ai-badge">
+        <span></span>
+        AI READY
+      </div>
+
+    </div>
+
+
+    <div id="smvAIContent">
+
+      <div class="smv-ai-empty">
+
+        <div class="smv-ai-icon">
+          ✦
+        </div>
+
+        <h3>
+          Let's plan something amazing.
+        </h3>
+
+        <p>
+          Use the search above or enquiry form to
+          generate your personalized event plan.
+        </p>
+
+      </div>
+
+    </div>
+
+  `;
+
+
+  const enquiry =
+    document.querySelector(
+      ".enquiry-section"
     );
-
-
-    lines.push(
-      "Suggested Venue Types: " +
-      profile.venueTypes.join(", ")
-    );
-
-
-    lines.push(
-      "Planning Focus: " +
-      profile.planningFocus
-    );
-
-
-    lines.push(
-      "Capacity Insight: " +
-      profile.guestInsight
-    );
-
-
-    lines.push(
-      "Date Insight: " +
-      profile.dateInsight
-    );
-
-
-    lines.push(
-      "Lead Priority Signal: " +
-      profile.priority
-    );
-
-  }
-
-
-  lines.push(
-    "",
-    "Source: Website"
-  );
-
-
-  return lines.join("\n");
-
-}
-
-
-// =====================================================
-// LEGACY HERO REQUIREMENTS
-// Kept for compatibility
-// =====================================================
-
-function buildRequirements(
-  eventType,
-  location,
-  guests,
-  eventDate
-) {
-
-  const details = [];
-
-
-  details.push(
-    "Event: " +
-    eventType
-  );
-
-
-  details.push(
-    "Location: " +
-    location
-  );
-
-
-  if (guests) {
-
-    details.push(
-      "Guests: " +
-      guests
-    );
-
-  }
-
-
-  if (eventDate) {
-
-    details.push(
-      "Event Date: " +
-      eventDate
-    );
-
-  }
-
-
-  return details.join("\n");
-
-}
-
-
-// =====================================================
-// GUEST RANGE CONVERSION
-// =====================================================
-
-function convertGuestRangeToNumber(value) {
-
-  if (!value) {
-    return null;
-  }
-
-
-  const text =
-    String(value);
 
 
   if (
-    text.includes("500+")
+    enquiry
+  ) {
+
+    enquiry.parentNode.insertBefore(
+      container,
+      enquiry
+    );
+
+  } else {
+
+    document.body.appendChild(
+      container
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// SHOW AI PLANNER
+// =====================================================
+
+function showAIPlannerPanel(
+  plan
+) {
+
+  if (!plan) {
+    return;
+  }
+
+
+  currentAIPlan =
+    plan;
+
+
+  const container =
+    document.getElementById(
+      "smvAIPlanner"
+    );
+
+
+  const content =
+    document.getElementById(
+      "smvAIContent"
+    );
+
+
+  if (
+    !container ||
+    !content
+  ) {
+
+    return;
+
+  }
+
+
+  content.innerHTML = `
+
+    <div class="smv-ai-score-row">
+
+      <div class="smv-ai-score">
+
+        <div class="smv-ai-score-number">
+          ${plan.matchScore}%
+        </div>
+
+        <div>
+          <strong>AI Match</strong>
+          <small>Based on your requirements</small>
+        </div>
+
+      </div>
+
+
+      <div class="smv-ai-intent">
+        <span>Lead intent</span>
+        <strong>
+          ${escapeHTML(plan.intent)}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="smv-ai-grid">
+
+      <div class="smv-ai-card">
+
+        <span class="smv-ai-card-icon">
+          🏛️
+        </span>
+
+        <h3>
+          Venue Ideas
+        </h3>
+
+        <div class="smv-ai-tags">
+
+          ${plan.venueTypes
+            .map(
+              item =>
+                `<span>${escapeHTML(item)}</span>`
+            )
+            .join("")}
+
+        </div>
+
+      </div>
+
+
+      <div class="smv-ai-card">
+
+        <span class="smv-ai-card-icon">
+          ✨
+        </span>
+
+        <h3>
+          Event Style
+        </h3>
+
+        <div class="smv-ai-tags">
+
+          ${plan.theme
+            .map(
+              item =>
+                `<span>${escapeHTML(item)}</span>`
+            )
+            .join("")}
+
+        </div>
+
+      </div>
+
+
+      <div class="smv-ai-card">
+
+        <span class="smv-ai-card-icon">
+          🍽️
+        </span>
+
+        <h3>
+          Food Ideas
+        </h3>
+
+        <div class="smv-ai-list">
+
+          ${plan.foodRecommendations
+            .map(
+              item =>
+                `<div>✓ ${escapeHTML(item)}</div>`
+            )
+            .join("")}
+
+        </div>
+
+      </div>
+
+
+      <div class="smv-ai-card">
+
+        <span class="smv-ai-card-icon">
+          🎯
+        </span>
+
+        <h3>
+          Recommended Services
+        </h3>
+
+        <div class="smv-ai-list">
+
+          ${plan.vendorRecommendations
+            .slice(0, 6)
+            .map(
+              item =>
+                `<div>✓ ${escapeHTML(item)}</div>`
+            )
+            .join("")}
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="smv-ai-budget">
+
+      <div>
+
+        <span class="smv-ai-card-icon">
+          💰
+        </span>
+
+        <div>
+
+          <strong>
+            Smart Budget Starting Point
+          </strong>
+
+          <small>
+            Indicative planning estimate — actual vendor
+            prices depend on location, package and requirements.
+          </small>
+
+        </div>
+
+      </div>
+
+
+      <div class="smv-ai-budget-number">
+
+        ₹${formatIndianNumber(
+          plan.budgetPlan.total
+        )}
+
+      </div>
+
+    </div>
+
+
+    <div class="smv-ai-breakdown">
+
+      ${renderBudgetItem(
+        "Venue",
+        plan.budgetPlan.breakdown.venue
+      )}
+
+      ${renderBudgetItem(
+        "Food",
+        plan.budgetPlan.breakdown.food
+      )}
+
+      ${renderBudgetItem(
+        "Decor",
+        plan.budgetPlan.breakdown.decor
+      )}
+
+      ${renderBudgetItem(
+        "Photography",
+        plan.budgetPlan.breakdown.photography
+      )}
+
+      ${renderBudgetItem(
+        "Entertainment",
+        plan.budgetPlan.breakdown.entertainment
+      )}
+
+      ${renderBudgetItem(
+        "Buffer",
+        plan.budgetPlan.breakdown.buffer
+      )}
+
+    </div>
+
+
+    <div class="smv-ai-planning">
+
+      <div class="smv-ai-planning-head">
+
+        <div>
+
+          <div class="smv-ai-kicker">
+            YOUR ROADMAP
+          </div>
+
+          <h3>
+            Smart Planning Timeline
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <div class="smv-ai-timeline">
+
+        ${plan.timeline
+          .map(
+            (item, index) => `
+
+              <div class="smv-ai-timeline-item">
+
+                <div class="smv-ai-timeline-dot">
+                  ${index + 1}
+                </div>
+
+                <div>
+
+                  <strong>
+                    ${escapeHTML(item.period)}
+                  </strong>
+
+                  <p>
+                    ${escapeHTML(item.task)}
+                  </p>
+
+                </div>
+
+              </div>
+
+            `
+          )
+          .join("")}
+
+      </div>
+
+    </div>
+
+
+    <div class="smv-ai-checklist">
+
+      <div class="smv-ai-planning-head">
+
+        <div>
+
+          <div class="smv-ai-kicker">
+            SMART CHECKLIST
+          </div>
+
+          <h3>
+            Don't Miss The Important Things
+          </h3>
+
+        </div>
+
+      </div>
+
+
+      <div class="smv-ai-check-grid">
+
+        ${plan.checklist
+          .map(
+            item => `
+
+              <label class="smv-ai-check-item">
+
+                <input
+                  type="checkbox"
+                  data-ai-check="${escapeHTML(item)}"
+                >
+
+                <span>
+                  ${escapeHTML(item)}
+                </span>
+
+              </label>
+
+            `
+          )
+          .join("")}
+
+      </div>
+
+    </div>
+
+
+    <div class="smv-ai-actions">
+
+      <button
+        type="button"
+        data-ai-action="save"
+        class="smv-ai-action primary"
+      >
+        💾 Save My Plan
+      </button>
+
+
+      <button
+        type="button"
+        data-ai-action="budget"
+        class="smv-ai-action"
+      >
+        💰 Recalculate Budget
+      </button>
+
+
+      <button
+        type="button"
+        data-ai-action="clear"
+        class="smv-ai-action danger"
+      >
+        Clear Plan
+      </button>
+
+    </div>
+
+  `;
+
+
+  container.classList.add(
+    "active"
+  );
+
+
+  setTimeout(
+    function () {
+
+      container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+    },
+    120
+  );
+
+}
+
+
+// =====================================================
+// BUDGET ESTIMATOR
+// =====================================================
+
+function showBudgetEstimator() {
+
+  if (!currentAIPlan) {
+
+    showAIToast(
+      "First create an event plan using the search above."
+    );
+
+    return;
+
+  }
+
+
+  const guests =
+    currentAIPlan.guests ||
+    100;
+
+
+  const input =
+    window.prompt(
+      "Enter your estimated budget per guest (₹):",
+      currentAIPlan.budget ||
+      currentAIPlan.budgetPlan.perGuest
+    );
+
+
+  if (
+    input ===
+    null
+  ) {
+
+    return;
+
+  }
+
+
+  const budget =
+    parseBudget(
+      input
+    );
+
+
+  if (
+    !budget ||
+    budget <= 0
+  ) {
+
+    showAIToast(
+      "Please enter a valid budget."
+    );
+
+    return;
+
+  }
+
+
+  currentAIPlan =
+    generateAIEventPlan({
+
+      eventType:
+        currentAIPlan.eventType,
+
+      location:
+        currentAIPlan.location,
+
+      guests:
+        guests,
+
+      eventDate:
+        currentAIPlan.eventDate,
+
+      budget:
+        budget,
+
+      food:
+        currentAIPlan.food
+
+    });
+
+
+  saveAIPlan(
+    currentAIPlan
+  );
+
+
+  showAIPlannerPanel(
+    currentAIPlan
+  );
+
+
+  showAIToast(
+    "✓ Budget updated."
+  );
+
+}
+
+
+// =====================================================
+// SAVE AI PLAN
+// =====================================================
+
+function saveAIPlan(
+  plan
+) {
+
+  if (!plan) {
+    return;
+  }
+
+
+  try {
+
+    localStorage.setItem(
+      SMV_AI_STORAGE_KEY,
+      JSON.stringify(
+        plan
+      )
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "Could not save AI plan:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// RESTORE SAVED PLAN
+// =====================================================
+
+function restoreSavedAIPlan() {
+
+  try {
+
+    const saved =
+      localStorage.getItem(
+        SMV_AI_STORAGE_KEY
+      );
+
+
+    if (!saved) {
+      return;
+    }
+
+
+    const plan =
+      JSON.parse(
+        saved
+      );
+
+
+    if (
+      !plan ||
+      !plan.eventType
+    ) {
+
+      return;
+
+    }
+
+
+    currentAIPlan =
+      plan;
+
+
+    // Don't automatically open the large planner
+    // immediately. Show a small restore prompt.
+
+    createRestorePrompt(
+      plan
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "Could not restore saved AI plan:",
+      error
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// RESTORE PROMPT
+// =====================================================
+
+function createRestorePrompt(
+  plan
+) {
+
+  if (
+    document.getElementById(
+      "smvRestorePrompt"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const prompt =
+    document.createElement(
+      "div"
+    );
+
+
+  prompt.id =
+    "smvRestorePrompt";
+
+
+  prompt.className =
+    "smv-restore-prompt";
+
+
+  prompt.innerHTML = `
+
+    <div>
+
+      <strong>
+        ✦ Your saved event plan is available
+      </strong>
+
+      <span>
+        ${escapeHTML(plan.eventType)}
+        ·
+        ${escapeHTML(plan.location)}
+      </span>
+
+    </div>
+
+
+    <div class="smv-restore-actions">
+
+      <button
+        type="button"
+        id="smvRestorePlan"
+      >
+        Restore
+      </button>
+
+      <button
+        type="button"
+        id="smvDismissPlan"
+      >
+        ×
+      </button>
+
+    </div>
+
+  `;
+
+
+  document.body.appendChild(
+    prompt
+  );
+
+
+  const restore =
+    document.getElementById(
+      "smvRestorePlan"
+    );
+
+
+  const dismiss =
+    document.getElementById(
+      "smvDismissPlan"
+    );
+
+
+  if (restore) {
+
+    restore.addEventListener(
+      "click",
+      function () {
+
+        showAIPlannerPanel(
+          plan
+        );
+
+        prompt.remove();
+
+      }
+    );
+
+  }
+
+
+  if (dismiss) {
+
+    dismiss.addEventListener(
+      "click",
+      function () {
+
+        prompt.remove();
+
+      }
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// CLEAR SAVED PLAN
+// =====================================================
+
+function clearSavedAIPlan() {
+
+  try {
+
+    localStorage.removeItem(
+      SMV_AI_STORAGE_KEY
+    );
+
+  } catch (error) {
+
+    console.warn(
+      error
+    );
+
+  }
+
+
+  currentAIPlan =
+    null;
+
+
+  const container =
+    document.getElementById(
+      "smvAIPlanner"
+    );
+
+
+  const content =
+    document.getElementById(
+      "smvAIContent"
+    );
+
+
+  if (
+    content
+  ) {
+
+    content.innerHTML = `
+
+      <div class="smv-ai-empty">
+
+        <div class="smv-ai-icon">
+          ✦
+        </div>
+
+        <h3>
+          Your planner is ready.
+        </h3>
+
+        <p>
+          Start a new event search above.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  if (
+    container
+  ) {
+
+    container.classList.remove(
+      "active"
+    );
+
+  }
+
+
+  showAIToast(
+    "Your saved plan has been cleared."
+  );
+
+}
+
+
+// =====================================================
+// SMART FORM ENHANCEMENTS
+// =====================================================
+
+function setupSmartFormEnhancements() {
+
+  const dateFields =
+    document.querySelectorAll(
+      'input[type="date"]'
+    );
+
+
+  dateFields.forEach(
+    function (field) {
+
+      const today =
+        new Date()
+          .toISOString()
+          .split("T")[0];
+
+
+      field.setAttribute(
+        "min",
+        today
+      );
+
+    }
+  );
+
+
+  const mobileFields =
+    document.querySelectorAll(
+      'input[id*="Mobile"], input[id*="mobile"], input[type="tel"]'
+    );
+
+
+  mobileFields.forEach(
+    function (field) {
+
+      field.setAttribute(
+        "inputmode",
+        "numeric"
+      );
+
+      field.setAttribute(
+        "maxlength",
+        "10"
+      );
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// SCROLL ANIMATIONS
+// =====================================================
+
+function setupScrollAnimations() {
+
+  if (
+    !("IntersectionObserver" in window)
+  ) {
+
+    return;
+
+  }
+
+
+  const elements =
+    document.querySelectorAll(
+      ".event-card, .feature-card, .contact-card, .about-image"
+    );
+
+
+  if (
+    !elements.length
+  ) {
+
+    return;
+
+  }
+
+
+  elements.forEach(
+    function (element) {
+
+      element.classList.add(
+        "smv-reveal"
+      );
+
+    }
+  );
+
+
+  const observer =
+    new IntersectionObserver(
+      function (
+        entries
+      ) {
+
+        entries.forEach(
+          function (
+            entry
+          ) {
+
+            if (
+              entry.isIntersecting
+            ) {
+
+              entry.target.classList.add(
+                "smv-visible"
+              );
+
+              observer.unobserve(
+                entry.target
+              );
+
+            }
+
+          }
+        );
+
+      },
+      {
+        threshold:
+          0.12
+      }
+    );
+
+
+  elements.forEach(
+    function (element) {
+
+      observer.observe(
+        element
+      );
+
+    }
+  );
+
+}
+
+
+// =====================================================
+// AI STYLES
+// =====================================================
+
+function injectAIPlannerStyles() {
+
+  if (
+    document.getElementById(
+      "smvAIPlannerStyles"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+
+  style.id =
+    "smvAIPlannerStyles";
+
+
+  style.textContent = `
+
+    .smv-ai-planner{
+
+      max-width:1120px;
+
+      margin:0 auto 35px;
+
+      padding:22px;
+
+      border:1px solid rgba(0,235,214,.22);
+
+      border-radius:18px;
+
+      background:
+
+        radial-gradient(
+          circle at 90% 0%,
+          rgba(0,230,210,.12),
+          transparent 30%
+        ),
+
+        linear-gradient(
+          145deg,
+          rgba(6,31,31,.95),
+          rgba(2,15,15,.98)
+        );
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.025);
+
+      display:none;
+
+    }
+
+
+    .smv-ai-planner.active{
+      display:block;
+    }
+
+
+    .smv-ai-header{
+
+      display:flex;
+
+      align-items:flex-start;
+
+      justify-content:space-between;
+
+      gap:20px;
+
+      margin-bottom:22px;
+
+    }
+
+
+    .smv-ai-kicker{
+
+      color:#11e0cf;
+
+      font-size:9px;
+
+      font-weight:900;
+
+      letter-spacing:1.5px;
+
+    }
+
+
+    .smv-ai-header h2{
+
+      font-size:27px;
+
+      margin:5px 0 7px;
+
+      letter-spacing:-.8px;
+
+    }
+
+
+    .smv-ai-header p{
+
+      color:#8eaaa8;
+
+      font-size:11px;
+
+      max-width:620px;
+
+    }
+
+
+    .smv-ai-badge{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:7px;
+
+      border:1px solid rgba(0,235,214,.25);
+
+      border-radius:30px;
+
+      padding:8px 12px;
+
+      color:#aafcf3;
+
+      font-size:9px;
+
+      font-weight:900;
+
+      letter-spacing:.8px;
+
+      white-space:nowrap;
+
+      background:rgba(0,220,205,.05);
+
+    }
+
+
+    .smv-ai-badge span{
+
+      width:7px;
+
+      height:7px;
+
+      border-radius:50%;
+
+      background:#11e0cf;
+
+      box-shadow:0 0 12px #11e0cf;
+
+    }
+
+
+    .smv-ai-score-row{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:15px;
+
+      margin-bottom:15px;
+
+      padding:13px;
+
+      border-radius:12px;
+
+      border:1px solid rgba(0,235,214,.12);
+
+      background:rgba(0,220,205,.035);
+
+    }
+
+
+    .smv-ai-score{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:11px;
+
+    }
+
+
+    .smv-ai-score-number{
+
+      width:54px;
+
+      height:54px;
+
+      border-radius:50%;
+
+      display:grid;
+
+      place-items:center;
+
+      border:2px solid #11e0cf;
+
+      color:#b9fff8;
+
+      font-size:14px;
+
+      font-weight:900;
+
+      box-shadow:
+        0 0 22px rgba(0,235,214,.16);
+
+    }
+
+
+    .smv-ai-score strong,
+    .smv-ai-score small{
+
+      display:block;
+
+    }
+
+
+    .smv-ai-score strong{
+
+      font-size:11px;
+
+    }
+
+
+    .smv-ai-score small{
+
+      color:#668482;
+
+      font-size:9px;
+
+      margin-top:2px;
+
+    }
+
+
+    .smv-ai-intent{
+
+      text-align:right;
+
+    }
+
+
+    .smv-ai-intent span,
+    .smv-ai-intent strong{
+
+      display:block;
+
+    }
+
+
+    .smv-ai-intent span{
+
+      color:#698382;
+
+      font-size:8px;
+
+      text-transform:uppercase;
+
+      letter-spacing:.8px;
+
+    }
+
+
+    .smv-ai-intent strong{
+
+      color:#ffd34b;
+
+      font-size:11px;
+
+      margin-top:3px;
+
+    }
+
+
+    .smv-ai-grid{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap:9px;
+
+    }
+
+
+    .smv-ai-card{
+
+      min-height:145px;
+
+      padding:15px;
+
+      border-radius:12px;
+
+      border:1px solid rgba(0,235,214,.11);
+
+      background:
+        rgba(4,24,24,.78);
+
+    }
+
+
+    .smv-ai-card-icon{
+
+      font-size:20px;
+
+      display:block;
+
+      margin-bottom:7px;
+
+    }
+
+
+    .smv-ai-card h3{
+
+      font-size:12px;
+
+      margin-bottom:10px;
+
+    }
+
+
+    .smv-ai-tags{
+
+      display:flex;
+
+      flex-wrap:wrap;
+
+      gap:5px;
+
+    }
+
+
+    .smv-ai-tags span{
+
+      border:1px solid rgba(0,235,214,.14);
+
+      background:rgba(0,235,214,.035);
+
+      color:#9dc2bf;
+
+      border-radius:20px;
+
+      padding:5px 7px;
+
+      font-size:8px;
+
+    }
+
+
+    .smv-ai-list{
+
+      color:#8eaaa8;
+
+      font-size:9px;
+
+      line-height:1.65;
+
+    }
+
+
+    .smv-ai-list div{
+
+      margin:2px 0;
+
+    }
+
+
+    .smv-ai-budget{
+
+      display:flex;
+
+      align-items:center;
+
+      justify-content:space-between;
+
+      gap:15px;
+
+      margin-top:10px;
+
+      padding:15px;
+
+      border:1px solid rgba(255,201,40,.18);
+
+      border-radius:12px;
+
+      background:rgba(255,201,40,.035);
+
+    }
+
+
+    .smv-ai-budget>div:first-child{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:10px;
+
+    }
+
+
+    .smv-ai-budget strong,
+    .smv-ai-budget small{
+
+      display:block;
+
+    }
+
+
+    .smv-ai-budget strong{
+
+      font-size:11px;
+
+    }
+
+
+    .smv-ai-budget small{
+
+      max-width:600px;
+
+      margin-top:3px;
+
+      color:#786f4c;
+
+      font-size:8px;
+
+    }
+
+
+    .smv-ai-budget-number{
+
+      color:#ffd34b;
+
+      font-size:20px;
+
+      font-weight:900;
+
+      white-space:nowrap;
+
+    }
+
+
+    .smv-ai-breakdown{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(6,1fr);
+
+      gap:7px;
+
+      margin-top:8px;
+
+    }
+
+
+    .smv-ai-budget-item{
+
+      padding:9px;
+
+      border:1px solid rgba(255,255,255,.05);
+
+      border-radius:8px;
+
+      text-align:center;
+
+      background:rgba(0,0,0,.12);
+
+    }
+
+
+    .smv-ai-budget-item span{
+
+      display:block;
+
+      color:#6f8987;
+
+      font-size:7px;
+
+      text-transform:uppercase;
+
+    }
+
+
+    .smv-ai-budget-item strong{
+
+      display:block;
+
+      color:#c8dfdd;
+
+      font-size:9px;
+
+      margin-top:3px;
+
+    }
+
+
+    .smv-ai-planning,
+    .smv-ai-checklist{
+
+      margin-top:15px;
+
+      padding:15px;
+
+      border:1px solid rgba(0,235,214,.09);
+
+      border-radius:12px;
+
+      background:rgba(2,17,17,.55);
+
+    }
+
+
+    .smv-ai-planning-head h3{
+
+      font-size:13px;
+
+      margin-top:3px;
+
+    }
+
+
+    .smv-ai-timeline{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap:10px;
+
+      margin-top:13px;
+
+    }
+
+
+    .smv-ai-timeline-item{
+
+      display:flex;
+
+      gap:8px;
+
+    }
+
+
+    .smv-ai-timeline-dot{
+
+      flex:none;
+
+      width:25px;
+
+      height:25px;
+
+      border-radius:50%;
+
+      display:grid;
+
+      place-items:center;
+
+      background:rgba(0,235,214,.09);
+
+      border:1px solid rgba(0,235,214,.2);
+
+      color:#11e0cf;
+
+      font-size:9px;
+
+      font-weight:900;
+
+    }
+
+
+    .smv-ai-timeline-item strong{
+
+      display:block;
+
+      color:#b7d1cf;
+
+      font-size:9px;
+
+    }
+
+
+    .smv-ai-timeline-item p{
+
+      color:#718b89;
+
+      font-size:8px;
+
+      line-height:1.4;
+
+      margin-top:3px;
+
+    }
+
+
+    .smv-ai-check-grid{
+
+      display:grid;
+
+      grid-template-columns:
+        repeat(2,1fr);
+
+      gap:5px 20px;
+
+      margin-top:12px;
+
+    }
+
+
+    .smv-ai-check-item{
+
+      display:flex;
+
+      align-items:center;
+
+      gap:7px;
+
+      padding:5px;
+
+      color:#8fa9a7;
+
+      font-size:9px;
+
+      cursor:pointer;
+
+    }
+
+
+    .smv-ai-check-item input{
+
+      accent-color:#11e0cf;
+
+    }
+
+
+    .smv-ai-check-item:has(
+      input:checked
+    ){
+
+      color:#4d7773;
+
+      text-decoration:line-through;
+
+    }
+
+
+    .smv-ai-actions{
+
+      display:flex;
+
+      flex-wrap:wrap;
+
+      gap:7px;
+
+      margin-top:14px;
+
+    }
+
+
+    .smv-ai-action{
+
+      border:1px solid rgba(0,235,214,.18);
+
+      background:rgba(0,235,214,.035);
+
+      color:#9ed2ce;
+
+      border-radius:20px;
+
+      padding:9px 13px;
+
+      cursor:pointer;
+
+      font-size:9px;
+
+      font-weight:800;
+
+    }
+
+
+    .smv-ai-action:hover{
+
+      border-color:#11e0cf;
+
+      color:#fff;
+
+    }
+
+
+    .smv-ai-action.primary{
+
+      background:#11d9c8;
+
+      color:#031313;
+
+      border-color:#11d9c8;
+
+    }
+
+
+    .smv-ai-action.danger{
+
+      color:#d38b8b;
+
+      border-color:rgba(255,100,100,.15);
+
+    }
+
+
+    .smv-ai-empty{
+
+      padding:28px 15px;
+
+      text-align:center;
+
+      border:1px dashed rgba(0,235,214,.15);
+
+      border-radius:12px;
+
+    }
+
+
+    .smv-ai-icon{
+
+      width:46px;
+
+      height:46px;
+
+      display:grid;
+
+      place-items:center;
+
+      margin:0 auto 9px;
+
+      border-radius:50%;
+
+      color:#11e0cf;
+
+      background:rgba(0,235,214,.08);
+
+      font-size:22px;
+
+    }
+
+
+    .smv-ai-empty h3{
+
+      font-size:15px;
+
+    }
+
+
+    .smv-ai-empty p{
+
+      color:#708b89;
+
+      font-size:9px;
+
+      margin-top:5px;
+
+    }
+
+
+    .smv-restore-prompt{
+
+      position:fixed;
+
+      right:18px;
+
+      bottom:18px;
+
+      z-index:999;
+
+      max-width:350px;
+
+      padding:13px;
+
+      border:1px solid rgba(0,235,214,.3);
+
+      border-radius:12px;
+
+      background:#061919;
+
+      box-shadow:0 15px 50px rgba(0,0,0,.45);
+
+      display:flex;
+
+      align-items:center;
+
+      gap:15px;
+
+    }
+
+
+    .smv-restore-prompt strong,
+    .smv-restore-prompt span{
+
+      display:block;
+
+    }
+
+
+    .smv-restore-prompt strong{
+
+      color:#e8fffc;
+
+      font-size:10px;
+
+    }
+
+
+    .smv-restore-prompt span{
+
+      color:#71918e;
+
+      font-size:8px;
+
+      margin-top:3px;
+
+    }
+
+
+    .smv-restore-actions{
+
+      display:flex;
+
+      gap:5px;
+
+    }
+
+
+    .smv-restore-actions button{
+
+      border:1px solid rgba(0,235,214,.2);
+
+      background:rgba(0,235,214,.05);
+
+      color:#9feee6;
+
+      border-radius:7px;
+
+      padding:6px 8px;
+
+      font-size:8px;
+
+      cursor:pointer;
+
+    }
+
+
+    .smv-restore-actions button:first-child{
+
+      background:#11d9c8;
+
+      color:#031313;
+
+    }
+
+
+    .smv-ai-toast{
+
+      position:fixed;
+
+      left:50%;
+
+      bottom:25px;
+
+      transform:
+        translateX(-50%)
+        translateY(20px);
+
+      z-index:1000;
+
+      padding:10px 15px;
+
+      border:1px solid rgba(0,235,214,.25);
+
+      border-radius:30px;
+
+      background:#061d1d;
+
+      color:#bdfbf5;
+
+      font-size:10px;
+
+      opacity:0;
+
+      pointer-events:none;
+
+      transition:.25s ease;
+
+      box-shadow:0 10px 35px rgba(0,0,0,.4);
+
+    }
+
+
+    .smv-ai-toast.show{
+
+      opacity:1;
+
+      transform:
+        translateX(-50%)
+        translateY(0);
+
+    }
+
+
+    .smv-reveal{
+
+      opacity:0;
+
+      transform:
+        translateY(12px);
+
+      transition:
+        opacity .5s ease,
+        transform .5s ease;
+
+    }
+
+
+    .smv-visible{
+
+      opacity:1;
+
+      transform:
+        translateY(0);
+
+    }
+
+
+    @media(max-width:900px){
+
+      .smv-ai-grid{
+
+        grid-template-columns:
+          repeat(2,1fr);
+
+      }
+
+      .smv-ai-timeline{
+
+        grid-template-columns:
+          repeat(2,1fr);
+
+      }
+
+      .smv-ai-breakdown{
+
+        grid-template-columns:
+          repeat(3,1fr);
+
+      }
+
+    }
+
+
+    @media(max-width:700px){
+
+      .smv-ai-planner{
+
+        margin-left:14px;
+
+        margin-right:14px;
+
+        padding:15px;
+
+      }
+
+
+      .smv-ai-header{
+
+        display:block;
+
+      }
+
+
+      .smv-ai-badge{
+
+        display:inline-flex;
+
+        margin-top:10px;
+
+      }
+
+
+      .smv-ai-header h2{
+
+        font-size:22px;
+
+      }
+
+
+      .smv-ai-grid{
+
+        grid-template-columns:
+          1fr 1fr;
+
+      }
+
+
+      .smv-ai-score-row{
+
+        align-items:flex-start;
+
+      }
+
+
+      .smv-ai-breakdown{
+
+        grid-template-columns:
+          repeat(2,1fr);
+
+      }
+
+
+      .smv-ai-timeline{
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .smv-ai-check-grid{
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .smv-ai-budget{
+
+        align-items:flex-start;
+
+        flex-direction:column;
+
+      }
+
+
+      .smv-restore-prompt{
+
+        left:14px;
+
+        right:14px;
+
+        bottom:14px;
+
+      }
+
+    }
+
+
+    @media(max-width:430px){
+
+      .smv-ai-grid{
+
+        grid-template-columns:
+          1fr;
+
+      }
+
+
+      .smv-ai-breakdown{
+
+        grid-template-columns:
+          1fr 1fr;
+
+      }
+
+
+      .smv-ai-actions{
+
+        flex-direction:column;
+
+      }
+
+
+      .smv-ai-action{
+
+        width:100%;
+
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
+
+}
+
+
+// =====================================================
+// BUDGET ITEM HTML
+// =====================================================
+
+function renderBudgetItem(
+  label,
+  value
+) {
+
+  return `
+
+    <div class="smv-ai-budget-item">
+
+      <span>
+        ${escapeHTML(label)}
+      </span>
+
+      <strong>
+        ₹${formatIndianNumber(value)}
+      </strong>
+
+    </div>
+
+  `;
+
+}
+
+
+// =====================================================
+// AI TOAST
+// =====================================================
+
+function showAIToast(
+  message
+) {
+
+  let toast =
+    document.getElementById(
+      "smvAITtoast"
+    );
+
+
+  if (!toast) {
+
+    toast =
+      document.createElement(
+        "div"
+      );
+
+    toast.id =
+      "smvAITtoast";
+
+    toast.className =
+      "smv-ai-toast";
+
+    document.body.appendChild(
+      toast
+    );
+
+  }
+
+
+  toast.textContent =
+    message;
+
+
+  toast.classList.add(
+    "show"
+  );
+
+
+  clearTimeout(
+    toast._timer
+  );
+
+
+  toast._timer =
+    setTimeout(
+      function () {
+
+        toast.classList.remove(
+          "show"
+        );
+
+      },
+      2800
+    );
+
+}
+
+
+// =====================================================
+// SCROLL TO AI PLANNER
+// =====================================================
+
+function scrollToAIPlanner() {
+
+  const planner =
+    document.getElementById(
+      "smvAIPlanner"
+    );
+
+
+  if (!planner) {
+    return;
+  }
+
+
+  setTimeout(
+    function () {
+
+      planner.scrollIntoView({
+        behavior:
+          "smooth",
+        block:
+          "start"
+      });
+
+    },
+    100
+  );
+
+}
+
+
+// =====================================================
+// PARSE GUEST NUMBER
+// =====================================================
+
+function parseGuestNumber(
+  value
+) {
+
+  if (
+    typeof value ===
+    "number"
+  ) {
+
+    return value;
+
+  }
+
+
+  if (!value) {
+    return 0;
+  }
+
+
+  const string =
+    String(
+      value
+    );
+
+
+  if (
+    string.includes(
+      "500+"
+    )
   ) {
 
     return 500;
@@ -1719,7 +4805,9 @@ function convertGuestRangeToNumber(value) {
 
 
   const numbers =
-    text.match(/\d+/g);
+    string.match(
+      /\d+/g
+    );
 
 
   if (
@@ -1727,7 +4815,7 @@ function convertGuestRangeToNumber(value) {
     !numbers.length
   ) {
 
-    return null;
+    return 0;
 
   }
 
@@ -1736,15 +4824,15 @@ function convertGuestRangeToNumber(value) {
     numbers.length >= 2
   ) {
 
-    const first =
-      Number(numbers[0]);
-
-    const second =
-      Number(numbers[1]);
-
-
     return Math.round(
-      (first + second) / 2
+      (
+        Number(
+          numbers[0]
+        ) +
+        Number(
+          numbers[1]
+        )
+      ) / 2
     );
 
   }
@@ -1758,922 +4846,120 @@ function convertGuestRangeToNumber(value) {
 
 
 // =====================================================
-// SMART DATE PROTECTION
+// PARSE BUDGET
 // =====================================================
 
-function setupDateProtection() {
-
-  const dateFields = [
-    "date",
-    "customerEventDate"
-  ];
-
-
-  const today =
-    getTodayISO();
-
-
-  dateFields.forEach(
-    function (id) {
-
-      const element =
-        document.getElementById(id);
-
-
-      if (element) {
-
-        element.min =
-          today;
-
-      }
-
-    }
-  );
-
-}
-
-
-// =====================================================
-// SMART FIELD ENHANCEMENTS
-// =====================================================
-
-function setupSmartFieldEnhancements() {
-
-  const mobile =
-    document.getElementById(
-      "customerMobile"
-    );
-
-
-  if (mobile) {
-
-    mobile.addEventListener(
-      "input",
-      function () {
-
-        this.value =
-          this.value
-            .replace(/\D/g, "")
-            .slice(0, 10);
-
-      }
-    );
-
-  }
-
-
-  const budget =
-    document.getElementById(
-      "customerBudget"
-    );
-
-
-  if (budget) {
-
-    budget.addEventListener(
-      "input",
-      function () {
-
-        if (
-          Number(this.value) < 0
-        ) {
-
-          this.value = "";
-
-        }
-
-      }
-    );
-
-  }
-
-
-  const guests =
-    document.getElementById(
-      "customerGuests"
-    );
-
-
-  if (guests) {
-
-    guests.addEventListener(
-      "input",
-      function () {
-
-        if (
-          Number(this.value) < 1
-        ) {
-
-          this.value = "";
-
-        }
-
-      }
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// DRAFT SAVING
-// =====================================================
-
-function setupDraftSaving() {
-
-  const form =
-    document.getElementById(
-      "customerEnquiryForm"
-    );
-
-
-  if (!form) {
-    return;
-  }
-
-
-  const fieldIds = [
-    "customerName",
-    "customerMobile",
-    "customerEmail",
-    "customerLocation",
-    "customerEventType",
-    "customerEventDate",
-    "customerGuests",
-    "customerBudget",
-    "customerFood",
-    "customerRequirements"
-  ];
-
-
-  fieldIds.forEach(
-    function (id) {
-
-      const field =
-        document.getElementById(id);
-
-
-      if (!field) {
-        return;
-      }
-
-
-      field.addEventListener(
-        "input",
-        saveCurrentDraft
-      );
-
-
-      field.addEventListener(
-        "change",
-        saveCurrentDraft
-      );
-
-    }
-  );
-
-}
-
-
-// =====================================================
-// SAVE CURRENT DRAFT
-// =====================================================
-
-function saveCurrentDraft() {
-
-  const form =
-    document.getElementById(
-      "customerEnquiryForm"
-    );
-
-
-  if (!form) {
-    return;
-  }
-
-
-  const data = {};
-
-
-  [
-    "customerName",
-    "customerMobile",
-    "customerEmail",
-    "customerLocation",
-    "customerEventType",
-    "customerEventDate",
-    "customerGuests",
-    "customerBudget",
-    "customerFood",
-    "customerRequirements"
-  ].forEach(
-    function (id) {
-
-      const element =
-        document.getElementById(id);
-
-
-      if (element) {
-
-        data[id] =
-          element.value;
-
-      }
-
-    }
-  );
-
-
-  try {
-
-    localStorage.setItem(
-      DRAFT_STORAGE_KEY,
-      JSON.stringify(data)
-    );
-
-  } catch (error) {
-
-    console.warn(
-      "Draft could not be saved:",
-      error
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// SAVE DRAFT DATA
-// =====================================================
-
-function saveDraftData(data) {
-
-  try {
-
-    const existing =
-      JSON.parse(
-        localStorage.getItem(
-          DRAFT_STORAGE_KEY
-        ) ||
-        "{}"
-      );
-
-
-    const merged = {
-      ...existing,
-      ...data
-    };
-
-
-    localStorage.setItem(
-      DRAFT_STORAGE_KEY,
-      JSON.stringify(merged)
-    );
-
-  } catch (error) {
-
-    console.warn(
-      "Smart draft save failed:",
-      error
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// RESTORE DRAFT
-// =====================================================
-
-function restoreSavedDraft() {
-
-  let data = null;
-
-
-  try {
-
-    data =
-      JSON.parse(
-        localStorage.getItem(
-          DRAFT_STORAGE_KEY
-        ) ||
-        "null"
-      );
-
-  } catch (error) {
-
-    console.warn(
-      "Saved draft could not be read."
-    );
-
-    return;
-
-  }
-
-
-  if (!data) {
-    return;
-  }
-
-
-  const hasUsefulData =
-    Object.values(data)
-      .some(
-        function (value) {
-
-          return (
-            value !== null &&
-            value !== undefined &&
-            String(value).trim() !== ""
-          );
-
-        }
-      );
-
-
-  if (!hasUsefulData) {
-    return;
-  }
-
-
-  let restored = false;
-
-
-  Object.keys(data)
-    .forEach(
-      function (id) {
-
-        const element =
-          document.getElementById(id);
-
-
-        if (
-          element &&
-          data[id] !== undefined &&
-          data[id] !== null &&
-          String(data[id]).trim() !== ""
-        ) {
-
-          element.value =
-            data[id];
-
-          restored = true;
-
-        }
-
-      }
-    );
-
-
-  if (!restored) {
-    return;
-  }
-
-
-  createDraftNotice();
-
-}
-
-
-// =====================================================
-// DRAFT NOTICE
-// =====================================================
-
-function createDraftNotice() {
-
-  if (
-    document.getElementById(
-      "smvDraftNotice"
-    )
-  ) {
-
-    return;
-
-  }
-
-
-  const form =
-    document.getElementById(
-      "customerEnquiryForm"
-    );
-
-
-  if (!form) {
-    return;
-  }
-
-
-  const notice =
-    document.createElement(
-      "div"
-    );
-
-
-  notice.id =
-    "smvDraftNotice";
-
-  notice.className =
-    "smv-draft-notice";
-
-
-  notice.innerHTML = `
-
-    <span>
-      ✦ Your previous enquiry details have been restored.
-    </span>
-
-    <button type="button" id="smvClearDraft">
-      Clear
-    </button>
-
-  `;
-
-
-  form.insertBefore(
-    notice,
-    form.firstChild
-  );
-
-
-  const clearButton =
-    document.getElementById(
-      "smvClearDraft"
-    );
-
-
-  if (clearButton) {
-
-    clearButton.addEventListener(
-      "click",
-      function () {
-
-        clearSavedDraft();
-
-        form.reset();
-
-        notice.remove();
-
-      }
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// CLEAR DRAFT
-// =====================================================
-
-function clearSavedDraft() {
-
-  try {
-
-    localStorage.removeItem(
-      DRAFT_STORAGE_KEY
-    );
-
-  } catch (error) {
-
-    console.warn(
-      "Could not clear draft."
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// SUCCESS MESSAGE + WHATSAPP
-// =====================================================
-
-function showSuccessWithReference(
-  element,
-  reference,
-  customer
-) {
-
-  if (!element) {
-    return;
-  }
-
-
-  const encodedMessage =
-    encodeURIComponent(
-      [
-        "Hello Select My Venue,",
-        "",
-        "I have submitted a venue enquiry.",
-        "",
-        "Reference: " + reference,
-        "Event: " + customer.eventType,
-        "Location: " + customer.location,
-        "",
-        "Please help me with suitable venue options."
-      ].join("\n")
-    );
-
-
-  element.innerHTML = `
-
-    <div class="smv-success-box">
-
-      <div class="smv-success-icon">
-        ✓
-      </div>
-
-      <div class="smv-success-content">
-
-        <strong>
-          Enquiry submitted successfully!
-        </strong>
-
-        <span>
-          Thank you, ${escapeHTML(customer.name)}.
-          Our team will contact you shortly.
-        </span>
-
-        <div class="smv-reference">
-          Enquiry ID:
-          <b>${escapeHTML(reference)}</b>
-        </div>
-
-        <div class="smv-success-actions">
-
-          <a
-            href="https://wa.me/919958716688?text=${encodedMessage}"
-            target="_blank"
-            rel="noopener"
-            class="smv-whatsapp-btn"
-          >
-            WhatsApp Our Team →
-          </a>
-
-          <button
-            type="button"
-            class="smv-copy-btn"
-            id="smvCopyReference"
-          >
-            Copy ID
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  element.classList.remove(
-    "success",
-    "error"
-  );
-
-
-  element.classList.add(
-    "success"
-  );
-
-
-  element.style.display =
-    "block";
-
-
-  const copyButton =
-    document.getElementById(
-      "smvCopyReference"
-    );
-
-
-  if (copyButton) {
-
-    copyButton.addEventListener(
-      "click",
-      async function () {
-
-        try {
-
-          await navigator.clipboard.writeText(
-            reference
-          );
-
-
-          copyButton.textContent =
-            "Copied ✓";
-
-
-          setTimeout(
-            function () {
-
-              copyButton.textContent =
-                "Copy ID";
-
-            },
-            1800
-          );
-
-        } catch (error) {
-
-          console.warn(
-            "Clipboard unavailable."
-          );
-
-        }
-
-      }
-    );
-
-  }
-
-}
-
-
-// =====================================================
-// ENQUIRY REFERENCE
-// =====================================================
-
-function createEnquiryReference() {
-
-  const now =
-    new Date();
-
-
-  const datePart =
-    [
-      now.getFullYear(),
-      String(
-        now.getMonth() + 1
-      ).padStart(2, "0"),
-      String(
-        now.getDate()
-      ).padStart(2, "0")
-    ].join("");
-
-
-  const randomPart =
-    Math.random()
-      .toString(36)
-      .substring(2, 7)
-      .toUpperCase();
-
-
-  return (
-    "SMV-" +
-    datePart +
-    "-" +
-    randomPart
-  );
-
-}
-
-
-// =====================================================
-// NAVIGATION HELPERS
-// =====================================================
-
-function setupNavigationHelpers() {
-
-  document
-    .querySelectorAll(
-      'a[href="#enquiry"]'
-    )
-    .forEach(
-      function (link) {
-
-        link.addEventListener(
-          "click",
-          function () {
-
-            setTimeout(
-              function () {
-
-                const firstField =
-                  document.getElementById(
-                    "customerName"
-                  );
-
-
-                if (firstField) {
-
-                  firstField.focus();
-
-                }
-
-              },
-              500
-            );
-
-          }
-        );
-
-      }
-    );
-
-}
-
-
-// =====================================================
-// LOCATION NORMALIZATION
-// =====================================================
-
-function normalizeLocation(
-  location
-) {
-
-  const value =
-    String(
-      location || ""
-    ).trim();
-
-
-  if (!value) {
-    return "";
-  }
-
-
-  return value
-    .replace(/\s+/g, " ")
-    .replace(
-      /\b(gurgaon)\b/gi,
-      "Gurgaon"
-    )
-    .replace(
-      /\b(gurugram)\b/gi,
-      "Gurugram"
-    )
-    .replace(
-      /\b(delhi ncr)\b/gi,
-      "Delhi NCR"
-    )
-    .trim();
-
-}
-
-
-// =====================================================
-// INDIAN MOBILE NORMALIZATION
-// =====================================================
-
-function normalizeIndianMobile(
+function parseBudget(
   value
 ) {
 
-  let mobile =
+  if (
+    typeof value ===
+    "number"
+  ) {
+
+    return value;
+
+  }
+
+
+  if (!value) {
+    return 0;
+  }
+
+
+  const cleaned =
     String(
-      value || ""
+      value
     )
-    .replace(
-      /\D/g,
-      ""
+      .replace(
+        /,/g,
+        ""
+      )
+      .replace(
+        /₹/g,
+        ""
+      )
+      .trim();
+
+
+  const number =
+    parseFloat(
+      cleaned
     );
 
 
-  if (
-    mobile.startsWith("91") &&
-    mobile.length === 12
-  ) {
-
-    mobile =
-      mobile.substring(2);
-
-  }
-
-
-  if (
-    mobile.length !== 10
-  ) {
-
-    return "";
-
-  }
-
-
-  if (
-    !/^[6-9][0-9]{9}$/.test(
-      mobile
-    )
-  ) {
-
-    return "";
-
-  }
-
-
-  return mobile;
+  return Number.isFinite(
+    number
+  )
+    ? number
+    : 0;
 
 }
 
 
 // =====================================================
-// DATE HELPERS
+// GUEST RANGE CONVERSION
 // =====================================================
 
-function getTodayISO() {
-
-  const now =
-    new Date();
-
-
-  const year =
-    now.getFullYear();
-
-
-  const month =
-    String(
-      now.getMonth() + 1
-    ).padStart(
-      2,
-      "0"
-    );
-
-
-  const day =
-    String(
-      now.getDate()
-    ).padStart(
-      2,
-      "0"
-    );
-
-
-  return (
-    year +
-    "-" +
-    month +
-    "-" +
-    day
-  );
-
-}
-
-
-function isPastDate(
-  dateString
+function convertGuestRangeToNumber(
+  value
 ) {
 
-  if (!dateString) {
-    return false;
-  }
-
-
-  return (
-    dateString <
-    getTodayISO()
-  );
+  return parseGuestNumber(
+    value
+  ) || null;
 
 }
 
 
-function daysUntil(
-  dateString
+// =====================================================
+// FORMAT INDIAN NUMBER
+// =====================================================
+
+function formatIndianNumber(
+  value
 ) {
 
-  if (!dateString) {
-    return 9999;
+  const number =
+    Math.round(
+      Number(
+        value || 0
+      )
+    );
+
+
+  try {
+
+    return number.toLocaleString(
+      "en-IN"
+    );
+
+  } catch (
+    error
+  ) {
+
+    return String(
+      number
+    );
+
   }
-
-
-  const target =
-    new Date(
-      dateString +
-      "T00:00:00"
-    );
-
-
-  const today =
-    new Date(
-      getTodayISO() +
-      "T00:00:00"
-    );
-
-
-  const difference =
-    target.getTime() -
-    today.getTime();
-
-
-  return Math.ceil(
-    difference /
-    86400000
-  );
 
 }
 
 
 // =====================================================
-// VALUE HELPERS
+// GET VALUE
 // =====================================================
 
-function getValue(id) {
+function getValue(
+  id
+) {
 
   const element =
-    document.getElementById(id);
+    document.getElementById(
+      id
+    );
 
 
   if (!element) {
@@ -2682,31 +4968,9 @@ function getValue(id) {
 
 
   return String(
-    element.value || ""
+    element.value ||
+    ""
   ).trim();
-
-}
-
-
-function setElementValue(
-  id,
-  value
-) {
-
-  const element =
-    document.getElementById(id);
-
-
-  if (
-    element &&
-    value !== undefined &&
-    value !== null
-  ) {
-
-    element.value =
-      value;
-
-  }
 
 }
 
@@ -2715,10 +4979,14 @@ function setElementValue(
 // FOCUS FIELD
 // =====================================================
 
-function focusField(id) {
+function focusField(
+  id
+) {
 
   const element =
-    document.getElementById(id);
+    document.getElementById(
+      id
+    );
 
 
   if (element) {
@@ -2746,7 +5014,9 @@ function isValidEmail(
 ) {
 
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    .test(email);
+    .test(
+      email
+    );
 
 }
 
@@ -2762,6 +5032,15 @@ function setButtonLoading(
 
   if (!button) {
     return;
+  }
+
+
+  if (
+    button.disabled
+  ) {
+
+    return;
+
   }
 
 
@@ -2813,6 +5092,122 @@ function restoreButton(
 
   button.removeAttribute(
     "aria-busy"
+  );
+
+}
+
+
+// =====================================================
+// FRIENDLY SUPABASE ERROR
+// =====================================================
+
+function getFriendlySupabaseError(
+  error
+) {
+
+  if (!error) {
+
+    return (
+      "Something went wrong. Please try again."
+    );
+
+  }
+
+
+  console.error(
+    "FULL SUPABASE ERROR:",
+    {
+      message:
+        error.message,
+
+      details:
+        error.details,
+
+      hint:
+        error.hint,
+
+      code:
+        error.code
+    }
+  );
+
+
+  const errorMessage =
+    String(
+      error.message ||
+      ""
+    ).toLowerCase();
+
+
+  const errorDetails =
+    String(
+      error.details ||
+      ""
+    ).toLowerCase();
+
+
+  const combined =
+    errorMessage +
+    " " +
+    errorDetails;
+
+
+  if (
+    combined.includes(
+      "row-level security"
+    ) ||
+    combined.includes(
+      "rls"
+    ) ||
+    combined.includes(
+      "permission denied"
+    ) ||
+    combined.includes(
+      "not allowed"
+    )
+  ) {
+
+    return (
+      "We could not submit your enquiry right now. Please try again."
+    );
+
+  }
+
+
+  if (
+    combined.includes(
+      "check constraint"
+    )
+  ) {
+
+    return (
+      "There is a database validation issue. Please try again."
+    );
+
+  }
+
+
+  if (
+    combined.includes(
+      "network"
+    ) ||
+    combined.includes(
+      "failed to fetch"
+    ) ||
+    combined.includes(
+      "fetch"
+    )
+  ) {
+
+    return (
+      "Please check your internet connection and try again."
+    );
+
+  }
+
+
+  return (
+    "We could not submit your enquiry right now. Please try again."
   );
 
 }
@@ -2890,7 +5285,8 @@ function showInlineMessage(
 
 
   if (
-    type === "success"
+    type ===
+    "success"
   ) {
 
     element.style.background =
@@ -2948,29 +5344,7 @@ function clearInlineMessage(
 
 
 // =====================================================
-// WAIT
-// =====================================================
-
-function wait(
-  milliseconds
-) {
-
-  return new Promise(
-    function (resolve) {
-
-      setTimeout(
-        resolve,
-        milliseconds
-      );
-
-    }
-  );
-
-}
-
-
-// =====================================================
-// HTML ESCAPE
+// ESCAPE HTML
 // =====================================================
 
 function escapeHTML(
@@ -2978,717 +5352,42 @@ function escapeHTML(
 ) {
 
   return String(
-    value || ""
+    value ||
+    ""
   )
-  .replace(
-    /&/g,
-    "&amp;"
-  )
-  .replace(
-    /</g,
-    "&lt;"
-  )
-  .replace(
-    />/g,
-    "&gt;"
-  )
-  .replace(
-    /"/g,
-    "&quot;"
-  )
-  .replace(
-    /'/g,
-    "&#039;"
-  );
-
-}
-
-
-// =====================================================
-// SMART UI STYLES
-//
-// These styles are injected by JS so NO HTML changes
-// are required for the new smart panel.
-// =====================================================
-
-function injectSmartStyles() {
-
-  if (
-    document.getElementById(
-      "smvSmartEngineStyles"
+    .replace(
+      /&/g,
+      "&amp;"
     )
-  ) {
-
-    return;
-
-  }
-
-
-  const style =
-    document.createElement(
-      "style"
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
     );
 
-
-  style.id =
-    "smvSmartEngineStyles";
-
-
-  style.textContent = `
-
-    /* -----------------------------------------------
-       SMART SEARCH RESULT
-    ----------------------------------------------- */
-
-    .smv-smart-result{
-
-      display:none;
-
-      max-width:1160px;
-
-      margin:12px auto 0;
-
-      padding:18px;
-
-      border:1px solid rgba(17,224,207,.28);
-
-      border-radius:16px;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(4,29,29,.94),
-          rgba(2,15,15,.96)
-        );
-
-      box-shadow:
-        0 15px 45px rgba(0,0,0,.24),
-        inset 0 0 40px rgba(0,220,205,.025);
-
-    }
-
-
-    .smv-smart-result.visible{
-
-      display:block;
-
-      animation:
-        smvSmartAppear .35s ease;
-
-    }
-
-
-    @keyframes smvSmartAppear{
-
-      from{
-
-        opacity:0;
-
-        transform:
-          translateY(-8px);
-
-      }
-
-      to{
-
-        opacity:1;
-
-        transform:
-          translateY(0);
-
-      }
-
-    }
-
-
-    .smv-smart-header{
-
-      display:flex;
-
-      align-items:center;
-
-      justify-content:space-between;
-
-      gap:20px;
-
-      margin-bottom:15px;
-
-    }
-
-
-    .smv-smart-label{
-
-      display:block;
-
-      color:#11e0cf;
-
-      font-size:9px;
-
-      font-weight:900;
-
-      letter-spacing:1.2px;
-
-      margin-bottom:4px;
-
-    }
-
-
-    .smv-smart-header h3{
-
-      color:#f5fbfa;
-
-      font-size:20px;
-
-      margin:0;
-
-    }
-
-
-    .smv-score{
-
-      min-width:88px;
-
-      text-align:center;
-
-      padding:9px 12px;
-
-      border:
-
-        1px solid
-
-        rgba(17,224,207,.24);
-
-      border-radius:12px;
-
-      background:
-
-        rgba(0,220,205,.06);
-
-    }
-
-
-    .smv-score strong{
-
-      display:block;
-
-      color:#11e0cf;
-
-      font-size:21px;
-
-      line-height:1;
-
-    }
-
-
-    .smv-score span{
-
-      display:block;
-
-      color:#73918f;
-
-      font-size:8px;
-
-      margin-top:4px;
-
-    }
-
-
-    .smv-smart-grid{
-
-      display:grid;
-
-      grid-template-columns:
-        repeat(4,1fr);
-
-      gap:8px;
-
-    }
-
-
-    .smv-smart-grid > div{
-
-      padding:10px;
-
-      border:
-
-        1px solid
-
-        rgba(17,224,207,.10);
-
-      border-radius:9px;
-
-      background:
-
-        rgba(0,20,20,.5);
-
-    }
-
-
-    .smv-smart-grid small{
-
-      display:block;
-
-      color:#63817f;
-
-      font-size:8px;
-
-      font-weight:800;
-
-      letter-spacing:.7px;
-
-      margin-bottom:3px;
-
-    }
-
-
-    .smv-smart-grid b{
-
-      display:block;
-
-      color:#e9f7f6;
-
-      font-size:11px;
-
-    }
-
-
-    .smv-priority{
-
-      color:#ffc928!important;
-
-    }
-
-
-    .smv-smart-insights{
-
-      display:grid;
-
-      grid-template-columns:
-        repeat(3,1fr);
-
-      gap:8px;
-
-      margin-top:8px;
-
-    }
-
-
-    .smv-smart-insights > div{
-
-      padding:11px;
-
-      border-radius:9px;
-
-      background:
-
-        rgba(4,26,26,.65);
-
-      border:
-
-        1px solid
-
-        rgba(17,224,207,.08);
-
-    }
-
-
-    .smv-smart-insights span{
-
-      display:block;
-
-      font-size:17px;
-
-      margin-bottom:5px;
-
-    }
-
-
-    .smv-smart-insights strong{
-
-      display:block;
-
-      color:#cfe8e6;
-
-      font-size:10px;
-
-    }
-
-
-    .smv-smart-insights p{
-
-      color:#75918f;
-
-      font-size:9px;
-
-      margin-top:3px;
-
-      line-height:1.4;
-
-    }
-
-
-    .smv-smart-focus{
-
-      display:flex;
-
-      align-items:center;
-
-      justify-content:space-between;
-
-      gap:15px;
-
-      margin-top:8px;
-
-      padding:10px 12px;
-
-      border-radius:9px;
-
-      background:
-
-        linear-gradient(
-          90deg,
-          rgba(17,224,207,.08),
-          rgba(17,224,207,.025)
-        );
-
-      border-left:
-        2px solid #11e0cf;
-
-    }
-
-
-    .smv-smart-focus span{
-
-      color:#5e7c7a;
-
-      font-size:8px;
-
-      font-weight:900;
-
-      letter-spacing:.8px;
-
-    }
-
-
-    .smv-smart-focus strong{
-
-      color:#cfeceb;
-
-      font-size:9px;
-
-      text-align:right;
-
-    }
-
-
-    /* -----------------------------------------------
-       SUCCESS
-    ----------------------------------------------- */
-
-    .smv-success-box{
-
-      display:flex;
-
-      align-items:flex-start;
-
-      gap:13px;
-
-    }
-
-
-    .smv-success-icon{
-
-      width:34px;
-
-      height:34px;
-
-      flex:none;
-
-      border-radius:50%;
-
-      display:grid;
-
-      place-items:center;
-
-      background:#bbf7d0;
-
-      color:#15803d;
-
-      font-weight:900;
-
-    }
-
-
-    .smv-success-content{
-
-      display:flex;
-
-      flex-direction:column;
-
-      gap:4px;
-
-    }
-
-
-    .smv-success-content > strong{
-
-      color:#15803d;
-
-      font-size:15px;
-
-    }
-
-
-    .smv-success-content > span{
-
-      color:#3f6f53;
-
-      font-size:12px;
-
-    }
-
-
-    .smv-reference{
-
-      margin-top:4px;
-
-      color:#4d765c;
-
-      font-size:11px;
-
-    }
-
-
-    .smv-reference b{
-
-      color:#15803d;
-
-      letter-spacing:.5px;
-
-    }
-
-
-    .smv-success-actions{
-
-      display:flex;
-
-      flex-wrap:wrap;
-
-      gap:7px;
-
-      margin-top:8px;
-
-    }
-
-
-    .smv-whatsapp-btn,
-    .smv-copy-btn{
-
-      border-radius:8px;
-
-      padding:8px 11px;
-
-      font-size:10px;
-
-      font-weight:800;
-
-      cursor:pointer;
-
-      text-decoration:none;
-
-    }
-
-
-    .smv-whatsapp-btn{
-
-      background:#15803d;
-
-      color:#fff;
-
-    }
-
-
-    .smv-copy-btn{
-
-      border:
-        1px solid
-
-        rgba(21,128,61,.35);
-
-      background:#fff;
-
-      color:#15803d;
-
-    }
-
-
-    /* -----------------------------------------------
-       DRAFT
-    ----------------------------------------------- */
-
-    .smv-draft-notice{
-
-      display:flex;
-
-      align-items:center;
-
-      justify-content:space-between;
-
-      gap:10px;
-
-      padding:9px 11px;
-
-      margin-bottom:12px;
-
-      border:
-
-        1px solid
-
-        rgba(17,224,207,.15);
-
-      border-radius:9px;
-
-      background:
-
-        rgba(17,224,207,.045);
-
-      color:#83aaa8;
-
-      font-size:9px;
-
-    }
-
-
-    .smv-draft-notice button{
-
-      border:
-
-        1px solid
-
-        rgba(17,224,207,.25);
-
-      border-radius:6px;
-
-      background:transparent;
-
-      color:#11e0cf;
-
-      padding:4px 8px;
-
-      cursor:pointer;
-
-      font-size:9px;
-
-    }
-
-
-    /* -----------------------------------------------
-       MOBILE
-    ----------------------------------------------- */
-
-    @media(max-width:700px){
-
-      .smv-smart-result{
-
-        margin-left:14px;
-
-        margin-right:14px;
-
-        padding:13px;
-
-      }
-
-
-      .smv-smart-header{
-
-        align-items:flex-start;
-
-      }
-
-
-      .smv-smart-header h3{
-
-        font-size:17px;
-
-      }
-
-
-      .smv-smart-grid{
-
-        grid-template-columns:
-          repeat(2,1fr);
-
-      }
-
-
-      .smv-smart-insights{
-
-        grid-template-columns:1fr;
-
-      }
-
-
-      .smv-smart-focus{
-
-        display:block;
-
-      }
-
-
-      .smv-smart-focus strong{
-
-        display:block;
-
-        text-align:left;
-
-        margin-top:4px;
-
-      }
-
-    }
-
-
-    @media(max-width:430px){
-
-      .smv-smart-grid{
-
-        grid-template-columns:1fr;
-
-      }
-
-
-      .smv-smart-header{
-
-        flex-direction:column;
-
-      }
-
-
-      .smv-score{
-
-        width:100%;
-
-      }
-
-    }
-
-  `;
-
-
-  document.head.appendChild(
-    style
-  );
-
 }
 
 
 // =====================================================
-// GLOBAL JAVASCRIPT ERROR LOG
+// GLOBAL ERROR LOG
 // =====================================================
 
 window.addEventListener(
   "error",
-  function (event) {
+  function (
+    event
+  ) {
 
     console.error(
       "WEBSITE ERROR:",
@@ -3706,7 +5405,9 @@ window.addEventListener(
 
 window.addEventListener(
   "unhandledrejection",
-  function (event) {
+  function (
+    event
+  ) {
 
     console.error(
       "UNHANDLED PROMISE ERROR:",
@@ -3715,172 +5416,6 @@ window.addEventListener(
 
   }
 );
-
-
-// =====================================================
-// FRIENDLY SUPABASE ERROR
-// =====================================================
-
-function getFriendlySupabaseError(
-  error
-) {
-
-  if (!error) {
-
-    return (
-      "Something went wrong. Please try again."
-    );
-
-  }
-
-
-  console.error(
-    "FULL SUPABASE ERROR:",
-    {
-      message:
-        error.message,
-
-      details:
-        error.details,
-
-      hint:
-        error.hint,
-
-      code:
-        error.code
-    }
-  );
-
-
-  const errorMessage =
-    String(
-      error.message ||
-      ""
-    ).toLowerCase();
-
-
-  const errorDetails =
-    String(
-      error.details ||
-      ""
-    ).toLowerCase();
-
-
-  const errorHint =
-    String(
-      error.hint ||
-      ""
-    ).toLowerCase();
-
-
-  const combined =
-    errorMessage +
-    " " +
-    errorDetails +
-    " " +
-    errorHint;
-
-
-  // -------------------------------------------------
-  // RLS / PERMISSION
-  // -------------------------------------------------
-
-  if (
-    combined.includes(
-      "row-level security"
-    ) ||
-    combined.includes(
-      "rls"
-    ) ||
-    combined.includes(
-      "permission denied"
-    ) ||
-    combined.includes(
-      "not allowed"
-    ) ||
-    combined.includes(
-      "violates row-level"
-    )
-  ) {
-
-    return (
-      "The enquiry could not be submitted because the website database permission needs attention. Please try again shortly."
-    );
-
-  }
-
-
-  // -------------------------------------------------
-  // CONSTRAINT
-  // -------------------------------------------------
-
-  if (
-    combined.includes(
-      "check constraint"
-    ) ||
-    combined.includes(
-      "violates check constraint"
-    )
-  ) {
-
-    return (
-      "The enquiry contains a database validation issue. Please check the entered details and try again."
-    );
-
-  }
-
-
-  // -------------------------------------------------
-  // NOT NULL
-  // -------------------------------------------------
-
-  if (
-    combined.includes(
-      "not-null"
-    ) ||
-    combined.includes(
-      "null value in column"
-    )
-  ) {
-
-    return (
-      "A required enquiry field is missing. Please complete the required fields and try again."
-    );
-
-  }
-
-
-  // -------------------------------------------------
-  // NETWORK
-  // -------------------------------------------------
-
-  if (
-    combined.includes(
-      "network"
-    ) ||
-    combined.includes(
-      "failed to fetch"
-    ) ||
-    combined.includes(
-      "fetch"
-    ) ||
-    combined.includes(
-      "timeout"
-    )
-  ) {
-
-    return (
-      "Please check your internet connection and try again."
-    );
-
-  }
-
-
-  return (
-    "We could not submit your enquiry right now. Please try again."
-  );
-
-}
 
 
 // =====================================================
@@ -3896,7 +5431,7 @@ console.log(
 );
 
 console.log(
-  "Smart Event Discovery Engine"
+  "AI EVENT PLANNER V1"
 );
 
 console.log(
@@ -3904,27 +5439,27 @@ console.log(
 );
 
 console.log(
-  "========================================"
+  "Mobile-safe enquiry submission: ACTIVE"
 );
 
 console.log(
-  "Smart search: ACTIVE"
+  "Smart matching: ACTIVE"
 );
 
 console.log(
-  "AI-style requirement analysis: ACTIVE"
+  "Budget intelligence: ACTIVE"
 );
 
 console.log(
-  "Draft protection: ACTIVE"
+  "Event checklist: ACTIVE"
 );
 
 console.log(
-  "Enquiry reference IDs: ACTIVE"
+  "Planning timeline: ACTIVE"
 );
 
 console.log(
-  "WhatsApp follow-up: ACTIVE"
+  "Local plan storage: ACTIVE"
 );
 
 console.log(
@@ -3936,16 +5471,18 @@ console.log(
 );
 
 
-if (supabaseClient) {
+if (
+  supabaseClient
+) {
 
   console.log(
-    "Supabase client: READY ✓"
+    "Supabase client: READY"
   );
 
 } else {
 
   console.error(
-    "Supabase client: NOT READY ✕"
+    "Supabase client: NOT READY"
   );
 
 }
