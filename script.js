@@ -512,3 +512,20 @@ function scrollToElement(id){const el=$(id);if(el)el.scrollIntoView({behavior:"s
 
 /* ================= EXPORT FOR DEBUGGING ================= */
 window.SMV = { generateAIEventPlan, renderAIPlan, getSavedPlan: readSavedPlan, getCurrentPlan: ()=>currentAIPlan };
+
+/* ================= CUSTOMER CTA ================= */
+(function setupFloatingWhatsApp(){
+  function mount(){
+    if(document.querySelector('.smv-whatsapp-float')) return;
+    const link=document.createElement('a');
+    link.className='smv-whatsapp-float';
+    link.href='https://wa.me/919958716688?text=Hi%20Select%20My%20Venue%2C%20I%20need%20help%20finding%20a%20venue.';
+    link.target='_blank';
+    link.rel='noopener';
+    link.setAttribute('aria-label','Chat with Select My Venue on WhatsApp');
+    link.innerHTML='<span class="smv-whatsapp-float-icon">◉</span><span>Chat on WhatsApp</span>';
+    document.body.appendChild(link);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mount,{once:true});
+  else mount();
+})();
