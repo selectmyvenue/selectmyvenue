@@ -3099,3 +3099,42 @@ window.SelectMyVenue = {
 console.log(
   "Select My Venue — website script loaded."
 );
+
+
+/* =========================================================
+   SELECT MY VENUE — V3 CUSTOMER-FIRST BRAND LAYER
+   Non-destructive: keeps existing forms, planner and Supabase logic.
+   ========================================================= */
+(function(){
+  function setupBrandExperience(){
+    const heroTitle=document.querySelector('.hero h1');
+    const heroText=document.querySelector('.hero-text');
+    if(heroTitle){ heroTitle.innerHTML='Find a venue that <span>fits your event.</span>'; }
+    if(heroText){ heroText.textContent='Tell Select My Venue what matters to you. We help you discover suitable venues around your event, your location, your guests and your priorities — without the endless search.'; }
+
+    const enquiryTitle=document.querySelector('.enquiry-section .section-heading h2');
+    const enquiryCopy=document.querySelector('.enquiry-section .section-heading>p');
+    if(enquiryTitle){ enquiryTitle.innerHTML='Your event. Your needs. <span>We’ll help find the venue.</span>'; }
+    if(enquiryCopy){ enquiryCopy.textContent='Share your requirements once. Select My Venue uses them to understand what matters to you and help identify suitable venue options.'; }
+
+    const contactHeading=document.querySelector('.contact-section h2');
+    const contactCopy=document.querySelector('.contact-section>p');
+    if(contactHeading){ contactHeading.innerHTML='Need help finding the <span>right venue?</span>'; }
+    if(contactCopy){ contactCopy.textContent='Talk to Select My Venue. Whether you are planning an event or simply exploring options, our team is here to help you move forward with confidence.'; }
+  }
+
+  function addBrandMicrocopy(){
+    const section=document.querySelector('.enquiry-section');
+    if(!section || section.querySelector('.smv-brand-note')) return;
+    const note=document.createElement('div');
+    note.className='smv-brand-note';
+    note.textContent='Select My Venue • Customer-first venue discovery • Built for your event';
+    const form=section.querySelector('.form-card');
+    if(form) form.insertAdjacentElement('afterend',note);
+  }
+
+  document.addEventListener('DOMContentLoaded',function(){
+    setupBrandExperience();
+    addBrandMicrocopy();
+  });
+})();
