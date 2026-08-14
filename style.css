@@ -392,30 +392,208 @@ body{font-size:15px}
 }
 
 /* =========================================================
-   SELECT MY VENUE — V3 CUSTOMER-FIRST BRAND POLISH
-   ========================================================= */
-:root{--brand-teal:#19d8bd;--brand-deep:#021613;--brand-gold:#f3c84b}
-body{font-size:15px}
-.site-header{box-shadow:0 8px 30px rgba(0,0,0,.16)}
-.brand img{filter:drop-shadow(0 8px 20px rgba(25,216,189,.12))}
-.hero-copy{max-width:780px}
-.hero h1{max-width:780px;text-wrap:balance}
-.hero-text{max-width:650px;color:#b6d0cc}
-.enquiry-section{scroll-margin-top:92px}
-.enquiry-section .form-card{box-shadow:0 25px 75px rgba(0,0,0,.24),0 0 0 1px rgba(25,216,189,.025)}
-.enquiry-section .section-heading h2 span{color:var(--brand-teal)}
-.contact-grid{align-items:stretch}
-.contact-card{min-height:198px;display:flex;flex-direction:column;justify-content:flex-start;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease,background .22s ease}
-.contact-card:hover{transform:translateY(-5px);border-color:rgba(25,216,189,.52);box-shadow:0 20px 48px rgba(0,0,0,.24)}
-.contact-card b,.contact-card strong,.contact-card span,.contact-card small{position:relative;z-index:1}
-.contact-card a{color:inherit}
-.smv-floating-whatsapp{position:fixed;right:22px;bottom:22px;z-index:2500;display:flex;align-items:center;gap:10px;min-width:184px;padding:11px 14px;border:1px solid rgba(25,216,189,.38);border-radius:999px;background:linear-gradient(135deg,rgba(6,58,50,.97),rgba(2,30,27,.97));box-shadow:0 18px 45px rgba(0,0,0,.32),0 0 28px rgba(25,216,189,.08);color:#e9fbf8;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
-.smv-floating-whatsapp:hover{transform:translateY(-3px) scale(1.015);border-color:rgba(25,216,189,.68);box-shadow:0 22px 52px rgba(0,0,0,.36),0 0 34px rgba(25,216,189,.14)}
-.smv-wa-icon{width:38px;height:38px;display:grid;place-items:center;flex:0 0 38px;border-radius:50%;background:var(--brand-teal);color:#01221d;font-size:21px;font-weight:900}
+   SELECT MY VENUE — FINAL PRODUCTION / CUSTOMER-FIRST POLISH
+   Appended overrides only. Existing HTML + JS IDs/classes preserved.
+========================================================= */
+
+:root{
+  --smv-glow:rgba(25,216,189,.18);
+  --smv-gold-soft:rgba(243,200,75,.12);
+}
+
+.hero-actions{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:20px;
+}
+.hero-about-btn{min-height:42px;padding:0 16px}
+.hero-trust-link{
+  color:#b7d4d0;
+  font-size:11px;
+  font-weight:800;
+  padding:10px 2px;
+  transition:.2s ease;
+}
+.hero-trust-link:hover{color:var(--teal);transform:translateX(2px)}
+
+.popular-heading-row{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:18px;
+}
+.popular-title{
+  margin-top:8px;
+  font-size:clamp(28px,3vw,42px);
+}
+.popular-title span{color:var(--teal)}
+.popular-subtitle{
+  margin-top:7px;
+  max-width:560px;
+  font-size:12px;
+  line-height:1.65;
+}
+
+.about-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:24px;
+}
+.about-actions .primary-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+}
+
+.contact-card{
+  cursor:pointer;
+}
+.contact-card:focus-visible,
+.secondary-btn:focus-visible,
+.primary-btn:focus-visible,
+.hero-trust-link:focus-visible,
+.nav-cta:focus-visible{
+  outline:2px solid var(--teal);
+  outline-offset:3px;
+}
+
+.smv-floating-whatsapp{
+  position:fixed;
+  right:22px;
+  bottom:22px;
+  z-index:2500;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:174px;
+  padding:10px 14px 10px 10px;
+  border:1px solid rgba(25,216,189,.42);
+  border-radius:999px;
+  background:linear-gradient(145deg,rgba(6,48,42,.97),rgba(2,28,25,.97));
+  color:#eafff9;
+  box-shadow:0 16px 42px rgba(0,0,0,.34),0 0 0 1px rgba(25,216,189,.04);
+  backdrop-filter:blur(14px);
+  text-decoration:none;
+  transition:.22s ease;
+}
+.smv-floating-whatsapp:hover{
+  transform:translateY(-3px);
+  border-color:rgba(25,216,189,.72);
+  box-shadow:0 20px 48px rgba(0,0,0,.4),0 0 30px rgba(25,216,189,.12);
+}
+.smv-wa-icon{
+  width:40px;height:40px;
+  display:grid;place-items:center;
+  flex:0 0 40px;
+  border-radius:50%;
+  background:linear-gradient(145deg,#1bd9c0,#0fbca7);
+  color:#00231d;
+  font-size:20px;
+  font-weight:900;
+}
 .smv-wa-copy{display:flex;flex-direction:column;line-height:1.15}
-.smv-wa-copy strong{font-size:12px;color:#fff}
-.smv-wa-copy small{margin-top:3px;color:#8fc1b9;font-size:9px;font-weight:700}
-.smv-wa-pulse{position:absolute;left:10px;top:10px;width:8px;height:8px;border-radius:50%;background:#7af3dd;box-shadow:0 0 0 0 rgba(122,243,221,.55);animation:smvPulse 2.2s infinite}
-@keyframes smvPulse{0%{box-shadow:0 0 0 0 rgba(122,243,221,.5)}70%{box-shadow:0 0 0 9px rgba(122,243,221,0)}100%{box-shadow:0 0 0 0 rgba(122,243,221,0)}}
-.smv-brand-note{margin:10px auto 0;max-width:620px;text-align:center;color:#789f99;font-size:10px;letter-spacing:.02em}
-@media(max-width:620px){.smv-floating-whatsapp{right:14px;bottom:14px;min-width:0;width:54px;height:54px;padding:0;justify-content:center;border-radius:50%}.smv-wa-copy{display:none}.smv-wa-icon{width:42px;height:42px;flex-basis:42px}.smv-wa-pulse{left:5px;top:5px}.contact-card{min-height:172px}}
+.smv-wa-copy strong{font-size:11px;color:#f2fffc}
+.smv-wa-copy small{margin-top:3px;font-size:9px;color:#8db9b3}
+.smv-wa-pulse{
+  position:absolute;
+  left:6px;top:6px;
+  width:48px;height:48px;
+  border:1px solid rgba(25,216,189,.42);
+  border-radius:50%;
+  animation:smvPulse 2.2s ease-out infinite;
+  pointer-events:none;
+}
+@keyframes smvPulse{
+  0%{transform:scale(.7);opacity:.75}
+  70%,100%{transform:scale(1.35);opacity:0}
+}
+
+.feature-card,
+.ai-result-card,
+.event-card,
+.contact-card{
+  will-change:transform;
+}
+
+.enquiry-section{
+  position:relative;
+}
+.enquiry-section::after{
+  content:"";
+  position:absolute;
+  inset:28px 0 auto;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(25,216,189,.18),transparent);
+  pointer-events:none;
+}
+
+.form-card{
+  box-shadow:0 28px 80px rgba(0,0,0,.24);
+}
+.form-submit{
+  background:linear-gradient(135deg,#20e0c5,#0fc6ad);
+  box-shadow:0 12px 30px rgba(25,216,189,.16);
+}
+
+.planner-summary-box{
+  background:
+    radial-gradient(circle at 100% 0%,rgba(25,216,189,.08),transparent 35%),
+    rgba(1,20,18,.32);
+}
+
+.ai-final-card{
+  box-shadow:0 18px 55px rgba(0,0,0,.18);
+}
+
+@media(max-width:820px){
+  .popular-heading-row{
+    display:block;
+  }
+  .popular-heading-row .secondary-btn{
+    margin-top:14px;
+  }
+  .hero-actions{
+    gap:8px;
+  }
+  .smv-floating-whatsapp{
+    right:16px;
+    bottom:16px;
+    min-width:0;
+    width:54px;
+    height:54px;
+    padding:0;
+    justify-content:center;
+  }
+  .smv-wa-copy{display:none}
+  .smv-wa-icon{
+    width:42px;height:42px;
+    flex-basis:42px;
+  }
+  .smv-wa-pulse{
+    left:3px;top:3px;width:48px;height:48px;
+  }
+}
+@media(max-width:620px){
+  .hero-actions{
+    align-items:stretch;
+    flex-direction:column;
+  }
+  .hero-about-btn{
+    width:max-content;
+  }
+  .hero-trust-link{
+    padding-left:2px;
+  }
+  .about-actions{
+    flex-direction:column;
+  }
+  .about-actions .primary-btn,
+  .about-actions .secondary-btn{
+    width:100%;
+  }
+}
