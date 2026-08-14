@@ -478,3 +478,424 @@ body{font-size:15px}
   .floating-whatsapp-text{display:none}
   .floating-whatsapp-icon{width:38px;height:38px}
 }
+
+/* =========================================================
+   AUTO ENQUIRY POPUP
+   Select My Venue
+========================================================= */
+
+.enquiry-popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(3, 15, 16, 0.72);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+
+.enquiry-popup-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+.enquiry-popup {
+  position: relative;
+
+  width: min(620px, 100%);
+
+  max-height: calc(100vh - 40px);
+
+  overflow-y: auto;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10, 36, 36, 0.98),
+      rgba(5, 24, 25, 0.98)
+    );
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.48),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+
+  transform: translateY(20px) scale(0.97);
+
+  transition:
+    transform 0.35s ease;
+
+  scrollbar-width: thin;
+}
+
+
+.enquiry-popup-overlay.show .enquiry-popup {
+  transform: translateY(0) scale(1);
+}
+
+
+.popup-content {
+  padding: 38px 40px 30px;
+}
+
+
+.popup-close {
+  position: absolute;
+
+  top: 16px;
+  right: 18px;
+
+  width: 36px;
+  height: 36px;
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.06);
+
+  color: rgba(255,255,255,0.75);
+
+  font-size: 25px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.popup-close:hover {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+
+.popup-badge {
+  display: inline-flex;
+
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 12px;
+
+  padding: 7px 12px;
+
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.06);
+
+  border: 1px solid rgba(255,255,255,0.09);
+
+  color: #d7b86a;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.2px;
+}
+
+
+.popup-content h2 {
+  margin: 0;
+
+  max-width: 500px;
+
+  color: #fff;
+
+  font-size: clamp(28px, 4vw, 40px);
+
+  line-height: 1.08;
+
+  letter-spacing: -1px;
+}
+
+
+.popup-content h2 span {
+  display: block;
+
+  color: #d7b86a;
+}
+
+
+.popup-subtitle {
+  max-width: 510px;
+
+  margin: 14px 0 25px;
+
+  color: rgba(255,255,255,0.68);
+
+  font-size: 14px;
+
+  line-height: 1.65;
+}
+
+
+.popup-form-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+
+.popup-field {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+
+.popup-field label {
+  color: rgba(255,255,255,0.58);
+
+  font-size: 10px;
+
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+
+.popup-field input,
+.popup-field select {
+  width: 100%;
+
+  min-height: 48px;
+
+  padding: 0 14px;
+
+  border-radius: 11px;
+
+  border: 1px solid rgba(255,255,255,0.10);
+
+  background: rgba(255,255,255,0.055);
+
+  color: #fff;
+
+  outline: none;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.popup-field input::placeholder {
+  color: rgba(255,255,255,0.35);
+}
+
+
+.popup-field select option {
+  color: #111;
+  background: #fff;
+}
+
+
+.popup-field input:focus,
+.popup-field select:focus {
+  border-color: rgba(215,184,106,0.7);
+
+  background: rgba(255,255,255,0.08);
+
+  box-shadow:
+    0 0 0 3px rgba(215,184,106,0.08);
+}
+
+
+.popup-submit-btn {
+  width: 100%;
+
+  min-height: 52px;
+
+  margin-top: 20px;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #d7b86a,
+      #b8954b
+    );
+
+  color: #071b1b;
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 900;
+
+  letter-spacing: 0.2px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 30px rgba(215,184,106,0.18);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.popup-submit-btn span {
+  margin-left: 6px;
+
+  font-size: 17px;
+}
+
+
+.popup-submit-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 35px rgba(215,184,106,0.26);
+}
+
+
+.popup-submit-btn:active {
+  transform: translateY(0);
+}
+
+
+.popup-trust {
+  margin: 12px 0 0;
+
+  text-align: center;
+
+  color: rgba(255,255,255,0.42);
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+
+.popup-later {
+  display: block;
+
+  margin: 14px auto 0;
+
+  padding: 5px 10px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: rgba(255,255,255,0.42);
+
+  font-family: inherit;
+
+  font-size: 11px;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease;
+}
+
+
+.popup-later:hover {
+  color: rgba(255,255,255,0.78);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 640px) {
+
+  .enquiry-popup-overlay {
+    align-items: flex-end;
+
+    padding: 10px;
+  }
+
+
+  .enquiry-popup {
+    width: 100%;
+
+    max-height: calc(100vh - 20px);
+
+    border-radius: 22px 22px 18px 18px;
+  }
+
+
+  .popup-content {
+    padding: 32px 20px 22px;
+  }
+
+
+  .popup-content h2 {
+    font-size: 28px;
+  }
+
+
+  .popup-subtitle {
+    font-size: 13px;
+
+    margin-bottom: 20px;
+  }
+
+
+  .popup-form-grid {
+    grid-template-columns: 1fr;
+
+    gap: 12px;
+  }
+
+
+  .popup-field input,
+  .popup-field select {
+    min-height: 46px;
+  }
+
+
+  .popup-submit-btn {
+    margin-top: 17px;
+  }
+
+}
+
+
+/* Prevent background scrolling while popup is open */
+
+body.popup-open {
+  overflow: hidden;
+}
