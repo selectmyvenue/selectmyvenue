@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -390,6 +391,353 @@
     </span>
 
   </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     FULL CUSTOMER ENQUIRY
+     HIGH-PRIORITY LEAD SECTION
+====================================================== -->
+
+<section
+  class="enquiry-section"
+  id="enquiry"
+>
+
+
+  <div class="section-heading">
+
+    <div>
+
+      <div class="section-kicker">
+        CUSTOMER ENQUIRY
+      </div>
+
+
+      <h2>
+        Tell us what you're
+        <span>looking for.</span>
+      </h2>
+
+    </div>
+
+
+    <p>
+
+      Share your requirements once. Our smart planning
+      system can use your event information to help our
+      team understand exactly what you need.
+
+    </p>
+
+  </div>
+
+
+
+  <!-- ===================================================
+       CUSTOMER FORM
+  ==================================================== -->
+
+  <form
+    class="form-card"
+    id="customerEnquiryForm"
+    novalidate
+  >
+
+
+    <!-- CUSTOMER DETAILS -->
+
+    <div class="form-section-title">
+      CUSTOMER DETAILS
+    </div>
+
+
+    <div class="form-grid four">
+
+
+      <div class="field">
+
+        <label for="customerName">
+          CUSTOMER NAME *
+        </label>
+
+        <input
+          id="customerName"
+          type="text"
+          placeholder="Enter your name"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerMobile">
+          MOBILE NUMBER *
+        </label>
+
+        <input
+          id="customerMobile"
+          type="tel"
+          inputmode="numeric"
+          maxlength="10"
+          placeholder="10-digit mobile number"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerEmail">
+          EMAIL
+        </label>
+
+        <input
+          id="customerEmail"
+          type="email"
+          placeholder="your@email.com"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerLocation">
+          CITY / LOCATION *
+        </label>
+
+        <input
+          id="customerLocation"
+          type="text"
+          placeholder="Delhi, Gurgaon, Noida..."
+          required
+        >
+
+      </div>
+
+    </div>
+
+
+
+    <!-- EVENT DETAILS -->
+
+    <div class="form-section-title">
+      EVENT DETAILS
+    </div>
+
+
+    <div class="form-grid five">
+
+
+      <div class="field">
+
+        <label for="customerEventType">
+          EVENT TYPE *
+        </label>
+
+
+        <select
+          id="customerEventType"
+          required
+        >
+
+          <option value="">
+            Select event
+          </option>
+
+          <option>Wedding</option>
+          <option>Engagement</option>
+          <option>Birthday</option>
+          <option>Anniversary</option>
+          <option>Corporate Event</option>
+          <option>Reception</option>
+          <option>Party</option>
+          <option>Baby Shower</option>
+          <option>Kitty Party</option>
+          <option>Other</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerEventDate">
+          EVENT DATE
+        </label>
+
+        <input
+          id="customerEventDate"
+          type="date"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerGuests">
+          NUMBER OF GUESTS
+        </label>
+
+        <input
+          id="customerGuests"
+          type="number"
+          min="1"
+          placeholder="e.g. 300"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerBudget">
+          BUDGET / PERSON
+        </label>
+
+        <input
+          id="customerBudget"
+          type="number"
+          min="0"
+          placeholder="₹ per person"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerFood">
+          FOOD PREFERENCE
+        </label>
+
+
+        <select id="customerFood">
+
+          <option value="">
+            Select preference
+          </option>
+
+          <option>Veg</option>
+          <option>Non-Veg</option>
+          <option>Both</option>
+          <option>Jain</option>
+          <option>Not Specified</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- AI PLANNER SUMMARY -->
+
+    <div class="planner-summary-box">
+
+      <div class="form-section-title">
+        🤖 AI PLANNER INFORMATION
+      </div>
+
+
+      <p>
+        Your AI event plan can automatically be attached
+        to this enquiry so our team can understand your
+        event priorities before contacting you.
+      </p>
+
+
+      <div
+        id="plannerSummaryPreview"
+        class="planner-summary-preview"
+      >
+        No AI event plan generated yet.
+      </div>
+
+
+      <button
+        type="button"
+        class="secondary-btn"
+        id="refreshPlannerSummary"
+      >
+        ↻ Update AI Plan Summary
+      </button>
+
+    </div>
+
+
+
+    <!-- REQUIREMENTS -->
+
+    <div class="requirements-row">
+
+
+      <div class="field">
+
+        <label for="customerRequirements">
+          OTHER REQUIREMENTS
+        </label>
+
+
+        <textarea
+          id="customerRequirements"
+          rows="4"
+          placeholder="Decoration, parking, rooms, catering, special requests, etc."
+        ></textarea>
+
+      </div>
+
+
+      <div class="submit-wrap">
+
+        <input
+          type="hidden"
+          id="leadSource"
+          value="Website"
+        >
+
+
+        <button
+          class="primary-btn form-submit"
+          id="customerEnquirySubmit"
+          type="submit"
+        >
+          Submit Enquiry →
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- CONFIRMATION / ERROR -->
+
+    <p
+      id="customerEnquiryMessage"
+      class="form-message"
+      role="alert"
+      aria-live="polite"
+    ></p>
+
+
+    <p class="form-note">
+
+      Your information is used only to understand your
+      venue requirements and contact you regarding suitable options.
+
+    </p>
+
+
+  </form>
 
 </section>
 
@@ -1491,13 +1839,16 @@
       >
 
         <label>
+
           <input
             type="checkbox"
             disabled
           >
+
           <span>
             Generate your event plan first
           </span>
+
         </label>
 
       </div>
@@ -1541,352 +1892,6 @@
 
 
   </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     FULL CUSTOMER ENQUIRY
-====================================================== -->
-
-<section
-  class="enquiry-section"
-  id="enquiry"
->
-
-
-  <div class="section-heading">
-
-    <div>
-
-      <div class="section-kicker">
-        CUSTOMER ENQUIRY
-      </div>
-
-
-      <h2>
-        Tell us what you're
-        <span>looking for.</span>
-      </h2>
-
-    </div>
-
-
-    <p>
-
-      Share your requirements once. Our smart planning
-      system can use your event information to help our
-      team understand exactly what you need.
-
-    </p>
-
-  </div>
-
-
-
-  <!-- ===================================================
-       CUSTOMER FORM
-  ==================================================== -->
-
-  <form
-    class="form-card"
-    id="customerEnquiryForm"
-    novalidate
-  >
-
-
-    <!-- CUSTOMER DETAILS -->
-
-    <div class="form-section-title">
-      CUSTOMER DETAILS
-    </div>
-
-
-    <div class="form-grid four">
-
-
-      <div class="field">
-
-        <label for="customerName">
-          CUSTOMER NAME *
-        </label>
-
-        <input
-          id="customerName"
-          type="text"
-          placeholder="Enter your name"
-          required
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerMobile">
-          MOBILE NUMBER *
-        </label>
-
-        <input
-          id="customerMobile"
-          type="tel"
-          inputmode="numeric"
-          maxlength="10"
-          placeholder="10-digit mobile number"
-          required
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerEmail">
-          EMAIL
-        </label>
-
-        <input
-          id="customerEmail"
-          type="email"
-          placeholder="your@email.com"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerLocation">
-          CITY / LOCATION *
-        </label>
-
-        <input
-          id="customerLocation"
-          type="text"
-          placeholder="Delhi, Gurgaon, Noida..."
-          required
-        >
-
-      </div>
-
-    </div>
-
-
-
-    <!-- EVENT DETAILS -->
-
-    <div class="form-section-title">
-      EVENT DETAILS
-    </div>
-
-
-    <div class="form-grid five">
-
-
-      <div class="field">
-
-        <label for="customerEventType">
-          EVENT TYPE *
-        </label>
-
-
-        <select
-          id="customerEventType"
-          required
-        >
-
-          <option value="">
-            Select event
-          </option>
-
-          <option>Wedding</option>
-          <option>Engagement</option>
-          <option>Birthday</option>
-          <option>Anniversary</option>
-          <option>Corporate Event</option>
-          <option>Reception</option>
-          <option>Party</option>
-          <option>Baby Shower</option>
-          <option>Kitty Party</option>
-          <option>Other</option>
-
-        </select>
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerEventDate">
-          EVENT DATE
-        </label>
-
-        <input
-          id="customerEventDate"
-          type="date"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerGuests">
-          NUMBER OF GUESTS
-        </label>
-
-        <input
-          id="customerGuests"
-          type="number"
-          min="1"
-          placeholder="e.g. 300"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerBudget">
-          BUDGET / PERSON
-        </label>
-
-        <input
-          id="customerBudget"
-          type="number"
-          min="0"
-          placeholder="₹ per person"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerFood">
-          FOOD PREFERENCE
-        </label>
-
-
-        <select id="customerFood">
-
-          <option value="">
-            Select preference
-          </option>
-
-          <option>Veg</option>
-          <option>Non-Veg</option>
-          <option>Both</option>
-          <option>Jain</option>
-          <option>Not Specified</option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- AI PLANNER SUMMARY -->
-
-    <div class="planner-summary-box">
-
-      <div class="form-section-title">
-        🤖 AI PLANNER INFORMATION
-      </div>
-
-
-      <p>
-        Your AI event plan can automatically be attached
-        to this enquiry so our team can understand your
-        event priorities before contacting you.
-      </p>
-
-
-      <div
-        id="plannerSummaryPreview"
-        class="planner-summary-preview"
-      >
-        No AI event plan generated yet.
-      </div>
-
-
-      <button
-        type="button"
-        class="secondary-btn"
-        id="refreshPlannerSummary"
-      >
-        ↻ Update AI Plan Summary
-      </button>
-
-    </div>
-
-
-
-    <!-- REQUIREMENTS -->
-
-    <div class="requirements-row">
-
-
-      <div class="field">
-
-        <label for="customerRequirements">
-          OTHER REQUIREMENTS
-        </label>
-
-
-        <textarea
-          id="customerRequirements"
-          rows="4"
-          placeholder="Decoration, parking, rooms, catering, special requests, etc."
-        ></textarea>
-
-      </div>
-
-
-      <div class="submit-wrap">
-
-        <input
-          type="hidden"
-          id="leadSource"
-          value="Website"
-        >
-
-
-        <button
-          class="primary-btn form-submit"
-          id="customerEnquirySubmit"
-          type="submit"
-        >
-          Submit Enquiry →
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- CONFIRMATION / ERROR -->
-
-    <p
-      id="customerEnquiryMessage"
-      class="form-message"
-      role="alert"
-      aria-live="polite"
-    ></p>
-
-
-    <p class="form-note">
-
-      Your information is used only to understand your
-      venue requirements and contact you regarding suitable options.
-
-    </p>
-
-
-  </form>
 
 </section>
 
@@ -2016,6 +2021,8 @@
   <div class="contact-grid">
 
 
+    <!-- EMAIL -->
+
     <a
       class="contact-card"
       href="mailto:support@selectmyvenue.com"
@@ -2037,6 +2044,9 @@
 
     </a>
 
+
+
+    <!-- CALL -->
 
     <a
       class="contact-card"
@@ -2060,11 +2070,14 @@
     </a>
 
 
+
+    <!-- WHATSAPP -->
+
     <a
       class="contact-card"
       href="https://wa.me/919958716688"
       target="_blank"
-      rel="noopener"
+      rel="noopener noreferrer"
     >
 
       <b>◉</b>
@@ -2084,11 +2097,14 @@
     </a>
 
 
+
+    <!-- WEBSITE -->
+
     <a
       class="contact-card"
       href="https://selectmyvenue.github.io/selectmyvenue/"
       target="_blank"
-      rel="noopener"
+      rel="noopener noreferrer"
     >
 
       <b>◎</b>
@@ -2199,7 +2215,7 @@
           <a
             href="https://wa.me/919958716688"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
           >
             WhatsApp
           </a>
@@ -2275,3 +2291,4 @@
 
 </body>
 </html>
+```
