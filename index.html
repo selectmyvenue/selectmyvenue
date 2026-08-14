@@ -2264,6 +2264,171 @@
   <span class="floating-whatsapp-text">Chat with us</span>
 </a>
 
+  <!-- =====================================================
+     AUTO ENQUIRY POPUP
+====================================================== -->
+
+<div
+  class="enquiry-popup-overlay"
+  id="enquiryPopup"
+  aria-hidden="true"
+>
+
+  <div
+    class="enquiry-popup"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="popupEnquiryTitle"
+  >
+
+    <button
+      type="button"
+      class="popup-close"
+      id="closeEnquiryPopup"
+      aria-label="Close enquiry form"
+    >
+      ×
+    </button>
+
+    <div class="popup-content">
+
+      <div class="popup-badge">
+        ✦ SMART VENUE DISCOVERY
+      </div>
+
+      <h2 id="popupEnquiryTitle">
+        Let's find the right
+        <span>venue for you.</span>
+      </h2>
+
+      <p class="popup-subtitle">
+        Tell us a few details and Select My Venue
+        will help you discover venues that fit your event.
+      </p>
+
+      <form
+        id="quickEnquiryForm"
+        class="quick-enquiry-form"
+      >
+
+        <div class="popup-form-grid">
+
+          <div class="popup-field">
+
+            <label for="popupCustomerName">
+              YOUR NAME
+            </label>
+
+            <input
+              id="popupCustomerName"
+              type="text"
+              placeholder="Enter your name"
+              autocomplete="name"
+              required
+            >
+
+          </div>
+
+
+          <div class="popup-field">
+
+            <label for="popupCustomerMobile">
+              MOBILE NUMBER
+            </label>
+
+            <input
+              id="popupCustomerMobile"
+              type="tel"
+              inputmode="numeric"
+              maxlength="10"
+              placeholder="10-digit mobile number"
+              autocomplete="tel"
+              required
+            >
+
+          </div>
+
+
+          <div class="popup-field">
+
+            <label for="popupEventType">
+              EVENT TYPE
+            </label>
+
+            <select
+              id="popupEventType"
+              required
+            >
+
+              <option value="">
+                Select event
+              </option>
+
+              <option>Wedding</option>
+              <option>Engagement</option>
+              <option>Birthday</option>
+              <option>Anniversary</option>
+              <option>Corporate Event</option>
+              <option>Reception</option>
+              <option>Party</option>
+              <option>Baby Shower</option>
+              <option>Kitty Party</option>
+              <option>Other</option>
+
+            </select>
+
+          </div>
+
+
+          <div class="popup-field">
+
+            <label for="popupLocation">
+              CITY / LOCATION
+            </label>
+
+            <input
+              id="popupLocation"
+              type="text"
+              placeholder="Delhi, Gurgaon, Noida..."
+              autocomplete="address-level2"
+              required
+            >
+
+          </div>
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="popup-submit-btn"
+        >
+          Find My Venue
+          <span>→</span>
+        </button>
+
+
+        <p class="popup-trust">
+          🔒 Your information is used only for your venue requirement.
+        </p>
+
+      </form>
+
+
+      <button
+        type="button"
+        class="popup-later"
+        id="popupMaybeLater"
+      >
+        Maybe later
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+  
 <!-- =====================================================
      TOAST
 ====================================================== -->
