@@ -216,3 +216,177 @@ p{color:var(--muted)}
   body{font-size:13px}.hero{padding-top:48px}.ai-badge{font-size:8px}.hero h1{font-size:clamp(38px,12vw,54px)}.search-card{grid-template-columns:1fr}.trust-strip{grid-template-columns:1fr}.event-grid{grid-template-columns:1fr 1fr}.event-card{min-height:145px}.feature-row{grid-template-columns:1fr}.feature-card:last-child{grid-column:auto}.planner-grid{grid-template-columns:1fr}.planner-actions{flex-direction:column}.planner-actions .primary-btn,.planner-actions .secondary-btn{width:100%}.budget-breakdown{grid-template-columns:1fr 1fr}.event-checklist{grid-template-columns:1fr}.timeline-list{grid-template-columns:1fr}.form-grid.four,.form-grid.five{grid-template-columns:1fr}.contact-grid{grid-template-columns:1fr}.footer-links{grid-template-columns:1fr 1fr}.footer-bottom{flex-direction:column}.ai-final-card h3{font-size:20px}
 }
 @media(max-width:390px){.event-grid{grid-template-columns:1fr}.footer-links{grid-template-columns:1fr}.hero h1{font-size:37px}}
+
+/* =========================================================
+   SELECT MY VENUE — CUSTOMER-FRIENDLY FINAL POLISH
+   Keeps the existing HTML unchanged.
+========================================================= */
+
+/* Main page flow: put the real customer enquiry immediately
+   after the hero/trust area, before Popular Events. */
+main{
+  display:flex;
+  flex-direction:column;
+}
+.hero{order:1}
+.trust-strip{order:2}
+.enquiry-section{order:3}
+.popular-section{order:4}
+.feature-row{order:5}
+.ai-planner-section{order:6}
+.about-section{order:7}
+.contact-section{order:8}
+
+/* Slightly larger, easier-to-read overall typography */
+body{font-size:15px}
+.section-kicker{font-size:11px}
+.field label,.planner-field label,.planner-extra label{font-size:10px}
+.field input,.field select,.planner-field input,.planner-field select{font-size:14px}
+.field input,.field select,.planner-field input,.planner-field select{height:54px}
+.primary-btn{font-size:14px;min-height:54px}
+.secondary-btn{font-size:13px;min-height:44px}
+
+/* Larger premium logo */
+.brand{width:220px;height:70px}
+.brand img{width:205px;max-height:66px}
+
+/* Hero: make the celebration image clearer and more prominent */
+.hero{min-height:720px;padding-top:82px}
+.hero::before{
+  background:
+    linear-gradient(90deg,rgba(1,18,16,.88) 0%,rgba(1,18,16,.66) 34%,rgba(1,18,16,.28) 67%,rgba(1,18,16,.48) 100%),
+    linear-gradient(180deg,rgba(1,18,16,.10),rgba(1,18,16,.54)),
+    url("https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=2400&q=92") center/cover no-repeat;
+}
+.hero::after{background:radial-gradient(circle at 78% 40%,rgba(25,216,189,.10),transparent 31%),linear-gradient(90deg,transparent 0%,rgba(0,0,0,.06) 100%)}
+.hero h1{font-size:clamp(48px,5.6vw,80px)}
+.hero-text{font-size:15px}
+
+/* Make the real enquiry feel like the main customer action */
+.enquiry-section{
+  padding-top:42px;
+  padding-bottom:48px;
+}
+.enquiry-section::before{
+  content:"START HERE • CUSTOMER ENQUIRY";
+  font-size:9px;
+  margin-bottom:12px;
+}
+.enquiry-section .section-heading{margin-bottom:18px}
+.enquiry-section .section-heading h2{font-size:clamp(32px,3.5vw,50px)}
+.form-card{padding:28px;border-radius:22px}
+.form-section-title{font-size:11px;margin-bottom:15px}
+.form-card .field input,.form-card .field select{height:54px;font-size:14px}
+.form-card .field label{font-size:10px}
+.form-note{font-size:10px}
+.form-submit{min-height:60px;font-size:15px}
+
+/* Popular Events: clearer image cards, less dark overlay */
+.popular-section{padding-top:36px}
+.event-grid{gap:16px}
+.event-card{min-height:185px;padding:20px 18px 18px}
+.event-card::after{background:linear-gradient(180deg,rgba(2,17,15,.02) 0%,rgba(2,17,15,.22) 38%,rgba(2,17,15,.78) 100%)}
+.event-card h3{font-size:18px;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.event-card p{font-size:11px;color:#d1e3df;text-shadow:0 2px 10px rgba(0,0,0,.55)}
+.event-symbol{width:38px;height:38px;font-size:15px;background:rgba(2,20,18,.34)}
+
+/* Give the feature cards a little more breathing room */
+.feature-card{min-height:300px;padding:28px}
+.feature-card h2{font-size:31px}
+.feature-card>p{font-size:13px}
+.check-list li{font-size:12px}
+
+/* AI planner remains functional, but visually secondary to enquiry */
+.ai-planner-section{padding-top:48px}
+.ai-planner-section .section-heading h2{font-size:clamp(30px,3.3vw,46px)}
+.planner-header strong{font-size:11px}
+.planner-status{font-size:10px}
+.planner-grid{gap:13px;padding:20px}
+.planner-extra{padding-left:20px;padding-right:20px}
+.planner-actions{padding:16px 20px}
+
+/* More attractive contact cards — simple, clean, premium */
+.contact-section{padding-top:58px;padding-bottom:74px}
+.contact-section>p{font-size:13px;max-width:620px}
+.contact-grid{gap:16px}
+.contact-card{
+  min-height:188px;
+  padding:22px;
+  border-radius:19px;
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(25,216,189,.12),transparent 38%),
+    linear-gradient(145deg,rgba(8,53,47,.95),rgba(3,28,25,.98));
+  box-shadow:0 14px 38px rgba(0,0,0,.16);
+}
+.contact-card::after{
+  content:"";
+  position:absolute;
+  right:-35px;
+  bottom:-45px;
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  border:1px solid rgba(25,216,189,.10);
+  pointer-events:none;
+}
+.contact-card b{
+  width:46px;
+  height:46px;
+  margin-bottom:16px;
+  border-radius:13px;
+  background:linear-gradient(145deg,rgba(25,216,189,.18),rgba(25,216,189,.05));
+  border:1px solid rgba(25,216,189,.18);
+  font-size:19px;
+}
+.contact-card strong{font-size:14px}
+.contact-card span{font-size:11px;color:#b3d3ce;margin-top:6px}
+.contact-card small{font-size:9px;margin-top:9px;color:#77a39d}
+
+/* Slightly larger footer presence */
+.site-footer{padding-bottom:4px}
+.footer-inner{padding-top:44px;padding-bottom:24px}
+.footer-link-group h4{font-size:11px}
+.footer-link-group a{font-size:11px}
+.footer-bottom{font-size:10px}
+.footer-final-logo{margin-top:28px}
+.footer-final-logo img{width:155px;opacity:.84}
+
+/* Desktop: keep the enquiry heading and action area prominent */
+@media(min-width:1121px){
+  .enquiry-section .section-heading{align-items:center}
+  .enquiry-section .section-heading>p{font-size:13px}
+}
+
+/* Tablet */
+@media(max-width:1120px){
+  .brand{width:200px}
+  .brand img{width:188px}
+  .event-card{min-height:175px}
+}
+
+/* Mobile */
+@media(max-width:820px){
+  .brand{width:175px;height:62px}
+  .brand img{width:170px;max-height:58px}
+  .hero{min-height:auto;padding-top:58px}
+  .hero h1{font-size:clamp(42px,10vw,62px)}
+  .hero-text{font-size:14px}
+  .enquiry-section{padding-top:34px}
+  .event-card{min-height:170px}
+  .contact-card{min-height:175px}
+}
+
+@media(max-width:620px){
+  body{font-size:14px}
+  .brand{width:160px}
+  .brand img{width:155px;max-height:55px}
+  .hero h1{font-size:clamp(38px,11.5vw,54px)}
+  .hero-text{font-size:13px}
+  .enquiry-section .section-heading h2{font-size:32px}
+  .form-card{padding:20px}
+  .event-card{min-height:160px}
+  .contact-card{min-height:165px}
+  .footer-final-logo img{width:145px}
+}
