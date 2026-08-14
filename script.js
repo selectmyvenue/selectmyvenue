@@ -3053,7 +3053,7 @@ document.addEventListener(
    FLOATING WHATSAPP — CUSTOMER-FIRST CTA
    ========================================================= */
 function setupFloatingWhatsApp(){
-  const number="919958716688";
+  const number="918368322256";
   const message="Hi Select My Venue! I am looking for a venue for my event. Please help me find suitable options.";
 
   // Prefer the floating WhatsApp button already present in index.html.
