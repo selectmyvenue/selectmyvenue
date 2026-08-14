@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", function () {
   setupScrollAnimations();
   setupFloatingWhatsApp();
   setupContactCardUX();
-  setupDateFields();
 
   console.log(
     "Select My Venue — exact HTML AI Planner initialized."
@@ -422,7 +421,7 @@ function setupAIEventPlanner() {
     saveButton.addEventListener("click", function () {
       if (!currentAIPlan) {
         showPlannerMessage(
-          "Create your Select My Venue event plan first.",
+          "Generate your event plan first.",
           "error"
         );
         return;
@@ -3050,23 +3049,6 @@ document.addEventListener(
   }
 );
 
-
-/* =========================================================
-   DATE UX — EVENT DATES SHOULD NOT DEFAULT TO THE PAST
-   ========================================================= */
-function setupDateFields() {
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, "0");
-  const dd = String(today.getDate()).padStart(2, "0");
-  const minDate = yyyy + "-" + mm + "-" + dd;
-
-  ["date", "plannerDate", "customerEventDate"].forEach(function(id){
-    const field = byId(id);
-    if (field) field.min = minDate;
-  });
-}
-
 /* =========================================================
    FLOATING WHATSAPP — CUSTOMER-FIRST CTA
    ========================================================= */
@@ -3085,7 +3067,6 @@ function setupFloatingWhatsApp(){
 function setupContactCardUX(){
   document.querySelectorAll(".contact-card").forEach(function(card){
     card.setAttribute("tabindex","0");
-    card.setAttribute("role","link");
     card.addEventListener("keydown",function(e){
       if(e.key!=="Enter" && e.key!==" ") return;
       const link=card.closest("a")||card.querySelector("a");
