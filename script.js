@@ -4635,6 +4635,7 @@ console.log(
 /* =========================================================
    SELECT MY VENUE — FINAL AI ASSISTANT
    FLOATING CUSTOMER ASSISTANT
+   CONNECTED TO SUPABASE AI
    ========================================================= */
 
 (function () {
@@ -4642,107 +4643,105 @@ console.log(
   "use strict";
 
   /* ---------------------------------------------------------
-     REMOVE ANY BROKEN / OLD AI ASSISTANT
+     REMOVE OLD / DUPLICATE AI WIDGETS
      --------------------------------------------------------- */
 
   function removeOldAIWidgets() {
 
-    /* Remove known old widget classes */
     document
       .querySelectorAll(
         ".smv-ai-chat-button, .smv-ai-chat-panel, #smvFinalAIAssistant"
       )
       .forEach(function (element) {
-        if (
-          element.id !== "smvFinalAIAssistant"
-        ) {
+
+        if (element.id !== "smvFinalAIAssistant") {
           element.remove();
         }
+
       });
 
     /*
-      Remove the broken assistant that was appearing
-      inside the enquiry section.
-
-      We identify it by its visible title rather than
-      relying on an unknown old class name.
+      Remove an older broken assistant if it was injected
+      somewhere inside the enquiry / planner area.
     */
-    const allElements =
-      document.querySelectorAll(
+
+    document
+      .querySelectorAll(
         "div, section, aside, article"
-      );
+      )
+      .forEach(function (element) {
 
-    allElements.forEach(function (element) {
-
-      if (
-        element.id === "smvFinalAIAssistant"
-      ) {
-        return;
-      }
-
-      const text =
-        (element.textContent || "")
-          .replace(/\s+/g, " ")
-          .trim();
-
-      if (
-        text.includes(
-          "Select My Venue AI Smart Event Assistant"
-        )
-      ) {
-
-        /*
-          Find the smallest sensible container.
-        */
-        let target = element;
-
-        while (
-          target.parentElement &&
-          target.parentElement !== document.body
-        ) {
-
-          const parentText =
-            (target.parentElement.textContent || "")
-              .replace(/\s+/g, " ")
-              .trim();
-
-          if (
-            parentText.length > 1800
-          ) {
-            break;
-          }
-
-          if (
-            target.parentElement.classList.contains(
-              "enquiry-section"
-            ) ||
-            target.parentElement.classList.contains(
-              "ai-planner-section"
-            )
-          ) {
-            break;
-          }
-
-          target = target.parentElement;
-        }
-
-        /*
-          Never remove the real enquiry section.
-        */
         if (
-          target.classList.contains(
-            "enquiry-section"
-          ) ||
-          target.classList.contains(
-            "ai-planner-section"
-          )
+          element.id === "smvFinalAIAssistant"
         ) {
           return;
         }
 
-        target.remove();
-      }
-    });
+        const text =
+          (element.textContent || "")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        if (
+          text.includes(
+            "Select My Venue AI Smart Event Assistant"
+          )
+        ) {
+
+          let target = element;
+
+          while (
+            target.parentElement &&
+            target.parentElement !== document.body
+          ) {
+
+            const parentText =
+              (target.parentElement.textContent || "")
+                .replace(/\s+/g, " ")
+                .trim();
+
+            if (
+              parentText.length > 1800
+            ) {
+              break;
+            }
+
+            if (
+              target.parentElement.classList.contains(
+                "enquiry-section"
+              ) ||
+              target.parentElement.classList.contains(
+                "ai-planner-section"
+              )
+            ) {
+              break;
+            }
+
+            target =
+              target.parentElement;
+          }
+
+          /*
+            Never remove the actual enquiry or
+            planner section.
+          */
+
+          if (
+            target.classList.contains(
+              "enquiry-section"
+            ) ||
+            target.classList.contains(
+              "ai-planner-section"
+            )
+          ) {
+            return;
+          }
+
+          target.remove();
+        }
+
+      });
+
   }
 
 
@@ -4768,7 +4767,9 @@ console.log(
 
     wrapper.innerHTML = `
 
-      <!-- AI BUTTON -->
+      <!-- =====================================================
+           FLOATING AI BUTTON
+           ===================================================== -->
 
       <button
         type="button"
@@ -4792,13 +4793,17 @@ console.log(
       </button>
 
 
-      <!-- AI PANEL -->
+      <!-- =====================================================
+           AI PANEL
+           ===================================================== -->
 
       <div
         id="smvFinalAIPanel"
         class="smv-final-ai-panel"
         aria-hidden="true"
       >
+
+        <!-- HEADER -->
 
         <div class="smv-final-ai-header">
 
@@ -4826,10 +4831,14 @@ console.log(
         </div>
 
 
+        <!-- CONVERSATION -->
+
         <div
           id="smvFinalAIConversation"
           class="smv-final-ai-conversation"
         >
+
+          <!-- WELCOME -->
 
           <div class="smv-final-ai-message ai">
 
@@ -4849,45 +4858,55 @@ console.log(
                 and guide you to the right next step.
               </p>
 
+              <p>
+                Tell me what you're planning —
+                wedding, birthday, corporate event,
+                engagement or any other occasion.
+              </p>
+
             </div>
 
           </div>
 
 
+          <!-- QUICK QUESTIONS -->
+
           <div class="smv-final-ai-suggestions">
 
             <button
               type="button"
-              data-ai-action="venue"
+              data-ai-question="I need help choosing a venue."
             >
-              🏛️ Venue type
+              🏛️ Choose a venue
             </button>
 
             <button
               type="button"
-              data-ai-action="budget"
+              data-ai-question="Help me plan my event budget."
             >
-              💰 Budget
+              💰 Plan my budget
             </button>
 
             <button
               type="button"
-              data-ai-action="checklist"
+              data-ai-question="What should I check before booking a venue?"
             >
               ✅ Venue checklist
             </button>
 
             <button
               type="button"
-              data-ai-action="planner"
+              data-ai-question="Help me plan my complete event."
             >
-              ✦ Start AI Planner
+              ✦ Plan my event
             </button>
 
           </div>
 
         </div>
 
+
+        <!-- INPUT -->
 
         <form
           id="smvFinalAIForm"
@@ -4898,11 +4917,13 @@ console.log(
             id="smvFinalAIInput"
             type="text"
             autocomplete="off"
+            maxlength="600"
             placeholder="Ask about your event..."
             aria-label="Ask Select My Venue AI"
           >
 
           <button
+            id="smvFinalAISend"
             type="submit"
             aria-label="Send message"
           >
@@ -4915,7 +4936,9 @@ console.log(
 
     `;
 
-    document.body.appendChild(wrapper);
+    document.body.appendChild(
+      wrapper
+    );
 
 
     /* ---------------------------------------------------------
@@ -4947,6 +4970,11 @@ console.log(
         "smvFinalAIInput"
       );
 
+    const sendButton =
+      document.getElementById(
+        "smvFinalAISend"
+      );
+
     const conversation =
       document.getElementById(
         "smvFinalAIConversation"
@@ -4954,12 +4982,14 @@ console.log(
 
 
     /* ---------------------------------------------------------
-       OPEN / CLOSE
+       OPEN ASSISTANT
        --------------------------------------------------------- */
 
     function openAssistant() {
 
-      panel.classList.add("open");
+      panel.classList.add(
+        "open"
+      );
 
       panel.setAttribute(
         "aria-hidden",
@@ -4971,20 +5001,29 @@ console.log(
         "true"
       );
 
-      setTimeout(function () {
+      setTimeout(
+        function () {
 
-        if (input) {
-          input.focus();
-        }
+          if (input) {
+            input.focus();
+          }
 
-      }, 100);
+        },
+        100
+      );
 
     }
 
+
+    /* ---------------------------------------------------------
+       CLOSE ASSISTANT
+       --------------------------------------------------------- */
 
     function closeAssistant() {
 
-      panel.classList.remove("open");
+      panel.classList.remove(
+        "open"
+      );
 
       panel.setAttribute(
         "aria-hidden",
@@ -4998,6 +5037,10 @@ console.log(
 
     }
 
+
+    /* ---------------------------------------------------------
+       BUTTON EVENTS
+       --------------------------------------------------------- */
 
     button.addEventListener(
       "click",
@@ -5028,425 +5071,6 @@ console.log(
 
 
     /* ---------------------------------------------------------
-       ADD MESSAGE
-       --------------------------------------------------------- */
-
-    function addMessage(
-      text,
-      type
-    ) {
-
-      const message =
-        document.createElement("div");
-
-      message.className =
-        "smv-final-ai-message " +
-        type;
-
-      if (
-        type === "ai"
-      ) {
-
-        message.innerHTML = `
-
-          <div class="smv-final-ai-avatar">
-            ✦
-          </div>
-
-          <div class="smv-final-ai-bubble">
-            ${text}
-          </div>
-
-        `;
-
-      } else {
-
-        message.innerHTML = `
-
-          <div class="smv-final-ai-user-bubble">
-            ${text}
-          </div>
-
-        `;
-
-      }
-
-      conversation.appendChild(
-        message
-      );
-
-      conversation.scrollTop =
-        conversation.scrollHeight;
-    }
-
-
-    /* ---------------------------------------------------------
-       AI RESPONSE ENGINE
-       --------------------------------------------------------- */
-
-    function getAIResponse(
-      question
-    ) {
-
-      const q =
-        question
-          .toLowerCase()
-          .trim();
-
-
-      /* VENUE */
-
-      if (
-        q.includes("venue") ||
-        q.includes("hall") ||
-        q.includes("banquet") ||
-        q.includes("place")
-      ) {
-
-        return `
-          <strong>Let's find the right venue.</strong>
-          <p>
-            The best venue depends on your event type,
-            city, guest count, budget and preferred style.
-          </p>
-          <p>
-            Tell me something like:
-            <br>
-            <b>Wedding • Delhi • 300 guests • ₹2,000/person</b>
-          </p>
-        `;
-
-      }
-
-
-      /* BUDGET */
-
-      if (
-        q.includes("budget") ||
-        q.includes("cost") ||
-        q.includes("price") ||
-        q.includes("₹") ||
-        q.includes("rupee")
-      ) {
-
-        return `
-          <strong>Let's understand your budget.</strong>
-          <p>
-            Your budget can be planned around venue,
-            food, decoration, photography and entertainment.
-          </p>
-          <p>
-            For a more useful estimate, tell me your
-            <b>guest count</b> and approximate
-            <b>budget per person</b>.
-          </p>
-        `;
-
-      }
-
-
-      /* WEDDING */
-
-      if (
-        q.includes("wedding") ||
-        q.includes("marriage") ||
-        q.includes("shaadi")
-      ) {
-
-        return `
-          <strong>Wedding planning starts with the basics.</strong>
-          <p>
-            I recommend deciding your:
-          </p>
-          <ul>
-            <li>Event date</li>
-            <li>City / location</li>
-            <li>Guest count</li>
-            <li>Budget</li>
-            <li>Venue style</li>
-          </ul>
-          <p>
-            Then our AI Event Planner can build a
-            personalized starting plan.
-          </p>
-        `;
-
-      }
-
-
-      /* CHECKLIST */
-
-      if (
-        q.includes("checklist") ||
-        q.includes("what should") ||
-        q.includes("things")
-      ) {
-
-        return `
-          <strong>Venue checklist</strong>
-          <p>
-            Before booking a venue, check:
-          </p>
-          <ul>
-            <li>Capacity for your guest count</li>
-            <li>Parking availability</li>
-            <li>Food / catering options</li>
-            <li>Decoration rules</li>
-            <li>Power backup</li>
-            <li>Rooms / accommodation if required</li>
-            <li>Vendor access</li>
-            <li>Final package and additional charges</li>
-          </ul>
-        `;
-
-      }
-
-
-      /* PLANNER */
-
-      if (
-        q.includes("planner") ||
-        q.includes("plan my event") ||
-        q.includes("start")
-      ) {
-
-        return `
-          <strong>Your AI Event Planner is ready.</strong>
-          <p>
-            I can take you to the full planner where
-            you can enter your event type, location,
-            date, guests, budget, food preference
-            and venue style.
-          </p>
-        `;
-
-      }
-
-
-      /* DEFAULT */
-
-      return `
-        <strong>I can help with your venue search.</strong>
-        <p>
-          Try asking me about:
-        </p>
-        <ul>
-          <li>Venue type</li>
-          <li>Budget</li>
-          <li>Wedding planning</li>
-          <li>Venue checklist</li>
-          <li>AI Event Planner</li>
-        </ul>
-        <p>
-          Or tell me your event requirements directly.
-        </p>
-      `;
-
-    }
-
-
-    /* ---------------------------------------------------------
-       SUBMIT MESSAGE
-       --------------------------------------------------------- */
-
-    form.addEventListener(
-      "submit",
-      function (event) {
-
-        event.preventDefault();
-
-        const value =
-          input.value.trim();
-
-        if (!value) {
-          return;
-        }
-
-        addMessage(
-          value.replace(
-            /</g,
-            "&lt;"
-          ),
-          "user"
-        );
-
-        input.value = "";
-
-        setTimeout(
-          function () {
-
-            addMessage(
-              getAIResponse(
-                value
-              ),
-              "ai"
-            );
-
-          },
-          350
-        );
-
-      }
-    );
-
-
-    /* ---------------------------------------------------------
-       QUICK ACTIONS
-       --------------------------------------------------------- */
-
-    conversation
-      .querySelectorAll(
-        "[data-ai-action]"
-      )
-      .forEach(
-        function (actionButton) {
-
-          actionButton.addEventListener(
-            "click",
-            function () {
-
-              const action =
-                actionButton.getAttribute(
-                  "data-ai-action"
-                );
-
-
-              if (
-                action === "venue"
-              ) {
-
-                addMessage(
-                  "I want help choosing a venue.",
-                  "user"
-                );
-
-                setTimeout(
-                  function () {
-
-                    addMessage(
-                      getAIResponse(
-                        "venue"
-                      ),
-                      "ai"
-                    );
-
-                  },
-                  250
-                );
-
-              }
-
-
-              if (
-                action === "budget"
-              ) {
-
-                addMessage(
-                  "Help me understand my event budget.",
-                  "user"
-                );
-
-                setTimeout(
-                  function () {
-
-                    addMessage(
-                      getAIResponse(
-                        "budget"
-                      ),
-                      "ai"
-                    );
-
-                  },
-                  250
-                );
-
-              }
-
-
-              if (
-                action === "checklist"
-              ) {
-
-                addMessage(
-                  "Show me the venue checklist.",
-                  "user"
-                );
-
-                setTimeout(
-                  function () {
-
-                    addMessage(
-                      getAIResponse(
-                        "checklist"
-                      ),
-                      "ai"
-                    );
-
-                  },
-                  250
-                );
-
-              }
-
-
-              if (
-                action === "planner"
-              ) {
-
-                addMessage(
-                  "I want to start the AI Event Planner.",
-                  "user"
-                );
-
-                setTimeout(
-                  function () {
-
-                    addMessage(
-                      getAIResponse(
-                        "planner"
-                      ),
-                      "ai"
-                    );
-
-                    setTimeout(
-                      function () {
-
-                        const planner =
-                          document.getElementById(
-                            "aiPlanner"
-                          );
-
-                        if (
-                          planner
-                        ) {
-
-                          planner.scrollIntoView({
-                            behavior:
-                              "smooth",
-                            block:
-                              "start"
-                          });
-
-                        }
-
-                      },
-                      700
-                    );
-
-                  },
-                  250
-                );
-
-              }
-
-            }
-          );
-
-        }
-      );
-
-
-    /* ---------------------------------------------------------
        ESCAPE KEY
        --------------------------------------------------------- */
 
@@ -5464,6 +5088,614 @@ console.log(
 
       }
     );
+
+
+    /* ---------------------------------------------------------
+       ADD MESSAGE
+       --------------------------------------------------------- */
+
+    function addMessage(
+      text,
+      type
+    ) {
+
+      const message =
+        document.createElement(
+          "div"
+        );
+
+      message.className =
+        "smv-final-ai-message " +
+        type;
+
+
+      if (
+        type === "ai"
+      ) {
+
+        const avatar =
+          document.createElement(
+            "div"
+          );
+
+        avatar.className =
+          "smv-final-ai-avatar";
+
+        avatar.textContent =
+          "✦";
+
+
+        const bubble =
+          document.createElement(
+            "div"
+          );
+
+        bubble.className =
+          "smv-final-ai-bubble";
+
+        /*
+          AI responses come from our
+          trusted Supabase Edge Function.
+
+          Use textContent first so arbitrary
+          AI output cannot inject scripts.
+        */
+
+        bubble.textContent =
+          String(
+            text || ""
+          );
+
+
+        message.appendChild(
+          avatar
+        );
+
+        message.appendChild(
+          bubble
+        );
+
+      } else {
+
+        const bubble =
+          document.createElement(
+            "div"
+          );
+
+        bubble.className =
+          "smv-final-ai-user-bubble";
+
+        bubble.textContent =
+          String(
+            text || ""
+          );
+
+        message.appendChild(
+          bubble
+        );
+
+      }
+
+
+      conversation.appendChild(
+        message
+      );
+
+
+      conversation.scrollTop =
+        conversation.scrollHeight;
+
+    }
+
+
+    /* ---------------------------------------------------------
+       TYPING INDICATOR
+       --------------------------------------------------------- */
+
+    function addTypingMessage() {
+
+      const message =
+        document.createElement(
+          "div"
+        );
+
+      message.className =
+        "smv-final-ai-message ai";
+
+
+      const avatar =
+        document.createElement(
+          "div"
+        );
+
+      avatar.className =
+        "smv-final-ai-avatar";
+
+      avatar.textContent =
+        "✦";
+
+
+      const bubble =
+        document.createElement(
+          "div"
+        );
+
+      bubble.className =
+        "smv-final-ai-bubble";
+
+      bubble.innerHTML =
+        `
+          <span class="smv-final-ai-typing">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        `;
+
+
+      message.appendChild(
+        avatar
+      );
+
+      message.appendChild(
+        bubble
+      );
+
+
+      conversation.appendChild(
+        message
+      );
+
+
+      conversation.scrollTop =
+        conversation.scrollHeight;
+
+
+      return message;
+
+    }
+
+
+    /* ---------------------------------------------------------
+       GET AI EVENT CONTEXT
+       --------------------------------------------------------- */
+
+    function getAIEventContext() {
+
+      function value(id) {
+
+        const element =
+          document.getElementById(
+            id
+          );
+
+        return element
+          ? String(
+              element.value || ""
+            ).trim()
+          : "";
+
+      }
+
+
+      const context = {
+
+        eventType:
+          value(
+            "plannerEventType"
+          ),
+
+        city:
+          value(
+            "plannerCity"
+          ),
+
+        eventDate:
+          value(
+            "plannerDate"
+          ),
+
+        guestCount:
+          value(
+            "plannerGuests"
+          ),
+
+        budget:
+          value(
+            "plannerBudget"
+          ),
+
+        venueType:
+          value(
+            "plannerVenueType"
+          ),
+
+        requirements:
+          value(
+            "plannerRequirements"
+          ) ||
+          value(
+            "customerRequirements"
+          )
+
+      };
+
+
+      /*
+        Include the current AI planner result
+        when available.
+      */
+
+      try {
+
+        if (
+          typeof currentAIPlan !==
+            "undefined" &&
+          currentAIPlan &&
+          typeof currentAIPlan ===
+            "object"
+        ) {
+
+          context.aiPlan = {
+
+            matchScore:
+              currentAIPlan.matchScore ??
+              null,
+
+            intent:
+              String(
+                currentAIPlan.intent ||
+                ""
+              ),
+
+            leadQuality:
+              String(
+                currentAIPlan.leadQuality ||
+                ""
+              ),
+
+            planningStage:
+              String(
+                currentAIPlan.planningStage ||
+                ""
+              ),
+
+            venueTypes:
+              Array.isArray(
+                currentAIPlan.venueTypes
+              )
+                ? currentAIPlan.venueTypes
+                    .slice(0, 5)
+                    .map(
+                      function (item) {
+                        return String(
+                          item
+                        );
+                      }
+                    )
+                : []
+
+          };
+
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "SMV AI context could not read current AI plan:",
+          error
+        );
+
+      }
+
+
+      return context;
+
+    }
+
+
+    /* ---------------------------------------------------------
+       CALL SUPABASE AI
+       --------------------------------------------------------- */
+
+    async function askSMVAI(
+      message
+    ) {
+
+      const context =
+        getAIEventContext();
+
+
+      const response =
+        await fetch(
+          "https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/smv-ai-assistant",
+          {
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                message:
+                  message,
+
+                context:
+                  context
+
+              })
+
+          }
+        );
+
+
+      let data =
+        null;
+
+
+      try {
+
+        data =
+          await response.json();
+
+      } catch (error) {
+
+        throw new Error(
+          "The AI assistant returned an invalid response."
+        );
+
+      }
+
+
+      if (
+        !response.ok
+      ) {
+
+        console.error(
+          "SMV AI Assistant error:",
+          data
+        );
+
+        throw new Error(
+          data?.error ||
+          "The AI assistant could not respond right now."
+        );
+
+      }
+
+
+      if (
+        !data ||
+        !data.reply
+      ) {
+
+        throw new Error(
+          "The AI assistant returned an empty response."
+        );
+
+      }
+
+
+      return String(
+        data.reply
+      ).trim();
+
+    }
+
+
+    /* ---------------------------------------------------------
+       SEND MESSAGE
+       --------------------------------------------------------- */
+
+    async function sendMessage(
+      message
+    ) {
+
+      message =
+        String(
+          message || ""
+        ).trim();
+
+
+      if (!message) {
+        return;
+      }
+
+
+      if (
+        message.length > 600
+      ) {
+
+        addMessage(
+          "Please keep your question under 600 characters.",
+          "ai"
+        );
+
+        return;
+
+      }
+
+
+      addMessage(
+        message,
+        "user"
+      );
+
+
+      input.value =
+        "";
+
+
+      input.disabled =
+        true;
+
+      sendButton.disabled =
+        true;
+
+
+      const typingMessage =
+        addTypingMessage();
+
+
+      try {
+
+        const reply =
+          await askSMVAI(
+            message
+          );
+
+
+        typingMessage.remove();
+
+
+        addMessage(
+          reply,
+          "ai"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "SMV AI Assistant:",
+          error
+        );
+
+
+        typingMessage.remove();
+
+
+        addMessage(
+          error?.message ||
+          "Sorry, the AI assistant is temporarily unavailable. Please try again.",
+          "ai"
+        );
+
+      } finally {
+
+        input.disabled =
+          false;
+
+        sendButton.disabled =
+          false;
+
+        input.focus();
+
+      }
+
+    }
+
+
+    /* ---------------------------------------------------------
+       CHAT FORM
+       --------------------------------------------------------- */
+
+    form.addEventListener(
+      "submit",
+      function (event) {
+
+        event.preventDefault();
+
+        sendMessage(
+          input.value
+        );
+
+      }
+    );
+
+
+    /* ---------------------------------------------------------
+       QUICK QUESTIONS
+       --------------------------------------------------------- */
+
+    conversation
+      .querySelectorAll(
+        "[data-ai-question]"
+      )
+      .forEach(
+        function (questionButton) {
+
+          questionButton.addEventListener(
+            "click",
+            function () {
+
+              const question =
+                questionButton.getAttribute(
+                  "data-ai-question"
+                );
+
+
+              if (!question) {
+                return;
+              }
+
+
+              openAssistant();
+
+
+              sendMessage(
+                question
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+    /* ---------------------------------------------------------
+       OPTIONAL: START PLANNER
+       --------------------------------------------------------- */
+
+    /*
+      If the AI tells the user to use the planner,
+      the actual planner remains untouched.
+
+      This button only provides a safe helper if
+      the existing planner exists on the page.
+    */
+
+    conversation
+      .querySelectorAll(
+        "[data-ai-start-planner]"
+      )
+      .forEach(
+        function (plannerButton) {
+
+          plannerButton.addEventListener(
+            "click",
+            function () {
+
+              const planner =
+                document.getElementById(
+                  "aiPlanner"
+                );
+
+
+              if (
+                planner
+              ) {
+
+                planner.scrollIntoView({
+                  behavior:
+                    "smooth",
+
+                  block:
+                    "start"
+                });
+
+              }
+
+            }
+          );
+
+        }
+      );
+
 
   }
 
@@ -5499,8 +5731,10 @@ console.log(
 
 
   /*
-    One final cleanup after other scripts have finished
-    injecting their content.
+    Final cleanup.
+
+    This catches any old assistant that another
+    script may have injected after page load.
   */
 
   setTimeout(
@@ -5514,3 +5748,4 @@ console.log(
 
 
 })();
+ 
