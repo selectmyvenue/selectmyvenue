@@ -1300,3 +1300,23 @@ body.popup-open {
     height: min(570px, calc(100vh - 145px));
   }
 }
+
+/* FINAL FLOATING BUTTON SPACING */
+
+.smv-ai-chat-button {
+  bottom: 92px;
+}
+
+.smv-ai-chat-panel {
+  bottom: 153px;
+}
+
+@media (max-width: 600px) {
+  .smv-ai-chat-button {
+    bottom: 82px;
+  }
+
+  .smv-ai-chat-panel {
+    bottom: 138px;
+  }
+}
