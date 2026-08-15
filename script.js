@@ -4202,7 +4202,6 @@ console.log(
 
   "use strict";
 
-
   /* =======================================================
      CONFIG
      ======================================================= */
@@ -4217,9 +4216,10 @@ console.log(
      PREVENT DUPLICATE INITIALIZATION
      ======================================================= */
 
-  if (
-    window.__SMV_FINAL_REAL_AI_INITIALIZED
-  ) {
+  if (window.__SMV_FINAL_REAL_AI_INITIALIZED) {
+    console.log(
+      "SMV AI: already initialized."
+    );
     return;
   }
 
@@ -4228,7 +4228,6 @@ console.log(
 
   /* =======================================================
      HTML ESCAPE
-     Prevent AI/customer text from injecting HTML.
      ======================================================= */
 
   function escapeHTML(value) {
@@ -4244,8 +4243,7 @@ console.log(
 
 
   /* =======================================================
-     SIMPLE AI TEXT FORMATTER
-     Keeps basic markdown-style formatting safe.
+     FORMAT AI TEXT
      ======================================================= */
 
   function formatAIText(value) {
@@ -4271,7 +4269,7 @@ console.log(
 
 
   /* =======================================================
-     REMOVE ONLY OUR OWN PREVIOUS FINAL WIDGET
+     REMOVE ONLY OUR FINAL WIDGET
      ======================================================= */
 
   function removeDuplicateFinalWidget() {
@@ -4282,16 +4280,14 @@ console.log(
       );
 
     if (existing) {
-
       existing.remove();
-
     }
 
   }
 
 
   /* =======================================================
-     CREATE FINAL AI ASSISTANT
+     CREATE AI ASSISTANT
      ======================================================= */
 
   function createFinalAIAssistant() {
@@ -4301,9 +4297,7 @@ console.log(
         "smvFinalAIAssistant"
       )
     ) {
-
       return;
-
     }
 
 
@@ -4315,10 +4309,6 @@ console.log(
 
 
     wrapper.innerHTML = `
-
-      <!-- =================================================
-           AI FLOATING BUTTON
-           ================================================= -->
 
       <button
         type="button"
@@ -4342,10 +4332,6 @@ console.log(
       </button>
 
 
-      <!-- =================================================
-           AI PANEL
-           ================================================= -->
-
       <div
         id="smvFinalAIPanel"
         class="smv-final-ai-panel"
@@ -4366,6 +4352,7 @@ console.log(
 
           </div>
 
+
           <button
             type="button"
             id="smvFinalAIClose"
@@ -4377,10 +4364,6 @@ console.log(
 
         </div>
 
-
-        <!-- =============================================
-             CONVERSATION
-             ============================================= -->
 
         <div
           id="smvFinalAIConversation"
@@ -4415,10 +4398,6 @@ console.log(
 
           </div>
 
-
-          <!-- =========================================
-               QUICK ACTIONS
-               ========================================= -->
 
           <div
             class="smv-final-ai-suggestions"
@@ -4457,10 +4436,6 @@ console.log(
         </div>
 
 
-        <!-- =============================================
-             CHAT FORM
-             ============================================= -->
-
         <form
           id="smvFinalAIForm"
           class="smv-final-ai-form"
@@ -4493,9 +4468,6 @@ console.log(
     document.body.appendChild(
       wrapper
     );
-
-
-    return wrapper;
 
   }
 
@@ -4569,9 +4541,7 @@ console.log(
       !panel ||
       !button
     ) {
-
       return;
-
     }
 
 
@@ -4619,9 +4589,7 @@ console.log(
       !panel ||
       !button
     ) {
-
       return;
-
     }
 
 
@@ -4740,7 +4708,7 @@ console.log(
 
 
   /* =======================================================
-     ADD THINKING MESSAGE
+     THINKING MESSAGE
      ======================================================= */
 
   function addThinkingMessage() {
@@ -4794,13 +4762,11 @@ console.log(
 
   /* =======================================================
      READ CURRENT EVENT CONTEXT
-     
-     IMPORTANT:
-     No customer name, phone or email is sent.
+
+     Customer name / phone / email are NOT sent.
      ======================================================= */
 
   function getAIEventContext() {
-
 
     function value(id) {
 
@@ -4810,9 +4776,7 @@ console.log(
         );
 
       if (!element) {
-
         return "";
-
       }
 
 
@@ -4869,10 +4833,6 @@ console.log(
 
     };
 
-
-    /* ================================================
-       SAFE AI PLAN CONTEXT
-       ================================================ */
 
     try {
 
@@ -4967,33 +4927,56 @@ console.log(
       getAIEventContext();
 
 
-    const response =
-      await fetch(
-        SUPABASE_AI_URL,
-        {
+    let response;
 
-          method: "POST",
 
-          headers: {
+    try {
 
-            "Content-Type":
-              "application/json"
+      response =
+        await fetch(
+          SUPABASE_AI_URL,
+          {
 
-          },
+            method: "POST",
 
-          body:
-            JSON.stringify({
+            headers: {
 
-              message:
-                message,
+              "Content-Type":
+                "application/json",
 
-              context:
-                context
+              "Accept":
+                "application/json"
 
-            })
+            },
 
-        }
+            body:
+              JSON.stringify({
+
+                message:
+                  String(
+                    message
+                  ).trim(),
+
+                context:
+                  context
+
+              })
+
+          }
+        );
+
+    } catch (networkError) {
+
+      console.error(
+        "SMV AI network error:",
+        networkError
       );
+
+      throw new Error(
+        "Unable to connect to the AI service. Please check your internet connection and try again."
+      );
+
+    }
 
 
     let data = null;
@@ -5004,31 +4987,88 @@ console.log(
       data =
         await response.json();
 
-    } catch (error) {
+    } catch (parseError) {
+
+      console.error(
+        "SMV AI invalid JSON response:",
+        parseError
+      );
 
       throw new Error(
-        "The AI assistant returned an invalid response."
+        "The AI service returned an invalid response."
       );
 
     }
+
+
+    console.log(
+      "SMV AI response:",
+      response.status,
+      data
+    );
 
 
     if (
       !response.ok
     ) {
 
+      const backendError =
+        data?.error ||
+        data?.message ||
+        data?.details?.error?.message ||
+        data?.details?.message ||
+        "";
+
+
       console.error(
-        "SMV AI Assistant error:",
-        data
+        "SMV AI backend error:",
+        {
+          status:
+            response.status,
+
+          response:
+            data
+        }
       );
 
 
+      if (
+        response.status === 401 ||
+        response.status === 403
+      ) {
+
+        throw new Error(
+          "The AI service rejected the request. Please check the Supabase AI function configuration."
+        );
+
+      }
+
+
+      if (
+        response.status === 404
+      ) {
+
+        throw new Error(
+          "The AI service endpoint was not found. Please check the Supabase Edge Function."
+        );
+
+      }
+
+
+      if (
+        response.status === 429
+      ) {
+
+        throw new Error(
+          "The AI service is temporarily busy. Please try again in a moment."
+        );
+
+      }
+
+
       throw new Error(
-
-        data?.error ||
-
+        backendError ||
         "The AI assistant could not respond right now."
-
       );
 
     }
@@ -5040,7 +5080,7 @@ console.log(
     ) {
 
       console.error(
-        "SMV AI Assistant returned no reply:",
+        "SMV AI returned no reply:",
         data
       );
 
@@ -5074,9 +5114,7 @@ console.log(
 
 
     if (!message) {
-
       return;
-
     }
 
 
@@ -5099,23 +5137,17 @@ console.log(
 
 
     if (input) {
-
       input.value = "";
-
     }
 
 
     if (input) {
-
       input.disabled = true;
-
     }
 
 
     if (sendButton) {
-
       sendButton.disabled = true;
-
     }
 
 
@@ -5125,13 +5157,6 @@ console.log(
 
     try {
 
-      /*
-       * THIS IS THE REAL AI CALL.
-       *
-       * There is NO getAIResponse()
-       * and NO hard-coded answer engine.
-       */
-
       const reply =
         await askSMVAI(
           message
@@ -5139,9 +5164,7 @@ console.log(
 
 
       if (thinking) {
-
         thinking.remove();
-
       }
 
 
@@ -5153,46 +5176,36 @@ console.log(
     } catch (error) {
 
       console.error(
-        "SMV AI Assistant error:",
+        "SMV AI Assistant:",
         error
       );
 
 
       if (thinking) {
-
         thinking.remove();
-
       }
 
 
       addAIMessage(
-
         error?.message ||
-
         "Sorry, the AI assistant is temporarily unavailable. Please try again."
-
       );
+
 
     } finally {
 
       if (input) {
-
         input.disabled = false;
-
       }
 
 
       if (sendButton) {
-
         sendButton.disabled = false;
-
       }
 
 
       if (input) {
-
         input.focus();
-
       }
 
     }
@@ -5202,7 +5215,8 @@ console.log(
 
   /* =======================================================
      QUICK ACTION QUESTIONS
-     These are now sent to REAL AI.
+
+     These are ALSO sent to REAL AI.
      ======================================================= */
 
   function getQuickQuestion(
@@ -5281,9 +5295,7 @@ console.log(
 
 
     if (!question) {
-
       return;
-
     }
 
 
@@ -5296,12 +5308,6 @@ console.log(
       question
     );
 
-
-    /*
-     * Start AI Planner after sending the request.
-     * We don't wait for the AI response because the
-     * planner itself is already available on the page.
-     */
 
     if (
       action === "planner"
@@ -5340,15 +5346,12 @@ console.log(
 
 
   /* =======================================================
-     BUTTON EVENTS
+     BUTTON / FORM EVENTS
      ======================================================= */
 
   function attachEvents() {
 
-
-    if (
-      button
-    ) {
+    if (button) {
 
       button.addEventListener(
         "click",
@@ -5364,9 +5367,7 @@ console.log(
     }
 
 
-    if (
-      closeButton
-    ) {
+    if (closeButton) {
 
       closeButton.addEventListener(
         "click",
@@ -5380,9 +5381,7 @@ console.log(
     }
 
 
-    if (
-      form
-    ) {
+    if (form) {
 
       form.addEventListener(
         "submit",
@@ -5402,9 +5401,7 @@ console.log(
     }
 
 
-    if (
-      conversation
-    ) {
+    if (conversation) {
 
       conversation
         .querySelectorAll(
@@ -5436,10 +5433,6 @@ console.log(
     }
 
 
-    /* ================================================
-       ESCAPE KEY
-       ================================================ */
-
     document.addEventListener(
       "keydown",
       function (event) {
@@ -5460,11 +5453,10 @@ console.log(
 
   /* =======================================================
      15 SECOND CUSTOMER-INTERACTION POPUP
-     
-     The timer starts only after the customer interacts
-     with the page.
-     
-     It does NOT immediately open the popup on page load.
+
+     The timer starts ONLY after customer interaction.
+
+     It does NOT immediately open on page load.
      ======================================================= */
 
   let interactionTimerStarted =
@@ -5493,11 +5485,6 @@ console.log(
       setTimeout(
         function () {
 
-          /*
-           * Only open automatically if the customer
-           * hasn't already opened it.
-           */
-
           if (
             panel &&
             !panel.classList.contains(
@@ -5525,12 +5512,6 @@ console.log(
   function interactionHandler(
     event
   ) {
-
-    /*
-     * Ignore clicks on the AI itself.
-     * Clicking the AI button should open it normally,
-     * not start another timer.
-     */
 
     if (
       event &&
@@ -5567,20 +5548,29 @@ console.log(
   function initialize() {
 
     /*
-     * Remove ONLY a previous Final widget.
-     *
-     * IMPORTANT:
-     * We DO NOT remove the REAL Supabase AI widget.
+     * Remove ONLY our own previous widget.
      */
 
     removeDuplicateFinalWidget();
 
 
+    /*
+     * Create exactly ONE final AI widget.
+     */
+
     createFinalAIAssistant();
 
 
+    /*
+     * Connect all elements.
+     */
+
     connectElements();
 
+
+    /*
+     * Attach events.
+     */
 
     attachEvents();
 
@@ -5627,6 +5617,5 @@ console.log(
     initialize();
 
   }
-
 
 })();
