@@ -4472,18 +4472,19 @@ console.log(
 
     if (!response.ok) {
 
-      console.error(
-        "SMV AI Assistant error:",
-        data
-      );
+  console.error(
+    "SMV AI Assistant HTTP ERROR:",
+    response.status,
+    data
+  );
 
-      throw new Error(
-        data?.error ||
-        "The AI assistant could not respond right now."
-      );
-
-    }
-
+  throw new Error(
+    data?.error ||
+    data?.message ||
+    `AI Assistant error (${response.status}). Please try again.`
+  );
+}
+     
     if (
       !data ||
       !data.reply
