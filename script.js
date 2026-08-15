@@ -4179,3 +4179,455 @@ window.SelectMyVenue = {
 console.log(
   "Select My Venue — website script loaded."
 );
+
+/* =========================================================
+   SELECT MY VENUE — REAL AI ASSISTANT
+   Connects to Supabase Edge Function: smv-ai-assistant
+   ========================================================= */
+
+(function setupSMVAIAssistant() {
+
+  const chatButton = document.getElementById("smvAiChatButton");
+  const chatPanel = document.getElementById("smvAiChatPanel");
+  const chatClose = document.getElementById("smvAiChatClose");
+  const chatForm = document.getElementById("smvAiChatForm");
+  const chatInput = document.getElementById("smvAiChatInput");
+  const chatSend = document.getElementById("smvAiChatSend");
+  const chatMessages = document.getElementById("smvAiChatMessages");
+
+  if (
+    !chatButton ||
+    !chatPanel ||
+    !chatClose ||
+    !chatForm ||
+    !chatInput ||
+    !chatSend ||
+    !chatMessages
+  ) {
+    console.warn(
+      "Select My Venue AI Assistant: required HTML elements were not found."
+    );
+    return;
+  }
+
+  /* ---------------------------------------------------------
+     OPEN / CLOSE CHAT
+     --------------------------------------------------------- */
+
+  function openChat() {
+
+    chatPanel.classList.add("open");
+    chatPanel.setAttribute("aria-hidden", "false");
+
+    setTimeout(function () {
+      chatInput.focus();
+    }, 100);
+  }
+
+  function closeChat() {
+
+    chatPanel.classList.remove("open");
+    chatPanel.setAttribute("aria-hidden", "true");
+  }
+
+  chatButton.addEventListener("click", openChat);
+  chatClose.addEventListener("click", closeChat);
+
+  /* ---------------------------------------------------------
+     ESC KEY
+     --------------------------------------------------------- */
+
+  document.addEventListener("keydown", function (event) {
+
+    if (event.key === "Escape") {
+      closeChat();
+    }
+
+  });
+
+  /* ---------------------------------------------------------
+     ADD MESSAGE
+     --------------------------------------------------------- */
+
+  function addMessage(text, type) {
+
+    const message = document.createElement("div");
+
+    message.className =
+      type === "user"
+        ? "smv-ai-message smv-ai-message-user"
+        : "smv-ai-message smv-ai-message-bot";
+
+    const title = document.createElement("strong");
+
+    title.textContent =
+      type === "user"
+        ? "You"
+        : "AI Assistant";
+
+    const paragraph = document.createElement("p");
+
+    paragraph.textContent = text;
+
+    message.appendChild(title);
+    message.appendChild(paragraph);
+
+    chatMessages.appendChild(message);
+
+    chatMessages.scrollTop =
+      chatMessages.scrollHeight;
+
+    return message;
+  }
+
+  /* ---------------------------------------------------------
+     TYPING MESSAGE
+     --------------------------------------------------------- */
+
+  function addTypingMessage() {
+
+    const message = document.createElement("div");
+
+    message.className =
+      "smv-ai-message smv-ai-message-bot";
+
+    const title = document.createElement("strong");
+
+    title.textContent = "AI Assistant";
+
+    const paragraph = document.createElement("p");
+
+    paragraph.textContent = "Thinking…";
+
+    message.appendChild(title);
+    message.appendChild(paragraph);
+
+    chatMessages.appendChild(message);
+
+    chatMessages.scrollTop =
+      chatMessages.scrollHeight;
+
+    return message;
+  }
+
+  /* ---------------------------------------------------------
+     READ CURRENT EVENT CONTEXT
+     IMPORTANT:
+     No customer name/mobile/email is sent.
+     --------------------------------------------------------- */
+
+  function getAIEventContext() {
+
+    function value(id) {
+
+      const element =
+        document.getElementById(id);
+
+      return element
+        ? String(element.value || "").trim()
+        : "";
+    }
+
+    const context = {
+
+      eventType:
+        value("plannerEventType") ||
+        value("customerEventType") ||
+        value("eventType"),
+
+      location:
+        value("plannerLocation") ||
+        value("customerLocation") ||
+        value("location"),
+
+      eventDate:
+        value("plannerDate") ||
+        value("customerEventDate") ||
+        value("date"),
+
+      guests:
+        value("plannerGuests") ||
+        value("customerGuests") ||
+        value("guests"),
+
+      budgetPerPerson:
+        value("plannerBudget") ||
+        value("customerBudget"),
+
+      food:
+        value("plannerFood") ||
+        value("customerFood"),
+
+      venueType:
+        value("plannerVenueType"),
+
+      requirements:
+        value("plannerRequirements") ||
+        value("customerRequirements")
+
+    };
+
+    /* Include safe AI planner information if available */
+
+    try {
+
+      if (
+        typeof currentAIPlan !== "undefined" &&
+        currentAIPlan &&
+        typeof currentAIPlan === "object"
+      ) {
+
+        context.aiPlan = {
+
+          matchScore:
+            currentAIPlan.matchScore ??
+            null,
+
+          intent:
+            String(
+              currentAIPlan.intent || ""
+            ),
+
+          leadQuality:
+            String(
+              currentAIPlan.leadQuality || ""
+            ),
+
+          planningStage:
+            String(
+              currentAIPlan.planningStage || ""
+            ),
+
+          venueTypes:
+            Array.isArray(
+              currentAIPlan.venueTypes
+            )
+              ? currentAIPlan.venueTypes
+                  .slice(0, 5)
+                  .map(function (item) {
+                    return String(item);
+                  })
+              : []
+
+        };
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "SMV AI context could not read current AI plan:",
+        error
+      );
+
+    }
+
+    return context;
+  }
+
+  /* ---------------------------------------------------------
+     CALL SUPABASE EDGE FUNCTION
+     --------------------------------------------------------- */
+
+  async function askSMVAI(message) {
+
+    const context =
+      getAIEventContext();
+
+    const response =
+      await fetch(
+        "https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/smv-ai-assistant",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            message: message,
+
+            context: context
+
+          })
+
+        }
+      );
+
+    let data = null;
+
+    try {
+
+      data = await response.json();
+
+    } catch (error) {
+
+      throw new Error(
+        "The AI assistant returned an invalid response."
+      );
+
+    }
+
+    if (!response.ok) {
+
+      console.error(
+        "SMV AI Assistant error:",
+        data
+      );
+
+      throw new Error(
+        data?.error ||
+        "The AI assistant could not respond right now."
+      );
+
+    }
+
+    if (
+      !data ||
+      !data.reply
+    ) {
+
+      throw new Error(
+        "The AI assistant returned an empty response."
+      );
+
+    }
+
+    return String(
+      data.reply
+    ).trim();
+
+  }
+
+  /* ---------------------------------------------------------
+     SEND MESSAGE
+     --------------------------------------------------------- */
+
+  async function sendMessage(message) {
+
+    message =
+      String(message || "").trim();
+
+    if (!message) {
+      return;
+    }
+
+    if (message.length > 600) {
+
+      addMessage(
+        "Please keep your question under 600 characters.",
+        "bot"
+      );
+
+      return;
+    }
+
+    addMessage(
+      message,
+      "user"
+    );
+
+    chatInput.value = "";
+
+    chatInput.disabled = true;
+    chatSend.disabled = true;
+
+    const typingMessage =
+      addTypingMessage();
+
+    try {
+
+      const reply =
+        await askSMVAI(message);
+
+      typingMessage.remove();
+
+      addMessage(
+        reply,
+        "bot"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "SMV AI Assistant:",
+        error
+      );
+
+      typingMessage.remove();
+
+      addMessage(
+        error?.message ||
+        "Sorry, the AI assistant is temporarily unavailable. Please try again.",
+        "bot"
+      );
+
+    } finally {
+
+      chatInput.disabled = false;
+      chatSend.disabled = false;
+
+      chatInput.focus();
+
+    }
+
+  }
+
+  /* ---------------------------------------------------------
+     CHAT FORM
+     --------------------------------------------------------- */
+
+  chatForm.addEventListener(
+    "submit",
+    function (event) {
+
+      event.preventDefault();
+
+      sendMessage(
+        chatInput.value
+      );
+
+    }
+  );
+
+  /* ---------------------------------------------------------
+     QUICK QUESTIONS
+     --------------------------------------------------------- */
+
+  document
+    .querySelectorAll(
+      "[data-ai-question]"
+    )
+    .forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          const question =
+            button.getAttribute(
+              "data-ai-question"
+            );
+
+          if (!question) {
+            return;
+          }
+
+          openChat();
+
+          sendMessage(
+            question
+          );
+
+        }
+      );
+
+    });
+
+  console.log(
+    "✓ Select My Venue AI Assistant initialized."
+  );
+
+})();
