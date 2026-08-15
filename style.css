@@ -247,8 +247,8 @@ body{font-size:15px}
 .secondary-btn{font-size:13px;min-height:44px}
 
 /* Larger premium logo */
-.brand{width:260px;height:78px}
-.brand img{width:245px;max-height:74px}
+.brand{width:300px;height:82px}
+.brand img{width:280px;max-height:78px}
 
 /* Hero: make the celebration image clearer and more prominent */
 .hero{min-height:720px;padding-top:82px}
@@ -397,8 +397,8 @@ body{font-size:15px}
 ========================================================= */
 
 /* Slightly larger header logo without making the header bulky */
-.brand{width:260px;height:78px}
-.brand img{width:245px;max-height:74px}
+.brand{width:300px;height:80px}
+.brand img{width:280px;max-height:74px}
 
 /* Light green enquiry success confirmation */
 .form-message.success,
