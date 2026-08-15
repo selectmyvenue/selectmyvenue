@@ -1253,3 +1253,50 @@ body.popup-open {
     font-size: 13px;
   }
 }
+
+/* =========================================================
+   SELECT MY VENUE — FINAL AI + WHATSAPP POSITION FIX
+   ========================================================= */
+
+.floating-whatsapp {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2500;
+}
+
+.smv-ai-chat-button {
+  position: fixed;
+  right: 20px;
+  bottom: 84px;
+  z-index: 9998;
+}
+
+.smv-ai-chat-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 145px;
+  z-index: 9999;
+}
+
+
+/* MOBILE */
+@media (max-width: 600px) {
+
+  .floating-whatsapp {
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .smv-ai-chat-button {
+    right: 12px;
+    bottom: 72px;
+  }
+
+  .smv-ai-chat-panel {
+    right: 12px;
+    bottom: 128px;
+    width: calc(100vw - 24px);
+    height: min(570px, calc(100vh - 145px));
+  }
+}
