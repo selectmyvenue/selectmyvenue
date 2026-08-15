@@ -247,8 +247,8 @@ body{font-size:15px}
 .secondary-btn{font-size:13px;min-height:44px}
 
 /* Larger premium logo */
-.brand{width:220px;height:70px}
-.brand img{width:205px;max-height:66px}
+.brand{width:260px;height:78px}
+.brand img{width:245px;max-height:74px}
 
 /* Hero: make the celebration image clearer and more prominent */
 .hero{min-height:720px;padding-top:82px}
