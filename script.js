@@ -1,7 +1,7 @@
 /* =========================================================
    SELECT MY VENUE
    WEBSITE JAVASCRIPT
-   Exact companion for the current index.html
+   Exact companion for the current index.html | Popup waits 15 seconds after first interaction
    Website -> AI Planner -> Customer Enquiry -> Supabase -> CRM
    ========================================================= */
 
@@ -2609,20 +2609,653 @@ function setupCustomerEnquiry() {
 
 function setupAutoEnquiryPopup() {
   const overlay = byId("enquiryPopup");
-  const form = byId("quickEnquiryForm");
-  const closeButton = byId("closeEnquiryPopup");
-  const laterButton = byId("popupMaybeLater");
-
-  if (!overlay || !form) {
+  if (!overlay) {
     console.warn("Select My Venue: enquiry popup HTML was not found.");
     return;
   }
 
-  let popupTimer = null;
+  /*
+   * COMPLETE CUSTOMER POPUP
+   * ---------------------------------------------------------
+   * The existing popup shell in index.html is intentionally reused.
+   * We replace only its inner content here so index.html does not
+   * need to be changed.
+   *
+   * Behaviour:
+   * - NEVER opens on initial page load.
+   * - First normal website click/tap starts a 3-second timer.
+   * - Popup opens after those 3 seconds.
+   * - Opens once per browser session.
+   * - Uses the same customer-enquiry fields as the main website form.
+   */
+  const popupRoot = overlay.querySelector(".enquiry-popup");
+  if (!popupRoot) return;
 
-  function isPopupSuppressed() {
+  const originalContent = popupRoot.querySelector(".popup-content");
+
+  /* Prevent duplicate initialization if the script is ever loaded twice. */
+  if (overlay.dataset.smvEnhanced === "1") return;
+  overlay.dataset.smvEnhanced = "1";
+
+  /* ---------------------------------------------------------
+     POPUP STYLES
+     --------------------------------------------------------- */
+  if (!byId("smvEnhancedPopupStyles")) {
+    const style = document.createElement("style");
+    style.id = "smvEnhancedPopupStyles";
+    style.textContent = `
+      #enquiryPopup {
+        z-index: 99999 !important;
+      }
+
+      #enquiryPopup .enquiry-popup {
+        width: min(1080px, calc(100vw - 32px)) !important;
+        max-width: 1080px !important;
+        height: min(760px, calc(100vh - 28px)) !important;
+        max-height: calc(100vh - 28px) !important;
+        overflow: hidden !important;
+        border-radius: 18px !important;
+      }
+
+      #enquiryPopup .popup-content.smv-complete-popup {
+        padding: 0 !important;
+        display: grid !important;
+        grid-template-columns: 34% 66% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+      }
+
+      .smv-popup-info {
+        padding: 42px 34px !important;
+        background:
+          radial-gradient(circle at 15% 12%, rgba(31, 211, 190, .14), transparent 30%),
+          linear-gradient(145deg, #071b1b 0%, #0b2929 55%, #102f2f 100%);
+        color: #fff !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+      }
+
+      .smv-popup-info .smv-popup-logo {
+        width: 150px !important;
+        max-width: 70% !important;
+        height: auto !important;
+        object-fit: contain !important;
+        margin-bottom: 34px !important;
+      }
+
+      .smv-popup-info .smv-popup-kicker {
+        font-size: 11px !important;
+        letter-spacing: 2px !important;
+        font-weight: 800 !important;
+        color: #c7a95b !important;
+        margin-bottom: 12px !important;
+      }
+
+      .smv-popup-info h2 {
+        margin: 0 0 14px !important;
+        font-size: clamp(28px, 3vw, 42px) !important;
+        line-height: 1.08 !important;
+        color: #fff !important;
+      }
+
+      .smv-popup-info h2 span {
+        color: #29d5c0 !important;
+      }
+
+      .smv-popup-info > p {
+        color: rgba(255,255,255,.75) !important;
+        line-height: 1.65 !important;
+        font-size: 14px !important;
+        margin: 0 0 25px !important;
+      }
+
+      .smv-popup-benefits {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: grid !important;
+        gap: 13px !important;
+      }
+
+      .smv-popup-benefits li {
+        display: flex !important;
+        gap: 10px !important;
+        align-items: flex-start !important;
+        color: rgba(255,255,255,.88) !important;
+        font-size: 13px !important;
+        line-height: 1.45 !important;
+      }
+
+      .smv-popup-benefits b {
+        color: #29d5c0 !important;
+        font-weight: 900 !important;
+      }
+
+      .smv-popup-how {
+        margin-top: 28px !important;
+        padding-top: 22px !important;
+        border-top: 1px solid rgba(255,255,255,.12) !important;
+      }
+
+      .smv-popup-how-title {
+        color: #c7a95b !important;
+        font-size: 10px !important;
+        font-weight: 900 !important;
+        letter-spacing: 1.6px !important;
+        margin-bottom: 13px !important;
+      }
+
+      .smv-popup-how-steps {
+        display: grid !important;
+        gap: 11px !important;
+      }
+
+      .smv-popup-how-step {
+        display: grid !important;
+        grid-template-columns: 27px 1fr !important;
+        gap: 9px !important;
+        align-items: start !important;
+      }
+
+      .smv-popup-how-step .num {
+        width: 27px !important;
+        height: 27px !important;
+        border: 1px solid rgba(41,213,192,.35) !important;
+        border-radius: 50% !important;
+        display: grid !important;
+        place-items: center !important;
+        color: #29d5c0 !important;
+        font-size: 10px !important;
+        font-weight: 900 !important;
+      }
+
+      .smv-popup-how-step strong {
+        display: block !important;
+        color: #fff !important;
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 2px !important;
+      }
+
+      .smv-popup-how-step span {
+        color: rgba(255,255,255,.62) !important;
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+      }
+
+      .smv-popup-form-side {
+        background: #fff !important;
+        color: #202727 !important;
+        padding: 20px 30px 16px !important;
+        overflow-y: auto !important;
+        position: relative !important;
+      }
+
+      .smv-popup-form-side .popup-close {
+        position: absolute !important;
+        right: 15px !important;
+        top: 10px !important;
+        z-index: 4 !important;
+        background: transparent !important;
+        border: 0 !important;
+        color: #1d2727 !important;
+        font-size: 31px !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+        padding: 3px 8px !important;
+      }
+
+      .smv-popup-form-head {
+        padding-right: 38px !important;
+        margin-bottom: 10px !important;
+      }
+
+      .smv-popup-form-head .kicker {
+        color: #138f82 !important;
+        font-size: 11px !important;
+        letter-spacing: 1.7px !important;
+        font-weight: 800 !important;
+        margin-bottom: 6px !important;
+      }
+
+      .smv-popup-form-head h3 {
+        margin: 0 !important;
+        font-size: 27px !important;
+        line-height: 1.15 !important;
+        color: #162121 !important;
+      }
+
+      .smv-popup-form-head p {
+        margin: 4px 0 0 !important;
+        color: #687373 !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+      }
+
+      .smv-popup-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 7px 12px !important;
+      }
+
+      .smv-popup-field {
+        min-width: 0 !important;
+      }
+
+      .smv-popup-field.full {
+        grid-column: 1 / -1 !important;
+      }
+
+      .smv-popup-field label {
+        display: block !important;
+        margin: 0 0 3px !important;
+        color: #586363 !important;
+        font-size: 10px !important;
+        letter-spacing: .65px !important;
+        font-weight: 800 !important;
+      }
+
+      .smv-popup-field input,
+      .smv-popup-field select,
+      .smv-popup-field textarea {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border: 1px solid #cfd5d5 !important;
+        border-radius: 8px !important;
+        background: #fff !important;
+        color: #1e2929 !important;
+        font: inherit !important;
+        font-size: 13px !important;
+        outline: none !important;
+        transition: border-color .18s ease, box-shadow .18s ease !important;
+      }
+
+      .smv-popup-field input,
+      .smv-popup-field select {
+        height: 35px !important;
+        padding: 0 10px !important;
+      }
+
+      .smv-popup-field textarea {
+        min-height: 55px !important;
+        padding: 7px 10px !important;
+        resize: vertical !important;
+      }
+
+      .smv-popup-field input:focus,
+      .smv-popup-field select:focus,
+      .smv-popup-field textarea:focus {
+        border-color: #139b8d !important;
+        box-shadow: 0 0 0 3px rgba(19,155,141,.10) !important;
+      }
+
+      .smv-popup-ai-summary {
+        margin-top: 8px !important;
+        border: 1px solid #e1e6e6 !important;
+        border-radius: 10px !important;
+        background: #f7fafa !important;
+        padding: 7px 10px !important;
+      }
+
+      .smv-popup-ai-summary strong {
+        display: block !important;
+        color: #197f75 !important;
+        font-size: 10px !important;
+        letter-spacing: .8px !important;
+        margin-bottom: 2px !important;
+      }
+
+      .smv-popup-ai-summary span {
+        color: #647070 !important;
+        font-size: 11px !important;
+        line-height: 1.45 !important;
+      }
+
+      .smv-popup-actions {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+        margin-top: 8px !important;
+      }
+
+      .smv-popup-submit {
+        flex: 1 !important;
+        min-height: 40px !important;
+        border: 0 !important;
+        border-radius: 9px !important;
+        background: linear-gradient(135deg,#0d9588,#16b9a8) !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
+        box-shadow: 0 8px 22px rgba(13,149,136,.18) !important;
+      }
+
+      .smv-popup-submit:hover {
+        filter: brightness(1.04) !important;
+      }
+
+      .smv-popup-submit:disabled {
+        opacity: .7 !important;
+        cursor: wait !important;
+      }
+
+      .smv-popup-later {
+        border: 0 !important;
+        background: transparent !important;
+        color: #687373 !important;
+        font-size: 12px !important;
+        cursor: pointer !important;
+        padding: 10px 5px !important;
+        white-space: nowrap !important;
+      }
+
+      .smv-popup-trust {
+        text-align: center !important;
+        color: #8a9393 !important;
+        font-size: 10px !important;
+        margin: 5px 0 0 !important;
+      }
+
+      .smv-popup-error {
+        min-height: 14px !important;
+        margin: 5px 0 0 !important;
+        color: #c43e3e !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+      }
+
+      .smv-popup-success {
+        min-height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        padding: 45px 30px !important;
+      }
+
+      .smv-popup-success-box {
+        max-width: 460px !important;
+      }
+
+      .smv-success-icon {
+        width: 70px !important;
+        height: 70px !important;
+        border-radius: 50% !important;
+        display: grid !important;
+        place-items: center !important;
+        margin: 0 auto 20px !important;
+        background: rgba(19,155,141,.12) !important;
+        color: #139b8d !important;
+        font-size: 35px !important;
+        font-weight: 900 !important;
+      }
+
+      .smv-popup-success h3 {
+        margin: 0 0 10px !important;
+        color: #172323 !important;
+        font-size: 27px !important;
+      }
+
+      .smv-popup-success p {
+        margin: 0 0 20px !important;
+        color: #697575 !important;
+        line-height: 1.6 !important;
+        font-size: 14px !important;
+      }
+
+      .smv-success-close {
+        min-height: 44px !important;
+        padding: 0 25px !important;
+        border: 0 !important;
+        border-radius: 8px !important;
+        background: #0d9588 !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+      }
+
+      /* Keep the complete form and submit action visible without requiring the customer to scroll. */
+      @media (min-width: 761px) {
+        #enquiryPopup .smv-popup-form-side {
+          overflow-y: auto !important;
+          scrollbar-width: thin !important;
+        }
+
+        #enquiryPopup .smv-popup-field label {
+          font-size: 9px !important;
+          line-height: 1.1 !important;
+        }
+
+        #enquiryPopup .smv-popup-trust {
+          margin-bottom: 0 !important;
+        }
+      }
+
+      @media (max-width: 760px) {
+        #enquiryPopup .enquiry-popup {
+          width: calc(100vw - 18px) !important;
+          max-height: 94vh !important;
+          border-radius: 14px !important;
+        }
+
+        #enquiryPopup .popup-content.smv-complete-popup {
+          grid-template-columns: 1fr !important;
+          min-height: auto !important;
+          max-height: 94vh !important;
+        }
+
+        .smv-popup-info {
+          display: none !important;
+        }
+
+        .smv-popup-form-side {
+          padding: 25px 18px 18px !important;
+          max-height: 94vh !important;
+        }
+
+        .smv-popup-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        .smv-popup-field.full {
+          grid-column: auto !important;
+        }
+      }
+
+      @media (min-width: 761px) and (max-height: 720px) {
+        .smv-popup-info {
+          padding: 28px 28px !important;
+        }
+
+        .smv-popup-form-side {
+          padding: 23px 28px 18px !important;
+        }
+
+        #enquiryPopup .popup-content.smv-complete-popup {
+          min-height: 0 !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /* ---------------------------------------------------------
+     BUILD COMPLETE POPUP FORM
+     --------------------------------------------------------- */
+  const content = originalContent || document.createElement("div");
+  content.className = "popup-content smv-complete-popup";
+
+  content.innerHTML = `
+    <div class="smv-popup-info">
+      <img class="smv-popup-logo" src="logo.png" alt="Select My Venue">
+
+      <div class="smv-popup-kicker">SMART VENUE DISCOVERY</div>
+
+      <h2>Let's find the right <span>venue for you.</span></h2>
+
+      <p>
+        Share your complete event requirement and our team can
+        understand exactly what you need before contacting you.
+      </p>
+
+      <ul class="smv-popup-benefits">
+        <li><b>✓</b><span>Requirement-based venue discovery</span></li>
+        <li><b>✓</b><span>Location, date and guest-focused matching</span></li>
+        <li><b>✓</b><span>Budget and food preference considered</span></li>
+        <li><b>✓</b><span>Human support from Select My Venue</span></li>
+        <li><b>✓</b><span>Your information is used only for your venue requirement</span></li>
+      </ul>
+    </div>
+
+    <div class="smv-popup-form-side">
+      <button type="button" class="popup-close" id="smvPopupClose" aria-label="Close enquiry form">×</button>
+
+      <div class="smv-popup-form-head">
+        <div class="kicker">YOUR REQUIREMENTS</div>
+        <h3>Get your venue options</h3>
+        <p>Tell us a few details. It only takes a moment.</p>
+      </div>
+
+      <form id="smvCompletePopupForm" novalidate>
+        <div class="smv-popup-grid">
+
+          <div class="smv-popup-field">
+            <label for="smvPopupName">CUSTOMER NAME *</label>
+            <input id="smvPopupName" type="text" placeholder="Enter your name" autocomplete="name" required>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupMobile">MOBILE NUMBER *</label>
+            <input id="smvPopupMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel" required>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupEmail">EMAIL</label>
+            <input id="smvPopupEmail" type="email" placeholder="your@email.com" autocomplete="email">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupLocation">CITY / LOCATION *</label>
+            <input id="smvPopupLocation" type="text" placeholder="Delhi, Gurgaon, Noida..." autocomplete="address-level2" required>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupEventType">EVENT TYPE *</label>
+            <select id="smvPopupEventType" required>
+              <option value="">Select event</option>
+              <option>Wedding</option>
+              <option>Engagement</option>
+              <option>Birthday</option>
+              <option>Anniversary</option>
+              <option>Corporate Event</option>
+              <option>Reception</option>
+              <option>Party</option>
+              <option>Baby Shower</option>
+              <option>Kitty Party</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupDate">EVENT DATE</label>
+            <input id="smvPopupDate" type="date">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupGuests">NUMBER OF GUESTS</label>
+            <input id="smvPopupGuests" type="number" min="1" placeholder="e.g. 300">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupBudget">BUDGET / PERSON</label>
+            <input id="smvPopupBudget" type="number" min="0" placeholder="₹ per person">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupFood">FOOD PREFERENCE</label>
+            <select id="smvPopupFood">
+              <option value="">Select preference</option>
+              <option>Veg</option>
+              <option>Non-Veg</option>
+              <option>Both</option>
+              <option>Jain</option>
+              <option>Not Specified</option>
+            </select>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupVenueType">VENUE STYLE</label>
+            <select id="smvPopupVenueType">
+              <option value="">Let Select My Venue decide</option>
+              <option>Banquet Hall</option>
+              <option>Hotel</option>
+              <option>Resort</option>
+              <option>Farmhouse</option>
+              <option>Lawn</option>
+              <option>Restaurant</option>
+              <option>Rooftop</option>
+              <option>Community Hall</option>
+            </select>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupStyle">EVENT STYLE</label>
+            <select id="smvPopupStyle">
+              <option value="">Let Select My Venue decide</option>
+              <option>Premium</option>
+              <option>Elegant</option>
+              <option>Modern</option>
+              <option>Traditional</option>
+              <option>Minimal</option>
+              <option>Luxury</option>
+              <option>Fun & Colorful</option>
+            </select>
+          </div>
+
+          <div class="smv-popup-field full">
+            <label for="smvPopupRequirements">OTHER REQUIREMENTS</label>
+            <textarea id="smvPopupRequirements" rows="3" maxlength="1000" placeholder="Decoration, parking, rooms, catering, DJ, photography, special requests, etc."></textarea>
+          </div>
+
+        </div>
+
+        <div class="smv-popup-ai-summary">
+          <strong>🤖 AI PLANNER INFORMATION</strong>
+          <span id="smvPopupAISummary">Your AI event plan will be attached automatically when available.</span>
+        </div>
+
+        <div class="smv-popup-actions">
+          <button type="submit" class="smv-popup-submit" id="smvPopupSubmit">Submit My Venue Requirement →</button>
+          <button type="button" class="smv-popup-later" id="smvPopupLater">Maybe later</button>
+        </div>
+
+        <p class="smv-popup-error" id="smvPopupMessage" role="alert" aria-live="polite"></p>
+        <p class="smv-popup-trust">🔒 Your information is used only for your venue requirement.</p>
+      </form>
+    </div>
+  `;
+
+  /* If content existed in the HTML, it is already inside popupRoot. */
+  if (!originalContent) popupRoot.appendChild(content);
+
+  const form = byId("smvCompletePopupForm");
+  const closeButton = byId("smvPopupClose");
+  const laterButton = byId("smvPopupLater");
+  const submitButton = byId("smvPopupSubmit");
+  const message = byId("smvPopupMessage");
+
+  if (!form) return;
+
+  /* ---------------------------------------------------------
+     SESSION CONTROL
+     --------------------------------------------------------- */
+  function isPopupHandled() {
     try {
-      return sessionStorage.getItem("smv_popup_handled_v1") === "1";
+      return sessionStorage.getItem("smv_popup_handled_v2") === "1";
     } catch (error) {
       return false;
     }
@@ -2630,25 +3263,78 @@ function setupAutoEnquiryPopup() {
 
   function markPopupHandled() {
     try {
-      sessionStorage.setItem("smv_popup_handled_v1", "1");
+      sessionStorage.setItem("smv_popup_handled_v2", "1");
     } catch (error) {
-      /* Storage may be unavailable; popup still works. */
+      /* Continue if browser storage is unavailable. */
     }
   }
 
+  /* ---------------------------------------------------------
+     OPEN / CLOSE
+     --------------------------------------------------------- */
   function openPopup() {
+    if (isPopupHandled()) return;
     if (overlay.classList.contains("show")) return;
+
+    /* Prefill from existing website/AI planner information. */
+    const plan = currentAIPlan;
+
+    if (plan) {
+      setValue("smvPopupEventType", plan.eventType || "");
+      setValue("smvPopupLocation", plan.location || "");
+      setValue("smvPopupDate", plan.eventDate || "");
+      setValue("smvPopupGuests", plan.guests || "");
+      setValue("smvPopupBudget", plan.budget || "");
+      setValue("smvPopupFood", plan.food || "");
+      setValue("smvPopupVenueType", plan.venueType || "");
+      setValue("smvPopupStyle", plan.style || "");
+
+      const summary = byId("smvPopupAISummary");
+      if (summary) {
+        summary.textContent =
+          (plan.eventType || "Event") +
+          " • " +
+          (plan.location || "Location not specified") +
+          " • Match " +
+          (plan.matchScore || "—") +
+          "% • " +
+          (plan.intent || "Requirement") +
+          (plan.style ? " • " + plan.style : "");
+      }
+    }
+
+    const mainName = getValue("customerName");
+    const mainMobile = getValue("customerMobile");
+    const mainEmail = getValue("customerEmail");
+    const mainLocation = getValue("customerLocation");
+    const mainEvent = getValue("customerEventType");
+    const mainDate = getValue("customerEventDate");
+    const mainGuests = getValue("customerGuests");
+    const mainBudget = getValue("customerBudget");
+    const mainFood = getValue("customerFood");
+    const mainOther = getValue("customerRequirements");
+
+    if (mainName) setValue("smvPopupName", mainName);
+    if (mainMobile) setValue("smvPopupMobile", mainMobile);
+    if (mainEmail) setValue("smvPopupEmail", mainEmail);
+    if (mainLocation) setValue("smvPopupLocation", mainLocation);
+    if (mainEvent) setValue("smvPopupEventType", mainEvent);
+    if (mainDate) setValue("smvPopupDate", mainDate);
+    if (mainGuests) setValue("smvPopupGuests", mainGuests);
+    if (mainBudget) setValue("smvPopupBudget", mainBudget);
+    if (mainFood) setValue("smvPopupFood", mainFood);
+    if (mainOther) setValue("smvPopupRequirements", mainOther);
+
+    clearInlineMessage(message);
 
     overlay.classList.add("show");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("popup-open");
 
-    const name = byId("popupCustomerName");
-    if (name) {
-      setTimeout(function () {
-        name.focus();
-      }, 120);
-    }
+    setTimeout(function () {
+      const name = byId("smvPopupName");
+      if (name) name.focus();
+    }, 100);
   }
 
   function closePopup(markHandled) {
@@ -2661,24 +3347,53 @@ function setupAutoEnquiryPopup() {
     }
   }
 
-  /* Auto-open once per browser session, after the page has loaded. */
-  if (!isPopupSuppressed()) {
-    popupTimer = setTimeout(function () {
+  /* ---------------------------------------------------------
+     TRIGGER:
+     NO PAGE-LOAD TIMER.
+     First genuine website click/tap -> wait 15 seconds -> popup.
+
+     The visitor gets time to browse before the enquiry form appears.
+     The popup never opens just because the page was loaded.
+     --------------------------------------------------------- */
+  const POPUP_DELAY_AFTER_INTERACTION = 10000;
+  let interactionTimer = null;
+  let interactionDetected = false;
+
+  function startInteractionTimer(event) {
+    if (interactionDetected) return;
+    if (isPopupHandled()) return;
+    if (overlay.classList.contains("show")) return;
+
+    if (event && event.target && event.target.closest("#enquiryPopup")) {
+      return;
+    }
+
+    interactionDetected = true;
+    clearTimeout(interactionTimer);
+
+    interactionTimer = setTimeout(function () {
       openPopup();
-    }, 7000);
+    }, POPUP_DELAY_AFTER_INTERACTION);
+
+    document.removeEventListener("click", startInteractionTimer, true);
+
+    console.log(
+      "Select My Venue: enquiry popup scheduled 15 seconds after first website interaction."
+    );
   }
 
-  if (closeButton) {
-    closeButton.addEventListener("click", function () {
-      closePopup(true);
-    });
-  }
+  document.addEventListener("click", startInteractionTimer, true);
 
-  if (laterButton) {
-    laterButton.addEventListener("click", function () {
-      closePopup(true);
-    });
-  }
+  /* ---------------------------------------------------------
+     CLOSE EVENTS
+     --------------------------------------------------------- */
+  closeButton.addEventListener("click", function () {
+    closePopup(true);
+  });
+
+  laterButton.addEventListener("click", function () {
+    closePopup(true);
+  });
 
   overlay.addEventListener("click", function (event) {
     if (event.target === overlay) {
@@ -2687,153 +3402,265 @@ function setupAutoEnquiryPopup() {
   });
 
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && overlay.classList.contains("show")) {
+    if (
+      event.key === "Escape" &&
+      overlay.classList.contains("show")
+    ) {
       closePopup(true);
     }
   });
 
+  /* ---------------------------------------------------------
+     MOBILE NUMBER
+     --------------------------------------------------------- */
+  const mobile = byId("smvPopupMobile");
+  if (mobile) {
+    mobile.addEventListener("input", function () {
+      this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+  }
+
+  /* ---------------------------------------------------------
+     SUCCESS SCREEN
+     --------------------------------------------------------- */
+  function showPopupSuccess() {
+    const side = popupRoot.querySelector(".smv-popup-form-side");
+    if (!side) return;
+
+    side.innerHTML = `
+      <div class="smv-popup-success">
+        <div class="smv-popup-success-box">
+          <div class="smv-success-icon">✓</div>
+          <h3>Requirement Received!</h3>
+          <p>
+            Thank you. Your venue requirement has been submitted
+            successfully and saved with our venue enquiry team.
+            Our Select My Venue team will review your details and
+            contact you with suitable options.
+          </p>
+          <button type="button" class="smv-success-close" id="smvSuccessClose">
+            Continue Browsing
+          </button>
+        </div>
+      </div>
+    `;
+
+    const successClose = byId("smvSuccessClose");
+    if (successClose) {
+      successClose.addEventListener("click", function () {
+        closePopup(true);
+      });
+    }
+  }
+
+  /* ---------------------------------------------------------
+     COMPLETE POPUP SUBMISSION
+     --------------------------------------------------------- */
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
+    event.stopPropagation();
 
-    const submitButton = form.querySelector('button[type="submit"]');
-    const customerName = getValue("popupCustomerName");
-    const customerMobile = getValue("popupCustomerMobile");
-    const eventType = getValue("popupEventType");
-    const location = getValue("popupLocation");
+    clearInlineMessage(message);
 
-    const cleanMobile = customerMobile
-      .replace(/\D/g, "")
-      .slice(0, 10);
+    const customerName = getValue("smvPopupName");
+    const customerMobile = getValue("smvPopupMobile");
+    const customerEmail = getValue("smvPopupEmail");
+    const location = getValue("smvPopupLocation");
+    const eventType = getValue("smvPopupEventType");
+    const eventDate = getValue("smvPopupDate");
+    const guests = getValue("smvPopupGuests");
+    const budget = getValue("smvPopupBudget");
+    const food = getValue("smvPopupFood");
+    const venueType = getValue("smvPopupVenueType");
+    const style = getValue("smvPopupStyle");
+    const other = getValue("smvPopupRequirements");
+
+    const cleanMobile = customerMobile.replace(/\D/g, "").slice(0, 10);
 
     if (!customerName) {
-      showToast("Please enter your name.", "error");
-      focusField("popupCustomerName");
+      showInlineMessage(message, "Please enter your name.", "error");
+      focusField("smvPopupName");
       return;
     }
 
     if (!/^[0-9]{10}$/.test(cleanMobile)) {
-      showToast("Please enter a valid 10-digit mobile number.", "error");
-      focusField("popupCustomerMobile");
+      showInlineMessage(
+        message,
+        "Please enter a valid 10-digit mobile number.",
+        "error"
+      );
+      focusField("smvPopupMobile");
       return;
     }
 
-    if (!eventType) {
-      showToast("Please select your event type.", "error");
-      focusField("popupEventType");
+    if (customerEmail && !isValidEmail(customerEmail)) {
+      showInlineMessage(
+        message,
+        "Please enter a valid email address.",
+        "error"
+      );
+      focusField("smvPopupEmail");
       return;
     }
 
     if (!location) {
-      showToast("Please enter your city or location.", "error");
-      focusField("popupLocation");
+      showInlineMessage(
+        message,
+        "Please enter your city or location.",
+        "error"
+      );
+      focusField("smvPopupLocation");
       return;
     }
 
-    /*
-     * Create a lightweight AI plan so the popup lead receives the
-     * same CRM intelligence structure as the main enquiry form.
-     */
+    if (!eventType) {
+      showInlineMessage(
+        message,
+        "Please select your event type.",
+        "error"
+      );
+      focusField("smvPopupEventType");
+      return;
+    }
+
     const plan = generateAIEventPlan({
       eventType: eventType,
       location: location,
-      eventDate: "",
-      guests: "",
-      budget: "",
-      food: "",
-      venueType: "",
-      style: "",
-      other: ""
+      eventDate: eventDate,
+      guests: guests,
+      budget: budget,
+      food: food,
+      venueType: venueType,
+      style: style,
+      other: other
     });
+
+    currentAIPlan = plan;
+    plannerGenerated = true;
+    saveAIPlan(plan);
 
     const requirements = buildFullAIRequirements({
       aiPlan: plan,
-      other: "Quick enquiry submitted from website popup."
+      other: other
     });
 
+    /*
+     * EXACT SAME DATABASE TABLE USED BY THE MAIN ENQUIRY FORM.
+     *
+     * Important:
+     * Do NOT call .select().single() after insert here.
+     * A successful INSERT can be blocked from SELECT by an RLS
+     * SELECT policy, which previously could make a saved enquiry
+     * look like a failed submission to the customer.
+     */
     const payload = {
       customer_name: customerName,
       mobile: cleanMobile,
-      email: null,
+      email: customerEmail || null,
       location: location,
       occasion: eventType,
-      event_date: null,
-      guests: null,
-      budget_per_person: null,
-      food_preference: null,
+      event_date: eventDate || null,
+      guests: guests ? Number(guests) : null,
+      budget_per_person: budget ? Number(budget) : null,
+      food_preference: food || null,
       requirements: requirements,
-      source: "Website - Quick Popup",
+      source: "Website - Enquiry Popup",
       status: "new",
       priority: calculateLeadPriority(plan),
       assigned_to: null,
       follow_up_at: null,
       internal_notes:
-        "Website Quick Popup Lead | Match Score: " +
+        "Website Enquiry Popup Lead | Match Score: " +
         plan.matchScore +
         "% | Intent: " +
         plan.intent +
         " | Quality: " +
         plan.leadQuality +
         " | Planning Stage: " +
-        plan.planningStage,
+        plan.planningStage +
+        (venueType ? " | Venue Style: " + venueType : "") +
+        (style ? " | Event Style: " + style : ""),
       last_contacted_at: null
     };
 
-    setButtonLoading(submitButton, "Submitting...");
+    setButtonLoading(
+      submitButton,
+      "Submitting..."
+    );
 
     try {
       if (!supabaseClient) {
-        throw new Error("Supabase client is not initialized.");
+        throw new Error(
+          "Supabase client is not initialized."
+        );
       }
 
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from("customer_enquiries")
-        .insert(payload)
-        .select("*")
-        .single();
+        .insert(payload);
 
       if (error) {
-        console.error("POPUP ENQUIRY SUPABASE ERROR:", error);
+        console.error(
+          "SELECT MY VENUE POPUP INSERT ERROR:",
+          error
+        );
         throw error;
       }
 
-      /* Keep the same information available to the full enquiry form. */
+      /*
+       * Keep the same enquiry information synchronized with the
+       * main website form and AI planner.
+       */
       setValue("customerName", customerName);
       setValue("customerMobile", cleanMobile);
-      setValue("customerEventType", eventType);
+      setValue("customerEmail", customerEmail);
       setValue("customerLocation", location);
+      setValue("customerEventType", eventType);
+      setValue("customerEventDate", eventDate);
+      setValue("customerGuests", guests);
+      setValue("customerBudget", budget);
+      setValue("customerFood", food);
+      setValue("customerRequirements", other);
 
-      currentAIPlan = plan;
-      plannerGenerated = true;
-      saveAIPlan(plan);
+      populatePlannerFromPlan(plan);
+      renderAIPlan(plan);
       updatePlannerSummary(plan);
 
-      form.reset();
       markPopupHandled();
-      closePopup(false);
-
-      showToast("✓ Your enquiry has been received successfully.");
 
       console.log(
-        "Select My Venue: popup enquiry saved to customer_enquiries.",
-        data
+        "Select My Venue: popup enquiry successfully inserted into customer_enquiries.",
+        payload
+      );
+
+      showPopupSuccess();
+
+      showToast(
+        "✓ Your venue requirement has been received successfully."
       );
     } catch (error) {
-      console.error("POPUP ENQUIRY ERROR:", error);
+      console.error(
+        "SELECT MY VENUE POPUP ENQUIRY ERROR:",
+        error
+      );
+
+      showInlineMessage(
+        message,
+        getFriendlySupabaseError(error),
+        "error"
+      );
+
       showToast(
         getFriendlySupabaseError(error),
         "error"
       );
     } finally {
-      restoreButton(submitButton, "Find My Venue →");
+      restoreButton(
+        submitButton,
+        "Submit My Venue Requirement →"
+      );
     }
   });
-
-  const popupMobile = byId("popupCustomerMobile");
-  if (popupMobile) {
-    popupMobile.addEventListener("input", function () {
-      this.value = this.value.replace(/\D/g, "").slice(0, 10);
-    });
-  }
 }
 
 /* =========================================================
@@ -3352,3 +4179,1338 @@ window.SelectMyVenue = {
 console.log(
   "Select My Venue — website script loaded."
 );
+
+/* =========================================================
+   SELECT MY VENUE — REAL AI ASSISTANT
+   Connects to Supabase Edge Function: smv-ai-assistant
+   ========================================================= */
+
+(function setupSMVAIAssistant() {
+
+  const chatButton = document.getElementById("smvAiChatButton");
+  const chatPanel = document.getElementById("smvAiChatPanel");
+  const chatClose = document.getElementById("smvAiChatClose");
+  const chatForm = document.getElementById("smvAiChatForm");
+  const chatInput = document.getElementById("smvAiChatInput");
+  const chatSend = document.getElementById("smvAiChatSend");
+  const chatMessages = document.getElementById("smvAiChatMessages");
+
+  if (
+    !chatButton ||
+    !chatPanel ||
+    !chatClose ||
+    !chatForm ||
+    !chatInput ||
+    !chatSend ||
+    !chatMessages
+  ) {
+    console.warn(
+      "Select My Venue AI Assistant: required HTML elements were not found."
+    );
+    return;
+  }
+
+  /* ---------------------------------------------------------
+     OPEN / CLOSE CHAT
+     --------------------------------------------------------- */
+
+  function openChat() {
+
+    chatPanel.classList.add("open");
+    chatPanel.setAttribute("aria-hidden", "false");
+
+    setTimeout(function () {
+      chatInput.focus();
+    }, 100);
+  }
+
+  function closeChat() {
+
+    chatPanel.classList.remove("open");
+    chatPanel.setAttribute("aria-hidden", "true");
+  }
+
+  chatButton.addEventListener("click", openChat);
+  chatClose.addEventListener("click", closeChat);
+
+  /* ---------------------------------------------------------
+     ESC KEY
+     --------------------------------------------------------- */
+
+  document.addEventListener("keydown", function (event) {
+
+    if (event.key === "Escape") {
+      closeChat();
+    }
+
+  });
+
+  /* ---------------------------------------------------------
+     ADD MESSAGE
+     --------------------------------------------------------- */
+
+  function addMessage(text, type) {
+
+    const message = document.createElement("div");
+
+    message.className =
+      type === "user"
+        ? "smv-ai-message smv-ai-message-user"
+        : "smv-ai-message smv-ai-message-bot";
+
+    const title = document.createElement("strong");
+
+    title.textContent =
+      type === "user"
+        ? "You"
+        : "AI Assistant";
+
+    const paragraph = document.createElement("p");
+
+    paragraph.textContent = text;
+
+    message.appendChild(title);
+    message.appendChild(paragraph);
+
+    chatMessages.appendChild(message);
+
+    chatMessages.scrollTop =
+      chatMessages.scrollHeight;
+
+    return message;
+  }
+
+  /* ---------------------------------------------------------
+     TYPING MESSAGE
+     --------------------------------------------------------- */
+
+  function addTypingMessage() {
+
+    const message = document.createElement("div");
+
+    message.className =
+      "smv-ai-message smv-ai-message-bot";
+
+    const title = document.createElement("strong");
+
+    title.textContent = "AI Assistant";
+
+    const paragraph = document.createElement("p");
+
+    paragraph.textContent = "Thinking…";
+
+    message.appendChild(title);
+    message.appendChild(paragraph);
+
+    chatMessages.appendChild(message);
+
+    chatMessages.scrollTop =
+      chatMessages.scrollHeight;
+
+    return message;
+  }
+
+  /* ---------------------------------------------------------
+     READ CURRENT EVENT CONTEXT
+     IMPORTANT:
+     No customer name/mobile/email is sent.
+     --------------------------------------------------------- */
+
+  function getAIEventContext() {
+
+    function value(id) {
+
+      const element =
+        document.getElementById(id);
+
+      return element
+        ? String(element.value || "").trim()
+        : "";
+    }
+
+    const context = {
+
+      eventType:
+        value("plannerEventType") ||
+        value("customerEventType") ||
+        value("eventType"),
+
+      location:
+        value("plannerLocation") ||
+        value("customerLocation") ||
+        value("location"),
+
+      eventDate:
+        value("plannerDate") ||
+        value("customerEventDate") ||
+        value("date"),
+
+      guests:
+        value("plannerGuests") ||
+        value("customerGuests") ||
+        value("guests"),
+
+      budgetPerPerson:
+        value("plannerBudget") ||
+        value("customerBudget"),
+
+      food:
+        value("plannerFood") ||
+        value("customerFood"),
+
+      venueType:
+        value("plannerVenueType"),
+
+      requirements:
+        value("plannerRequirements") ||
+        value("customerRequirements")
+
+    };
+
+    /* Include safe AI planner information if available */
+
+    try {
+
+      if (
+        typeof currentAIPlan !== "undefined" &&
+        currentAIPlan &&
+        typeof currentAIPlan === "object"
+      ) {
+
+        context.aiPlan = {
+
+          matchScore:
+            currentAIPlan.matchScore ??
+            null,
+
+          intent:
+            String(
+              currentAIPlan.intent || ""
+            ),
+
+          leadQuality:
+            String(
+              currentAIPlan.leadQuality || ""
+            ),
+
+          planningStage:
+            String(
+              currentAIPlan.planningStage || ""
+            ),
+
+          venueTypes:
+            Array.isArray(
+              currentAIPlan.venueTypes
+            )
+              ? currentAIPlan.venueTypes
+                  .slice(0, 5)
+                  .map(function (item) {
+                    return String(item);
+                  })
+              : []
+
+        };
+
+      }
+
+    } catch (error) {
+
+      console.warn(
+        "SMV AI context could not read current AI plan:",
+        error
+      );
+
+    }
+
+    return context;
+  }
+
+  /* ---------------------------------------------------------
+     CALL SUPABASE EDGE FUNCTION
+     --------------------------------------------------------- */
+
+  async function askSMVAI(message) {
+
+    const context =
+      getAIEventContext();
+
+    const response =
+      await fetch(
+        "https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/smv-ai-assistant",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            message: message,
+
+            context: context
+
+          })
+
+        }
+      );
+
+    let data = null;
+
+    try {
+
+      data = await response.json();
+
+    } catch (error) {
+
+      throw new Error(
+        "The AI assistant returned an invalid response."
+      );
+
+    }
+
+    if (!response.ok) {
+
+      console.error(
+        "SMV AI Assistant error:",
+        data
+      );
+
+      throw new Error(
+        data?.error ||
+        "The AI assistant could not respond right now."
+      );
+
+    }
+
+    if (
+      !data ||
+      !data.reply
+    ) {
+
+      throw new Error(
+        "The AI assistant returned an empty response."
+      );
+
+    }
+
+    return String(
+      data.reply
+    ).trim();
+
+  }
+
+  /* ---------------------------------------------------------
+     SEND MESSAGE
+     --------------------------------------------------------- */
+
+  async function sendMessage(message) {
+
+    message =
+      String(message || "").trim();
+
+    if (!message) {
+      return;
+    }
+
+    if (message.length > 600) {
+
+      addMessage(
+        "Please keep your question under 600 characters.",
+        "bot"
+      );
+
+      return;
+    }
+
+    addMessage(
+      message,
+      "user"
+    );
+
+    chatInput.value = "";
+
+    chatInput.disabled = true;
+    chatSend.disabled = true;
+
+    const typingMessage =
+      addTypingMessage();
+
+    try {
+
+      const reply =
+        await askSMVAI(message);
+
+      typingMessage.remove();
+
+      addMessage(
+        reply,
+        "bot"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "SMV AI Assistant:",
+        error
+      );
+
+      typingMessage.remove();
+
+      addMessage(
+        error?.message ||
+        "Sorry, the AI assistant is temporarily unavailable. Please try again.",
+        "bot"
+      );
+
+    } finally {
+
+      chatInput.disabled = false;
+      chatSend.disabled = false;
+
+      chatInput.focus();
+
+    }
+
+  }
+
+  /* ---------------------------------------------------------
+     CHAT FORM
+     --------------------------------------------------------- */
+
+  chatForm.addEventListener(
+    "submit",
+    function (event) {
+
+      event.preventDefault();
+
+      sendMessage(
+        chatInput.value
+      );
+
+    }
+  );
+
+  /* ---------------------------------------------------------
+     QUICK QUESTIONS
+     --------------------------------------------------------- */
+
+  document
+    .querySelectorAll(
+      "[data-ai-question]"
+    )
+    .forEach(function (button) {
+
+      button.addEventListener(
+        "click",
+        function () {
+
+          const question =
+            button.getAttribute(
+              "data-ai-question"
+            );
+
+          if (!question) {
+            return;
+          }
+
+          openChat();
+
+          sendMessage(
+            question
+          );
+
+        }
+      );
+
+    });
+
+  console.log(
+    "✓ Select My Venue AI Assistant initialized."
+  );
+
+})();
+
+/* =========================================================
+   SELECT MY VENUE — FINAL AI ASSISTANT
+   FLOATING CUSTOMER ASSISTANT
+   ========================================================= */
+
+(function () {
+
+  "use strict";
+
+  /* ---------------------------------------------------------
+     REMOVE ANY BROKEN / OLD AI ASSISTANT
+     --------------------------------------------------------- */
+
+  function removeOldAIWidgets() {
+
+    /* Remove known old widget classes */
+    document
+      .querySelectorAll(
+        ".smv-ai-chat-button, .smv-ai-chat-panel, #smvFinalAIAssistant"
+      )
+      .forEach(function (element) {
+        if (
+          element.id !== "smvFinalAIAssistant"
+        ) {
+          element.remove();
+        }
+      });
+
+    /*
+      Remove the broken assistant that was appearing
+      inside the enquiry section.
+
+      We identify it by its visible title rather than
+      relying on an unknown old class name.
+    */
+    const allElements =
+      document.querySelectorAll(
+        "div, section, aside, article"
+      );
+
+    allElements.forEach(function (element) {
+
+      if (
+        element.id === "smvFinalAIAssistant"
+      ) {
+        return;
+      }
+
+      const text =
+        (element.textContent || "")
+          .replace(/\s+/g, " ")
+          .trim();
+
+      if (
+        text.includes(
+          "Select My Venue AI Smart Event Assistant"
+        )
+      ) {
+
+        /*
+          Find the smallest sensible container.
+        */
+        let target = element;
+
+        while (
+          target.parentElement &&
+          target.parentElement !== document.body
+        ) {
+
+          const parentText =
+            (target.parentElement.textContent || "")
+              .replace(/\s+/g, " ")
+              .trim();
+
+          if (
+            parentText.length > 1800
+          ) {
+            break;
+          }
+
+          if (
+            target.parentElement.classList.contains(
+              "enquiry-section"
+            ) ||
+            target.parentElement.classList.contains(
+              "ai-planner-section"
+            )
+          ) {
+            break;
+          }
+
+          target = target.parentElement;
+        }
+
+        /*
+          Never remove the real enquiry section.
+        */
+        if (
+          target.classList.contains(
+            "enquiry-section"
+          ) ||
+          target.classList.contains(
+            "ai-planner-section"
+          )
+        ) {
+          return;
+        }
+
+        target.remove();
+      }
+    });
+  }
+
+
+  /* ---------------------------------------------------------
+     CREATE FINAL AI ASSISTANT
+     --------------------------------------------------------- */
+
+  function createFinalAIAssistant() {
+
+    if (
+      document.getElementById(
+        "smvFinalAIAssistant"
+      )
+    ) {
+      return;
+    }
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.id =
+      "smvFinalAIAssistant";
+
+    wrapper.innerHTML = `
+
+      <!-- AI BUTTON -->
+
+      <button
+        type="button"
+        id="smvFinalAIButton"
+        class="smv-final-ai-button"
+        aria-label="Open Select My Venue AI Assistant"
+        aria-expanded="false"
+      >
+
+        <span
+          class="smv-final-ai-icon"
+          aria-hidden="true"
+        >
+          ✦
+        </span>
+
+        <span>
+          AI Assistant
+        </span>
+
+      </button>
+
+
+      <!-- AI PANEL -->
+
+      <div
+        id="smvFinalAIPanel"
+        class="smv-final-ai-panel"
+        aria-hidden="true"
+      >
+
+        <div class="smv-final-ai-header">
+
+          <div>
+
+            <strong>
+              Select My Venue
+            </strong>
+
+            <small>
+              AI Event Assistant
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            id="smvFinalAIClose"
+            class="smv-final-ai-close"
+            aria-label="Close AI Assistant"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <div
+          id="smvFinalAIConversation"
+          class="smv-final-ai-conversation"
+        >
+
+          <div class="smv-final-ai-message ai">
+
+            <div class="smv-final-ai-avatar">
+              ✦
+            </div>
+
+            <div class="smv-final-ai-bubble">
+
+              <strong>
+                Hi! I'm your Select My Venue AI Assistant.
+              </strong>
+
+              <p>
+                I can help you plan your event,
+                understand your venue requirements
+                and guide you to the right next step.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="smv-final-ai-suggestions">
+
+            <button
+              type="button"
+              data-ai-action="venue"
+            >
+              🏛️ Venue type
+            </button>
+
+            <button
+              type="button"
+              data-ai-action="budget"
+            >
+              💰 Budget
+            </button>
+
+            <button
+              type="button"
+              data-ai-action="checklist"
+            >
+              ✅ Venue checklist
+            </button>
+
+            <button
+              type="button"
+              data-ai-action="planner"
+            >
+              ✦ Start AI Planner
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <form
+          id="smvFinalAIForm"
+          class="smv-final-ai-form"
+        >
+
+          <input
+            id="smvFinalAIInput"
+            type="text"
+            autocomplete="off"
+            placeholder="Ask about your event..."
+            aria-label="Ask Select My Venue AI"
+          >
+
+          <button
+            type="submit"
+            aria-label="Send message"
+          >
+            →
+          </button>
+
+        </form>
+
+      </div>
+
+    `;
+
+    document.body.appendChild(wrapper);
+
+
+    /* ---------------------------------------------------------
+       ELEMENTS
+       --------------------------------------------------------- */
+
+    const button =
+      document.getElementById(
+        "smvFinalAIButton"
+      );
+
+    const panel =
+      document.getElementById(
+        "smvFinalAIPanel"
+      );
+
+    const close =
+      document.getElementById(
+        "smvFinalAIClose"
+      );
+
+    const form =
+      document.getElementById(
+        "smvFinalAIForm"
+      );
+
+    const input =
+      document.getElementById(
+        "smvFinalAIInput"
+      );
+
+    const conversation =
+      document.getElementById(
+        "smvFinalAIConversation"
+      );
+
+
+    /* ---------------------------------------------------------
+       OPEN / CLOSE
+       --------------------------------------------------------- */
+
+    function openAssistant() {
+
+      panel.classList.add("open");
+
+      panel.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      button.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      setTimeout(function () {
+
+        if (input) {
+          input.focus();
+        }
+
+      }, 100);
+
+    }
+
+
+    function closeAssistant() {
+
+      panel.classList.remove("open");
+
+      panel.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      button.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        if (
+          panel.classList.contains(
+            "open"
+          )
+        ) {
+
+          closeAssistant();
+
+        } else {
+
+          openAssistant();
+
+        }
+
+      }
+    );
+
+
+    close.addEventListener(
+      "click",
+      closeAssistant
+    );
+
+
+    /* ---------------------------------------------------------
+       ADD MESSAGE
+       --------------------------------------------------------- */
+
+    function addMessage(
+      text,
+      type
+    ) {
+
+      const message =
+        document.createElement("div");
+
+      message.className =
+        "smv-final-ai-message " +
+        type;
+
+      if (
+        type === "ai"
+      ) {
+
+        message.innerHTML = `
+
+          <div class="smv-final-ai-avatar">
+            ✦
+          </div>
+
+          <div class="smv-final-ai-bubble">
+            ${text}
+          </div>
+
+        `;
+
+      } else {
+
+        message.innerHTML = `
+
+          <div class="smv-final-ai-user-bubble">
+            ${text}
+          </div>
+
+        `;
+
+      }
+
+      conversation.appendChild(
+        message
+      );
+
+      conversation.scrollTop =
+        conversation.scrollHeight;
+    }
+
+
+    /* ---------------------------------------------------------
+       AI RESPONSE ENGINE
+       --------------------------------------------------------- */
+
+    function getAIResponse(
+      question
+    ) {
+
+      const q =
+        question
+          .toLowerCase()
+          .trim();
+
+
+      /* VENUE */
+
+      if (
+        q.includes("venue") ||
+        q.includes("hall") ||
+        q.includes("banquet") ||
+        q.includes("place")
+      ) {
+
+        return `
+          <strong>Let's find the right venue.</strong>
+          <p>
+            The best venue depends on your event type,
+            city, guest count, budget and preferred style.
+          </p>
+          <p>
+            Tell me something like:
+            <br>
+            <b>Wedding • Delhi • 300 guests • ₹2,000/person</b>
+          </p>
+        `;
+
+      }
+
+
+      /* BUDGET */
+
+      if (
+        q.includes("budget") ||
+        q.includes("cost") ||
+        q.includes("price") ||
+        q.includes("₹") ||
+        q.includes("rupee")
+      ) {
+
+        return `
+          <strong>Let's understand your budget.</strong>
+          <p>
+            Your budget can be planned around venue,
+            food, decoration, photography and entertainment.
+          </p>
+          <p>
+            For a more useful estimate, tell me your
+            <b>guest count</b> and approximate
+            <b>budget per person</b>.
+          </p>
+        `;
+
+      }
+
+
+      /* WEDDING */
+
+      if (
+        q.includes("wedding") ||
+        q.includes("marriage") ||
+        q.includes("shaadi")
+      ) {
+
+        return `
+          <strong>Wedding planning starts with the basics.</strong>
+          <p>
+            I recommend deciding your:
+          </p>
+          <ul>
+            <li>Event date</li>
+            <li>City / location</li>
+            <li>Guest count</li>
+            <li>Budget</li>
+            <li>Venue style</li>
+          </ul>
+          <p>
+            Then our AI Event Planner can build a
+            personalized starting plan.
+          </p>
+        `;
+
+      }
+
+
+      /* CHECKLIST */
+
+      if (
+        q.includes("checklist") ||
+        q.includes("what should") ||
+        q.includes("things")
+      ) {
+
+        return `
+          <strong>Venue checklist</strong>
+          <p>
+            Before booking a venue, check:
+          </p>
+          <ul>
+            <li>Capacity for your guest count</li>
+            <li>Parking availability</li>
+            <li>Food / catering options</li>
+            <li>Decoration rules</li>
+            <li>Power backup</li>
+            <li>Rooms / accommodation if required</li>
+            <li>Vendor access</li>
+            <li>Final package and additional charges</li>
+          </ul>
+        `;
+
+      }
+
+
+      /* PLANNER */
+
+      if (
+        q.includes("planner") ||
+        q.includes("plan my event") ||
+        q.includes("start")
+      ) {
+
+        return `
+          <strong>Your AI Event Planner is ready.</strong>
+          <p>
+            I can take you to the full planner where
+            you can enter your event type, location,
+            date, guests, budget, food preference
+            and venue style.
+          </p>
+        `;
+
+      }
+
+
+      /* DEFAULT */
+
+      return `
+        <strong>I can help with your venue search.</strong>
+        <p>
+          Try asking me about:
+        </p>
+        <ul>
+          <li>Venue type</li>
+          <li>Budget</li>
+          <li>Wedding planning</li>
+          <li>Venue checklist</li>
+          <li>AI Event Planner</li>
+        </ul>
+        <p>
+          Or tell me your event requirements directly.
+        </p>
+      `;
+
+    }
+
+
+    /* ---------------------------------------------------------
+       SUBMIT MESSAGE
+       --------------------------------------------------------- */
+
+    form.addEventListener(
+      "submit",
+      function (event) {
+
+        event.preventDefault();
+
+        const value =
+          input.value.trim();
+
+        if (!value) {
+          return;
+        }
+
+        addMessage(
+          value.replace(
+            /</g,
+            "&lt;"
+          ),
+          "user"
+        );
+
+        input.value = "";
+
+        setTimeout(
+          function () {
+
+            addMessage(
+              getAIResponse(
+                value
+              ),
+              "ai"
+            );
+
+          },
+          350
+        );
+
+      }
+    );
+
+
+    /* ---------------------------------------------------------
+       QUICK ACTIONS
+       --------------------------------------------------------- */
+
+    conversation
+      .querySelectorAll(
+        "[data-ai-action]"
+      )
+      .forEach(
+        function (actionButton) {
+
+          actionButton.addEventListener(
+            "click",
+            function () {
+
+              const action =
+                actionButton.getAttribute(
+                  "data-ai-action"
+                );
+
+
+              if (
+                action === "venue"
+              ) {
+
+                addMessage(
+                  "I want help choosing a venue.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "venue"
+                      ),
+                      "ai"
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+
+              if (
+                action === "budget"
+              ) {
+
+                addMessage(
+                  "Help me understand my event budget.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "budget"
+                      ),
+                      "ai"
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+
+              if (
+                action === "checklist"
+              ) {
+
+                addMessage(
+                  "Show me the venue checklist.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "checklist"
+                      ),
+                      "ai"
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+
+              if (
+                action === "planner"
+              ) {
+
+                addMessage(
+                  "I want to start the AI Event Planner.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "planner"
+                      ),
+                      "ai"
+                    );
+
+                    setTimeout(
+                      function () {
+
+                        const planner =
+                          document.getElementById(
+                            "aiPlanner"
+                          );
+
+                        if (
+                          planner
+                        ) {
+
+                          planner.scrollIntoView({
+                            behavior:
+                              "smooth",
+                            block:
+                              "start"
+                          });
+
+                        }
+
+                      },
+                      700
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+
+    /* ---------------------------------------------------------
+       ESCAPE KEY
+       --------------------------------------------------------- */
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeAssistant();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* ---------------------------------------------------------
+     INITIALIZE
+     --------------------------------------------------------- */
+
+  function initializeFinalAI() {
+
+    removeOldAIWidgets();
+
+    createFinalAIAssistant();
+
+  }
+
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      initializeFinalAI
+    );
+
+  } else {
+
+    initializeFinalAI();
+
+  }
+
+
+  /*
+    One final cleanup after other scripts have finished
+    injecting their content.
+  */
+
+  setTimeout(
+    function () {
+
+      removeOldAIWidgets();
+
+    },
+    800
+  );
+
+
+})();
