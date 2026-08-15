@@ -2651,7 +2651,8 @@ function setupAutoEnquiryPopup() {
       #enquiryPopup .enquiry-popup {
         width: min(1080px, calc(100vw - 32px)) !important;
         max-width: 1080px !important;
-        max-height: min(92vh, 760px) !important;
+        height: min(760px, calc(100vh - 28px)) !important;
+        max-height: calc(100vh - 28px) !important;
         overflow: hidden !important;
         border-radius: 18px !important;
       }
@@ -2660,8 +2661,9 @@ function setupAutoEnquiryPopup() {
         padding: 0 !important;
         display: grid !important;
         grid-template-columns: 34% 66% !important;
-        min-height: 620px !important;
-        max-height: min(92vh, 760px) !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
       }
 
       .smv-popup-info {
@@ -2786,7 +2788,7 @@ function setupAutoEnquiryPopup() {
       .smv-popup-form-side {
         background: #fff !important;
         color: #202727 !important;
-        padding: 30px 34px 25px !important;
+        padding: 20px 30px 16px !important;
         overflow-y: auto !important;
         position: relative !important;
       }
@@ -2807,7 +2809,7 @@ function setupAutoEnquiryPopup() {
 
       .smv-popup-form-head {
         padding-right: 38px !important;
-        margin-bottom: 18px !important;
+        margin-bottom: 10px !important;
       }
 
       .smv-popup-form-head .kicker {
@@ -2826,7 +2828,7 @@ function setupAutoEnquiryPopup() {
       }
 
       .smv-popup-form-head p {
-        margin: 7px 0 0 !important;
+        margin: 4px 0 0 !important;
         color: #687373 !important;
         font-size: 13px !important;
         line-height: 1.5 !important;
@@ -2835,7 +2837,7 @@ function setupAutoEnquiryPopup() {
       .smv-popup-grid {
         display: grid !important;
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 13px 14px !important;
+        gap: 7px 12px !important;
       }
 
       .smv-popup-field {
@@ -2848,7 +2850,7 @@ function setupAutoEnquiryPopup() {
 
       .smv-popup-field label {
         display: block !important;
-        margin: 0 0 6px !important;
+        margin: 0 0 3px !important;
         color: #586363 !important;
         font-size: 10px !important;
         letter-spacing: .65px !important;
@@ -2872,13 +2874,13 @@ function setupAutoEnquiryPopup() {
 
       .smv-popup-field input,
       .smv-popup-field select {
-        height: 42px !important;
-        padding: 0 12px !important;
+        height: 35px !important;
+        padding: 0 10px !important;
       }
 
       .smv-popup-field textarea {
-        min-height: 78px !important;
-        padding: 10px 12px !important;
+        min-height: 55px !important;
+        padding: 7px 10px !important;
         resize: vertical !important;
       }
 
@@ -2890,11 +2892,11 @@ function setupAutoEnquiryPopup() {
       }
 
       .smv-popup-ai-summary {
-        margin-top: 14px !important;
+        margin-top: 8px !important;
         border: 1px solid #e1e6e6 !important;
         border-radius: 10px !important;
         background: #f7fafa !important;
-        padding: 11px 13px !important;
+        padding: 7px 10px !important;
       }
 
       .smv-popup-ai-summary strong {
@@ -2902,7 +2904,7 @@ function setupAutoEnquiryPopup() {
         color: #197f75 !important;
         font-size: 10px !important;
         letter-spacing: .8px !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 2px !important;
       }
 
       .smv-popup-ai-summary span {
@@ -2916,12 +2918,12 @@ function setupAutoEnquiryPopup() {
         align-items: center !important;
         justify-content: space-between !important;
         gap: 12px !important;
-        margin-top: 17px !important;
+        margin-top: 8px !important;
       }
 
       .smv-popup-submit {
         flex: 1 !important;
-        min-height: 46px !important;
+        min-height: 40px !important;
         border: 0 !important;
         border-radius: 9px !important;
         background: linear-gradient(135deg,#0d9588,#16b9a8) !important;
@@ -2955,12 +2957,12 @@ function setupAutoEnquiryPopup() {
         text-align: center !important;
         color: #8a9393 !important;
         font-size: 10px !important;
-        margin: 10px 0 0 !important;
+        margin: 5px 0 0 !important;
       }
 
       .smv-popup-error {
-        min-height: 18px !important;
-        margin: 9px 0 0 !important;
+        min-height: 14px !important;
+        margin: 5px 0 0 !important;
         color: #c43e3e !important;
         font-size: 12px !important;
         font-weight: 600 !important;
@@ -3016,6 +3018,23 @@ function setupAutoEnquiryPopup() {
         cursor: pointer !important;
       }
 
+      /* Keep the complete form and submit action visible without requiring the customer to scroll. */
+      @media (min-width: 761px) {
+        #enquiryPopup .smv-popup-form-side {
+          overflow-y: auto !important;
+          scrollbar-width: thin !important;
+        }
+
+        #enquiryPopup .smv-popup-field label {
+          font-size: 9px !important;
+          line-height: 1.1 !important;
+        }
+
+        #enquiryPopup .smv-popup-trust {
+          margin-bottom: 0 !important;
+        }
+      }
+
       @media (max-width: 760px) {
         #enquiryPopup .enquiry-popup {
           width: calc(100vw - 18px) !important;
@@ -3057,7 +3076,7 @@ function setupAutoEnquiryPopup() {
         }
 
         #enquiryPopup .popup-content.smv-complete-popup {
-          min-height: 570px !important;
+          min-height: 0 !important;
         }
       }
     `;
