@@ -397,8 +397,8 @@ body{font-size:15px}
 ========================================================= */
 
 /* Slightly larger header logo without making the header bulky */
-.brand{width:230px;height:72px}
-.brand img{width:216px;max-height:68px}
+.brand{width:260px;height:78px}
+.brand img{width:245px;max-height:74px}
 
 /* Light green enquiry success confirmation */
 .form-message.success,
