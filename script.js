@@ -2609,20 +2609,568 @@ function setupCustomerEnquiry() {
 
 function setupAutoEnquiryPopup() {
   const overlay = byId("enquiryPopup");
-  const form = byId("quickEnquiryForm");
-  const closeButton = byId("closeEnquiryPopup");
-  const laterButton = byId("popupMaybeLater");
-
-  if (!overlay || !form) {
+  if (!overlay) {
     console.warn("Select My Venue: enquiry popup HTML was not found.");
     return;
   }
 
-  let popupTimer = null;
+  /*
+   * COMPLETE CUSTOMER POPUP
+   * ---------------------------------------------------------
+   * The existing popup shell in index.html is intentionally reused.
+   * We replace only its inner content here so index.html does not
+   * need to be changed.
+   *
+   * Behaviour:
+   * - NEVER opens on initial page load.
+   * - First normal website click/tap starts a 3-second timer.
+   * - Popup opens after those 3 seconds.
+   * - Opens once per browser session.
+   * - Uses the same customer-enquiry fields as the main website form.
+   */
+  const popupRoot = overlay.querySelector(".enquiry-popup");
+  if (!popupRoot) return;
 
-  function isPopupSuppressed() {
+  const originalContent = popupRoot.querySelector(".popup-content");
+
+  /* Prevent duplicate initialization if the script is ever loaded twice. */
+  if (overlay.dataset.smvEnhanced === "1") return;
+  overlay.dataset.smvEnhanced = "1";
+
+  /* ---------------------------------------------------------
+     POPUP STYLES
+     --------------------------------------------------------- */
+  if (!byId("smvEnhancedPopupStyles")) {
+    const style = document.createElement("style");
+    style.id = "smvEnhancedPopupStyles";
+    style.textContent = `
+      #enquiryPopup {
+        z-index: 99999 !important;
+      }
+
+      #enquiryPopup .enquiry-popup {
+        width: min(1080px, calc(100vw - 32px)) !important;
+        max-width: 1080px !important;
+        max-height: min(92vh, 760px) !important;
+        overflow: hidden !important;
+        border-radius: 18px !important;
+      }
+
+      #enquiryPopup .popup-content.smv-complete-popup {
+        padding: 0 !important;
+        display: grid !important;
+        grid-template-columns: 34% 66% !important;
+        min-height: 620px !important;
+        max-height: min(92vh, 760px) !important;
+      }
+
+      .smv-popup-info {
+        padding: 42px 34px !important;
+        background:
+          radial-gradient(circle at 15% 12%, rgba(31, 211, 190, .14), transparent 30%),
+          linear-gradient(145deg, #071b1b 0%, #0b2929 55%, #102f2f 100%);
+        color: #fff !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+      }
+
+      .smv-popup-info .smv-popup-logo {
+        width: 150px !important;
+        max-width: 70% !important;
+        height: auto !important;
+        object-fit: contain !important;
+        margin-bottom: 34px !important;
+      }
+
+      .smv-popup-info .smv-popup-kicker {
+        font-size: 11px !important;
+        letter-spacing: 2px !important;
+        font-weight: 800 !important;
+        color: #c7a95b !important;
+        margin-bottom: 12px !important;
+      }
+
+      .smv-popup-info h2 {
+        margin: 0 0 14px !important;
+        font-size: clamp(28px, 3vw, 42px) !important;
+        line-height: 1.08 !important;
+        color: #fff !important;
+      }
+
+      .smv-popup-info h2 span {
+        color: #29d5c0 !important;
+      }
+
+      .smv-popup-info > p {
+        color: rgba(255,255,255,.75) !important;
+        line-height: 1.65 !important;
+        font-size: 14px !important;
+        margin: 0 0 25px !important;
+      }
+
+      .smv-popup-benefits {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: grid !important;
+        gap: 13px !important;
+      }
+
+      .smv-popup-benefits li {
+        display: flex !important;
+        gap: 10px !important;
+        align-items: flex-start !important;
+        color: rgba(255,255,255,.88) !important;
+        font-size: 13px !important;
+        line-height: 1.45 !important;
+      }
+
+      .smv-popup-benefits b {
+        color: #29d5c0 !important;
+        font-weight: 900 !important;
+      }
+
+      .smv-popup-form-side {
+        background: #fff !important;
+        color: #202727 !important;
+        padding: 30px 34px 25px !important;
+        overflow-y: auto !important;
+        position: relative !important;
+      }
+
+      .smv-popup-form-side .popup-close {
+        position: absolute !important;
+        right: 15px !important;
+        top: 10px !important;
+        z-index: 4 !important;
+        background: transparent !important;
+        border: 0 !important;
+        color: #1d2727 !important;
+        font-size: 31px !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+        padding: 3px 8px !important;
+      }
+
+      .smv-popup-form-head {
+        padding-right: 38px !important;
+        margin-bottom: 18px !important;
+      }
+
+      .smv-popup-form-head .kicker {
+        color: #138f82 !important;
+        font-size: 11px !important;
+        letter-spacing: 1.7px !important;
+        font-weight: 800 !important;
+        margin-bottom: 6px !important;
+      }
+
+      .smv-popup-form-head h3 {
+        margin: 0 !important;
+        font-size: 27px !important;
+        line-height: 1.15 !important;
+        color: #162121 !important;
+      }
+
+      .smv-popup-form-head p {
+        margin: 7px 0 0 !important;
+        color: #687373 !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+      }
+
+      .smv-popup-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 13px 14px !important;
+      }
+
+      .smv-popup-field {
+        min-width: 0 !important;
+      }
+
+      .smv-popup-field.full {
+        grid-column: 1 / -1 !important;
+      }
+
+      .smv-popup-field label {
+        display: block !important;
+        margin: 0 0 6px !important;
+        color: #586363 !important;
+        font-size: 10px !important;
+        letter-spacing: .65px !important;
+        font-weight: 800 !important;
+      }
+
+      .smv-popup-field input,
+      .smv-popup-field select,
+      .smv-popup-field textarea {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border: 1px solid #cfd5d5 !important;
+        border-radius: 8px !important;
+        background: #fff !important;
+        color: #1e2929 !important;
+        font: inherit !important;
+        font-size: 13px !important;
+        outline: none !important;
+        transition: border-color .18s ease, box-shadow .18s ease !important;
+      }
+
+      .smv-popup-field input,
+      .smv-popup-field select {
+        height: 42px !important;
+        padding: 0 12px !important;
+      }
+
+      .smv-popup-field textarea {
+        min-height: 78px !important;
+        padding: 10px 12px !important;
+        resize: vertical !important;
+      }
+
+      .smv-popup-field input:focus,
+      .smv-popup-field select:focus,
+      .smv-popup-field textarea:focus {
+        border-color: #139b8d !important;
+        box-shadow: 0 0 0 3px rgba(19,155,141,.10) !important;
+      }
+
+      .smv-popup-ai-summary {
+        margin-top: 14px !important;
+        border: 1px solid #e1e6e6 !important;
+        border-radius: 10px !important;
+        background: #f7fafa !important;
+        padding: 11px 13px !important;
+      }
+
+      .smv-popup-ai-summary strong {
+        display: block !important;
+        color: #197f75 !important;
+        font-size: 10px !important;
+        letter-spacing: .8px !important;
+        margin-bottom: 5px !important;
+      }
+
+      .smv-popup-ai-summary span {
+        color: #647070 !important;
+        font-size: 11px !important;
+        line-height: 1.45 !important;
+      }
+
+      .smv-popup-actions {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+        margin-top: 17px !important;
+      }
+
+      .smv-popup-submit {
+        flex: 1 !important;
+        min-height: 46px !important;
+        border: 0 !important;
+        border-radius: 9px !important;
+        background: linear-gradient(135deg,#0d9588,#16b9a8) !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        font-size: 14px !important;
+        cursor: pointer !important;
+        box-shadow: 0 8px 22px rgba(13,149,136,.18) !important;
+      }
+
+      .smv-popup-submit:hover {
+        filter: brightness(1.04) !important;
+      }
+
+      .smv-popup-submit:disabled {
+        opacity: .7 !important;
+        cursor: wait !important;
+      }
+
+      .smv-popup-later {
+        border: 0 !important;
+        background: transparent !important;
+        color: #687373 !important;
+        font-size: 12px !important;
+        cursor: pointer !important;
+        padding: 10px 5px !important;
+        white-space: nowrap !important;
+      }
+
+      .smv-popup-trust {
+        text-align: center !important;
+        color: #8a9393 !important;
+        font-size: 10px !important;
+        margin: 10px 0 0 !important;
+      }
+
+      .smv-popup-error {
+        min-height: 18px !important;
+        margin: 9px 0 0 !important;
+        color: #c43e3e !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+      }
+
+      .smv-popup-success {
+        min-height: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        padding: 45px 30px !important;
+      }
+
+      .smv-popup-success-box {
+        max-width: 460px !important;
+      }
+
+      .smv-success-icon {
+        width: 70px !important;
+        height: 70px !important;
+        border-radius: 50% !important;
+        display: grid !important;
+        place-items: center !important;
+        margin: 0 auto 20px !important;
+        background: rgba(19,155,141,.12) !important;
+        color: #139b8d !important;
+        font-size: 35px !important;
+        font-weight: 900 !important;
+      }
+
+      .smv-popup-success h3 {
+        margin: 0 0 10px !important;
+        color: #172323 !important;
+        font-size: 27px !important;
+      }
+
+      .smv-popup-success p {
+        margin: 0 0 20px !important;
+        color: #697575 !important;
+        line-height: 1.6 !important;
+        font-size: 14px !important;
+      }
+
+      .smv-success-close {
+        min-height: 44px !important;
+        padding: 0 25px !important;
+        border: 0 !important;
+        border-radius: 8px !important;
+        background: #0d9588 !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+      }
+
+      @media (max-width: 760px) {
+        #enquiryPopup .enquiry-popup {
+          width: calc(100vw - 18px) !important;
+          max-height: 94vh !important;
+          border-radius: 14px !important;
+        }
+
+        #enquiryPopup .popup-content.smv-complete-popup {
+          grid-template-columns: 1fr !important;
+          min-height: auto !important;
+          max-height: 94vh !important;
+        }
+
+        .smv-popup-info {
+          display: none !important;
+        }
+
+        .smv-popup-form-side {
+          padding: 25px 18px 18px !important;
+          max-height: 94vh !important;
+        }
+
+        .smv-popup-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        .smv-popup-field.full {
+          grid-column: auto !important;
+        }
+      }
+
+      @media (min-width: 761px) and (max-height: 720px) {
+        .smv-popup-info {
+          padding: 28px 28px !important;
+        }
+
+        .smv-popup-form-side {
+          padding: 23px 28px 18px !important;
+        }
+
+        #enquiryPopup .popup-content.smv-complete-popup {
+          min-height: 570px !important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /* ---------------------------------------------------------
+     BUILD COMPLETE POPUP FORM
+     --------------------------------------------------------- */
+  const content = originalContent || document.createElement("div");
+  content.className = "popup-content smv-complete-popup";
+
+  content.innerHTML = `
+    <div class="smv-popup-info">
+      <img class="smv-popup-logo" src="logo.png" alt="Select My Venue">
+
+      <div class="smv-popup-kicker">SMART VENUE DISCOVERY</div>
+
+      <h2>Let's find the right <span>venue for you.</span></h2>
+
+      <p>
+        Share your complete event requirement and our team can
+        understand exactly what you need before contacting you.
+      </p>
+
+      <ul class="smv-popup-benefits">
+        <li><b>✓</b><span>Requirement-based venue discovery</span></li>
+        <li><b>✓</b><span>Location, date and guest-focused matching</span></li>
+        <li><b>✓</b><span>Budget and food preference considered</span></li>
+        <li><b>✓</b><span>Human support from Select My Venue</span></li>
+        <li><b>✓</b><span>Your information is used only for your venue requirement</span></li>
+      </ul>
+    </div>
+
+    <div class="smv-popup-form-side">
+      <button type="button" class="popup-close" id="smvPopupClose" aria-label="Close enquiry form">×</button>
+
+      <div class="smv-popup-form-head">
+        <div class="kicker">YOUR REQUIREMENTS</div>
+        <h3>Get your venue options</h3>
+        <p>Tell us a few details. It only takes a moment.</p>
+      </div>
+
+      <form id="smvCompletePopupForm" novalidate>
+        <div class="smv-popup-grid">
+
+          <div class="smv-popup-field">
+            <label for="smvPopupName">CUSTOMER NAME *</label>
+            <input id="smvPopupName" type="text" placeholder="Enter your name" autocomplete="name" required>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupMobile">MOBILE NUMBER *</label>
+            <input id="smvPopupMobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel" required>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupEmail">EMAIL</label>
+            <input id="smvPopupEmail" type="email" placeholder="your@email.com" autocomplete="email">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupLocation">CITY / LOCATION *</label>
+            <input id="smvPopupLocation" type="text" placeholder="Delhi, Gurgaon, Noida..." autocomplete="address-level2" required>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupEventType">EVENT TYPE *</label>
+            <select id="smvPopupEventType" required>
+              <option value="">Select event</option>
+              <option>Wedding</option>
+              <option>Engagement</option>
+              <option>Birthday</option>
+              <option>Anniversary</option>
+              <option>Corporate Event</option>
+              <option>Reception</option>
+              <option>Party</option>
+              <option>Baby Shower</option>
+              <option>Kitty Party</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupDate">EVENT DATE</label>
+            <input id="smvPopupDate" type="date">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupGuests">NUMBER OF GUESTS</label>
+            <input id="smvPopupGuests" type="number" min="1" placeholder="e.g. 300">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupBudget">BUDGET / PERSON</label>
+            <input id="smvPopupBudget" type="number" min="0" placeholder="₹ per person">
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupFood">FOOD PREFERENCE</label>
+            <select id="smvPopupFood">
+              <option value="">Select preference</option>
+              <option>Veg</option>
+              <option>Non-Veg</option>
+              <option>Both</option>
+              <option>Jain</option>
+              <option>Not Specified</option>
+            </select>
+          </div>
+
+          <div class="smv-popup-field">
+            <label for="smvPopupVenueType">VENUE STYLE</label>
+            <select id="smvPopupVenueType">
+              <option value="">Let Select My Venue decide</option>
+              <option>Banquet Hall</option>
+              <option>Hotel</option>
+              <option>Resort</option>
+              <option>Farmhouse</option>
+              <option>Lawn</option>
+              <option>Restaurant</option>
+              <option>Rooftop</option>
+              <option>Community Hall</option>
+            </select>
+          </div>
+
+          <div class="smv-popup-field full">
+            <label for="smvPopupRequirements">OTHER REQUIREMENTS</label>
+            <textarea id="smvPopupRequirements" rows="3" maxlength="1000" placeholder="Decoration, parking, rooms, catering, DJ, photography, special requests, etc."></textarea>
+          </div>
+
+        </div>
+
+        <div class="smv-popup-ai-summary">
+          <strong>🤖 AI PLANNER INFORMATION</strong>
+          <span id="smvPopupAISummary">Your AI event plan will be attached automatically when available.</span>
+        </div>
+
+        <div class="smv-popup-actions">
+          <button type="submit" class="smv-popup-submit" id="smvPopupSubmit">Submit My Venue Requirement →</button>
+          <button type="button" class="smv-popup-later" id="smvPopupLater">Maybe later</button>
+        </div>
+
+        <p class="smv-popup-error" id="smvPopupMessage" role="alert" aria-live="polite"></p>
+        <p class="smv-popup-trust">🔒 Your information is used only for your venue requirement.</p>
+      </form>
+    </div>
+  `;
+
+  /* If content existed in the HTML, it is already inside popupRoot. */
+  if (!originalContent) popupRoot.appendChild(content);
+
+  const form = byId("smvCompletePopupForm");
+  const closeButton = byId("smvPopupClose");
+  const laterButton = byId("smvPopupLater");
+  const submitButton = byId("smvPopupSubmit");
+  const message = byId("smvPopupMessage");
+
+  if (!form) return;
+
+  /* ---------------------------------------------------------
+     SESSION CONTROL
+     --------------------------------------------------------- */
+  function isPopupHandled() {
     try {
-      return sessionStorage.getItem("smv_popup_handled_v1") === "1";
+      return sessionStorage.getItem("smv_popup_handled_v2") === "1";
     } catch (error) {
       return false;
     }
@@ -2630,25 +3178,76 @@ function setupAutoEnquiryPopup() {
 
   function markPopupHandled() {
     try {
-      sessionStorage.setItem("smv_popup_handled_v1", "1");
+      sessionStorage.setItem("smv_popup_handled_v2", "1");
     } catch (error) {
-      /* Storage may be unavailable; popup still works. */
+      /* Continue if browser storage is unavailable. */
     }
   }
 
+  /* ---------------------------------------------------------
+     OPEN / CLOSE
+     --------------------------------------------------------- */
   function openPopup() {
+    if (isPopupHandled()) return;
     if (overlay.classList.contains("show")) return;
+
+    /* Prefill from existing website/AI planner information. */
+    const plan = currentAIPlan;
+
+    if (plan) {
+      setValue("smvPopupEventType", plan.eventType || "");
+      setValue("smvPopupLocation", plan.location || "");
+      setValue("smvPopupDate", plan.eventDate || "");
+      setValue("smvPopupGuests", plan.guests || "");
+      setValue("smvPopupBudget", plan.budget || "");
+      setValue("smvPopupFood", plan.food || "");
+      setValue("smvPopupVenueType", plan.venueType || "");
+
+      const summary = byId("smvPopupAISummary");
+      if (summary) {
+        summary.textContent =
+          (plan.eventType || "Event") +
+          " • " +
+          (plan.location || "Location not specified") +
+          " • Match " +
+          (plan.matchScore || "—") +
+          "% • " +
+          (plan.intent || "Requirement");
+      }
+    }
+
+    const mainName = getValue("customerName");
+    const mainMobile = getValue("customerMobile");
+    const mainEmail = getValue("customerEmail");
+    const mainLocation = getValue("customerLocation");
+    const mainEvent = getValue("customerEventType");
+    const mainDate = getValue("customerEventDate");
+    const mainGuests = getValue("customerGuests");
+    const mainBudget = getValue("customerBudget");
+    const mainFood = getValue("customerFood");
+    const mainOther = getValue("customerRequirements");
+
+    if (mainName) setValue("smvPopupName", mainName);
+    if (mainMobile) setValue("smvPopupMobile", mainMobile);
+    if (mainEmail) setValue("smvPopupEmail", mainEmail);
+    if (mainLocation) setValue("smvPopupLocation", mainLocation);
+    if (mainEvent) setValue("smvPopupEventType", mainEvent);
+    if (mainDate) setValue("smvPopupDate", mainDate);
+    if (mainGuests) setValue("smvPopupGuests", mainGuests);
+    if (mainBudget) setValue("smvPopupBudget", mainBudget);
+    if (mainFood) setValue("smvPopupFood", mainFood);
+    if (mainOther) setValue("smvPopupRequirements", mainOther);
+
+    clearInlineMessage(message);
 
     overlay.classList.add("show");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("popup-open");
 
-    const name = byId("popupCustomerName");
-    if (name) {
-      setTimeout(function () {
-        name.focus();
-      }, 120);
-    }
+    setTimeout(function () {
+      const name = byId("smvPopupName");
+      if (name) name.focus();
+    }, 100);
   }
 
   function closePopup(markHandled) {
@@ -2661,24 +3260,50 @@ function setupAutoEnquiryPopup() {
     }
   }
 
-  /* Auto-open once per browser session, after the page has loaded. */
-  if (!isPopupSuppressed()) {
-    popupTimer = setTimeout(function () {
+  /* ---------------------------------------------------------
+     TRIGGER:
+     NO PAGE-LOAD TIMER.
+     First website click -> wait 3 seconds -> popup.
+     --------------------------------------------------------- */
+  let interactionTimer = null;
+  let interactionDetected = false;
+
+  function startInteractionTimer(event) {
+    if (interactionDetected) return;
+    if (isPopupHandled()) return;
+    if (overlay.classList.contains("show")) return;
+
+    /*
+     * Ignore clicks made inside the popup itself.
+     * At this stage the popup is normally hidden.
+     */
+    if (event && event.target && event.target.closest("#enquiryPopup")) {
+      return;
+    }
+
+    interactionDetected = true;
+
+    clearTimeout(interactionTimer);
+
+    interactionTimer = setTimeout(function () {
       openPopup();
-    }, 7000);
+    }, 3000);
+
+    document.removeEventListener("click", startInteractionTimer, true);
   }
 
-  if (closeButton) {
-    closeButton.addEventListener("click", function () {
-      closePopup(true);
-    });
-  }
+  document.addEventListener("click", startInteractionTimer, true);
 
-  if (laterButton) {
-    laterButton.addEventListener("click", function () {
-      closePopup(true);
-    });
-  }
+  /* ---------------------------------------------------------
+     CLOSE EVENTS
+     --------------------------------------------------------- */
+  closeButton.addEventListener("click", function () {
+    closePopup(true);
+  });
+
+  laterButton.addEventListener("click", function () {
+    closePopup(true);
+  });
 
   overlay.addEventListener("click", function (event) {
     if (event.target === overlay) {
@@ -2687,153 +3312,262 @@ function setupAutoEnquiryPopup() {
   });
 
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && overlay.classList.contains("show")) {
+    if (
+      event.key === "Escape" &&
+      overlay.classList.contains("show")
+    ) {
       closePopup(true);
     }
   });
 
+  /* ---------------------------------------------------------
+     MOBILE NUMBER
+     --------------------------------------------------------- */
+  const mobile = byId("smvPopupMobile");
+  if (mobile) {
+    mobile.addEventListener("input", function () {
+      this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+  }
+
+  /* ---------------------------------------------------------
+     SUCCESS SCREEN
+     --------------------------------------------------------- */
+  function showPopupSuccess() {
+    const side = popupRoot.querySelector(".smv-popup-form-side");
+    if (!side) return;
+
+    side.innerHTML = `
+      <div class="smv-popup-success">
+        <div class="smv-popup-success-box">
+          <div class="smv-success-icon">✓</div>
+          <h3>Requirement Received!</h3>
+          <p>
+            Thank you. Your venue requirement has been submitted
+            successfully. Our Select My Venue team will review
+            your requirement and contact you with suitable options.
+          </p>
+          <button type="button" class="smv-success-close" id="smvSuccessClose">
+            Continue Browsing
+          </button>
+        </div>
+      </div>
+    `;
+
+    const successClose = byId("smvSuccessClose");
+    if (successClose) {
+      successClose.addEventListener("click", function () {
+        closePopup(true);
+      });
+    }
+  }
+
+  /* ---------------------------------------------------------
+     COMPLETE POPUP SUBMISSION
+     --------------------------------------------------------- */
   form.addEventListener("submit", async function (event) {
     event.preventDefault();
+    event.stopPropagation();
 
-    const submitButton = form.querySelector('button[type="submit"]');
-    const customerName = getValue("popupCustomerName");
-    const customerMobile = getValue("popupCustomerMobile");
-    const eventType = getValue("popupEventType");
-    const location = getValue("popupLocation");
+    clearInlineMessage(message);
 
-    const cleanMobile = customerMobile
-      .replace(/\D/g, "")
-      .slice(0, 10);
+    const customerName = getValue("smvPopupName");
+    const customerMobile = getValue("smvPopupMobile");
+    const customerEmail = getValue("smvPopupEmail");
+    const location = getValue("smvPopupLocation");
+    const eventType = getValue("smvPopupEventType");
+    const eventDate = getValue("smvPopupDate");
+    const guests = getValue("smvPopupGuests");
+    const budget = getValue("smvPopupBudget");
+    const food = getValue("smvPopupFood");
+    const venueType = getValue("smvPopupVenueType");
+    const other = getValue("smvPopupRequirements");
+
+    const cleanMobile = customerMobile.replace(/\D/g, "").slice(0, 10);
 
     if (!customerName) {
-      showToast("Please enter your name.", "error");
-      focusField("popupCustomerName");
+      showInlineMessage(message, "Please enter your name.", "error");
+      focusField("smvPopupName");
       return;
     }
 
     if (!/^[0-9]{10}$/.test(cleanMobile)) {
-      showToast("Please enter a valid 10-digit mobile number.", "error");
-      focusField("popupCustomerMobile");
+      showInlineMessage(
+        message,
+        "Please enter a valid 10-digit mobile number.",
+        "error"
+      );
+      focusField("smvPopupMobile");
       return;
     }
 
-    if (!eventType) {
-      showToast("Please select your event type.", "error");
-      focusField("popupEventType");
+    if (customerEmail && !isValidEmail(customerEmail)) {
+      showInlineMessage(
+        message,
+        "Please enter a valid email address.",
+        "error"
+      );
+      focusField("smvPopupEmail");
       return;
     }
 
     if (!location) {
-      showToast("Please enter your city or location.", "error");
-      focusField("popupLocation");
+      showInlineMessage(
+        message,
+        "Please enter your city or location.",
+        "error"
+      );
+      focusField("smvPopupLocation");
       return;
     }
 
-    /*
-     * Create a lightweight AI plan so the popup lead receives the
-     * same CRM intelligence structure as the main enquiry form.
-     */
+    if (!eventType) {
+      showInlineMessage(
+        message,
+        "Please select your event type.",
+        "error"
+      );
+      focusField("smvPopupEventType");
+      return;
+    }
+
     const plan = generateAIEventPlan({
       eventType: eventType,
       location: location,
-      eventDate: "",
-      guests: "",
-      budget: "",
-      food: "",
-      venueType: "",
+      eventDate: eventDate,
+      guests: guests,
+      budget: budget,
+      food: food,
+      venueType: venueType,
       style: "",
-      other: ""
+      other: other
     });
+
+    currentAIPlan = plan;
+    plannerGenerated = true;
+    saveAIPlan(plan);
 
     const requirements = buildFullAIRequirements({
       aiPlan: plan,
-      other: "Quick enquiry submitted from website popup."
+      other: other
     });
 
+    /*
+     * EXACT SAME DATABASE TABLE USED BY THE MAIN ENQUIRY FORM.
+     *
+     * Important:
+     * Do NOT call .select().single() after insert here.
+     * A successful INSERT can be blocked from SELECT by an RLS
+     * SELECT policy, which previously could make a saved enquiry
+     * look like a failed submission to the customer.
+     */
     const payload = {
       customer_name: customerName,
       mobile: cleanMobile,
-      email: null,
+      email: customerEmail || null,
       location: location,
       occasion: eventType,
-      event_date: null,
-      guests: null,
-      budget_per_person: null,
-      food_preference: null,
+      event_date: eventDate || null,
+      guests: guests ? Number(guests) : null,
+      budget_per_person: budget ? Number(budget) : null,
+      food_preference: food || null,
       requirements: requirements,
-      source: "Website - Quick Popup",
+      source: "Website - Enquiry Popup",
       status: "new",
       priority: calculateLeadPriority(plan),
       assigned_to: null,
       follow_up_at: null,
       internal_notes:
-        "Website Quick Popup Lead | Match Score: " +
+        "Website Enquiry Popup Lead | Match Score: " +
         plan.matchScore +
         "% | Intent: " +
         plan.intent +
         " | Quality: " +
         plan.leadQuality +
         " | Planning Stage: " +
-        plan.planningStage,
+        plan.planningStage +
+        (venueType ? " | Venue Style: " + venueType : ""),
       last_contacted_at: null
     };
 
-    setButtonLoading(submitButton, "Submitting...");
+    setButtonLoading(
+      submitButton,
+      "Submitting..."
+    );
 
     try {
       if (!supabaseClient) {
-        throw new Error("Supabase client is not initialized.");
+        throw new Error(
+          "Supabase client is not initialized."
+        );
       }
 
-      const { data, error } = await supabaseClient
+      const { error } = await supabaseClient
         .from("customer_enquiries")
-        .insert(payload)
-        .select("*")
-        .single();
+        .insert(payload);
 
       if (error) {
-        console.error("POPUP ENQUIRY SUPABASE ERROR:", error);
+        console.error(
+          "SELECT MY VENUE POPUP INSERT ERROR:",
+          error
+        );
         throw error;
       }
 
-      /* Keep the same information available to the full enquiry form. */
+      /*
+       * Keep the same enquiry information synchronized with the
+       * main website form and AI planner.
+       */
       setValue("customerName", customerName);
       setValue("customerMobile", cleanMobile);
-      setValue("customerEventType", eventType);
+      setValue("customerEmail", customerEmail);
       setValue("customerLocation", location);
+      setValue("customerEventType", eventType);
+      setValue("customerEventDate", eventDate);
+      setValue("customerGuests", guests);
+      setValue("customerBudget", budget);
+      setValue("customerFood", food);
+      setValue("customerRequirements", other);
 
-      currentAIPlan = plan;
-      plannerGenerated = true;
-      saveAIPlan(plan);
+      populatePlannerFromPlan(plan);
+      renderAIPlan(plan);
       updatePlannerSummary(plan);
 
-      form.reset();
       markPopupHandled();
-      closePopup(false);
-
-      showToast("✓ Your enquiry has been received successfully.");
 
       console.log(
-        "Select My Venue: popup enquiry saved to customer_enquiries.",
-        data
+        "Select My Venue: popup enquiry successfully inserted into customer_enquiries.",
+        payload
+      );
+
+      showPopupSuccess();
+
+      showToast(
+        "✓ Your venue requirement has been received successfully."
       );
     } catch (error) {
-      console.error("POPUP ENQUIRY ERROR:", error);
+      console.error(
+        "SELECT MY VENUE POPUP ENQUIRY ERROR:",
+        error
+      );
+
+      showInlineMessage(
+        message,
+        getFriendlySupabaseError(error),
+        "error"
+      );
+
       showToast(
         getFriendlySupabaseError(error),
         "error"
       );
     } finally {
-      restoreButton(submitButton, "Find My Venue →");
+      restoreButton(
+        submitButton,
+        "Submit My Venue Requirement →"
+      );
     }
   });
-
-  const popupMobile = byId("popupCustomerMobile");
-  if (popupMobile) {
-    popupMobile.addEventListener("input", function () {
-      this.value = this.value.replace(/\D/g, "").slice(0, 10);
-    });
-  }
 }
 
 /* =========================================================
