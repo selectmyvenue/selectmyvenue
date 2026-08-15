@@ -4631,3 +4631,886 @@ console.log(
   );
 
 })();
+
+/* =========================================================
+   SELECT MY VENUE — FINAL AI ASSISTANT
+   FLOATING CUSTOMER ASSISTANT
+   ========================================================= */
+
+(function () {
+
+  "use strict";
+
+  /* ---------------------------------------------------------
+     REMOVE ANY BROKEN / OLD AI ASSISTANT
+     --------------------------------------------------------- */
+
+  function removeOldAIWidgets() {
+
+    /* Remove known old widget classes */
+    document
+      .querySelectorAll(
+        ".smv-ai-chat-button, .smv-ai-chat-panel, #smvFinalAIAssistant"
+      )
+      .forEach(function (element) {
+        if (
+          element.id !== "smvFinalAIAssistant"
+        ) {
+          element.remove();
+        }
+      });
+
+    /*
+      Remove the broken assistant that was appearing
+      inside the enquiry section.
+
+      We identify it by its visible title rather than
+      relying on an unknown old class name.
+    */
+    const allElements =
+      document.querySelectorAll(
+        "div, section, aside, article"
+      );
+
+    allElements.forEach(function (element) {
+
+      if (
+        element.id === "smvFinalAIAssistant"
+      ) {
+        return;
+      }
+
+      const text =
+        (element.textContent || "")
+          .replace(/\s+/g, " ")
+          .trim();
+
+      if (
+        text.includes(
+          "Select My Venue AI Smart Event Assistant"
+        )
+      ) {
+
+        /*
+          Find the smallest sensible container.
+        */
+        let target = element;
+
+        while (
+          target.parentElement &&
+          target.parentElement !== document.body
+        ) {
+
+          const parentText =
+            (target.parentElement.textContent || "")
+              .replace(/\s+/g, " ")
+              .trim();
+
+          if (
+            parentText.length > 1800
+          ) {
+            break;
+          }
+
+          if (
+            target.parentElement.classList.contains(
+              "enquiry-section"
+            ) ||
+            target.parentElement.classList.contains(
+              "ai-planner-section"
+            )
+          ) {
+            break;
+          }
+
+          target = target.parentElement;
+        }
+
+        /*
+          Never remove the real enquiry section.
+        */
+        if (
+          target.classList.contains(
+            "enquiry-section"
+          ) ||
+          target.classList.contains(
+            "ai-planner-section"
+          )
+        ) {
+          return;
+        }
+
+        target.remove();
+      }
+    });
+  }
+
+
+  /* ---------------------------------------------------------
+     CREATE FINAL AI ASSISTANT
+     --------------------------------------------------------- */
+
+  function createFinalAIAssistant() {
+
+    if (
+      document.getElementById(
+        "smvFinalAIAssistant"
+      )
+    ) {
+      return;
+    }
+
+    const wrapper =
+      document.createElement("div");
+
+    wrapper.id =
+      "smvFinalAIAssistant";
+
+    wrapper.innerHTML = `
+
+      <!-- AI BUTTON -->
+
+      <button
+        type="button"
+        id="smvFinalAIButton"
+        class="smv-final-ai-button"
+        aria-label="Open Select My Venue AI Assistant"
+        aria-expanded="false"
+      >
+
+        <span
+          class="smv-final-ai-icon"
+          aria-hidden="true"
+        >
+          ✦
+        </span>
+
+        <span>
+          AI Assistant
+        </span>
+
+      </button>
+
+
+      <!-- AI PANEL -->
+
+      <div
+        id="smvFinalAIPanel"
+        class="smv-final-ai-panel"
+        aria-hidden="true"
+      >
+
+        <div class="smv-final-ai-header">
+
+          <div>
+
+            <strong>
+              Select My Venue
+            </strong>
+
+            <small>
+              AI Event Assistant
+            </small>
+
+          </div>
+
+          <button
+            type="button"
+            id="smvFinalAIClose"
+            class="smv-final-ai-close"
+            aria-label="Close AI Assistant"
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <div
+          id="smvFinalAIConversation"
+          class="smv-final-ai-conversation"
+        >
+
+          <div class="smv-final-ai-message ai">
+
+            <div class="smv-final-ai-avatar">
+              ✦
+            </div>
+
+            <div class="smv-final-ai-bubble">
+
+              <strong>
+                Hi! I'm your Select My Venue AI Assistant.
+              </strong>
+
+              <p>
+                I can help you plan your event,
+                understand your venue requirements
+                and guide you to the right next step.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="smv-final-ai-suggestions">
+
+            <button
+              type="button"
+              data-ai-action="venue"
+            >
+              🏛️ Venue type
+            </button>
+
+            <button
+              type="button"
+              data-ai-action="budget"
+            >
+              💰 Budget
+            </button>
+
+            <button
+              type="button"
+              data-ai-action="checklist"
+            >
+              ✅ Venue checklist
+            </button>
+
+            <button
+              type="button"
+              data-ai-action="planner"
+            >
+              ✦ Start AI Planner
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <form
+          id="smvFinalAIForm"
+          class="smv-final-ai-form"
+        >
+
+          <input
+            id="smvFinalAIInput"
+            type="text"
+            autocomplete="off"
+            placeholder="Ask about your event..."
+            aria-label="Ask Select My Venue AI"
+          >
+
+          <button
+            type="submit"
+            aria-label="Send message"
+          >
+            →
+          </button>
+
+        </form>
+
+      </div>
+
+    `;
+
+    document.body.appendChild(wrapper);
+
+
+    /* ---------------------------------------------------------
+       ELEMENTS
+       --------------------------------------------------------- */
+
+    const button =
+      document.getElementById(
+        "smvFinalAIButton"
+      );
+
+    const panel =
+      document.getElementById(
+        "smvFinalAIPanel"
+      );
+
+    const close =
+      document.getElementById(
+        "smvFinalAIClose"
+      );
+
+    const form =
+      document.getElementById(
+        "smvFinalAIForm"
+      );
+
+    const input =
+      document.getElementById(
+        "smvFinalAIInput"
+      );
+
+    const conversation =
+      document.getElementById(
+        "smvFinalAIConversation"
+      );
+
+
+    /* ---------------------------------------------------------
+       OPEN / CLOSE
+       --------------------------------------------------------- */
+
+    function openAssistant() {
+
+      panel.classList.add("open");
+
+      panel.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      button.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+      setTimeout(function () {
+
+        if (input) {
+          input.focus();
+        }
+
+      }, 100);
+
+    }
+
+
+    function closeAssistant() {
+
+      panel.classList.remove("open");
+
+      panel.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      button.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+
+    button.addEventListener(
+      "click",
+      function () {
+
+        if (
+          panel.classList.contains(
+            "open"
+          )
+        ) {
+
+          closeAssistant();
+
+        } else {
+
+          openAssistant();
+
+        }
+
+      }
+    );
+
+
+    close.addEventListener(
+      "click",
+      closeAssistant
+    );
+
+
+    /* ---------------------------------------------------------
+       ADD MESSAGE
+       --------------------------------------------------------- */
+
+    function addMessage(
+      text,
+      type
+    ) {
+
+      const message =
+        document.createElement("div");
+
+      message.className =
+        "smv-final-ai-message " +
+        type;
+
+      if (
+        type === "ai"
+      ) {
+
+        message.innerHTML = `
+
+          <div class="smv-final-ai-avatar">
+            ✦
+          </div>
+
+          <div class="smv-final-ai-bubble">
+            ${text}
+          </div>
+
+        `;
+
+      } else {
+
+        message.innerHTML = `
+
+          <div class="smv-final-ai-user-bubble">
+            ${text}
+          </div>
+
+        `;
+
+      }
+
+      conversation.appendChild(
+        message
+      );
+
+      conversation.scrollTop =
+        conversation.scrollHeight;
+    }
+
+
+    /* ---------------------------------------------------------
+       AI RESPONSE ENGINE
+       --------------------------------------------------------- */
+
+    function getAIResponse(
+      question
+    ) {
+
+      const q =
+        question
+          .toLowerCase()
+          .trim();
+
+
+      /* VENUE */
+
+      if (
+        q.includes("venue") ||
+        q.includes("hall") ||
+        q.includes("banquet") ||
+        q.includes("place")
+      ) {
+
+        return `
+          <strong>Let's find the right venue.</strong>
+          <p>
+            The best venue depends on your event type,
+            city, guest count, budget and preferred style.
+          </p>
+          <p>
+            Tell me something like:
+            <br>
+            <b>Wedding • Delhi • 300 guests • ₹2,000/person</b>
+          </p>
+        `;
+
+      }
+
+
+      /* BUDGET */
+
+      if (
+        q.includes("budget") ||
+        q.includes("cost") ||
+        q.includes("price") ||
+        q.includes("₹") ||
+        q.includes("rupee")
+      ) {
+
+        return `
+          <strong>Let's understand your budget.</strong>
+          <p>
+            Your budget can be planned around venue,
+            food, decoration, photography and entertainment.
+          </p>
+          <p>
+            For a more useful estimate, tell me your
+            <b>guest count</b> and approximate
+            <b>budget per person</b>.
+          </p>
+        `;
+
+      }
+
+
+      /* WEDDING */
+
+      if (
+        q.includes("wedding") ||
+        q.includes("marriage") ||
+        q.includes("shaadi")
+      ) {
+
+        return `
+          <strong>Wedding planning starts with the basics.</strong>
+          <p>
+            I recommend deciding your:
+          </p>
+          <ul>
+            <li>Event date</li>
+            <li>City / location</li>
+            <li>Guest count</li>
+            <li>Budget</li>
+            <li>Venue style</li>
+          </ul>
+          <p>
+            Then our AI Event Planner can build a
+            personalized starting plan.
+          </p>
+        `;
+
+      }
+
+
+      /* CHECKLIST */
+
+      if (
+        q.includes("checklist") ||
+        q.includes("what should") ||
+        q.includes("things")
+      ) {
+
+        return `
+          <strong>Venue checklist</strong>
+          <p>
+            Before booking a venue, check:
+          </p>
+          <ul>
+            <li>Capacity for your guest count</li>
+            <li>Parking availability</li>
+            <li>Food / catering options</li>
+            <li>Decoration rules</li>
+            <li>Power backup</li>
+            <li>Rooms / accommodation if required</li>
+            <li>Vendor access</li>
+            <li>Final package and additional charges</li>
+          </ul>
+        `;
+
+      }
+
+
+      /* PLANNER */
+
+      if (
+        q.includes("planner") ||
+        q.includes("plan my event") ||
+        q.includes("start")
+      ) {
+
+        return `
+          <strong>Your AI Event Planner is ready.</strong>
+          <p>
+            I can take you to the full planner where
+            you can enter your event type, location,
+            date, guests, budget, food preference
+            and venue style.
+          </p>
+        `;
+
+      }
+
+
+      /* DEFAULT */
+
+      return `
+        <strong>I can help with your venue search.</strong>
+        <p>
+          Try asking me about:
+        </p>
+        <ul>
+          <li>Venue type</li>
+          <li>Budget</li>
+          <li>Wedding planning</li>
+          <li>Venue checklist</li>
+          <li>AI Event Planner</li>
+        </ul>
+        <p>
+          Or tell me your event requirements directly.
+        </p>
+      `;
+
+    }
+
+
+    /* ---------------------------------------------------------
+       SUBMIT MESSAGE
+       --------------------------------------------------------- */
+
+    form.addEventListener(
+      "submit",
+      function (event) {
+
+        event.preventDefault();
+
+        const value =
+          input.value.trim();
+
+        if (!value) {
+          return;
+        }
+
+        addMessage(
+          value.replace(
+            /</g,
+            "&lt;"
+          ),
+          "user"
+        );
+
+        input.value = "";
+
+        setTimeout(
+          function () {
+
+            addMessage(
+              getAIResponse(
+                value
+              ),
+              "ai"
+            );
+
+          },
+          350
+        );
+
+      }
+    );
+
+
+    /* ---------------------------------------------------------
+       QUICK ACTIONS
+       --------------------------------------------------------- */
+
+    conversation
+      .querySelectorAll(
+        "[data-ai-action]"
+      )
+      .forEach(
+        function (actionButton) {
+
+          actionButton.addEventListener(
+            "click",
+            function () {
+
+              const action =
+                actionButton.getAttribute(
+                  "data-ai-action"
+                );
+
+
+              if (
+                action === "venue"
+              ) {
+
+                addMessage(
+                  "I want help choosing a venue.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "venue"
+                      ),
+                      "ai"
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+
+              if (
+                action === "budget"
+              ) {
+
+                addMessage(
+                  "Help me understand my event budget.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "budget"
+                      ),
+                      "ai"
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+
+              if (
+                action === "checklist"
+              ) {
+
+                addMessage(
+                  "Show me the venue checklist.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "checklist"
+                      ),
+                      "ai"
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+
+              if (
+                action === "planner"
+              ) {
+
+                addMessage(
+                  "I want to start the AI Event Planner.",
+                  "user"
+                );
+
+                setTimeout(
+                  function () {
+
+                    addMessage(
+                      getAIResponse(
+                        "planner"
+                      ),
+                      "ai"
+                    );
+
+                    setTimeout(
+                      function () {
+
+                        const planner =
+                          document.getElementById(
+                            "aiPlanner"
+                          );
+
+                        if (
+                          planner
+                        ) {
+
+                          planner.scrollIntoView({
+                            behavior:
+                              "smooth",
+                            block:
+                              "start"
+                          });
+
+                        }
+
+                      },
+                      700
+                    );
+
+                  },
+                  250
+                );
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+
+    /* ---------------------------------------------------------
+       ESCAPE KEY
+       --------------------------------------------------------- */
+
+    document.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeAssistant();
+
+        }
+
+      }
+    );
+
+  }
+
+
+  /* ---------------------------------------------------------
+     INITIALIZE
+     --------------------------------------------------------- */
+
+  function initializeFinalAI() {
+
+    removeOldAIWidgets();
+
+    createFinalAIAssistant();
+
+  }
+
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      initializeFinalAI
+    );
+
+  } else {
+
+    initializeFinalAI();
+
+  }
+
+
+  /*
+    One final cleanup after other scripts have finished
+    injecting their content.
+  */
+
+  setTimeout(
+    function () {
+
+      removeOldAIWidgets();
+
+    },
+    800
+  );
+
+
+})();
