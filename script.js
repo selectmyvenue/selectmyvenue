@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
   setupPopularEventShortcuts();
   setupAIEventPlanner();
   setupCustomerEnquiry();
+  setupAutoEnquiryPopup();
   setupPlannerToEnquiry();
   setupSmartFormEnhancements();
   restoreSavedAIPlan();
@@ -2602,6 +2603,240 @@ function setupCustomerEnquiry() {
 }
 
 /* =========================================================
+   AUTO CUSTOMER ENQUIRY POPUP
+   Same customer enquiry -> Supabase -> CRM flow
+   ========================================================= */
+
+function setupAutoEnquiryPopup() {
+  const overlay = byId("enquiryPopup");
+  const form = byId("quickEnquiryForm");
+  const closeButton = byId("closeEnquiryPopup");
+  const laterButton = byId("popupMaybeLater");
+
+  if (!overlay || !form) {
+    console.warn("Select My Venue: enquiry popup HTML was not found.");
+    return;
+  }
+
+  let popupTimer = null;
+
+  function isPopupSuppressed() {
+    try {
+      return sessionStorage.getItem("smv_popup_handled_v1") === "1";
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function markPopupHandled() {
+    try {
+      sessionStorage.setItem("smv_popup_handled_v1", "1");
+    } catch (error) {
+      /* Storage may be unavailable; popup still works. */
+    }
+  }
+
+  function openPopup() {
+    if (overlay.classList.contains("show")) return;
+
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("popup-open");
+
+    const name = byId("popupCustomerName");
+    if (name) {
+      setTimeout(function () {
+        name.focus();
+      }, 120);
+    }
+  }
+
+  function closePopup(markHandled) {
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("popup-open");
+
+    if (markHandled) {
+      markPopupHandled();
+    }
+  }
+
+  /* Auto-open once per browser session, after the page has loaded. */
+  if (!isPopupSuppressed()) {
+    popupTimer = setTimeout(function () {
+      openPopup();
+    }, 7000);
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener("click", function () {
+      closePopup(true);
+    });
+  }
+
+  if (laterButton) {
+    laterButton.addEventListener("click", function () {
+      closePopup(true);
+    });
+  }
+
+  overlay.addEventListener("click", function (event) {
+    if (event.target === overlay) {
+      closePopup(true);
+    }
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && overlay.classList.contains("show")) {
+      closePopup(true);
+    }
+  });
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    const customerName = getValue("popupCustomerName");
+    const customerMobile = getValue("popupCustomerMobile");
+    const eventType = getValue("popupEventType");
+    const location = getValue("popupLocation");
+
+    const cleanMobile = customerMobile
+      .replace(/\D/g, "")
+      .slice(0, 10);
+
+    if (!customerName) {
+      showToast("Please enter your name.", "error");
+      focusField("popupCustomerName");
+      return;
+    }
+
+    if (!/^[0-9]{10}$/.test(cleanMobile)) {
+      showToast("Please enter a valid 10-digit mobile number.", "error");
+      focusField("popupCustomerMobile");
+      return;
+    }
+
+    if (!eventType) {
+      showToast("Please select your event type.", "error");
+      focusField("popupEventType");
+      return;
+    }
+
+    if (!location) {
+      showToast("Please enter your city or location.", "error");
+      focusField("popupLocation");
+      return;
+    }
+
+    /*
+     * Create a lightweight AI plan so the popup lead receives the
+     * same CRM intelligence structure as the main enquiry form.
+     */
+    const plan = generateAIEventPlan({
+      eventType: eventType,
+      location: location,
+      eventDate: "",
+      guests: "",
+      budget: "",
+      food: "",
+      venueType: "",
+      style: "",
+      other: ""
+    });
+
+    const requirements = buildFullAIRequirements({
+      aiPlan: plan,
+      other: "Quick enquiry submitted from website popup."
+    });
+
+    const payload = {
+      customer_name: customerName,
+      mobile: cleanMobile,
+      email: null,
+      location: location,
+      occasion: eventType,
+      event_date: null,
+      guests: null,
+      budget_per_person: null,
+      food_preference: null,
+      requirements: requirements,
+      source: "Website - Quick Popup",
+      status: "new",
+      priority: calculateLeadPriority(plan),
+      assigned_to: null,
+      follow_up_at: null,
+      internal_notes:
+        "Website Quick Popup Lead | Match Score: " +
+        plan.matchScore +
+        "% | Intent: " +
+        plan.intent +
+        " | Quality: " +
+        plan.leadQuality +
+        " | Planning Stage: " +
+        plan.planningStage,
+      last_contacted_at: null
+    };
+
+    setButtonLoading(submitButton, "Submitting...");
+
+    try {
+      if (!supabaseClient) {
+        throw new Error("Supabase client is not initialized.");
+      }
+
+      const { data, error } = await supabaseClient
+        .from("customer_enquiries")
+        .insert(payload)
+        .select("*")
+        .single();
+
+      if (error) {
+        console.error("POPUP ENQUIRY SUPABASE ERROR:", error);
+        throw error;
+      }
+
+      /* Keep the same information available to the full enquiry form. */
+      setValue("customerName", customerName);
+      setValue("customerMobile", cleanMobile);
+      setValue("customerEventType", eventType);
+      setValue("customerLocation", location);
+
+      currentAIPlan = plan;
+      plannerGenerated = true;
+      saveAIPlan(plan);
+      updatePlannerSummary(plan);
+
+      form.reset();
+      markPopupHandled();
+      closePopup(false);
+
+      showToast("✓ Your enquiry has been received successfully.");
+
+      console.log(
+        "Select My Venue: popup enquiry saved to customer_enquiries.",
+        data
+      );
+    } catch (error) {
+      console.error("POPUP ENQUIRY ERROR:", error);
+      showToast(
+        getFriendlySupabaseError(error),
+        "error"
+      );
+    } finally {
+      restoreButton(submitButton, "Find My Venue →");
+    }
+  });
+
+  const popupMobile = byId("popupCustomerMobile");
+  if (popupMobile) {
+    popupMobile.addEventListener("input", function () {
+      this.value = this.value.replace(/\D/g, "").slice(0, 10);
+    });
+  }
+}
+
+/* =========================================================
    SYNC CUSTOMER FORM -> PLANNER
    ========================================================= */
 
@@ -3053,7 +3288,7 @@ document.addEventListener(
    FLOATING WHATSAPP — CUSTOMER-FIRST CTA
    ========================================================= */
 function setupFloatingWhatsApp(){
-  const number="918368322256";
+  const number="919958716688";
   const message="Hi Select My Venue! I am looking for a venue for my event. Please help me find suitable options.";
 
   // Prefer the floating WhatsApp button already present in index.html.
