@@ -2439,7 +2439,97 @@
 ></span>
 
 
+<!-- =====================================================
+     SELECT MY VENUE — AI ASSISTANT
+====================================================== -->
 
+<button
+  type="button"
+  id="smvAiChatButton"
+  class="smv-ai-chat-button"
+  aria-label="Open Select My Venue AI Assistant"
+>
+  <span class="smv-ai-chat-icon">✦</span>
+  <span class="smv-ai-chat-label">AI Assistant</span>
+</button>
+
+<div
+  id="smvAiChatPanel"
+  class="smv-ai-chat-panel"
+  aria-hidden="true"
+>
+
+  <div class="smv-ai-chat-header">
+
+    <div>
+      <strong>✦ Select My Venue AI</strong>
+      <small>Smart Event Assistant</small>
+    </div>
+
+    <button
+      type="button"
+      id="smvAiChatClose"
+      aria-label="Close AI Assistant"
+    >
+      ×
+    </button>
+
+  </div>
+
+  <div
+    id="smvAiChatMessages"
+    class="smv-ai-chat-messages"
+  >
+
+    <div class="smv-ai-message smv-ai-message-bot">
+      <strong>AI Assistant</strong>
+      <p>
+        Hi! 👋 I'm your Select My Venue AI Assistant.
+        I can help with venue types, guest planning,
+        approximate budgets, food, décor and event planning.
+      </p>
+    </div>
+
+  </div>
+
+  <div class="smv-ai-chat-suggestions">
+
+    <button type="button" data-ai-question="What venue type would be suitable for my event?">
+      🏨 Venue type
+    </button>
+
+    <button type="button" data-ai-question="How should I plan my event budget?">
+      💰 Budget
+    </button>
+
+    <button type="button" data-ai-question="What should I consider when selecting a venue?">
+      ✓ Venue checklist
+    </button>
+
+  </div>
+
+  <form id="smvAiChatForm" class="smv-ai-chat-form">
+
+    <input
+      type="text"
+      id="smvAiChatInput"
+      placeholder="Ask about your event..."
+      maxlength="600"
+      autocomplete="off"
+    >
+
+    <button
+      type="submit"
+      id="smvAiChatSend"
+      aria-label="Send message"
+    >
+      →
+    </button>
+
+  </form>
+
+</div>
+  
 <!-- =====================================================
      SUPABASE LIBRARY
      MUST LOAD BEFORE script.js
