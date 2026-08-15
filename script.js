@@ -4636,7 +4636,7 @@ console.log(
 /* =========================================================
    SELECT MY VENUE — FINAL AI ASSISTANT
    FLOATING CUSTOMER ASSISTANT
-   CONNECTED TO SUPABASE AI
+   REAL SUPABASE AI CONNECTION
    ========================================================= */
 
 (function () {
@@ -4644,121 +4644,44 @@ console.log(
   "use strict";
 
   /* ---------------------------------------------------------
-     REMOVE OLD / DUPLICATE AI WIDGETS
+     CONFIG
      --------------------------------------------------------- */
 
-  function removeOldAIWidgets() {
-
-    document
-      .querySelectorAll(
-        ".smv-ai-chat-button, .smv-ai-chat-panel, #smvFinalAIAssistant"
-      )
-      .forEach(function (element) {
-
-        if (element.id !== "smvFinalAIAssistant") {
-          element.remove();
-        }
-
-      });
-
-    /*
-      Remove an older broken assistant if it was injected
-      somewhere inside the enquiry / planner area.
-    */
-
-    document
-      .querySelectorAll(
-        "div, section, aside, article"
-      )
-      .forEach(function (element) {
-
-        if (
-          element.id === "smvFinalAIAssistant"
-        ) {
-          return;
-        }
-
-        const text =
-          (element.textContent || "")
-            .replace(/\s+/g, " ")
-            .trim();
-
-        if (
-          text.includes(
-            "Select My Venue AI Smart Event Assistant"
-          )
-        ) {
-
-          let target = element;
-
-          while (
-            target.parentElement &&
-            target.parentElement !== document.body
-          ) {
-
-            const parentText =
-              (target.parentElement.textContent || "")
-                .replace(/\s+/g, " ")
-                .trim();
-
-            if (
-              parentText.length > 1800
-            ) {
-              break;
-            }
-
-            if (
-              target.parentElement.classList.contains(
-                "enquiry-section"
-              ) ||
-              target.parentElement.classList.contains(
-                "ai-planner-section"
-              )
-            ) {
-              break;
-            }
-
-            target =
-              target.parentElement;
-          }
-
-          /*
-            Never remove the actual enquiry or
-            planner section.
-          */
-
-          if (
-            target.classList.contains(
-              "enquiry-section"
-            ) ||
-            target.classList.contains(
-              "ai-planner-section"
-            )
-          ) {
-            return;
-          }
-
-          target.remove();
-        }
-
-      });
-
-  }
+  const AI_ENDPOINT =
+    "https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/smv-ai-assistant";
 
 
   /* ---------------------------------------------------------
-     CREATE FINAL AI ASSISTANT
+     CREATE ASSISTANT
      --------------------------------------------------------- */
 
   function createFinalAIAssistant() {
 
+    /* Prevent duplicate assistant */
+
     if (
-      document.getElementById(
-        "smvFinalAIAssistant"
-      )
+      document.getElementById("smvFinalAIAssistant")
     ) {
       return;
     }
+
+
+    /* -------------------------------------------------------
+       REMOVE OLD FLOATING ASSISTANTS ONLY
+       ------------------------------------------------------- */
+
+    document
+      .querySelectorAll(
+        "#smvFinalAIAssistant"
+      )
+      .forEach(function (element) {
+        element.remove();
+      });
+
+
+    /* -------------------------------------------------------
+       WRAPPER
+       ------------------------------------------------------- */
 
     const wrapper =
       document.createElement("div");
@@ -4766,11 +4689,12 @@ console.log(
     wrapper.id =
       "smvFinalAIAssistant";
 
-    wrapper.innerHTML = `
 
-      <!-- =====================================================
-           FLOATING AI BUTTON
-           ===================================================== -->
+    /* -------------------------------------------------------
+       HTML
+       ------------------------------------------------------- */
+
+    wrapper.innerHTML = `
 
       <button
         type="button"
@@ -4779,24 +4703,14 @@ console.log(
         aria-label="Open Select My Venue AI Assistant"
         aria-expanded="false"
       >
-
         <span
           class="smv-final-ai-icon"
           aria-hidden="true"
-        >
-          ✦
-        </span>
+        >✦</span>
 
-        <span>
-          AI Assistant
-        </span>
-
+        <span>AI Assistant</span>
       </button>
 
-
-      <!-- =====================================================
-           AI PANEL
-           ===================================================== -->
 
       <div
         id="smvFinalAIPanel"
@@ -4804,20 +4718,12 @@ console.log(
         aria-hidden="true"
       >
 
-        <!-- HEADER -->
-
         <div class="smv-final-ai-header">
 
           <div>
+            <strong>Select My Venue</strong>
 
-            <strong>
-              Select My Venue
-            </strong>
-
-            <small>
-              AI Event Assistant
-            </small>
-
+            <small>AI Event Assistant</small>
           </div>
 
           <button
@@ -4832,14 +4738,10 @@ console.log(
         </div>
 
 
-        <!-- CONVERSATION -->
-
         <div
           id="smvFinalAIConversation"
           class="smv-final-ai-conversation"
         >
-
-          <!-- WELCOME -->
 
           <div class="smv-final-ai-message ai">
 
@@ -4859,55 +4761,45 @@ console.log(
                 and guide you to the right next step.
               </p>
 
-              <p>
-                Tell me what you're planning —
-                wedding, birthday, corporate event,
-                engagement or any other occasion.
-              </p>
-
             </div>
 
           </div>
 
 
-          <!-- QUICK QUESTIONS -->
-
           <div class="smv-final-ai-suggestions">
 
             <button
               type="button"
-              data-ai-question="I need help choosing a venue."
+              data-ai-action="venue"
             >
-              🏛️ Choose a venue
+              🏛️ Venue type
             </button>
 
             <button
               type="button"
-              data-ai-question="Help me plan my event budget."
+              data-ai-action="budget"
             >
-              💰 Plan my budget
+              💰 Budget
             </button>
 
             <button
               type="button"
-              data-ai-question="What should I check before booking a venue?"
+              data-ai-action="checklist"
             >
               ✅ Venue checklist
             </button>
 
             <button
               type="button"
-              data-ai-question="Help me plan my complete event."
+              data-ai-action="planner"
             >
-              ✦ Plan my event
+              ✦ Start AI Planner
             </button>
 
           </div>
 
         </div>
 
-
-        <!-- INPUT -->
 
         <form
           id="smvFinalAIForm"
@@ -4924,7 +4816,6 @@ console.log(
           >
 
           <button
-            id="smvFinalAISend"
             type="submit"
             aria-label="Send message"
           >
@@ -4937,14 +4828,13 @@ console.log(
 
     `;
 
-    document.body.appendChild(
-      wrapper
-    );
+
+    document.body.appendChild(wrapper);
 
 
-    /* ---------------------------------------------------------
+    /* -------------------------------------------------------
        ELEMENTS
-       --------------------------------------------------------- */
+       ------------------------------------------------------- */
 
     const button =
       document.getElementById(
@@ -4971,26 +4861,19 @@ console.log(
         "smvFinalAIInput"
       );
 
-    const sendButton =
-      document.getElementById(
-        "smvFinalAISend"
-      );
-
     const conversation =
       document.getElementById(
         "smvFinalAIConversation"
       );
 
 
-    /* ---------------------------------------------------------
-       OPEN ASSISTANT
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       OPEN
+       ------------------------------------------------------- */
 
     function openAssistant() {
 
-      panel.classList.add(
-        "open"
-      );
+      panel.classList.add("open");
 
       panel.setAttribute(
         "aria-hidden",
@@ -5002,29 +4885,24 @@ console.log(
         "true"
       );
 
-      setTimeout(
-        function () {
+      setTimeout(function () {
 
-          if (input) {
-            input.focus();
-          }
+        if (input) {
+          input.focus();
+        }
 
-        },
-        100
-      );
+      }, 100);
 
     }
 
 
-    /* ---------------------------------------------------------
-       CLOSE ASSISTANT
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       CLOSE
+       ------------------------------------------------------- */
 
     function closeAssistant() {
 
-      panel.classList.remove(
-        "open"
-      );
+      panel.classList.remove("open");
 
       panel.setAttribute(
         "aria-hidden",
@@ -5038,19 +4916,13 @@ console.log(
 
     }
 
-
-    /* ---------------------------------------------------------
-       BUTTON EVENTS
-       --------------------------------------------------------- */
 
     button.addEventListener(
       "click",
       function () {
 
         if (
-          panel.classList.contains(
-            "open"
-          )
+          panel.classList.contains("open")
         ) {
 
           closeAssistant();
@@ -5071,9 +4943,9 @@ console.log(
     );
 
 
-    /* ---------------------------------------------------------
-       ESCAPE KEY
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       ESCAPE
+       ------------------------------------------------------- */
 
     document.addEventListener(
       "keydown",
@@ -5091,91 +4963,61 @@ console.log(
     );
 
 
-    /* ---------------------------------------------------------
-       ADD MESSAGE
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       SAFE HTML ESCAPE
+       ------------------------------------------------------- */
 
-    function addMessage(
-      text,
-      type
-    ) {
+    function escapeHTML(value) {
+
+      return String(
+        value == null
+          ? ""
+          : value
+      )
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    /* -------------------------------------------------------
+       ADD USER MESSAGE
+       ------------------------------------------------------- */
+
+    function addUserMessage(text) {
 
       const message =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       message.className =
-        "smv-final-ai-message " +
-        type;
+        "smv-final-ai-message user";
 
 
-      if (
-        type === "ai"
-      ) {
+      message.innerHTML = `
 
-        const avatar =
-          document.createElement(
-            "div"
-          );
+        <div class="smv-final-ai-user-bubble">
+          ${escapeHTML(text)}
+        </div>
 
-        avatar.className =
-          "smv-final-ai-avatar";
-
-        avatar.textContent =
-          "✦";
-
-
-        const bubble =
-          document.createElement(
-            "div"
-          );
-
-        bubble.className =
-          "smv-final-ai-bubble";
-
-        /*
-          AI responses come from our
-          trusted Supabase Edge Function.
-
-          Use textContent first so arbitrary
-          AI output cannot inject scripts.
-        */
-
-        bubble.textContent =
-          String(
-            text || ""
-          );
-
-
-        message.appendChild(
-          avatar
-        );
-
-        message.appendChild(
-          bubble
-        );
-
-      } else {
-
-        const bubble =
-          document.createElement(
-            "div"
-          );
-
-        bubble.className =
-          "smv-final-ai-user-bubble";
-
-        bubble.textContent =
-          String(
-            text || ""
-          );
-
-        message.appendChild(
-          bubble
-        );
-
-      }
+      `;
 
 
       conversation.appendChild(
@@ -5189,58 +5031,72 @@ console.log(
     }
 
 
-    /* ---------------------------------------------------------
-       TYPING INDICATOR
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       ADD AI MESSAGE
+       ------------------------------------------------------- */
 
-    function addTypingMessage() {
+    function addAIMessage(text) {
 
       const message =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       message.className =
         "smv-final-ai-message ai";
 
 
-      const avatar =
-        document.createElement(
-          "div"
-        );
+      /*
+       * AI response is treated as text.
+       * This prevents HTML/script injection.
+       */
 
-      avatar.className =
-        "smv-final-ai-avatar";
+      message.innerHTML = `
 
-      avatar.textContent =
-        "✦";
+        <div class="smv-final-ai-avatar">
+          ✦
+        </div>
 
+        <div class="smv-final-ai-bubble">
+          ${escapeHTML(text)}
+        </div>
 
-      const bubble =
-        document.createElement(
-          "div"
-        );
-
-      bubble.className =
-        "smv-final-ai-bubble";
-
-      bubble.innerHTML =
-        `
-          <span class="smv-final-ai-typing">
-            <span></span>
-            <span></span>
-            <span></span>
-          </span>
-        `;
+      `;
 
 
-      message.appendChild(
-        avatar
+      conversation.appendChild(
+        message
       );
 
-      message.appendChild(
-        bubble
-      );
+
+      conversation.scrollTop =
+        conversation.scrollHeight;
+
+    }
+
+
+    /* -------------------------------------------------------
+       TYPING INDICATOR
+       ------------------------------------------------------- */
+
+    function addTypingMessage() {
+
+      const message =
+        document.createElement("div");
+
+      message.className =
+        "smv-final-ai-message ai";
+
+
+      message.innerHTML = `
+
+        <div class="smv-final-ai-avatar">
+          ✦
+        </div>
+
+        <div class="smv-final-ai-bubble">
+          Thinking…
+        </div>
+
+      `;
 
 
       conversation.appendChild(
@@ -5257,24 +5113,41 @@ console.log(
     }
 
 
-    /* ---------------------------------------------------------
-       GET AI EVENT CONTEXT
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       READ EVENT CONTEXT
+       ------------------------------------------------------- */
 
-    function getAIEventContext() {
+    function getEventContext() {
 
-      function value(id) {
+      function getValue(ids) {
 
-        const element =
-          document.getElementById(
-            id
-          );
+        for (
+          let i = 0;
+          i < ids.length;
+          i++
+        ) {
 
-        return element
-          ? String(
+          const element =
+            document.getElementById(
+              ids[i]
+            );
+
+          if (
+            element &&
+            String(
               element.value || ""
             ).trim()
-          : "";
+          ) {
+
+            return String(
+              element.value || ""
+            ).trim();
+
+          }
+
+        }
+
+        return "";
 
       }
 
@@ -5282,50 +5155,63 @@ console.log(
       const context = {
 
         eventType:
-          value(
-            "plannerEventType"
-          ),
+          getValue([
+            "plannerEventType",
+            "customerEventType",
+            "eventType"
+          ]),
 
-        city:
-          value(
-            "plannerCity"
-          ),
+        location:
+          getValue([
+            "plannerLocation",
+            "customerLocation",
+            "location"
+          ]),
 
         eventDate:
-          value(
-            "plannerDate"
-          ),
+          getValue([
+            "plannerDate",
+            "customerEventDate",
+            "date"
+          ]),
 
-        guestCount:
-          value(
-            "plannerGuests"
-          ),
+        guests:
+          getValue([
+            "plannerGuests",
+            "customerGuests",
+            "guests"
+          ]),
 
-        budget:
-          value(
-            "plannerBudget"
-          ),
+        budgetPerPerson:
+          getValue([
+            "plannerBudget",
+            "customerBudget"
+          ]),
+
+        food:
+          getValue([
+            "plannerFood",
+            "customerFood"
+          ]),
 
         venueType:
-          value(
+          getValue([
             "plannerVenueType"
-          ),
+          ]),
 
         requirements:
-          value(
-            "plannerRequirements"
-          ) ||
-          value(
+          getValue([
+            "plannerRequirements",
             "customerRequirements"
-          )
+          ])
 
       };
 
 
       /*
-        Include the current AI planner result
-        when available.
-      */
+       * Include existing AI plan when available.
+       * Only safe planning information is sent.
+       */
 
       try {
 
@@ -5367,13 +5253,9 @@ console.log(
               )
                 ? currentAIPlan.venueTypes
                     .slice(0, 5)
-                    .map(
-                      function (item) {
-                        return String(
-                          item
-                        );
-                      }
-                    )
+                    .map(function (item) {
+                      return String(item);
+                    })
                 : []
 
           };
@@ -5383,7 +5265,7 @@ console.log(
       } catch (error) {
 
         console.warn(
-          "SMV AI context could not read current AI plan:",
+          "SMV AI context error:",
           error
         );
 
@@ -5395,47 +5277,70 @@ console.log(
     }
 
 
-    /* ---------------------------------------------------------
-       CALL SUPABASE AI
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       CALL SUPABASE EDGE FUNCTION
+       ------------------------------------------------------- */
 
-    async function askSMVAI(
-      message
-    ) {
+    async function askAI(message) {
 
       const context =
-        getAIEventContext();
+        getEventContext();
 
 
-      const response =
-        await fetch(
-          "https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/smv-ai-assistant",
-          {
-            method:
-              "POST",
+      console.log(
+        "SMV AI → sending request",
+        {
+          message: message,
+          context: context
+        }
+      );
 
-            headers: {
-              "Content-Type":
-                "application/json"
-            },
 
-            body:
-              JSON.stringify({
+      let response;
 
-                message:
-                  message,
 
-                context:
-                  context
+      try {
 
-              })
+        response =
+          await fetch(
+            AI_ENDPOINT,
+            {
+              method: "POST",
 
-          }
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify({
+
+                  message:
+                    message,
+
+                  context:
+                    context
+
+                })
+
+            }
+          );
+
+      } catch (networkError) {
+
+        console.error(
+          "SMV AI network error:",
+          networkError
         );
 
+        throw new Error(
+          "Unable to connect to the AI service. Please check your internet connection and try again."
+        );
 
-      let data =
-        null;
+      }
+
+
+      let data = null;
 
 
       try {
@@ -5443,58 +5348,111 @@ console.log(
         data =
           await response.json();
 
-      } catch (error) {
-
-        throw new Error(
-          "The AI assistant returned an invalid response."
-        );
-
-      }
-
-
-      if (
-        !response.ok
-      ) {
+      } catch (jsonError) {
 
         console.error(
-          "SMV AI Assistant error:",
-          data
+          "SMV AI invalid JSON:",
+          jsonError
         );
 
         throw new Error(
-          data?.error ||
-          "The AI assistant could not respond right now."
+          "The AI service returned an invalid response."
         );
+
+      }
+
+
+      console.log(
+        "SMV AI ← response",
+        {
+          status:
+            response.status,
+
+          data:
+            data
+        }
+      );
+
+
+      if (!response.ok) {
+
+        const serverError =
+          data &&
+          (
+            data.error ||
+            data.message
+          );
+
+
+        throw new Error(
+          serverError ||
+          (
+            "AI service error (" +
+            response.status +
+            ")."
+          )
+        );
+
+      }
+
+
+      /*
+       * Support the expected reply property.
+       */
+
+      if (
+        data &&
+        typeof data.reply ===
+          "string" &&
+        data.reply.trim()
+      ) {
+
+        return data.reply.trim();
+
+      }
+
+
+      /*
+       * Also support common alternate response
+       * property names without breaking the UI.
+       */
+
+      if (
+        data &&
+        typeof data.response ===
+          "string" &&
+        data.response.trim()
+      ) {
+
+        return data.response.trim();
 
       }
 
 
       if (
-        !data ||
-        !data.reply
+        data &&
+        typeof data.message ===
+          "string" &&
+        data.message.trim()
       ) {
 
-        throw new Error(
-          "The AI assistant returned an empty response."
-        );
+        return data.message.trim();
 
       }
 
 
-      return String(
-        data.reply
-      ).trim();
+      throw new Error(
+        "The AI service returned an empty response."
+      );
 
     }
 
 
-    /* ---------------------------------------------------------
+    /* -------------------------------------------------------
        SEND MESSAGE
-       --------------------------------------------------------- */
+       ------------------------------------------------------- */
 
-    async function sendMessage(
-      message
-    ) {
+    async function sendMessage(message) {
 
       message =
         String(
@@ -5511,9 +5469,8 @@ console.log(
         message.length > 600
       ) {
 
-        addMessage(
-          "Please keep your question under 600 characters.",
-          "ai"
+        addAIMessage(
+          "Please keep your question under 600 characters."
         );
 
         return;
@@ -5521,58 +5478,63 @@ console.log(
       }
 
 
-      addMessage(
-        message,
-        "user"
+      addUserMessage(
+        message
       );
 
 
-      input.value =
-        "";
+      input.value = "";
+
+      input.disabled = true;
 
 
-      input.disabled =
-        true;
+      const sendButton =
+        form.querySelector(
+          "button[type='submit']"
+        );
 
-      sendButton.disabled =
-        true;
+
+      if (sendButton) {
+        sendButton.disabled = true;
+      }
 
 
-      const typingMessage =
+      const typing =
         addTypingMessage();
 
 
       try {
 
         const reply =
-          await askSMVAI(
+          await askAI(
             message
           );
 
 
-        typingMessage.remove();
+        typing.remove();
 
 
-        addMessage(
-          reply,
-          "ai"
+        addAIMessage(
+          reply
         );
+
 
       } catch (error) {
 
         console.error(
-          "SMV AI Assistant:",
+          "Select My Venue AI:",
           error
         );
 
 
-        typingMessage.remove();
+        typing.remove();
 
 
-        addMessage(
-          error?.message ||
-          "Sorry, the AI assistant is temporarily unavailable. Please try again.",
-          "ai"
+        addAIMessage(
+          error &&
+          error.message
+            ? error.message
+            : "The AI assistant could not respond right now. Please try again."
         );
 
       } finally {
@@ -5580,8 +5542,12 @@ console.log(
         input.disabled =
           false;
 
-        sendButton.disabled =
-          false;
+
+        if (sendButton) {
+          sendButton.disabled =
+            false;
+        }
+
 
         input.focus();
 
@@ -5590,9 +5556,9 @@ console.log(
     }
 
 
-    /* ---------------------------------------------------------
-       CHAT FORM
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       FORM SUBMIT
+       ------------------------------------------------------- */
 
     form.addEventListener(
       "submit",
@@ -5608,86 +5574,98 @@ console.log(
     );
 
 
-    /* ---------------------------------------------------------
-       QUICK QUESTIONS
-       --------------------------------------------------------- */
+    /* -------------------------------------------------------
+       QUICK ACTIONS
+       ------------------------------------------------------- */
 
     conversation
       .querySelectorAll(
-        "[data-ai-question]"
+        "[data-ai-action]"
       )
       .forEach(
-        function (questionButton) {
+        function (actionButton) {
 
-          questionButton.addEventListener(
+          actionButton.addEventListener(
             "click",
             function () {
 
-              const question =
-                questionButton.getAttribute(
-                  "data-ai-question"
-                );
-
-
-              if (!question) {
-                return;
-              }
-
-
-              openAssistant();
-
-
-              sendMessage(
-                question
-              );
-
-            }
-          );
-
-        }
-      );
-
-
-    /* ---------------------------------------------------------
-       OPTIONAL: START PLANNER
-       --------------------------------------------------------- */
-
-    /*
-      If the AI tells the user to use the planner,
-      the actual planner remains untouched.
-
-      This button only provides a safe helper if
-      the existing planner exists on the page.
-    */
-
-    conversation
-      .querySelectorAll(
-        "[data-ai-start-planner]"
-      )
-      .forEach(
-        function (plannerButton) {
-
-          plannerButton.addEventListener(
-            "click",
-            function () {
-
-              const planner =
-                document.getElementById(
-                  "aiPlanner"
+              const action =
+                actionButton.getAttribute(
+                  "data-ai-action"
                 );
 
 
               if (
-                planner
+                action === "venue"
               ) {
 
-                planner.scrollIntoView({
-                  behavior:
-                    "smooth",
+                sendMessage(
+                  "I want help choosing a venue."
+                );
 
-                  block:
-                    "start"
-                });
+              }
+
+
+              else if (
+                action === "budget"
+              ) {
+
+                sendMessage(
+                  "Help me understand my event budget."
+                );
+
+              }
+
+
+              else if (
+                action === "checklist"
+              ) {
+
+                sendMessage(
+                  "Show me the venue checklist."
+                );
+
+              }
+
+
+              else if (
+                action === "planner"
+              ) {
+
+                sendMessage(
+                  "I want to start the AI Event Planner."
+                );
+
+
+                /*
+                 * Also move the user to the planner
+                 * after the AI request has been sent.
+                 */
+
+                setTimeout(
+                  function () {
+
+                    const planner =
+                      document.getElementById(
+                        "aiPlanner"
+                      );
+
+
+                    if (planner) {
+
+                      planner.scrollIntoView({
+                        behavior:
+                          "smooth",
+
+                        block:
+                          "start"
+                      });
+
+                    }
+
+                  },
+                  1000
+                );
 
               }
 
@@ -5696,20 +5674,21 @@ console.log(
 
         }
       );
-
 
   }
 
 
   /* ---------------------------------------------------------
-     INITIALIZE
+     INITIALIZE AFTER DOM IS READY
      --------------------------------------------------------- */
 
-  function initializeFinalAI() {
-
-    removeOldAIWidgets();
+  function initialize() {
 
     createFinalAIAssistant();
+
+    console.log(
+      "Select My Venue — FINAL REAL AI Assistant initialized."
+    );
 
   }
 
@@ -5721,32 +5700,13 @@ console.log(
 
     document.addEventListener(
       "DOMContentLoaded",
-      initializeFinalAI
+      initialize
     );
 
   } else {
 
-    initializeFinalAI();
+    initialize();
 
   }
 
-
-  /*
-    Final cleanup.
-
-    This catches any old assistant that another
-    script may have injected after page load.
-  */
-
-  setTimeout(
-    function () {
-
-      removeOldAIWidgets();
-
-    },
-    800
-  );
-
-
 })();
- 
