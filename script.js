@@ -1,7 +1,7 @@
 /* =========================================================
    SELECT MY VENUE
    WEBSITE JAVASCRIPT
-   Exact companion for the current index.html
+   Exact companion for the current index.html | Popup waits 15 seconds after first interaction
    Website -> AI Planner -> Customer Enquiry -> Supabase -> CRM
    ========================================================= */
 
@@ -2731,6 +2731,58 @@ function setupAutoEnquiryPopup() {
         font-weight: 900 !important;
       }
 
+      .smv-popup-how {
+        margin-top: 28px !important;
+        padding-top: 22px !important;
+        border-top: 1px solid rgba(255,255,255,.12) !important;
+      }
+
+      .smv-popup-how-title {
+        color: #c7a95b !important;
+        font-size: 10px !important;
+        font-weight: 900 !important;
+        letter-spacing: 1.6px !important;
+        margin-bottom: 13px !important;
+      }
+
+      .smv-popup-how-steps {
+        display: grid !important;
+        gap: 11px !important;
+      }
+
+      .smv-popup-how-step {
+        display: grid !important;
+        grid-template-columns: 27px 1fr !important;
+        gap: 9px !important;
+        align-items: start !important;
+      }
+
+      .smv-popup-how-step .num {
+        width: 27px !important;
+        height: 27px !important;
+        border: 1px solid rgba(41,213,192,.35) !important;
+        border-radius: 50% !important;
+        display: grid !important;
+        place-items: center !important;
+        color: #29d5c0 !important;
+        font-size: 10px !important;
+        font-weight: 900 !important;
+      }
+
+      .smv-popup-how-step strong {
+        display: block !important;
+        color: #fff !important;
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 2px !important;
+      }
+
+      .smv-popup-how-step span {
+        color: rgba(255,255,255,.62) !important;
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+      }
+
       .smv-popup-form-side {
         background: #fff !important;
         color: #202727 !important;
@@ -3131,6 +3183,20 @@ function setupAutoEnquiryPopup() {
             </select>
           </div>
 
+          <div class="smv-popup-field">
+            <label for="smvPopupStyle">EVENT STYLE</label>
+            <select id="smvPopupStyle">
+              <option value="">Let Select My Venue decide</option>
+              <option>Premium</option>
+              <option>Elegant</option>
+              <option>Modern</option>
+              <option>Traditional</option>
+              <option>Minimal</option>
+              <option>Luxury</option>
+              <option>Fun & Colorful</option>
+            </select>
+          </div>
+
           <div class="smv-popup-field full">
             <label for="smvPopupRequirements">OTHER REQUIREMENTS</label>
             <textarea id="smvPopupRequirements" rows="3" maxlength="1000" placeholder="Decoration, parking, rooms, catering, DJ, photography, special requests, etc."></textarea>
@@ -3202,6 +3268,7 @@ function setupAutoEnquiryPopup() {
       setValue("smvPopupBudget", plan.budget || "");
       setValue("smvPopupFood", plan.food || "");
       setValue("smvPopupVenueType", plan.venueType || "");
+      setValue("smvPopupStyle", plan.style || "");
 
       const summary = byId("smvPopupAISummary");
       if (summary) {
@@ -3212,7 +3279,8 @@ function setupAutoEnquiryPopup() {
           " • Match " +
           (plan.matchScore || "—") +
           "% • " +
-          (plan.intent || "Requirement");
+          (plan.intent || "Requirement") +
+          (plan.style ? " • " + plan.style : "");
       }
     }
 
@@ -3263,8 +3331,12 @@ function setupAutoEnquiryPopup() {
   /* ---------------------------------------------------------
      TRIGGER:
      NO PAGE-LOAD TIMER.
-     First website click -> wait 3 seconds -> popup.
+     First genuine website click/tap -> wait 15 seconds -> popup.
+
+     The visitor gets time to browse before the enquiry form appears.
+     The popup never opens just because the page was loaded.
      --------------------------------------------------------- */
+  const POPUP_DELAY_AFTER_INTERACTION = 15000;
   let interactionTimer = null;
   let interactionDetected = false;
 
@@ -3273,23 +3345,22 @@ function setupAutoEnquiryPopup() {
     if (isPopupHandled()) return;
     if (overlay.classList.contains("show")) return;
 
-    /*
-     * Ignore clicks made inside the popup itself.
-     * At this stage the popup is normally hidden.
-     */
     if (event && event.target && event.target.closest("#enquiryPopup")) {
       return;
     }
 
     interactionDetected = true;
-
     clearTimeout(interactionTimer);
 
     interactionTimer = setTimeout(function () {
       openPopup();
-    }, 3000);
+    }, POPUP_DELAY_AFTER_INTERACTION);
 
     document.removeEventListener("click", startInteractionTimer, true);
+
+    console.log(
+      "Select My Venue: enquiry popup scheduled 15 seconds after first website interaction."
+    );
   }
 
   document.addEventListener("click", startInteractionTimer, true);
@@ -3344,8 +3415,9 @@ function setupAutoEnquiryPopup() {
           <h3>Requirement Received!</h3>
           <p>
             Thank you. Your venue requirement has been submitted
-            successfully. Our Select My Venue team will review
-            your requirement and contact you with suitable options.
+            successfully and saved with our venue enquiry team.
+            Our Select My Venue team will review your details and
+            contact you with suitable options.
           </p>
           <button type="button" class="smv-success-close" id="smvSuccessClose">
             Continue Browsing
@@ -3381,6 +3453,7 @@ function setupAutoEnquiryPopup() {
     const budget = getValue("smvPopupBudget");
     const food = getValue("smvPopupFood");
     const venueType = getValue("smvPopupVenueType");
+    const style = getValue("smvPopupStyle");
     const other = getValue("smvPopupRequirements");
 
     const cleanMobile = customerMobile.replace(/\D/g, "").slice(0, 10);
@@ -3439,7 +3512,7 @@ function setupAutoEnquiryPopup() {
       budget: budget,
       food: food,
       venueType: venueType,
-      style: "",
+      style: style,
       other: other
     });
 
@@ -3486,7 +3559,8 @@ function setupAutoEnquiryPopup() {
         plan.leadQuality +
         " | Planning Stage: " +
         plan.planningStage +
-        (venueType ? " | Venue Style: " + venueType : ""),
+        (venueType ? " | Venue Style: " + venueType : "") +
+        (style ? " | Event Style: " + style : ""),
       last_contacted_at: null
     };
 
