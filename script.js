@@ -2531,15 +2531,10 @@ function setupCustomerEnquiry() {
           follow_up_at:
             null,
 
-          internal_notes:
-            "AI Planner Qualified Lead | Match Score: " +
-            plan.matchScore +
-            "% | Intent: " +
-            plan.intent +
-            " | Quality: " +
-            plan.leadQuality +
-            " | Planning Stage: " +
-            plan.planningStage,
+           internal_notes:
+  customerRequirements
+    ? customerRequirements.trim()
+    : "",
 
           last_contacted_at:
             null
