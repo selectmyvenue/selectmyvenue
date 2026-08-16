@@ -1831,3 +1831,151 @@ body.popup-open {
   }
 
 }
+
+/* =========================================================
+   SELECT MY VENUE — FINAL LOGO FIX
+   HORIZONTAL SIZE + HEADER/FOOTER BACKGROUND BLEND
+   ========================================================= */
+
+/* ---------------- HEADER ---------------- */
+
+.site-header .header-inner {
+  display: flex;
+  align-items: center;
+}
+
+/* Keep the header itself exactly as it is */
+.site-header {
+  background: rgba(1, 20, 17, .88);
+}
+
+/* Give logo more horizontal room */
+.site-header .brand {
+  width: 420px !important;
+  height: 76px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+}
+
+/* Larger horizontal logo */
+.site-header .brand img,
+.site-header .main-logo {
+  width: 410px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 76px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+
+  /*
+     Your current PNG still contains an opaque black
+     background. SCREEN makes that black background
+     visually disappear and lets the header show through.
+  */
+  mix-blend-mode: screen !important;
+
+  filter: drop-shadow(0 5px 12px rgba(0,0,0,.18));
+}
+
+
+/* ---------------- FOOTER ---------------- */
+
+/*
+   Keep footer background consistent with the existing
+   Select My Venue dark theme.
+*/
+footer,
+.site-footer {
+  background: #011411 !important;
+}
+
+/* Footer logo container */
+.site-footer .footer-final-logo,
+footer .footer-final-logo {
+  display: flex !important;
+  align-items: center !important;
+  background: transparent !important;
+}
+
+/* Footer logo */
+.site-footer .footer-final-logo img,
+footer .footer-final-logo img {
+  width: 380px !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: 72px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+
+  /* Remove visual black rectangle */
+  mix-blend-mode: screen !important;
+
+  filter: drop-shadow(0 5px 12px rgba(0,0,0,.18));
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .site-header .brand {
+    width: 350px !important;
+  }
+
+  .site-header .brand img,
+  .site-header .main-logo {
+    width: 340px !important;
+    max-height: 70px !important;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 820px) {
+
+  .site-header .brand {
+    width: 280px !important;
+    height: 68px !important;
+  }
+
+  .site-header .brand img,
+  .site-header .main-logo {
+    width: 270px !important;
+    max-height: 64px !important;
+  }
+
+  .site-footer .footer-final-logo img,
+  footer .footer-final-logo img {
+    width: 300px !important;
+    max-width: 100% !important;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .site-header .brand {
+    width: 240px !important;
+  }
+
+  .site-header .brand img,
+  .site-header .main-logo {
+    width: 230px !important;
+    max-height: 60px !important;
+  }
+
+  .site-footer .footer-final-logo img,
+  footer .footer-final-logo img {
+    width: 260px !important;
+    max-width: 100% !important;
+  }
+
+}
