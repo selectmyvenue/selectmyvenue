@@ -1715,3 +1715,28 @@ body.popup-open {
   }
 
 }
+
+/* =========================================================
+   SELECT MY VENUE — HEADER LOGO HEIGHT FIX
+   Keep logo width/length exactly as it is.
+   Make the logo fill the header vertically.
+   ========================================================= */
+
+.site-header .header-inner {
+  height: 74px;
+  align-items: stretch;
+}
+
+.site-header .brand {
+  height: 74px;
+  display: flex;
+  align-items: center;
+}
+
+.site-header .brand img {
+  width: 280px;
+  height: 74px;
+  max-height: 74px;
+  object-fit: contain;
+  object-position: left center;
+}
