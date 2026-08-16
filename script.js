@@ -3355,7 +3355,7 @@ function setupAutoEnquiryPopup() {
      The visitor gets time to browse before the enquiry form appears.
      The popup never opens just because the page was loaded.
      --------------------------------------------------------- */
-  const POPUP_DELAY_AFTER_INTERACTION = 10000;
+  const POPUP_DELAY_AFTER_INTERACTION = 15000;
   let interactionTimer = null;
   let interactionDetected = false;
 
@@ -4845,8 +4845,9 @@ console.log(
         context.aiPlan = {
 
           matchScore:
-            currentAIPlan.matchScore ??
-            null,
+            (currentAIPlan.matchScore != null
+              ? currentAIPlan.matchScore
+              : null),
 
 
           intent:
