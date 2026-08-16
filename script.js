@@ -4209,7 +4209,6 @@ console.log(
   const SUPABASE_AI_URL =
     "https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/smv-ai-assistant";
 
-  const AI_POPUP_DELAY = 15000;
 
 
   /* =======================================================
@@ -5452,96 +5451,60 @@ console.log(
   }
 
 
-  /* =======================================================
-     15 SECOND CUSTOMER-INTERACTION POPUP
+    /* =======================================================
+     AI ASSISTANT — MANUAL OPEN ONLY
+     =======================================================
 
-     The timer starts ONLY after customer interaction.
+     The AI Assistant must NEVER open automatically.
 
-     It does NOT immediately open on page load.
+     Customer must click the AI Assistant button manually.
+
+     IMPORTANT:
+     - No timer
+     - No first-click trigger
+     - No automatic popup
+     - AI functionality remains unchanged
+     - setupAutoEnquiryPopup() is NOT affected
      ======================================================= */
 
-  let interactionTimerStarted =
-    false;
+  let interactionTimerStarted = false;
+  let interactionTimer = null;
 
-  let interactionTimer =
-    null;
+  /*
+     Intentionally disabled.
 
+     The AI Assistant is now completely manual.
+     The button click handled in attachEvents()
+     is the only way to open the assistant.
+  */
 
   function startInteractionTimer() {
-
-    if (
-      interactionTimerStarted
-    ) {
-
-      return;
-
-    }
-
-
-    interactionTimerStarted =
-      true;
-
-
-    interactionTimer =
-      setTimeout(
-        function () {
-
-          if (
-            panel &&
-            !panel.classList.contains(
-              "open"
-            )
-          ) {
-
-            openAssistant(
-              false
-            );
-
-          }
-
-        },
-        AI_POPUP_DELAY
-      );
-
+    return;
   }
 
 
-  /* =======================================================
-     START TIMER AFTER CUSTOMER INTERACTS
-     ======================================================= */
-
-  function interactionHandler(
-    event
-  ) {
-
-    if (
-      event &&
-      event.target &&
-      event.target.closest &&
-      event.target.closest(
-        "#smvFinalAIAssistant"
-      )
-    ) {
-
-      return;
-
-    }
-
-
-    startInteractionTimer();
-
+  function interactionHandler(event) {
+    return;
   }
 
 
-  document.addEventListener(
-    "click",
-    interactionHandler,
-    {
-      passive: true
-    }
-  );
+  /*
+     IMPORTANT:
+     Do NOT attach a document-wide click listener here.
 
+     The previous version used:
 
+     document.addEventListener(
+       "click",
+       interactionHandler,
+       {
+         passive: true
+       }
+     );
+
+     That listener has intentionally been removed.
+  */
+   
   /* =======================================================
      INITIALIZE
      ======================================================= */
