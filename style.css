@@ -19,7 +19,7 @@
   --teal-2:#0fc8b0;
   --gold:#f3c84b;
   --danger:#ff8d8d;
-  --container:1360px;
+  --container:100%;
   --radius:20px;
   --shadow:0 24px 70px rgba(0,0,0,.28);
 }
