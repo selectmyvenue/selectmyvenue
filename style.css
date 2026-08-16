@@ -1718,36 +1718,29 @@ body.popup-open {
 
 /* =========================================================
    SELECT MY VENUE
-   FULL HEADER LOGO — VERTICAL HEIGHT FIX
-   Add this at the VERY END of style.css
+   LOGO ONLY — FULL HEADER VERTICAL HEIGHT
+   Keep all other header content centered
    ========================================================= */
 
-/* Remove unwanted top/bottom spacing from the header */
-.site-header {
-  padding: 0 !important;
-}
-
-/* Make the header container use the complete header height */
+/* Keep the existing header and navigation alignment unchanged */
 .site-header .header-inner {
-  height: 100px;
-  min-height: 100px;
-  align-items: stretch;
-  padding: 0;
-}
-
-/* Make the logo/brand area full header height */
-.site-header .brand {
-  height: 100px;
-  display: flex;
   align-items: center;
 }
 
-/* Make the actual logo fill the header vertically */
+/* Keep brand centered inside the existing header */
+.site-header .brand {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0;
+}
+
+/* ONLY enlarge the logo vertically */
 .site-header .brand img {
-  height: 100px;
+  height: 100%;
   width: auto;
-  max-height: 100px;
+  max-height: none;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
   display: block;
 }
