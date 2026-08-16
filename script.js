@@ -3913,17 +3913,22 @@ function buildAIRequirements(plan) {
 }
 
 function buildFullAIRequirements(data) {
-  let result = buildAIRequirements(
-    data.aiPlan
-  );
+  const customerComment =
+    typeof data?.other === "string"
+      ? data.other.trim()
+      : "";
 
-  if (data.other) {
-    result +=
-      "\n\n=== CUSTOMER REQUIREMENTS ===\n" +
-      data.other;
+  // IMPORTANT:
+  // If the customer did not type anything in
+  // "Other Requirements", keep CRM Requirements
+  // completely empty.
+  if (!customerComment) {
+    return "";
   }
 
-  return result;
+  // If the customer typed a comment,
+  // save ONLY the customer's actual comment.
+  return customerComment;
 }
 
 /* =========================================================
