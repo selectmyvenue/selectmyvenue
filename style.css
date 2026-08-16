@@ -1717,33 +1717,34 @@ body.popup-open {
 }
 
 /* =========================================================
-   SELECT MY VENUE — FINAL HEADER LOGO SIZE
-   Logo fills header vertically
-   Navigation stays vertically centered
+   SELECT MY VENUE — FINAL LOGO SIZE FIX
+   Fit logo inside existing header
+   Keep navigation centered
    ========================================================= */
 
 .site-header .header-inner {
-  position: relative;
+  align-items: center !important;
 }
 
-/* Keep brand itself centered */
+/* Keep the brand centered */
 .site-header .brand {
-  display: flex;
-  align-items: center;
-  padding: 0;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  padding: 0 !important;
 }
 
-/* Make ONLY the logo larger */
+/* Logo fits inside the header without overflowing */
 .site-header .main-logo {
-  height: 96px !important;
+  height: 78px !important;
   width: auto !important;
-  max-height: none !important;
-  max-width: none !important;
-  object-fit: contain;
-  display: block;
+  max-height: 78px !important;
+  max-width: 500px !important;
+  object-fit: contain !important;
+  display: block !important;
 }
 
-/* Keep navigation in the middle */
+/* Keep navigation vertically centered */
 .site-header nav {
-  align-self: center;
+  align-self: center !important;
 }
