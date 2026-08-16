@@ -184,14 +184,18 @@
   </div>
 
 
-
   <!-- ===================================================
-       HERO SEARCH
+       OLD QUICK SEARCH
+       
+       Kept hidden only for JavaScript compatibility.
+       The customer no longer sees this form.
   ==================================================== -->
 
   <form
     class="search-card"
     id="searchForm"
+    style="display:none;"
+    aria-hidden="true"
   >
 
     <div class="field">
@@ -202,7 +206,7 @@
 
       <select
         id="eventType"
-        required
+        tabindex="-1"
       >
 
         <option value="">
@@ -233,7 +237,7 @@
         id="location"
         type="text"
         placeholder="City / Area"
-        required
+        tabindex="-1"
       >
 
     </div>
@@ -245,7 +249,10 @@
         GUESTS
       </label>
 
-      <select id="guests">
+      <select
+        id="guests"
+        tabindex="-1"
+      >
 
         <option value="">
           Select guests
@@ -271,6 +278,7 @@
       <input
         id="date"
         type="date"
+        tabindex="-1"
       >
 
     </div>
@@ -279,6 +287,7 @@
     <button
       class="primary-btn search-btn"
       type="submit"
+      tabindex="-1"
     >
       Find My Venue →
     </button>
@@ -289,6 +298,7 @@
   <p
     id="heroFormMessage"
     class="hero-form-message"
+    style="display:none;"
   ></p>
 
 
@@ -297,6 +307,354 @@
     ✦ Smart matching • AI event planning • Requirement based • Built for India
 
   </p>
+
+</section>
+
+
+
+<!-- =====================================================
+     REAL CUSTOMER ENQUIRY
+     
+     THIS IS NOW THE FIRST MAIN ACTION AFTER HERO.
+====================================================== -->
+
+<section
+  class="enquiry-section"
+  id="enquiry"
+>
+
+
+  <div class="section-heading">
+
+    <div>
+
+      <div class="section-kicker">
+        YOUR REQUIREMENTS
+      </div>
+
+
+      <h2>
+        Let's find a venue
+        <span>that fits your event.</span>
+      </h2>
+
+    </div>
+
+
+    <p>
+
+      Tell us about your event, your guests and what matters
+      to you. Share your requirements once and our team can
+      use them to help identify suitable venue options.
+
+    </p>
+
+  </div>
+
+
+
+  <!-- ===================================================
+       CUSTOMER FORM
+  ==================================================== -->
+
+  <form
+    class="form-card"
+    id="customerEnquiryForm"
+    novalidate
+  >
+
+
+    <!-- CUSTOMER DETAILS -->
+
+    <div class="form-section-title">
+      CUSTOMER DETAILS
+    </div>
+
+
+    <div class="form-grid four">
+
+
+      <div class="field">
+
+        <label for="customerName">
+          CUSTOMER NAME *
+        </label>
+
+        <input
+          id="customerName"
+          type="text"
+          placeholder="Enter your name"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerMobile">
+          MOBILE NUMBER *
+        </label>
+
+        <input
+          id="customerMobile"
+          type="tel"
+          inputmode="numeric"
+          maxlength="10"
+          placeholder="10-digit mobile number"
+          required
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerEmail">
+          EMAIL
+        </label>
+
+        <input
+          id="customerEmail"
+          type="email"
+          placeholder="your@email.com"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerLocation">
+          CITY / LOCATION *
+        </label>
+
+        <input
+          id="customerLocation"
+          type="text"
+          placeholder="Delhi, Gurgaon, Noida..."
+          required
+        >
+
+      </div>
+
+    </div>
+
+
+
+    <!-- EVENT DETAILS -->
+
+    <div class="form-section-title">
+      EVENT DETAILS
+    </div>
+
+
+    <div class="form-grid five">
+
+
+      <div class="field">
+
+        <label for="customerEventType">
+          EVENT TYPE *
+        </label>
+
+
+        <select
+          id="customerEventType"
+          required
+        >
+
+          <option value="">
+            Select event
+          </option>
+
+          <option>Wedding</option>
+          <option>Engagement</option>
+          <option>Birthday</option>
+          <option>Anniversary</option>
+          <option>Corporate Event</option>
+          <option>Reception</option>
+          <option>Party</option>
+          <option>Baby Shower</option>
+          <option>Kitty Party</option>
+          <option>Other</option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerEventDate">
+          EVENT DATE
+        </label>
+
+        <input
+          id="customerEventDate"
+          type="date"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerGuests">
+          NUMBER OF GUESTS
+        </label>
+
+        <input
+          id="customerGuests"
+          type="number"
+          min="1"
+          placeholder="e.g. 300"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerBudget">
+          BUDGET / PERSON
+        </label>
+
+        <input
+          id="customerBudget"
+          type="number"
+          min="0"
+          placeholder="₹ per person"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="customerFood">
+          FOOD PREFERENCE
+        </label>
+
+
+        <select id="customerFood">
+
+          <option value="">
+            Select preference
+          </option>
+
+          <option>Veg</option>
+          <option>Non-Veg</option>
+          <option>Both</option>
+          <option>Jain</option>
+          <option>Not Specified</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- AI PLANNER SUMMARY -->
+
+    <div class="planner-summary-box">
+
+      <div class="form-section-title">
+        🤖 AI PLANNER INFORMATION
+      </div>
+
+
+      <p>
+        Your AI event plan can automatically be attached
+        to this enquiry so our team can understand your
+        event priorities before contacting you.
+      </p>
+
+
+      <div
+        id="plannerSummaryPreview"
+        class="planner-summary-preview"
+      >
+        No AI event plan generated yet.
+      </div>
+
+
+      <button
+        type="button"
+        class="secondary-btn"
+        id="refreshPlannerSummary"
+      >
+        ↻ Update AI Plan Summary
+      </button>
+
+    </div>
+
+
+
+    <!-- REQUIREMENTS -->
+
+    <div class="requirements-row">
+
+
+      <div class="field">
+
+        <label for="customerRequirements">
+          OTHER REQUIREMENTS
+        </label>
+
+
+        <textarea
+          id="customerRequirements"
+          rows="4"
+          placeholder="Decoration, parking, rooms, catering, special requests, etc."
+        ></textarea>
+
+      </div>
+
+
+      <div class="submit-wrap">
+
+        <input
+          type="hidden"
+          id="leadSource"
+          value="Website"
+        >
+
+
+        <button
+          class="primary-btn form-submit"
+          id="customerEnquirySubmit"
+          type="submit"
+        >
+          Submit My Venue Requirement →
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- CONFIRMATION / ERROR -->
+
+    <p
+      id="customerEnquiryMessage"
+      class="form-message"
+      role="alert"
+      aria-live="polite"
+    ></p>
+
+
+    <p class="form-note">
+
+      Your information is used only to understand your
+      venue requirements and contact you regarding suitable options.
+
+    </p>
+
+
+  </form>
 
 </section>
 
@@ -1005,6 +1363,7 @@
         WHAT ELSE MATTERS TO YOU?
       </label>
 
+
       <textarea
         id="plannerRequirements"
         rows="3"
@@ -1492,13 +1851,16 @@
       >
 
         <label>
+
           <input
             type="checkbox"
             disabled
           >
+
           <span>
             Generate your event plan first
           </span>
+
         </label>
 
       </div>
@@ -1542,352 +1904,6 @@
 
 
   </div>
-
-</section>
-
-
-
-<!-- =====================================================
-     FULL CUSTOMER ENQUIRY
-====================================================== -->
-
-<section
-  class="enquiry-section"
-  id="enquiry"
->
-
-
-  <div class="section-heading">
-
-    <div>
-
-      <div class="section-kicker">
-        YOUR REQUIREMENTS
-      </div>
-
-
-      <h2>
-        Let's find a venue
-        <span>that fits your event.</span>
-      </h2>
-
-    </div>
-
-
-    <p>
-
-      You've already told Select My Venue what matters.
-      Now share a few more details and we'll use your
-      requirements to help identify suitable venue options.
-
-    </p>
-
-  </div>
-
-
-
-  <!-- ===================================================
-       CUSTOMER FORM
-  ==================================================== -->
-
-  <form
-    class="form-card"
-    id="customerEnquiryForm"
-    novalidate
-  >
-
-
-    <!-- CUSTOMER DETAILS -->
-
-    <div class="form-section-title">
-      CUSTOMER DETAILS
-    </div>
-
-
-    <div class="form-grid four">
-
-
-      <div class="field">
-
-        <label for="customerName">
-          CUSTOMER NAME *
-        </label>
-
-        <input
-          id="customerName"
-          type="text"
-          placeholder="Enter your name"
-          required
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerMobile">
-          MOBILE NUMBER *
-        </label>
-
-        <input
-          id="customerMobile"
-          type="tel"
-          inputmode="numeric"
-          maxlength="10"
-          placeholder="10-digit mobile number"
-          required
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerEmail">
-          EMAIL
-        </label>
-
-        <input
-          id="customerEmail"
-          type="email"
-          placeholder="your@email.com"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerLocation">
-          CITY / LOCATION *
-        </label>
-
-        <input
-          id="customerLocation"
-          type="text"
-          placeholder="Delhi, Gurgaon, Noida..."
-          required
-        >
-
-      </div>
-
-    </div>
-
-
-
-    <!-- EVENT DETAILS -->
-
-    <div class="form-section-title">
-      EVENT DETAILS
-    </div>
-
-
-    <div class="form-grid five">
-
-
-      <div class="field">
-
-        <label for="customerEventType">
-          EVENT TYPE *
-        </label>
-
-
-        <select
-          id="customerEventType"
-          required
-        >
-
-          <option value="">
-            Select event
-          </option>
-
-          <option>Wedding</option>
-          <option>Engagement</option>
-          <option>Birthday</option>
-          <option>Anniversary</option>
-          <option>Corporate Event</option>
-          <option>Reception</option>
-          <option>Party</option>
-          <option>Baby Shower</option>
-          <option>Kitty Party</option>
-          <option>Other</option>
-
-        </select>
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerEventDate">
-          EVENT DATE
-        </label>
-
-        <input
-          id="customerEventDate"
-          type="date"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerGuests">
-          NUMBER OF GUESTS
-        </label>
-
-        <input
-          id="customerGuests"
-          type="number"
-          min="1"
-          placeholder="e.g. 300"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerBudget">
-          BUDGET / PERSON
-        </label>
-
-        <input
-          id="customerBudget"
-          type="number"
-          min="0"
-          placeholder="₹ per person"
-        >
-
-      </div>
-
-
-      <div class="field">
-
-        <label for="customerFood">
-          FOOD PREFERENCE
-        </label>
-
-
-        <select id="customerFood">
-
-          <option value="">
-            Select preference
-          </option>
-
-          <option>Veg</option>
-          <option>Non-Veg</option>
-          <option>Both</option>
-          <option>Jain</option>
-          <option>Not Specified</option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- AI PLANNER SUMMARY -->
-
-    <div class="planner-summary-box">
-
-      <div class="form-section-title">
-        🤖 AI PLANNER INFORMATION
-      </div>
-
-
-      <p>
-        Your AI event plan can automatically be attached
-        to this enquiry so our team can understand your
-        event priorities before contacting you.
-      </p>
-
-
-      <div
-        id="plannerSummaryPreview"
-        class="planner-summary-preview"
-      >
-        No AI event plan generated yet.
-      </div>
-
-
-      <button
-        type="button"
-        class="secondary-btn"
-        id="refreshPlannerSummary"
-      >
-        ↻ Update AI Plan Summary
-      </button>
-
-    </div>
-
-
-
-    <!-- REQUIREMENTS -->
-
-    <div class="requirements-row">
-
-
-      <div class="field">
-
-        <label for="customerRequirements">
-          OTHER REQUIREMENTS
-        </label>
-
-
-        <textarea
-          id="customerRequirements"
-          rows="4"
-          placeholder="Decoration, parking, rooms, catering, special requests, etc."
-        ></textarea>
-
-      </div>
-
-
-      <div class="submit-wrap">
-
-        <input
-          type="hidden"
-          id="leadSource"
-          value="Website"
-        >
-
-
-        <button
-          class="primary-btn form-submit"
-          id="customerEnquirySubmit"
-          type="submit"
-        >
-          Submit My Venue Requirement →
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- CONFIRMATION / ERROR -->
-
-    <p
-      id="customerEnquiryMessage"
-      class="form-message"
-      role="alert"
-      aria-live="polite"
-    ></p>
-
-
-    <p class="form-note">
-
-      Your information is used only to understand your
-      venue requirements and contact you regarding suitable options.
-
-    </p>
-
-
-  </form>
 
 </section>
 
@@ -2247,14 +2263,13 @@
 
 
 
-
 <!-- =====================================================
      FLOATING WHATSAPP
 ====================================================== -->
 
 <a
   class="floating-whatsapp"
-  href="https://wa.me/918368322256?text=Hi%20Select%20My%20Venue%2C%20I%20need%20help%20finding%20a%20venue."
+  href="https://wa.me/918368322256?text=Hi%20Select%20My%20Venue%2C%20I%20need%20help%20finding%20a%20venue"
   target="_blank"
   rel="noopener"
   aria-label="Chat with Select My Venue on WhatsApp"
@@ -2264,7 +2279,9 @@
   <span class="floating-whatsapp-text">Chat with us</span>
 </a>
 
-  <!-- =====================================================
+
+
+<!-- =====================================================
      AUTO ENQUIRY POPUP
 ====================================================== -->
 
@@ -2305,6 +2322,7 @@
         Tell us a few details and Select My Venue
         will help you discover venues that fit your event.
       </p>
+
 
       <form
         id="quickEnquiryForm"
@@ -2428,7 +2446,9 @@
   </div>
 
 </div>
-  
+
+
+
 <!-- =====================================================
      TOAST
 ====================================================== -->
@@ -2438,7 +2458,8 @@
   class="toast-message"
 ></span>
 
-  
+
+
 <!-- =====================================================
      SUPABASE LIBRARY
      MUST LOAD BEFORE script.js
@@ -2446,11 +2467,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+
+
 <!-- =====================================================
      SELECT MY VENUE WEBSITE JAVASCRIPT
 ====================================================== -->
 
 <script src="script.js"></script>
+
 
 </body>
 </html>
