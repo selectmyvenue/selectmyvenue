@@ -1748,3 +1748,86 @@ body.popup-open {
 .site-header nav {
   align-self: center !important;
 }
+
+/* =========================================================
+   SELECT MY VENUE — FINAL LOGO SIZE / BACKGROUND FIX
+   Header + Footer
+   ========================================================= */
+
+/* HEADER — keep all existing header content centered */
+.site-header {
+  display: flex;
+  align-items: center;
+}
+
+/* Header logo */
+.site-header .brand {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.site-header .main-logo {
+  display: block;
+  width: 430px;          /* increase horizontal size */
+  max-width: none;
+  height: 72px;          /* fills header vertically */
+  max-height: 72px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* FOOTER — same background as existing footer */
+.site-footer .footer-final-logo {
+  display: flex;
+  align-items: center;
+  background: transparent;
+}
+
+.site-footer .footer-final-logo img {
+  display: block;
+  width: 380px;          /* horizontal footer logo */
+  max-width: none;
+  height: 70px;
+  max-height: 70px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .site-header .main-logo {
+    width: 320px;
+    height: 64px;
+    max-height: 64px;
+  }
+
+  .site-footer .footer-final-logo img {
+    width: 300px;
+    height: 60px;
+    max-height: 60px;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .site-header .main-logo {
+    width: 260px;
+    height: 58px;
+    max-height: 58px;
+  }
+
+  .site-footer .footer-final-logo img {
+    width: 250px;
+    height: 55px;
+    max-height: 55px;
+  }
+
+}
