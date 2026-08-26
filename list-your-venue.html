@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>List Your Venue | Select My Venue</title>
+  <meta name="description" content="Apply to join the Select My Venue verified partner network and receive relevant event enquiries through the Partner CRM.">
+  <meta name="robots" content="index,follow"><link rel="canonical" href="https://selectmyvenue.com/list-your-venue.html">
+  <link rel="icon" href="logo.png" type="image/png"><link rel="stylesheet" href="public-pages.css">
+</head>
+<body>
+  <header class="page-header"><nav class="page-nav" aria-label="Main navigation"><a href="index.html"><img class="page-logo" src="logo.png" alt="Select My Venue"></a><div class="page-nav-links"><a href="venues.html">Browse Venues</a><a href="https://partner.selectmyvenue.com/">Partner Login</a><a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a></div></nav></header>
+  <main class="page-main">
+    <section class="page-hero"><p class="eyebrow">VENUE PARTNER ONBOARDING</p><h1>Grow with Select My Venue.</h1><p>Share your venue information for a partner review. Your listing will never be published as verified until our team checks and approves it.</p></section>
+    <div class="onboarding-layout">
+      <aside class="info-card"><h2>How onboarding works</h2><div class="info-list">
+        <div class="info-item"><span class="info-number">1</span><div><strong>Send venue details</strong><p>Complete the short partner application.</p></div></div>
+        <div class="info-item"><span class="info-number">2</span><div><strong>Verification call</strong><p>Our team reviews ownership, contact and venue information.</p></div></div>
+        <div class="info-item"><span class="info-number">3</span><div><strong>Admin approval</strong><p>Approved venues receive a permanent Venue ID and listing status.</p></div></div>
+        <div class="info-item"><span class="info-number">4</span><div><strong>Partner CRM access</strong><p>Eligible partners can receive and manage assigned enquiries securely.</p></div></div>
+      </div></aside>
+      <section class="form-card"><h2>Venue partner application</h2><p class="form-intro">This sends the application to the Select My Venue onboarding team on WhatsApp. It does not publish your venue automatically.</p>
+        <form id="venueApplication" novalidate><div class="form-grid">
+          <div class="form-field full"><label for="venueName">VENUE NAME *</label><input id="venueName" maxlength="140" required></div>
+          <div class="form-field"><label for="ownerName">OWNER / CONTACT NAME *</label><input id="ownerName" maxlength="120" autocomplete="name" required></div>
+          <div class="form-field"><label for="mobile">MOBILE / WHATSAPP *</label><input id="mobile" inputmode="tel" autocomplete="tel" placeholder="10-digit number" required></div>
+          <div class="form-field"><label for="email">EMAIL</label><input id="email" type="email" autocomplete="email"></div>
+          <div class="form-field"><label for="venueType">VENUE TYPE *</label><select id="venueType" required><option value="">Select type</option><option>Banquet Hall</option><option>Farmhouse</option><option>Hotel</option><option>Resort</option><option>Party Lawn</option><option>Restaurant</option><option>Other</option></select></div>
+          <div class="form-field"><label for="city">CITY *</label><input id="city" maxlength="80" required></div>
+          <div class="form-field"><label for="area">AREA / LOCALITY *</label><input id="area" maxlength="100" required></div>
+          <div class="form-field"><label for="capacity">MAXIMUM CAPACITY</label><input id="capacity" type="number" min="1" max="100000" inputmode="numeric"></div>
+          <div class="form-field full"><label for="details">SHORT DETAILS</label><textarea id="details" maxlength="700" placeholder="Food, rooms, parking, packages or anything our team should know"></textarea><span class="form-help">Do not share passwords or sensitive documents here.</span></div>
+        </div>
+        <label class="consent"><input id="consent" type="checkbox" required><span>I confirm that I am authorised to share these venue details and agree to be contacted about Select My Venue partner onboarding.</span></label>
+        <div class="form-actions"><button id="applyButton" class="button button-primary" type="submit">Send Application on WhatsApp</button><div id="formMessage" class="form-message" role="alert" aria-live="polite"></div></div>
+        </form>
+      </section>
+    </div>
+  </main>
+  <footer class="page-footer">© 2026 Select My Venue · <a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></footer>
+  <script>
+  (function(){const form=document.getElementById("venueApplication"),message=document.getElementById("formMessage");const value=id=>document.getElementById(id).value.trim();form.addEventListener("submit",event=>{event.preventDefault();message.className="form-message";message.textContent="";const mobile=value("mobile").replace(/\D/g,"");if(!form.checkValidity()){form.reportValidity();message.textContent="Please complete all required fields.";message.classList.add("error");return}if(mobile.length<10||mobile.length>15){message.textContent="Please enter a valid mobile number.";message.classList.add("error");document.getElementById("mobile").focus();return}const lines=["Hi Select My Venue, I want to apply as a venue partner.","",`Venue: ${value("venueName")}`,`Owner/Contact: ${value("ownerName")}`,`Mobile: ${mobile}`,`Email: ${value("email")||"—"}`,`Type: ${value("venueType")}`,`Location: ${value("area")}, ${value("city")}`,`Maximum Capacity: ${value("capacity")||"—"}`,`Details: ${value("details")||"—"}`];const url=`https://wa.me/918368322256?text=${encodeURIComponent(lines.join("\n"))}`;message.textContent="Opening secure WhatsApp onboarding…";message.classList.add("success");window.open(url,"_blank","noopener,noreferrer")})})();
+  </script>
+</body>
+</html>
