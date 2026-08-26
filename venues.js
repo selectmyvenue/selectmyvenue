@@ -40,7 +40,7 @@
     if(!client){grid.innerHTML='<div class="state-card"><h2>Venue directory unavailable</h2><p>Please send your requirement and our team will assist you.</p></div>';return;}
     let result=await client.rpc("smv_public_venues");
     if(result.error&&/function|schema cache/i.test(String(result.error.message||""))){
-      result=await client.from("venues").select("id,venue_name,venue_type,description,city,area,capacity_min,capacity_max,price_min_per_person,price_max_per_person,food_veg,food_non_veg,parking_available,rooms_available,google_maps_url,featured").eq("venue_status","approved").eq("verification_status","verified").order("featured",{ascending:false}).order("venue_name",{ascending:true});
+      result=await client.from("venues").select("id,venue_name,venue_type,description,city,area,capacity_min,capacity_max,price_min_per_person,price_max_per_person,food_veg,food_non_veg,parking_available,rooms_available,google_maps_url,featured").eq("venue_status","approved").eq("verification_status","verified").eq("public_listing_enabled",true).order("featured",{ascending:false}).order("venue_name",{ascending:true});
     }
     if(result.error){console.error("Venue directory error:",result.error);grid.innerHTML='<div class="state-card"><h2>Venue listings are being updated</h2><p>Please share your requirement and our team will send suitable verified options.</p><p style="margin-top:18px"><a class="button button-primary" href="index.html#enquiry">Find My Venue</a></p></div>';return;}
     venues=Array.isArray(result.data)
