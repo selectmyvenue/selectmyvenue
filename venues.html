@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Verified Venues | Select My Venue</title>
+  <meta name="description" content="Browse approved and verified venue partners on Select My Venue, then request a personalised quote for your event.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://selectmyvenue.com/venues.html">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="stylesheet" href="public-pages.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="page-header">
+    <nav class="page-nav" aria-label="Main navigation">
+      <a href="index.html" aria-label="Select My Venue home"><img class="page-logo" src="logo.png" alt="Select My Venue"></a>
+      <div class="page-nav-links">
+        <a href="index.html#how">How It Works</a>
+        <a href="index.html#aiPlanner">AI Planner</a>
+        <a href="list-your-venue.html">List Your Venue</a>
+        <a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a>
+      </div>
+    </nav>
+  </header>
+  <main class="page-main">
+    <section class="page-hero">
+      <p class="eyebrow">SELECT MY VENUE PARTNER NETWORK</p>
+      <h1>Discover verified venues.</h1>
+      <p>Explore approved venue partners. Share your event requirements and our team will help you compare suitable options.</p>
+      <div class="trust-note">✓ Only approved and verified venue records are shown publicly.</div>
+    </section>
+    <section aria-label="Venue directory">
+      <div class="toolbar">
+        <input id="venueSearch" type="search" placeholder="Search venue, city or area" aria-label="Search venues">
+        <select id="venueCity" aria-label="Filter by city"><option value="">All Cities</option></select>
+      </div>
+      <div id="venueGrid" class="venue-grid" aria-live="polite">
+        <div class="state-card"><h2>Loading venues…</h2><p>Please wait while we prepare the verified partner directory.</p></div>
+      </div>
+    </section>
+  </main>
+  <footer class="page-footer">© 2026 Select My Venue · <a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://partner.selectmyvenue.com/">Partner Login</a></footer>
+  <script src="venues.js"></script>
+</body>
+</html>

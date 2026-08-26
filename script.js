@@ -333,13 +333,6 @@ function setupHeroSearch() {
           priority: calculateLeadPriority(plan),
           assigned_to: null,
           follow_up_at: null,
-          internal_notes:
-            "AI Planner Lead | Match Score: " +
-            plan.matchScore +
-            "% | Intent: " +
-            plan.intent +
-            " | Quality: " +
-            plan.leadQuality,
           last_contacted_at: null
         });
 
@@ -2531,11 +2524,6 @@ function setupCustomerEnquiry() {
           follow_up_at:
             null,
 
-           internal_notes:
-  customerRequirements
-    ? customerRequirements.trim()
-    : "",
-
           last_contacted_at:
             null
         };
@@ -3350,7 +3338,7 @@ function setupAutoEnquiryPopup() {
      The visitor gets time to browse before the enquiry form appears.
      The popup never opens just because the page was loaded.
      --------------------------------------------------------- */
-  const POPUP_DELAY_AFTER_INTERACTION = 10000;
+  const POPUP_DELAY_AFTER_INTERACTION = 15000;
   let interactionTimer = null;
   let interactionDetected = false;
 
@@ -3564,17 +3552,6 @@ function setupAutoEnquiryPopup() {
       priority: calculateLeadPriority(plan),
       assigned_to: null,
       follow_up_at: null,
-      internal_notes:
-        "Website Enquiry Popup Lead | Match Score: " +
-        plan.matchScore +
-        "% | Intent: " +
-        plan.intent +
-        " | Quality: " +
-        plan.leadQuality +
-        " | Planning Stage: " +
-        plan.planningStage +
-        (venueType ? " | Venue Style: " + venueType : "") +
-        (style ? " | Event Style: " + style : ""),
       last_contacted_at: null
     };
 
@@ -5551,9 +5528,7 @@ console.log(
 
 
     console.log(
-      "✓ AI popup delay:",
-      AI_POPUP_DELAY / 1000,
-      "seconds after customer interaction."
+      "✓ AI Assistant is ready and opens only when requested."
     );
 
   }
