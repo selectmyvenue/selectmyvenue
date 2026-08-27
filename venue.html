@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Verified Venue Profile | Select My Venue</title>
+  <meta id="venueMetaDescription" name="description" content="View this verified venue profile on Select My Venue and request a personalised quote for your event.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link id="venueCanonical" rel="canonical" href="https://selectmyvenue.com/venue.html">
+  <meta property="og:type" content="website">
+  <meta id="venueOgTitle" property="og:title" content="Verified Venue Profile | Select My Venue">
+  <meta id="venueOgDescription" property="og:description" content="Explore this verified venue and request a personalised quote.">
+  <meta id="venueOgUrl" property="og:url" content="https://selectmyvenue.com/venue.html">
+  <meta id="venueOgImage" property="og:image" content="https://selectmyvenue.com/logo.png">
+  <meta property="og:site_name" content="Select My Venue">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="stylesheet" href="public-pages.css">
+  <script id="venueStructuredData" type="application/ld+json"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="page-header">
+    <nav class="page-nav" aria-label="Main navigation">
+      <a href="index.html" aria-label="Select My Venue home"><img class="page-logo" src="logo.png" alt="Select My Venue"></a>
+      <div class="page-nav-links">
+        <a href="venues.html">Browse Venues</a>
+        <a href="delhi-ncr-venues.html">Delhi NCR Guide</a>
+        <a href="index.html#how">How It Works</a>
+        <a href="list-your-venue.html">List Your Venue</a>
+        <a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page-main venue-profile-main">
+    <div class="breadcrumbs">
+      <a href="index.html">Home</a><span>›</span><a href="venues.html">Verified Venues</a><span>›</span><span id="venueBreadcrumb">Venue Profile</span>
+    </div>
+
+    <div id="venueProfileLoading" class="state-card">
+      <h2>Loading venue profile…</h2>
+      <p>Please wait while we prepare the verified venue details.</p>
+    </div>
+
+    <div id="venueProfileError" class="state-card" hidden>
+      <h2>Venue profile unavailable</h2>
+      <p>This venue may be private, inactive or no longer publicly listed.</p>
+      <p style="margin-top:18px"><a class="button button-primary" href="venues.html">Browse Verified Venues</a></p>
+    </div>
+
+    <article id="venueProfile" hidden>
+      <section class="venue-profile-hero">
+        <div id="venueProfileMedia" class="venue-profile-media">
+          <div id="venueProfileFallback" class="venue-profile-fallback" aria-hidden="true">🏨</div>
+          <img id="venueProfileImage" alt="" hidden>
+          <div class="venue-profile-overlay"></div>
+          <div class="venue-profile-badges">
+            <span id="venueProfileType" class="home-venue-badge">Venue</span>
+            <span class="home-venue-badge verified">✓ Verified Partner</span>
+          </div>
+        </div>
+
+        <div class="venue-profile-titlebar">
+          <div>
+            <p class="eyebrow">SELECT MY VENUE PARTNER NETWORK</p>
+            <h1 id="venueProfileName">Venue</h1>
+            <p id="venueProfileLocation" class="venue-profile-location">Location on request</p>
+          </div>
+          <div class="venue-profile-hero-actions">
+            <a id="venueProfileQuote" class="button button-primary" href="index.html#enquiry">Get Personalised Quote</a>
+            <a id="venueProfileWhatsapp" class="button button-secondary" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp Us</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="venue-profile-facts" aria-label="Venue highlights">
+        <div><span>Capacity</span><strong id="venueProfileCapacity">On request</strong></div>
+        <div><span>Price range</span><strong id="venueProfilePrice">Quote on request</strong></div>
+        <div><span>Venue type</span><strong id="venueProfileFactType">Venue</strong></div>
+        <div><span>Verification</span><strong>✓ Verified</strong></div>
+      </section>
+
+      <div class="venue-profile-layout">
+        <div class="venue-profile-content">
+          <section class="venue-profile-panel">
+            <p class="eyebrow">ABOUT THE VENUE</p>
+            <h2 id="venueAboutHeading">A venue for memorable celebrations.</h2>
+            <p id="venueProfileDescription">Ask our team for availability, packages and detailed venue information.</p>
+          </section>
+
+          <section class="venue-profile-panel">
+            <p class="eyebrow">FACILITIES &amp; SERVICES</p>
+            <h2>What this venue offers</h2>
+            <div id="venueProfileFeatures" class="venue-profile-features"></div>
+          </section>
+        </div>
+
+        <aside class="venue-profile-enquiry">
+          <span class="venue-profile-assist-badge">PERSONALISED SUPPORT</span>
+          <h2>Interested in this venue?</h2>
+          <p>Share your event details once. Our team will help you check suitability, pricing and next steps.</p>
+          <a id="venueProfileQuoteAside" class="button button-primary" href="index.html#enquiry">Request Venue Quote</a>
+          <a id="venueProfileMap" class="button button-secondary" href="#" target="_blank" rel="noopener" hidden>View on Google Maps</a>
+          <small>Your details go to Select My Venue—not directly to the venue.</small>
+        </aside>
+      </div>
+    </article>
+  </main>
+
+  <footer class="page-footer">© 2026 Select My Venue · <a href="venues.html">Verified Venues</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://partner.selectmyvenue.com/">Partner Login</a></footer>
+  <script src="venue-profile.js"></script>
+</body>
+</html>
