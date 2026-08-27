@@ -178,7 +178,28 @@ function applySelectedVenueContext() {
     .trim()
     .slice(0, 160);
 
-  if (!venueName) {
+  const eventType = String(params.get("event_type") || "")
+    .trim()
+    .slice(0, 80);
+  const location = String(params.get("location") || "")
+    .trim()
+    .slice(0, 120);
+  const guests = String(params.get("guests") || "")
+    .replace(/[^0-9]/g, "")
+    .slice(0, 6);
+  const budget = String(params.get("budget") || "")
+    .replace(/[^0-9]/g, "")
+    .slice(0, 8);
+  const sourcePage = String(params.get("source_page") || "")
+    .trim()
+    .slice(0, 120);
+
+  if (eventType) setValue("customerEventType", eventType);
+  if (location) setValue("customerLocation", location);
+  if (guests) setValue("customerGuests", guests);
+  if (budget) setValue("customerBudget", budget);
+
+  if (!venueName && !sourcePage) {
     return;
   }
 
@@ -188,7 +209,12 @@ function applySelectedVenueContext() {
     return;
   }
 
-  const note = `Interested venue: ${venueName}`;
+  const notes = [];
+
+  if (venueName) notes.push(`Interested venue: ${venueName}`);
+  if (sourcePage) notes.push(`Search page: ${sourcePage}`);
+
+  const note = notes.join("\n");
   const current = String(requirements.value || "").trim();
 
   if (!current.toLowerCase().includes(note.toLowerCase())) {
