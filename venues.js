@@ -9,6 +9,7 @@
   let venues=[];
 
   const escapeHtml=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+  const safeHttpUrl=value=>{try{const url=new URL(String(value||""));return ["http:","https:"].includes(url.protocol)?url.href:""}catch(_){return ""}};
   const money=value=>value===null||value===undefined||value===""?null:new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(Number(value));
   const capacity=item=>{
     const min=Number(item.capacity_min||0);const max=Number(item.capacity_max||0);
@@ -17,6 +18,16 @@
   const price=item=>{
     const min=money(item.price_min_per_person);const max=money(item.price_max_per_person);
     if(min&&max)return `${min}–${max}/person`;return min?`${min}+/person`:max?`Up to ${max}/person`:"Quote on request";
+  };
+  const features=item=>{
+    const list=[];
+    if(item.food_veg)list.push("Vegetarian");
+    if(item.food_non_veg)list.push("Non-Vegetarian");
+    if(item.parking_available)list.push("Parking");
+    if(item.rooms_available)list.push("Rooms");
+    if(item.catering_available)list.push("Catering");
+    if(item.decoration_available)list.push("Decoration");
+    return list.slice(0,4);
   };
   function render(){
     const term=search.value.trim().toLowerCase();const selected=city.value;
@@ -29,11 +40,17 @@
       return;
     }
     grid.innerHTML=filtered.map(item=>{
+      const id=encodeURIComponent(String(item.id||""));
+      const name=String(item.venue_name||"Venue Partner");
       const location=[item.area,item.city].filter(Boolean).map(escapeHtml).join(", ")||"Location on request";
       const description=item.description?escapeHtml(String(item.description).slice(0,180)):"Ask our team for availability, packages and venue details.";
-      const quote=`index.html#enquiry`;
+      const quote=`index.html?venue=${id}&venue_name=${encodeURIComponent(name)}#enquiry`;
+      const profile=`venue.html?id=${id}`;
       const map=item.google_maps_url&&/^https?:\/\//i.test(item.google_maps_url)?`<a class="button button-secondary" href="${escapeHtml(item.google_maps_url)}" target="_blank" rel="noopener">Map</a>`:"";
-      return `<article class="venue-card"><div class="venue-card-top"><span class="venue-type">${escapeHtml(item.venue_type||"Venue")}</span><span class="verified">✓ Verified</span></div><h2>${escapeHtml(item.venue_name||"Venue Partner")}</h2><p class="venue-location">${location}</p><div class="venue-facts"><div class="venue-fact">${escapeHtml(capacity(item))}</div><div class="venue-fact">${escapeHtml(price(item))}</div></div><p class="venue-description">${description}</p><div class="venue-actions"><a class="button button-primary" href="${quote}">Get Quote</a>${map}</div></article>`;
+      const cover=safeHttpUrl(item.cover_image_url);
+      const media=cover?`<img src="${escapeHtml(cover)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async">`:'<div class="venue-card-image-fallback" aria-hidden="true">🏨</div>';
+      const featureHtml=features(item).map(feature=>`<span>✓ ${escapeHtml(feature)}</span>`).join("")||"<span>Details on request</span>";
+      return `<article class="venue-card"><div class="venue-card-media">${media}<div class="venue-card-top"><span class="venue-type">${escapeHtml(item.venue_type||"Venue")}</span><span class="verified">✓ Verified</span></div></div><div class="venue-card-body"><h2>${escapeHtml(name)}</h2><p class="venue-location">⌖ ${location}</p><div class="venue-facts"><div class="venue-fact">${escapeHtml(capacity(item))}</div><div class="venue-fact">${escapeHtml(price(item))}</div></div><div class="venue-feature-list">${featureHtml}</div><p class="venue-description">${description}</p><div class="venue-actions"><a class="button button-primary" href="${profile}">View Profile</a><a class="button button-secondary" href="${quote}">Get Quote</a>${map}</div></div></article>`;
     }).join("");
   }
   async function load(){

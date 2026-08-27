@@ -51,6 +51,7 @@ let plannerGenerated = false;
 
 document.addEventListener("DOMContentLoaded", function () {
   setupMobileMenu();
+  applySelectedVenueContext();
   setupHeroSearch();
   setupPopularEventShortcuts();
   setupAIEventPlanner();
@@ -169,6 +170,30 @@ function showToast(message, type) {
   showToast.timer = setTimeout(function () {
     toast.classList.remove("show");
   }, 3200);
+}
+
+function applySelectedVenueContext() {
+  const params = new URLSearchParams(window.location.search);
+  const venueName = String(params.get("venue_name") || "")
+    .trim()
+    .slice(0, 160);
+
+  if (!venueName) {
+    return;
+  }
+
+  const requirements = byId("customerRequirements");
+
+  if (!requirements) {
+    return;
+  }
+
+  const note = `Interested venue: ${venueName}`;
+  const current = String(requirements.value || "").trim();
+
+  if (!current.toLowerCase().includes(note.toLowerCase())) {
+    requirements.value = current ? `${note}\n${current}` : note;
+  }
 }
 
 function getFriendlySupabaseError(error) {
