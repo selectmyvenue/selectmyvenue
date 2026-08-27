@@ -283,7 +283,8 @@ p{color:var(--muted)}
 
 .home-venue-grid{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(280px,360px));
+  justify-content:center;
   gap:18px;
 }
 
@@ -307,7 +308,7 @@ p{color:var(--muted)}
 
 .home-venue-media{
   position:relative;
-  min-height:215px;
+  min-height:195px;
   overflow:hidden;
   background:
     radial-gradient(circle at 75% 18%,rgba(25,216,189,.24),transparent 35%),
@@ -316,7 +317,7 @@ p{color:var(--muted)}
 
 .home-venue-media img{
   width:100%;
-  height:215px;
+  height:195px;
   object-fit:cover;
   transition:transform .45s ease;
 }
@@ -326,7 +327,7 @@ p{color:var(--muted)}
 }
 
 .home-venue-image-fallback{
-  min-height:215px;
+  min-height:195px;
   display:grid;
   place-items:center;
   color:rgba(231,249,246,.72);
@@ -375,13 +376,13 @@ p{color:var(--muted)}
   flex:1;
   display:flex;
   flex-direction:column;
-  padding:21px;
+  padding:18px;
 }
 
 .home-venue-content h3{
   overflow-wrap:anywhere;
   color:#f4fbfa;
-  font-size:22px;
+  font-size:20px;
 }
 
 .home-venue-location{
@@ -394,7 +395,7 @@ p{color:var(--muted)}
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:8px;
-  margin:17px 0 13px;
+  margin:14px 0 12px;
 }
 
 .home-venue-fact{
@@ -492,7 +493,7 @@ p{color:var(--muted)}
 @keyframes smvVenueSpin{to{transform:rotate(360deg)}}
 
 @media(max-width:980px){
-  .home-venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .home-venue-grid{grid-template-columns:repeat(auto-fit,minmax(280px,360px))}
   .home-venues-heading-actions{max-width:430px;align-items:flex-end;flex-direction:column}
 }
 
@@ -503,7 +504,7 @@ p{color:var(--muted)}
 
 @media(max-width:620px){
   .home-venue-grid{grid-template-columns:1fr}
-  .home-venue-media,.home-venue-media img,.home-venue-image-fallback{min-height:205px;height:205px}
+  .home-venue-media,.home-venue-media img,.home-venue-image-fallback{min-height:190px;height:190px}
   .home-venues-heading-actions{display:block}
   .home-venues-heading-actions .secondary-btn{margin-top:14px}
 }
@@ -527,6 +528,7 @@ main{
 .trust-strip{order:2}
 .enquiry-section{order:3}
 .popular-section{order:4}
+.home-venues-section{order:5}
 .feature-row{order:5}
 .ai-planner-section{order:6}
 .about-section{order:7}
@@ -578,6 +580,10 @@ body{font-size:15px}
 
 /* Popular Events: clearer image cards, less dark overlay */
 .popular-section{padding-top:36px}
+.popular-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:35px;margin-bottom:22px}
+.popular-heading h2{margin-top:9px;font-size:clamp(30px,3.3vw,46px);line-height:1.08}
+.popular-heading h2 span{display:block;color:var(--teal)}
+.popular-heading>p{max-width:420px;font-size:12px;line-height:1.75}
 .event-grid{gap:16px}
 .event-card{min-height:185px;padding:20px 18px 18px}
 .event-card::after{background:linear-gradient(180deg,rgba(2,17,15,.02) 0%,rgba(2,17,15,.22) 38%,rgba(2,17,15,.78) 100%)}
@@ -670,6 +676,8 @@ body{font-size:15px}
   .hero-text{font-size:14px}
   .enquiry-section{padding-top:34px}
   .event-card{min-height:170px}
+  .popular-heading{display:block}
+  .popular-heading>p{margin-top:13px}
   .contact-card{min-height:175px}
 }
 
@@ -682,6 +690,7 @@ body{font-size:15px}
   .enquiry-section .section-heading h2{font-size:32px}
   .form-card{padding:20px}
   .event-card{min-height:160px}
+  .popular-heading h2{font-size:32px}
   .contact-card{min-height:165px}
   .footer-final-logo img{width:145px}
 }
