@@ -3,9 +3,10 @@
 
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+  const section = document.getElementById("featuredVenues");
   const grid = document.getElementById("homeVenueGrid");
 
-  if (!grid) {
+  if (!section || !grid) {
     return;
   }
 
@@ -141,19 +142,20 @@
     `;
   }
 
-  function renderEmpty(message) {
-    grid.innerHTML = `
-      <div class="home-venue-empty">
-        <strong>New verified venue profiles are being prepared.</strong>
-        <p>${escapeHtml(message)}</p>
-        <a class="primary-btn" href="#enquiry">Share Your Requirement</a>
-      </div>
-    `;
+  function hideShowcase() {
+    grid.innerHTML = "";
+    section.hidden = true;
+    section.setAttribute("aria-busy", "false");
+  }
+
+  function showShowcase() {
+    section.hidden = false;
+    section.setAttribute("aria-busy", "false");
   }
 
   async function loadHomepageVenues() {
     if (!client) {
-      renderEmpty("Share your event details and our team will help you personally.");
+      hideShowcase();
       return;
     }
 
@@ -161,7 +163,7 @@
 
     if (error) {
       console.error("Homepage venue showcase error:", error);
-      renderEmpty("The live venue directory is being updated. You can still send your requirement now.");
+      hideShowcase();
       return;
     }
 
@@ -170,10 +172,11 @@
       : [];
 
     if (!venues.length) {
-      renderEmpty("Share your event details and we will send suitable verified options.");
+      hideShowcase();
       return;
     }
 
+    showShowcase();
     grid.innerHTML = venues
       .slice(0, 6)
       .map(renderVenue)
