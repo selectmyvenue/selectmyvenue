@@ -136,7 +136,11 @@
         "@id": "https://selectmyvenue.com/#website",
         "name": "Select My Venue",
         "alternateName": "SMV",
-        "url": "https://selectmyvenue.com/"
+        "url": "https://selectmyvenue.com/",
+        "inLanguage": "en-IN",
+        "publisher": {
+          "@id": "https://selectmyvenue.com/#organization"
+        }
       },
 
       {
@@ -150,7 +154,34 @@
         },
         "description": "Smart AI event and venue discovery platform helping people discover suitable venues and plan weddings, celebrations, corporate events and special occasions across India.",
         "telephone": "+91-83683-22256",
-        "email": "support@selectmyvenue.com"
+        "email": "support@selectmyvenue.com",
+        "areaServed": {
+          "@type": "Country",
+          "name": "India"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "customer support",
+          "telephone": "+91-83683-22256",
+          "email": "support@selectmyvenue.com",
+          "areaServed": "IN",
+          "availableLanguage": ["English", "Hindi"]
+        }
+      },
+
+      {
+        "@type": "Service",
+        "@id": "https://selectmyvenue.com/#venue-discovery-service",
+        "name": "Venue Discovery and Event Planning",
+        "serviceType": "Venue discovery and event planning assistance",
+        "url": "https://selectmyvenue.com/",
+        "provider": {
+          "@id": "https://selectmyvenue.com/#organization"
+        },
+        "areaServed": {
+          "@type": "Country",
+          "name": "India"
+        }
       }
 
     ]
