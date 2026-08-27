@@ -2503,3 +2503,29 @@ footer .footer-final-logo img {
   }
 
 }
+
+/* Keep the full desktop navigation inside medium-width screens. */
+@media (min-width: 1121px) and (max-width: 1499px) {
+  .site-header .header-inner {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .site-header .brand {
+    width: clamp(270px, 22vw, 330px) !important;
+  }
+
+  .site-header .brand img,
+  .site-header .main-logo {
+    width: 100% !important;
+    max-height: 68px !important;
+  }
+
+  #mainNav {
+    gap: clamp(10px, 1.15vw, 18px);
+  }
+
+  #mainNav a {
+    font-size: clamp(10px, .86vw, 12px);
+  }
+}
