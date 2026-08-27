@@ -98,8 +98,8 @@
       publicAccess: true,
       address: {
         "@type": "PostalAddress",
+        streetAddress: venue.area || undefined,
         addressLocality: venue.city || location || undefined,
-        addressRegion: venue.area || undefined,
         addressCountry: "IN"
       },
       maximumAttendeeCapacity: Number(venue.capacity_max || 0) || undefined,
