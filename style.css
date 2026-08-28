@@ -554,33 +554,37 @@ body{font-size:15px}
   inset:0;
   z-index:0;
   overflow:hidden;
-  background:#041c19;
+  background:#f4eee5;
 }
 .hero-slide{
   position:absolute;
   inset:-2%;
   opacity:0;
-  background-position:center;
+  background-position:72% center;
   background-size:cover;
   background-repeat:no-repeat;
-  filter:saturate(1.08) contrast(1.03);
+  filter:saturate(1.02) contrast(1.03) brightness(1.08);
   will-change:opacity,transform;
   animation:smvHeroSideSlide 28s cubic-bezier(.55,.08,.35,1) infinite both;
 }
 .hero-slide-1{
-  background-image:url("assets/hero/wedding-reception.webp");
+  background-image:url("assets/hero/hero-bright-wedding-v2.webp");
+  background-position:74% center;
   animation-delay:-1s;
 }
 .hero-slide-2{
-  background-image:url("assets/hero/birthday-anniversary.webp");
+  background-image:url("assets/hero/hero-bright-celebration-v2.webp");
+  background-position:78% center;
   animation-delay:6s;
 }
 .hero-slide-3{
-  background-image:url("assets/hero/outdoor-celebration.webp");
+  background-image:url("assets/hero/hero-bright-garden-v2.webp");
+  background-position:78% center;
   animation-delay:13s;
 }
 .hero-slide-4{
-  background-image:url("assets/hero/sangeet-engagement.webp");
+  background-image:url("assets/hero/hero-bright-engagement-v2.webp");
+  background-position:76% center;
   animation-delay:20s;
 }
 @keyframes smvHeroSideSlide{
@@ -593,12 +597,12 @@ body{font-size:15px}
 .hero::before{
   z-index:1;
   background:
-    linear-gradient(90deg,rgba(1,18,16,.79) 0%,rgba(1,18,16,.56) 36%,rgba(1,18,16,.14) 70%,rgba(1,18,16,.30) 100%),
-    linear-gradient(180deg,rgba(1,18,16,.04),rgba(1,18,16,.42));
+    linear-gradient(90deg,rgba(1,18,16,.91) 0%,rgba(1,18,16,.72) 38%,rgba(1,18,16,.16) 70%,rgba(1,18,16,.06) 100%),
+    linear-gradient(180deg,rgba(1,18,16,.02),rgba(1,18,16,.22));
   filter:none;
   transform:none;
 }
-.hero::after{z-index:1;background:radial-gradient(circle at 78% 40%,rgba(25,216,189,.10),transparent 31%),linear-gradient(90deg,transparent 0%,rgba(0,0,0,.06) 100%)}
+.hero::after{z-index:1;background:radial-gradient(circle at 80% 42%,rgba(255,255,255,.16),transparent 34%),linear-gradient(90deg,transparent 52%,rgba(255,255,255,.05) 100%)}
 .hero h1{font-size:clamp(44px,4.8vw,68px)}
 .hero-text{font-size:14px}
 
@@ -1521,7 +1525,30 @@ body.popup-open {
   }
 
   .hero h1 {
-    font-size: clamp(38px, 11vw, 50px);
+    max-width: 94%;
+    font-size: clamp(36px, 10.5vw, 48px);
+  }
+
+  .hero-slide {
+    background-position: 78% center;
+    filter: saturate(1.02) contrast(1.04) brightness(1.12);
+  }
+
+  .hero::before {
+    background:
+      linear-gradient(90deg, rgba(1,18,16,.88) 0%, rgba(1,18,16,.69) 48%, rgba(1,18,16,.16) 100%),
+      linear-gradient(180deg, rgba(1,18,16,.02), rgba(1,18,16,.25));
+  }
+
+  .hero::after {
+    background:
+      radial-gradient(circle at 86% 32%, rgba(255,255,255,.17), transparent 32%),
+      linear-gradient(90deg, transparent 56%, rgba(255,255,255,.06) 100%);
+  }
+
+  .hero-text {
+    max-width: 92%;
+    color: #c4dcd8;
   }
 
   .enquiry-section {
