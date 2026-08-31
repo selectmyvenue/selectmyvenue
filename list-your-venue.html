@@ -1,54 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>List Your Venue | Select My Venue</title>
-  <meta name="description" content="Apply to join the Select My Venue verified partner network and receive relevant event enquiries through the Partner CRM.">
-  <meta name="robots" content="index,follow,max-image-preview:large"><link rel="canonical" href="https://selectmyvenue.com/list-your-venue.html">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>List Your Venue FREE | Founding Venue Partner | Select My Venue</title>
+  <meta name="description" content="Join Select My Venue as a Founding Venue Partner. Free venue listing, ₹0 joining fee, Partner CRM access and a complimentary 10-day launch trial.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://selectmyvenue.com/list-your-venue.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="List Your Venue | Select My Venue">
-  <meta property="og:description" content="Apply to join the Select My Venue partner network and manage relevant enquiries through the Partner CRM.">
+  <meta property="og:title" content="List Your Venue FREE | Select My Venue">
+  <meta property="og:description" content="Founding Venue Partner launch offer: free listing, ₹0 joining fee and complimentary 10-day launch trial.">
   <meta property="og:url" content="https://selectmyvenue.com/list-your-venue.html">
   <meta property="og:image" content="https://selectmyvenue.com/logo.png">
   <meta property="og:site_name" content="Select My Venue">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="List Your Venue | Select My Venue">
-  <meta name="twitter:description" content="Apply to join the Select My Venue partner network and manage relevant enquiries through the Partner CRM.">
+  <meta name="twitter:title" content="List Your Venue FREE | Select My Venue">
+  <meta name="twitter:description" content="Join the Founding Venue Partner launch offer with free listing and ₹0 joining fee.">
   <meta name="twitter:image" content="https://selectmyvenue.com/logo.png">
-  <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512"><link rel="shortcut icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180"><link rel="stylesheet" href="public-pages.css">
+  <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512">
+  <link rel="shortcut icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+  <link rel="stylesheet" href="public-pages.css">
+  <style>
+    :root{--smv-bg:#031817;--smv-bg2:#041f1d;--smv-panel:#062522;--smv-teal:#19d8bd;--smv-teal2:#0fc8b0;--smv-text:#f3fbfa;--smv-muted:#8fb8b3;--smv-gold:#f3c84b}
+    .founding-offer-wrap{max-width:1440px;margin:26px auto 4px;padding:0 24px}
+    .founding-offer{position:relative;overflow:hidden;border:1px solid rgba(25,216,189,.42);border-radius:24px;background:radial-gradient(circle at 88% 18%,rgba(243,200,75,.14),transparent 25%),radial-gradient(circle at 10% 100%,rgba(25,216,189,.16),transparent 30%),linear-gradient(135deg,#042824 0%,#031d1a 50%,#061f1d 100%);box-shadow:0 24px 70px rgba(0,0,0,.28),0 0 44px rgba(25,216,189,.08);padding:30px;display:grid;grid-template-columns:1.18fr .82fr;gap:28px;align-items:center}
+    .founding-offer:before{content:"";position:absolute;inset:-40%;background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.08) 50%,transparent 58%);transform:translateX(-45%);animation:smvOfferShine 5s ease-in-out infinite;pointer-events:none}
+    .offer-copy,.offer-side{position:relative;z-index:1}
+    .offer-kicker{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border:1px solid rgba(25,216,189,.42);border-radius:999px;color:var(--smv-teal);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;background:rgba(25,216,189,.06)}
+    .offer-kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--smv-teal);box-shadow:0 0 14px rgba(25,216,189,.9);animation:smvBlink 1.25s ease-in-out infinite}
+    .founding-offer h1{margin:16px 0 10px;color:var(--smv-text);font-size:clamp(34px,4.1vw,62px);line-height:.98;letter-spacing:-.045em}
+    .founding-offer h1 .free{color:var(--smv-teal);font-weight:950;text-shadow:0 0 20px rgba(25,216,189,.18);animation:smvOfferPulse 1.55s ease-in-out infinite}
+    .offer-lead{max-width:780px;color:#a8c9c4;font-size:15px;line-height:1.7;margin:0 0 18px}
+    .offer-badges{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+    .offer-badge{padding:9px 12px;border-radius:12px;border:1px solid rgba(25,216,189,.22);background:rgba(25,216,189,.055);color:#d8f6f1;font-weight:800;font-size:12px}
+    .offer-badge.gold{border-color:rgba(243,200,75,.34);background:rgba(243,200,75,.07);color:#ffe48a}
+    .offer-side{border:1px solid rgba(25,216,189,.20);border-radius:18px;background:rgba(2,24,22,.68);padding:20px}
+    .offer-side h2{margin:0 0 13px;color:var(--smv-text);font-size:18px}
+    .offer-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+    .offer-list li{position:relative;padding-left:22px;color:#cfe9e5;font-size:13px;line-height:1.4}
+    .offer-list li:before{content:"✓";position:absolute;left:0;top:0;color:var(--smv-teal);font-weight:950}
+    .offer-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+    .offer-btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 19px;border-radius:12px;background:linear-gradient(135deg,var(--smv-teal),var(--smv-teal2));color:#02211c!important;font-weight:950;text-decoration:none;box-shadow:0 10px 26px rgba(25,216,189,.16);animation:smvButtonGlow 2s ease-in-out infinite}
+    .offer-note{margin-top:11px;color:#7fa9a3;font-size:10.5px;line-height:1.5}
+    .launch-strip{margin:14px 0 0;padding:11px 15px;border-radius:13px;border:1px solid rgba(243,200,75,.28);background:linear-gradient(90deg,rgba(243,200,75,.10),rgba(25,216,189,.05));text-align:center;color:#f7e5a1;font-weight:900;letter-spacing:.035em;animation:smvStripBlink 1.8s ease-in-out infinite}
+    @keyframes smvBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.82)}}
+    @keyframes smvOfferPulse{0%,100%{opacity:1}50%{opacity:.62}}
+    @keyframes smvButtonGlow{0%,100%{box-shadow:0 10px 26px rgba(25,216,189,.14)}50%{box-shadow:0 10px 32px rgba(25,216,189,.34),0 0 24px rgba(25,216,189,.14)}}
+    @keyframes smvStripBlink{0%,100%{border-color:rgba(243,200,75,.28);box-shadow:none}50%{border-color:rgba(243,200,75,.72);box-shadow:0 0 18px rgba(243,200,75,.10)}}
+    @keyframes smvOfferShine{0%,65%,100%{transform:translateX(-45%)}82%{transform:translateX(45%)}}
+    @media(max-width:900px){.founding-offer{grid-template-columns:1fr}.offer-list{grid-template-columns:1fr 1fr}}
+    @media(max-width:560px){.founding-offer-wrap{padding:0 14px;margin-top:16px}.founding-offer{padding:21px 17px;border-radius:19px}.offer-list{grid-template-columns:1fr}.offer-btn{width:100%}.launch-strip{font-size:11px}}
+    @media(prefers-reduced-motion:reduce){.offer-kicker .dot,.founding-offer h1 .free,.offer-btn,.launch-strip,.founding-offer:before{animation:none!important}}
+  </style>
 </head>
 <body>
-  <header class="page-header"><nav class="page-nav" aria-label="Main navigation"><a href="index.html"><img class="page-logo" src="logo.png" alt="Select My Venue"></a><div class="page-nav-links"><a href="venues.html">Browse Venues</a><a href="delhi-ncr-venues.html">Delhi NCR Guide</a><a href="https://partner.selectmyvenue.com/">Partner Login</a><a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a></div></nav></header>
-  <main class="page-main">
-    <section class="page-hero"><p class="eyebrow">VENUE PARTNER ONBOARDING</p><h1>Grow with Select My Venue.</h1><p>Share your venue information for a partner review. Your listing will never be published as verified until our team checks and approves it.</p></section>
-    <div class="onboarding-layout">
-      <aside class="info-card"><h2>How onboarding works</h2><div class="info-list">
-        <div class="info-item"><span class="info-number">1</span><div><strong>Send venue details</strong><p>Complete the short partner application.</p></div></div>
-        <div class="info-item"><span class="info-number">2</span><div><strong>Verification call</strong><p>Our team reviews ownership, contact and venue information.</p></div></div>
-        <div class="info-item"><span class="info-number">3</span><div><strong>Admin approval</strong><p>Approved venues receive a permanent Venue ID and listing status.</p></div></div>
-        <div class="info-item"><span class="info-number">4</span><div><strong>Partner CRM access</strong><p>Eligible partners can receive and manage assigned enquiries securely.</p></div></div>
-      </div></aside>
-      <section class="form-card"><h2>Venue partner application</h2><p class="form-intro">This sends the application to the Select My Venue onboarding team on WhatsApp. It does not publish your venue automatically.</p>
-        <form id="venueApplication" novalidate><div class="form-grid">
-          <div class="form-field full"><label for="venueName">VENUE NAME *</label><input id="venueName" maxlength="140" required></div>
-          <div class="form-field"><label for="ownerName">OWNER / CONTACT NAME *</label><input id="ownerName" maxlength="120" autocomplete="name" required></div>
-          <div class="form-field"><label for="mobile">MOBILE / WHATSAPP *</label><input id="mobile" inputmode="tel" autocomplete="tel" placeholder="10-digit number" required></div>
-          <div class="form-field"><label for="email">EMAIL</label><input id="email" type="email" autocomplete="email"></div>
-          <div class="form-field"><label for="venueType">VENUE TYPE *</label><select id="venueType" required><option value="">Select type</option><option>Banquet Hall</option><option>Farmhouse</option><option>Hotel</option><option>Resort</option><option>Party Lawn</option><option>Restaurant</option><option>Other</option></select></div>
-          <div class="form-field"><label for="city">CITY *</label><input id="city" maxlength="80" required></div>
-          <div class="form-field"><label for="area">AREA / LOCALITY *</label><input id="area" maxlength="100" required></div>
-          <div class="form-field"><label for="capacity">MAXIMUM CAPACITY</label><input id="capacity" type="number" min="1" max="100000" inputmode="numeric"></div>
-          <div class="form-field full"><label for="details">SHORT DETAILS</label><textarea id="details" maxlength="700" placeholder="Food, rooms, parking, packages or anything our team should know"></textarea><span class="form-help">Do not share passwords or sensitive documents here.</span></div>
+  <header class="page-header">
+    <nav class="page-nav" aria-label="Main navigation">
+      <a href="index.html"><img class="page-logo" src="logo.png" alt="Select My Venue"></a>
+      <div class="page-nav-links">
+        <a href="venues.html">Browse Venues</a>
+        <a href="delhi-ncr-venues.html">Delhi NCR Guide</a>
+        <a href="https://partner.selectmyvenue.com/">Partner Login</a>
+        <a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a>
+      </div>
+    </nav>
+  </header>
+
+  <div class="founding-offer-wrap">
+    <section class="founding-offer" aria-labelledby="foundingOfferTitle">
+      <div class="offer-copy">
+        <div class="offer-kicker"><span class="dot" aria-hidden="true"></span> LAUNCH OFFER · FOUNDING VENUE PARTNERS</div>
+        <h1 id="foundingOfferTitle">List Your Venue <span class="free">FREE.</span></h1>
+        <p class="offer-lead">Join the Select My Venue partner network during our launch phase. We help create your venue profile and give eligible partners access to tools for managing relevant customer enquiry opportunities.</p>
+        <div class="offer-badges" aria-label="Launch offer highlights">
+          <span class="offer-badge">₹0 JOINING FEE</span>
+          <span class="offer-badge">FREE VENUE LISTING</span>
+          <span class="offer-badge">PARTNER CRM ACCESS</span>
+          <span class="offer-badge gold">10-DAY COMPLIMENTARY LAUNCH TRIAL</span>
         </div>
-        <label class="consent"><input id="consent" type="checkbox" required><span>I confirm that I am authorised to share these venue details and agree to be contacted about Select My Venue partner onboarding.</span></label>
-        <div class="form-actions"><button id="applyButton" class="button button-primary" type="submit">Send Application on WhatsApp</button><div id="formMessage" class="form-message" role="alert" aria-live="polite"></div></div>
+        <div class="launch-strip">✨ LIMITED LAUNCH OFFER — NO PAYMENT REQUIRED TO GET STARTED ✨</div>
+      </div>
+      <aside class="offer-side">
+        <h2>Your Founding Partner launch benefits</h2>
+        <ul class="offer-list">
+          <li>Professional venue profile</li>
+          <li>₹0 joining fee</li>
+          <li>Partner CRM access</li>
+          <li>Relevant enquiry opportunities</li>
+          <li>Verified Partner opportunity</li>
+          <li>No commission to join</li>
+          <li>10-day complimentary trial</li>
+          <li>No long-term commitment</li>
+        </ul>
+        <div class="offer-cta"><a class="offer-btn" href="#venueApplication">LIST YOUR VENUE FREE →</a></div>
+        <p class="offer-note">You stay in control. Joining does not guarantee enquiries or bookings, and there is no obligation to continue after the complimentary period.</p>
+      </aside>
+    </section>
+  </div>
+
+  <main class="page-main">
+    <section class="page-hero">
+      <p class="eyebrow">VENUE PARTNER ONBOARDING</p>
+      <h1>Grow with Select My Venue.</h1>
+      <p>Share your venue information for a partner review. Your listing will never be published as verified until our team checks and approves it.</p>
+    </section>
+
+    <div class="onboarding-layout">
+      <aside class="info-card">
+        <h2>How onboarding works</h2>
+        <div class="info-list">
+          <div class="info-item"><span class="info-number">1</span><div><strong>Send venue details</strong><p>Complete the short partner application.</p></div></div>
+          <div class="info-item"><span class="info-number">2</span><div><strong>Verification call</strong><p>Our team reviews ownership, contact and venue information.</p></div></div>
+          <div class="info-item"><span class="info-number">3</span><div><strong>Admin approval</strong><p>Approved venues receive a permanent Venue ID and listing status.</p></div></div>
+          <div class="info-item"><span class="info-number">4</span><div><strong>Partner CRM access</strong><p>Eligible partners can receive and manage assigned enquiries securely.</p></div></div>
+        </div>
+      </aside>
+
+      <section class="form-card">
+        <h2>Venue partner application</h2>
+        <p class="form-intro">This sends the application to the Select My Venue onboarding team on WhatsApp. It does not publish your venue automatically.</p>
+        <form id="venueApplication" novalidate>
+          <div class="form-grid">
+            <div class="form-field full"><label for="venueName">VENUE NAME *</label><input id="venueName" maxlength="140" required></div>
+            <div class="form-field"><label for="ownerName">OWNER / CONTACT NAME *</label><input id="ownerName" maxlength="120" autocomplete="name" required></div>
+            <div class="form-field"><label for="mobile">MOBILE / WHATSAPP *</label><input id="mobile" inputmode="tel" autocomplete="tel" placeholder="10-digit number" required></div>
+            <div class="form-field"><label for="email">EMAIL</label><input id="email" type="email" autocomplete="email"></div>
+            <div class="form-field"><label for="venueType">VENUE TYPE *</label><select id="venueType" required><option value="">Select type</option><option>Banquet Hall</option><option>Farmhouse</option><option>Hotel</option><option>Resort</option><option>Party Lawn</option><option>Restaurant</option><option>Other</option></select></div>
+            <div class="form-field"><label for="city">CITY *</label><input id="city" maxlength="80" required></div>
+            <div class="form-field"><label for="area">AREA / LOCALITY *</label><input id="area" maxlength="100" required></div>
+            <div class="form-field"><label for="capacity">MAXIMUM CAPACITY</label><input id="capacity" type="number" min="1" max="100000" inputmode="numeric"></div>
+            <div class="form-field full"><label for="details">SHORT DETAILS</label><textarea id="details" maxlength="700" placeholder="Food, rooms, parking, packages or anything our team should know"></textarea><span class="form-help">Do not share passwords or sensitive documents here.</span></div>
+          </div>
+          <label class="consent"><input id="consent" type="checkbox" required><span>I confirm that I am authorised to share these venue details and agree to be contacted about Select My Venue partner onboarding.</span></label>
+          <div class="form-actions"><button id="applyButton" class="button button-primary" type="submit">Send Application on WhatsApp</button><div id="formMessage" class="form-message" role="alert" aria-live="polite"></div></div>
         </form>
       </section>
     </div>
   </main>
+
   <footer class="page-footer">© 2026 Select My Venue · <a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></footer>
+
   <script>
-  (function(){const form=document.getElementById("venueApplication"),message=document.getElementById("formMessage");const value=id=>document.getElementById(id).value.trim();form.addEventListener("submit",event=>{event.preventDefault();message.className="form-message";message.textContent="";const mobile=value("mobile").replace(/\D/g,"");if(!form.checkValidity()){form.reportValidity();message.textContent="Please complete all required fields.";message.classList.add("error");return}if(mobile.length<10||mobile.length>15){message.textContent="Please enter a valid mobile number.";message.classList.add("error");document.getElementById("mobile").focus();return}const lines=["Hi Select My Venue, I want to apply as a venue partner.","",`Venue: ${value("venueName")}`,`Owner/Contact: ${value("ownerName")}`,`Mobile: ${mobile}`,`Email: ${value("email")||"—"}`,`Type: ${value("venueType")}`,`Location: ${value("area")}, ${value("city")}`,`Maximum Capacity: ${value("capacity")||"—"}`,`Details: ${value("details")||"—"}`];const url=`https://wa.me/918368322256?text=${encodeURIComponent(lines.join("\n"))}`;message.textContent="Opening secure WhatsApp onboarding…";message.classList.add("success");window.open(url,"_blank","noopener,noreferrer")})})();
+  (function(){
+    const form=document.getElementById("venueApplication"),message=document.getElementById("formMessage");
+    const value=id=>document.getElementById(id).value.trim();
+    form.addEventListener("submit",event=>{
+      event.preventDefault();message.className="form-message";message.textContent="";
+      const mobile=value("mobile").replace(/\D/g,"");
+      if(!form.checkValidity()){form.reportValidity();message.textContent="Please complete all required fields.";message.classList.add("error");return}
+      if(mobile.length<10||mobile.length>15){message.textContent="Please enter a valid mobile number.";message.classList.add("error");document.getElementById("mobile").focus();return}
+      const lines=[
+        "Hi Select My Venue, I want to apply as a Founding Venue Partner under the launch offer.","",
+        `Venue: ${value("venueName")}`,
+        `Owner/Contact: ${value("ownerName")}`,
+        `Mobile: ${mobile}`,
+        `Email: ${value("email")||"—"}`,
+        `Type: ${value("venueType")}`,
+        `Location: ${value("area")}, ${value("city")}`,
+        `Maximum Capacity: ${value("capacity")||"—"}`,
+        `Details: ${value("details")||"—"}`
+      ];
+      const url=`https://wa.me/918368322256?text=${encodeURIComponent(lines.join("\n"))}`;
+      message.textContent="Opening secure WhatsApp onboarding…";message.classList.add("success");
+      window.open(url,"_blank","noopener,noreferrer")
+    })
+  })();
   </script>
 </body>
 </html>
