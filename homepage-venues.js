@@ -30,39 +30,26 @@
       .smv-owner-launch-cta:hover{transform:translateY(-2px);filter:brightness(1.05)}
       .smv-owner-launch-trust{margin-top:11px;color:#6f9c96;font-size:9px;line-height:1.45}
 
-      /* Header desktop balance */
-      .header-inner{padding-left:22px!important;padding-right:22px!important;gap:16px!important}
-      .brand{width:180px!important;flex:0 0 180px!important}
-      .brand img{width:168px!important}
-      #mainNav{min-width:0!important;gap:clamp(8px,.72vw,15px)!important;margin-left:auto!important;justify-content:flex-end!important}
-      #mainNav>a{font-size:clamp(14px,.86vw,16px)!important;font-weight:800!important;flex:0 0 auto!important}
-      #mainNav .smv-header-action{min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease,color .2s ease}
-      #mainNav a.smv-find-nav{padding:0 15px!important;border:1px solid rgba(25,216,189,.48)!important;background:linear-gradient(180deg,rgba(25,216,189,.09),rgba(25,216,189,.025))!important;color:#2ce3ca!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 7px 20px rgba(0,0,0,.11)}
+      /* Compact but clearly separated desktop navigation */
+      .header-inner{padding-left:18px!important;padding-right:18px!important;gap:12px!important}
+      .brand{width:170px!important;flex:0 0 170px!important}.brand img{width:160px!important}
+      #mainNav{min-width:0!important;gap:5px!important;margin-left:auto!important;justify-content:flex-end!important;align-items:center!important}
+      #mainNav>a:not(.smv-header-action){position:relative;display:inline-flex!important;align-items:center;justify-content:center;min-height:38px;padding:0 9px!important;border-radius:10px;color:#b9cfcc!important;font-size:14px!important;font-weight:760!important;white-space:nowrap;background:rgba(255,255,255,.018);border:1px solid transparent;transition:.18s ease}
+      #mainNav>a:not(.smv-header-action)::after{display:none!important}
+      #mainNav>a:not(.smv-header-action):hover{color:#f3fbfa!important;background:rgba(25,216,189,.07);border-color:rgba(25,216,189,.13)}
+      #mainNav>a:not(.smv-header-action).active{color:#fff!important;background:rgba(25,216,189,.09);border-color:rgba(25,216,189,.2);box-shadow:inset 0 -2px 0 #19d8bd}
+      #mainNav .smv-header-action{min-height:42px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-size:14px!important;transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease,color .2s ease}
+      #mainNav a.smv-find-nav{padding:0 14px!important;border:1px solid rgba(25,216,189,.48)!important;background:linear-gradient(180deg,rgba(25,216,189,.09),rgba(25,216,189,.025))!important;color:#2ce3ca!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 7px 20px rgba(0,0,0,.11)}
       #mainNav a.smv-find-nav::after{display:none!important}
-      #mainNav a.smv-header-phone{position:relative;padding:0 13px!important;gap:7px;color:#f3fbfa!important;font-weight:950!important;white-space:nowrap;border:1px solid rgba(25,216,189,.18);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(25,216,189,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
-      #mainNav a.smv-header-phone::before{content:"☎";width:25px;height:25px;display:grid;place-items:center;border-radius:50%;color:#02211c;background:linear-gradient(135deg,#2ce3ca,#19d8bd);font-size:12px;line-height:1;box-shadow:0 0 14px rgba(25,216,189,.16)}
+      #mainNav a.smv-header-phone{position:relative;padding:0 12px!important;gap:7px;color:#f3fbfa!important;font-weight:950!important;white-space:nowrap;border:1px solid rgba(25,216,189,.18);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(25,216,189,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
+      #mainNav a.smv-header-phone::before{content:"☎";width:24px;height:24px;display:grid;place-items:center;border-radius:50%;color:#02211c;background:linear-gradient(135deg,#2ce3ca,#19d8bd);font-size:11px;line-height:1;box-shadow:0 0 14px rgba(25,216,189,.16)}
       #mainNav a.smv-header-phone::after{display:none!important}
-      #mainNav a.smv-owner-nav-offer{position:relative;padding:0 16px!important;border:1px solid rgba(243,200,75,.52);border-radius:999px;color:#ffe47a!important;background:linear-gradient(180deg,rgba(243,200,75,.09),rgba(243,200,75,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 7px 20px rgba(0,0,0,.11);animation:smvOwnerNavGlow 2.4s ease-in-out infinite}
+      #mainNav a.smv-owner-nav-offer{position:relative;padding:0 14px!important;border:1px solid rgba(243,200,75,.52);border-radius:999px;color:#ffe47a!important;background:linear-gradient(180deg,rgba(243,200,75,.09),rgba(243,200,75,.025));box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 7px 20px rgba(0,0,0,.11);animation:smvOwnerNavGlow 2.4s ease-in-out infinite}
       #mainNav a.smv-owner-nav-offer::before{content:"FREE";position:absolute;top:-9px;right:9px;min-width:32px;height:17px;padding:0 5px;display:grid;place-items:center;border-radius:999px;border:2px solid #031817;background:#19d8bd;color:#02211c;font-size:7px;font-weight:1000;letter-spacing:.08em;box-shadow:0 0 12px rgba(25,216,189,.25)}
       #mainNav a.smv-owner-nav-offer::after{display:none!important}
       #mainNav a.smv-find-nav:hover,#mainNav a.smv-header-phone:hover,#mainNav a.smv-owner-nav-offer:hover{transform:translateY(-1px)}
-
-      @media(max-width:1650px){
-        .header-inner{padding-left:16px!important;padding-right:16px!important;gap:9px!important}
-        .brand{width:160px!important;flex-basis:160px!important}.brand img{width:150px!important}
-        #mainNav{gap:7px!important}
-        #mainNav>a{font-size:14px!important}
-        #mainNav .smv-header-action{min-height:42px}
-        #mainNav a.smv-find-nav{padding:0 12px!important}
-        #mainNav a.smv-header-phone{padding:0 10px!important;gap:5px}
-        #mainNav a.smv-owner-nav-offer{padding:0 12px!important}
-      }
-      @media(max-width:1450px){
-        #mainNav{gap:7px!important}
-        #mainNav>a{font-size:13.5px!important}
-        #mainNav a[href="#aiPlanner"],#mainNav a[href="delhi-ncr-venues.html"]{display:none!important}
-        .brand{width:158px!important;flex-basis:158px!important}.brand img{width:148px!important}
-      }
+      @media(max-width:1650px){.header-inner{padding-left:14px!important;padding-right:14px!important;gap:8px!important}.brand{width:155px!important;flex-basis:155px!important}.brand img{width:146px!important}#mainNav{gap:4px!important}#mainNav>a:not(.smv-header-action){font-size:13px!important;padding:0 7px!important;min-height:36px}#mainNav .smv-header-action{font-size:13px!important;min-height:40px}#mainNav a.smv-find-nav{padding:0 11px!important}#mainNav a.smv-header-phone{padding:0 9px!important;gap:5px}#mainNav a.smv-owner-nav-offer{padding:0 11px!important}}
+      @media(max-width:1450px){#mainNav a[href="#aiPlanner"],#mainNav a[href="delhi-ncr-venues.html"]{display:none!important}.brand{width:150px!important;flex-basis:150px!important}.brand img{width:142px!important}#mainNav>a:not(.smv-header-action){font-size:13px!important;padding:0 8px!important}}
 
       #home{min-height:430px!important}#home .hero-inner{min-height:430px!important;padding-top:54px!important;padding-bottom:48px!important}#home h1{font-size:clamp(42px,4.6vw,72px)!important;line-height:1.01!important}
       @keyframes smvHomepageDotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.78)}}
@@ -91,26 +78,13 @@
 
     const findLink = document.querySelector('#mainNav a.nav-cta[href="#enquiry"]');
     if (findLink) findLink.classList.add("smv-header-action", "smv-find-nav");
-
     const navOffer = document.querySelector('#mainNav a[href="list-your-venue.html"]');
-    if (navOffer) {
-      navOffer.classList.add("smv-header-action", "smv-owner-nav-offer");
-      navOffer.setAttribute("title", "Founding Venue Partner Offer — List Your Venue FREE");
-      navOffer.setAttribute("aria-label", "List Your Venue FREE — Founding Venue Partner Offer");
-    }
-
+    if (navOffer) {navOffer.classList.add("smv-header-action", "smv-owner-nav-offer");navOffer.setAttribute("title", "Founding Venue Partner Offer — List Your Venue FREE");navOffer.setAttribute("aria-label", "List Your Venue FREE — Founding Venue Partner Offer");}
     const contactLink = document.querySelector('#mainNav a[href="#contact"]');
-    if (contactLink) {
-      contactLink.textContent = "+91 83683 22256";
-      contactLink.href = "tel:+918368322256";
-      contactLink.classList.add("smv-header-action", "smv-header-phone");
-      contactLink.setAttribute("aria-label", "Call Select My Venue at +91 83683 22256");
-      contactLink.setAttribute("title", "Call +91 83683 22256");
-    }
+    if (contactLink) {contactLink.textContent = "+91 83683 22256";contactLink.href = "tel:+918368322256";contactLink.classList.add("smv-header-action", "smv-header-phone");contactLink.setAttribute("aria-label", "Call Select My Venue at +91 83683 22256");contactLink.setAttribute("title", "Call +91 83683 22256");}
   }
 
   installFoundingPartnerOffer();
-
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
   const section = document.getElementById("featuredVenues");
