@@ -7,7 +7,9 @@
   const grid=document.getElementById("venueGrid");
   const search=document.getElementById("venueSearch");
   const city=document.getElementById("venueCity");
+  const quickFilters=document.getElementById("venueQuickFilters");
   let venues=[];
+  let activeQuickFilter="all";
 
   const escapeHtml=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
   const safeHttpUrl=value=>{try{const url=new URL(String(value||""));return ["http:","https:"].includes(url.protocol)?url.href:""}catch(_){return ""}};
@@ -34,22 +36,30 @@
     }catch(_){return""}
   }
 
+  function matchesQuickFilter(item){
+    if(activeQuickFilter==="parking")return item.parking_available===true;
+    if(activeQuickFilter==="rooms")return item.rooms_available===true;
+    if(activeQuickFilter==="veg")return item.food_veg===true;
+    if(activeQuickFilter==="nonveg")return item.food_non_veg===true;
+    if(activeQuickFilter==="300plus")return Number(item.capacity_max||item.capacity_min||0)>=300;
+    return true;
+  }
+
   function render(){
     const term=search.value.trim().toLowerCase(),selected=city.value;
-    const filtered=venues.filter(item=>{const haystack=[item.venue_name,item.city,item.area,item.venue_type].join(" ").toLowerCase();return(!term||haystack.includes(term))&&(!selected||item.city===selected)});
-    if(!filtered.length){grid.innerHTML='<div class="state-card"><h2>No matching venues found</h2><p>Change the search or send your requirement and our team will help you personally.</p><p style="margin-top:18px"><a class="button button-primary" href="index.html#enquiry">Send Venue Requirement</a></p></div>';return}
+    const filtered=venues.filter(item=>{const haystack=[item.venue_name,item.city,item.area,item.venue_type].join(" ").toLowerCase();return(!term||haystack.includes(term))&&(!selected||item.city===selected)&&matchesQuickFilter(item)});
+    if(!filtered.length){grid.innerHTML='<div class="state-card"><h2>No matching venues found</h2><p>Try another filter or share your event requirement and our team will help you personally.</p><p style="margin-top:18px"><a class="button button-primary" href="index.html#enquiry">Send Venue Requirement</a></p></div>';return}
     grid.innerHTML=filtered.map(item=>{
       const id=encodeURIComponent(String(item.id||""));
       const name=String(item.venue_name||"Venue Partner");
       const location=[item.area,item.city].filter(Boolean).map(escapeHtml).join(", ")||"Location on request";
-      const description=item.description?escapeHtml(String(item.description).slice(0,180)):"Ask our team for availability, packages and venue details.";
+      const description=item.description?escapeHtml(String(item.description).slice(0,155)):"Ask our team for availability, packages and venue details.";
       const profile=`venue.html?id=${id}`;
       const quote=`venue.html?id=${id}&quote=1`;
-      const map=item.google_maps_url&&/^https?:\/\//i.test(item.google_maps_url)?`<a class="button button-secondary" href="${escapeHtml(item.google_maps_url)}" target="_blank" rel="noopener">Map</a>`:"";
       const cover=safeHttpUrl(item._resolvedCover||item.cover_image_url);
       const media=cover?`<img src="${escapeHtml(cover)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async">`:'<div class="venue-card-image-fallback" aria-hidden="true">🏨</div>';
       const featureHtml=features(item).map(feature=>`<span>✓ ${escapeHtml(feature)}</span>`).join("")||"<span>Details on request</span>";
-      return`<article class="venue-card"><div class="venue-card-media">${media}<div class="venue-card-top"><span class="venue-type">${escapeHtml(item.venue_type||"Venue")}</span><span class="verified">✓ Verified</span></div></div><div class="venue-card-body"><h2>${escapeHtml(name)}</h2><p class="venue-location">⌖ ${location}</p><div class="venue-facts"><div class="venue-fact">${escapeHtml(capacity(item))}</div><div class="venue-fact">${escapeHtml(price(item))}</div></div><div class="venue-feature-list">${featureHtml}</div><p class="venue-description">${description}</p><div class="venue-actions"><a class="button button-primary" href="${profile}">View Profile</a><a class="button button-secondary" href="${quote}">Get Quote</a>${map}</div></div></article>`
+      return`<article class="venue-card"><div class="venue-card-media">${media}<div class="venue-card-top"><span class="venue-type">${escapeHtml(item.venue_type||"Venue")}</span><span class="verified">✓ Verified</span></div></div><div class="venue-card-body"><h2>${escapeHtml(name)}</h2><p class="venue-location">⌖ ${location}</p><div class="venue-facts"><div class="venue-fact">${escapeHtml(capacity(item))}</div><div class="venue-fact">${escapeHtml(price(item))}</div></div><div class="venue-feature-list">${featureHtml}</div><p class="venue-description">${description}</p><div class="venue-actions"><a class="button button-primary" href="${profile}">View Venue</a><a class="button button-secondary" href="${quote}">Check Availability</a></div></div></article>`
     }).join("")
   }
 
@@ -71,5 +81,14 @@
     render();
   }
 
-  search.addEventListener("input",render);city.addEventListener("change",render);load();
+  search.addEventListener("input",render);
+  city.addEventListener("change",render);
+  quickFilters?.addEventListener("click",event=>{
+    const button=event.target.closest("[data-filter]");
+    if(!button)return;
+    activeQuickFilter=button.dataset.filter||"all";
+    quickFilters.querySelectorAll("[data-filter]").forEach(item=>item.classList.toggle("active",item===button));
+    render();
+  });
+  load();
 })();
