@@ -38,24 +38,35 @@
   }
 
   function fixVenueQuoteButtons(){
-    document.querySelectorAll('.home-venue-card .home-venue-actions .primary-btn').forEach(function(button){
-      button.textContent="Get Quote";
-      button.setAttribute("aria-label","Get venue quote");
+    var buttons=document.querySelectorAll('.home-venue-card .home-venue-actions .primary-btn');
+    buttons.forEach(function(button){
+      if(button.textContent!=="Get Quote") button.textContent="Get Quote";
+      if(button.getAttribute("aria-label")!=="Get venue quote") button.setAttribute("aria-label","Get venue quote");
       var card=button.closest('.home-venue-card');
       var profile=card&&card.querySelector('.home-venue-actions .secondary-btn[href*="venue.html?id="]');
       if(profile){
         var href=profile.getAttribute("href")||"";
-        button.setAttribute("href",href+(href.indexOf("?")>=0?"&":"?")+"quote=1");
+        var quoteHref=href+(href.indexOf("?")>=0?"&":"?")+"quote=1";
+        if(button.getAttribute("href")!==quoteHref) button.setAttribute("href",quoteHref);
       }
     });
+    return buttons.length>0;
   }
 
   function setupVenueQuoteWatcher(){
-    fixVenueQuoteButtons();
     var grid=document.getElementById("homeVenueGrid");
     if(!grid||grid.dataset.smvQuoteWatcher==="1")return;
     grid.dataset.smvQuoteWatcher="1";
-    new MutationObserver(fixVenueQuoteButtons).observe(grid,{childList:true,subtree:true});
+
+    if(fixVenueQuoteButtons()) return;
+
+    var observer=new MutationObserver(function(){
+      if(fixVenueQuoteButtons()) observer.disconnect();
+    });
+    observer.observe(grid,{childList:true});
+
+    setTimeout(function(){fixVenueQuoteButtons();},700);
+    setTimeout(function(){fixVenueQuoteButtons();observer.disconnect();},3000);
   }
 
   function loadCore(){
