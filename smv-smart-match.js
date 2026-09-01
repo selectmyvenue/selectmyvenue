@@ -6,7 +6,7 @@
     var link=document.createElement("link");
     link.id="smvHomepageCustomerLuxury";
     link.rel="stylesheet";
-    link.href="homepage-customer-luxury.css?v=20260901-1";
+    link.href="homepage-customer-luxury.css?v=20260901-2";
     document.head.appendChild(link);
   }
 
@@ -37,9 +37,31 @@
     }
   }
 
+  function fixVenueQuoteButtons(){
+    document.querySelectorAll('.home-venue-card .home-venue-actions .primary-btn').forEach(function(button){
+      button.textContent="Get Quote";
+      button.setAttribute("aria-label","Get venue quote");
+      var card=button.closest('.home-venue-card');
+      var profile=card&&card.querySelector('.home-venue-actions .secondary-btn[href*="venue.html?id="]');
+      if(profile){
+        var href=profile.getAttribute("href")||"";
+        button.setAttribute("href",href+(href.indexOf("?")>=0?"&":"?")+"quote=1");
+      }
+    });
+  }
+
+  function setupVenueQuoteWatcher(){
+    fixVenueQuoteButtons();
+    var grid=document.getElementById("homeVenueGrid");
+    if(!grid||grid.dataset.smvQuoteWatcher==="1")return;
+    grid.dataset.smvQuoteWatcher="1";
+    new MutationObserver(fixVenueQuoteButtons).observe(grid,{childList:true,subtree:true});
+  }
+
   function loadCore(){
     loadLuxuryStyles();
     activateSmartMatchLayout();
+    setupVenueQuoteWatcher();
     if(document.getElementById("smvSmartMatchCoreLoader"))return;
     var script=document.createElement("script");
     script.id="smvSmartMatchCoreLoader";
