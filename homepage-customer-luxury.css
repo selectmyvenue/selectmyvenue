@@ -53,7 +53,7 @@
 #enquiry .smv-submit{min-height:60px!important;font-size:14px!important;border-radius:15px!important;box-shadow:0 16px 36px rgba(243,200,75,.18)!important}
 #enquiry .smv-privacy{font-size:10px!important}
 
-/* ---------- HOMEPAGE VENUE SHOWCASE: LARGE LUXURY CARDS ---------- */
+/* ---------- HOMEPAGE VENUE SHOWCASE: BALANCED PREMIUM CARDS ---------- */
 .home-venues-section{
   width:calc(100% - 32px)!important;
   max-width:1760px!important;
@@ -65,29 +65,38 @@
 .home-venues-section .section-heading{width:100%!important;padding-left:0!important;padding-right:0!important}
 .home-venue-grid{
   width:100%!important;
-  grid-template-columns:repeat(3,minmax(340px,1fr))!important;
-  justify-content:stretch!important;
-  gap:24px!important;
+  display:grid!important;
+  grid-template-columns:repeat(auto-fit,minmax(300px,420px))!important;
+  justify-content:center!important;
+  gap:22px!important;
 }
-.home-venue-grid:has(.home-venue-card:only-child){grid-template-columns:minmax(480px,680px)!important;justify-content:center!important}
-.home-venue-card{border-radius:25px!important;min-height:540px!important;border-color:rgba(45,214,193,.24)!important;box-shadow:0 28px 70px rgba(0,0,0,.28)!important}
-.home-venue-media,.home-venue-media img,.home-venue-image-fallback{height:270px!important;min-height:270px!important}
-.home-venue-content{padding:25px!important}
-.home-venue-content h3{font-size:27px!important;line-height:1.1!important}
-.home-venue-location{font-size:13px!important;margin-top:9px!important}
-.home-venue-facts{gap:11px!important;margin:19px 0 16px!important}
-.home-venue-fact{padding:15px!important;border-radius:13px!important}
-.home-venue-fact span{font-size:9px!important}
-.home-venue-fact strong{font-size:13px!important;margin-top:5px!important}
-.home-venue-features{gap:8px!important;min-height:34px!important}
-.home-venue-features span{font-size:10px!important;padding:7px 10px!important;border:1px solid rgba(25,216,189,.10)!important}
-.home-venue-actions{gap:11px!important;margin-top:24px!important}
-.home-venue-actions .primary-btn,.home-venue-actions .secondary-btn{min-height:52px!important;font-size:13px!important;border-radius:13px!important}
+.home-venue-grid:has(.home-venue-card:only-child){
+  grid-template-columns:minmax(360px,500px)!important;
+  justify-content:center!important;
+}
+.home-venue-card{
+  border-radius:23px!important;
+  min-height:455px!important;
+  border-color:rgba(45,214,193,.24)!important;
+  box-shadow:0 24px 58px rgba(0,0,0,.27)!important;
+}
+.home-venue-media,.home-venue-media img,.home-venue-image-fallback{height:220px!important;min-height:220px!important}
+.home-venue-content{padding:20px!important}
+.home-venue-content h3{font-size:23px!important;line-height:1.1!important}
+.home-venue-location{font-size:12px!important;margin-top:8px!important}
+.home-venue-facts{gap:9px!important;margin:16px 0 14px!important}
+.home-venue-fact{padding:12px!important;border-radius:12px!important}
+.home-venue-fact span{font-size:8px!important}
+.home-venue-fact strong{font-size:12px!important;margin-top:4px!important}
+.home-venue-features{gap:7px!important;min-height:30px!important}
+.home-venue-features span{font-size:9px!important;padding:6px 9px!important;border:1px solid rgba(25,216,189,.10)!important}
+.home-venue-actions{gap:10px!important;margin-top:20px!important}
+.home-venue-actions .primary-btn,.home-venue-actions .secondary-btn{min-height:48px!important;font-size:12px!important;border-radius:12px!important}
 
 @media(max-width:1180px){
   #enquiry.smv-smart-match-active{padding:48px 28px 58px!important}
   #enquiry .smv-body{padding:34px 30px 31px!important}
-  .home-venue-grid{grid-template-columns:repeat(2,minmax(310px,1fr))!important}
+  .home-venue-grid{grid-template-columns:repeat(auto-fit,minmax(290px,390px))!important}
 }
 @media(max-width:760px){
   #enquiry.smv-smart-match-active{width:calc(100% - 16px)!important;margin:18px auto 30px!important;padding:34px 12px 42px!important;border-radius:24px!important}
@@ -100,8 +109,8 @@
   #enquiry .smv-chip span{font-size:22px!important}
   .home-venues-section{width:calc(100% - 18px)!important}
   .home-venue-grid,.home-venue-grid:has(.home-venue-card:only-child){grid-template-columns:1fr!important}
-  .home-venue-card{min-height:480px!important}
-  .home-venue-media,.home-venue-media img,.home-venue-image-fallback{height:230px!important;min-height:230px!important}
-  .home-venue-content{padding:21px!important}
-  .home-venue-content h3{font-size:24px!important}
+  .home-venue-card{min-height:440px!important}
+  .home-venue-media,.home-venue-media img,.home-venue-image-fallback{height:210px!important;min-height:210px!important}
+  .home-venue-content{padding:19px!important}
+  .home-venue-content h3{font-size:22px!important}
 }
