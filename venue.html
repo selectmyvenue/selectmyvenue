@@ -19,7 +19,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="public-pages.css">
   <link rel="stylesheet" href="venue-profile-white.css?v=20260901-1">
-  <link rel="stylesheet" href="venue-profile-luxury.css?v=20260901-1">
+  <link rel="stylesheet" href="venue-profile-luxury.css?v=20260901-2">
   <link rel="stylesheet" href="venue-profile-carousel.css?v=20260901-1">
   <script id="venueStructuredData" type="application/ld+json"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -75,7 +75,7 @@
           </div>
           <div class="venue-profile-hero-actions">
             <button id="venueProfileQuote" class="button button-primary venue-quote-trigger" type="button">Check Price & Availability</button>
-            <a id="venueProfileWhatsapp" class="button button-secondary" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp Us</a>
+            <a id="venueProfileWhatsapp" class="button button-secondary" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp</a>
             <button id="venueShareBtn" class="button button-ghost" type="button">Share</button>
           </div>
         </div>
@@ -85,7 +85,7 @@
         <div><span>Capacity</span><strong id="venueProfileCapacity">On request</strong></div>
         <div><span>Price range</span><strong id="venueProfilePrice">Quote on request</strong></div>
         <div><span>Venue type</span><strong id="venueProfileFactType">Venue</strong></div>
-        <div><span>Verification</span><strong class="verified-text">✓ Verified Partner</strong></div>
+        <div><span>Useful for guests</span><strong id="venueProfileGuestAmenity">Verified venue</strong></div>
       </section>
 
       <section id="venueProfileGallerySection" class="venue-profile-panel venue-white-card venue-gallery-section" hidden>
@@ -135,7 +135,7 @@
           <span class="venue-profile-assist-badge">PERSONALISED SUPPORT</span>
           <h2>Interested in this venue?</h2>
           <p>Tell us your event details once. We’ll use the venue, capacity and budget information already on this page to make your enquiry faster.</p>
-          <button id="venueProfileQuoteAside" class="button button-primary venue-quote-trigger" type="button">Get My Venue Quote</button>
+          <button id="venueProfileQuoteAside" class="button button-primary venue-quote-trigger" type="button">Check Price & Availability</button>
           <a id="venueProfileMap" class="button button-secondary" href="#" target="_blank" rel="noopener" hidden>View on Google Maps</a>
           <div class="venue-assist-points">
             <span>✓ Quick availability check</span>
@@ -145,10 +145,26 @@
           <small>Your enquiry goes to Select My Venue for personalised assistance.</small>
         </aside>
       </div>
+
+      <section id="similarVenuesSection" class="venue-similar-section" hidden>
+        <div class="venue-similar-head">
+          <div>
+            <p class="eyebrow">YOU MAY ALSO LIKE</p>
+            <h2>Explore similar verified venues.</h2>
+          </div>
+          <a href="venues.html" class="button button-ghost">Browse All Venues</a>
+        </div>
+        <div id="similarVenuesGrid" class="venue-similar-grid"></div>
+      </section>
     </article>
   </main>
 
   <footer class="page-footer venue-white-footer">© 2026 Select My Venue · <a href="venues.html">Verified Venues</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://partner.selectmyvenue.com/">Partner Login</a></footer>
+
+  <div class="venue-mobile-actions" id="venueMobileActions" hidden>
+    <button type="button" class="venue-mobile-primary venue-quote-trigger">Check Availability</button>
+    <a id="venueMobileWhatsapp" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp</a>
+  </div>
 
   <div id="venueQuoteModal" class="venue-quote-modal" hidden>
     <div class="venue-quote-backdrop" data-close-quote></div>
@@ -167,7 +183,7 @@
           <label><span>GUESTS</span><input id="venueQuoteGuests" name="guests" type="number" min="1" placeholder="e.g. 250"></label>
           <label><span>BUDGET / PERSON</span><input id="venueQuoteBudget" name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></label>
         </div>
-        <button id="venueQuoteSubmit" class="venue-quote-submit" type="submit">Get My Quote →</button>
+        <button id="venueQuoteSubmit" class="venue-quote-submit" type="submit">Check Price & Availability →</button>
         <p class="venue-quote-trust">No long form. Your selected venue is attached automatically.</p>
         <div id="venueQuoteStatus" class="venue-quote-status" role="status" aria-live="polite"></div>
       </form>
@@ -176,5 +192,63 @@
 
   <script src="venue-profile.js?v=20260901-2"></script>
   <script src="venue-profile-carousel.js?v=20260901-1"></script>
+  <script>
+    (function(){
+      "use strict";
+      const SUPABASE_URL="https://uajqwyoqbbswkfiwosyw.supabase.co";
+      const SUPABASE_ANON_KEY="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+      const id=new URLSearchParams(location.search).get("id")||"";
+      const client=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+      const escapeHtml=value=>String(value??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+      const money=value=>{const n=Number(value);return Number.isFinite(n)&&n>0?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n):"Quote on request"};
+      function updateProfileExtras(){
+        const profile=document.getElementById("venueProfile");
+        if(!profile||profile.hidden){setTimeout(updateProfileExtras,150);return;}
+        const features=[...document.querySelectorAll("#venueProfileFeatures strong")].map(x=>x.textContent.toLowerCase());
+        const amenity=document.getElementById("venueProfileGuestAmenity");
+        if(amenity){
+          if(features.some(x=>x.includes("parking")))amenity.textContent="Parking available";
+          else if(features.some(x=>x.includes("room")))amenity.textContent="Rooms available";
+          else if(features.some(x=>x.includes("vegetarian")))amenity.textContent="Vegetarian food";
+          else amenity.textContent="Verified venue";
+        }
+        const mainWhatsapp=document.getElementById("venueProfileWhatsapp");
+        const mobileWhatsapp=document.getElementById("venueMobileWhatsapp");
+        if(mainWhatsapp&&mobileWhatsapp)mobileWhatsapp.href=mainWhatsapp.href;
+        const mobileActions=document.getElementById("venueMobileActions");if(mobileActions)mobileActions.hidden=false;
+        document.querySelectorAll("#venueMobileActions .venue-quote-trigger").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("venueProfileQuote")?.click()));
+        loadSimilar();
+      }
+      async function loadSimilar(){
+        if(!client||!id)return;
+        try{
+          const currentName=document.getElementById("venueProfileName")?.textContent||"";
+          const currentLocation=(document.getElementById("venueProfileLocation")?.textContent||"").replace(/^⌖\s*/,"");
+          const currentCity=currentLocation.split(",").pop()?.trim()||"";
+          let result=await client.rpc("smv_public_venues");
+          if(result.error)return;
+          let rows=(Array.isArray(result.data)?result.data:[]).map(item=>item?.venue||item).filter(v=>String(v?.id)!==String(id));
+          rows.sort((a,b)=>{
+            const aCity=String(a.city||"")===currentCity?1:0,bCity=String(b.city||"")===currentCity?1:0;
+            return bCity-aCity;
+          });
+          rows=rows.slice(0,3);
+          if(!rows.length)return;
+          const grid=document.getElementById("similarVenuesGrid"),section=document.getElementById("similarVenuesSection");
+          if(!grid||!section)return;
+          grid.innerHTML=rows.map(v=>{
+            const name=String(v.venue_name||"Verified Venue");
+            const locationText=[v.area,v.city].filter(Boolean).join(", ")||"Location on request";
+            const cap=v.capacity_max?`Up to ${escapeHtml(v.capacity_max)} guests`:v.capacity_min?`${escapeHtml(v.capacity_min)}+ guests`:"Capacity on request";
+            const priceText=v.price_min_per_person?`From ${money(v.price_min_per_person)}/person`:"Quote on request";
+            const cover=String(v.cover_image_url||"");
+            return `<article class="venue-similar-card"><a class="venue-similar-media" href="venue.html?id=${encodeURIComponent(v.id)}">${cover?`<img src="${escapeHtml(cover)}" alt="${escapeHtml(name)}" loading="lazy">`:`<span>🏨</span>`}</a><div class="venue-similar-body"><span class="venue-similar-verified">✓ Verified</span><h3>${escapeHtml(name)}</h3><p>⌖ ${escapeHtml(locationText)}</p><div class="venue-similar-facts"><span>${cap}</span><span>${priceText}</span></div><div class="venue-similar-actions"><a href="venue.html?id=${encodeURIComponent(v.id)}">View Venue</a><a href="venue.html?id=${encodeURIComponent(v.id)}&quote=1">Check Availability</a></div></div></article>`;
+          }).join("");
+          section.hidden=false;
+        }catch(_){ }
+      }
+      if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",updateProfileExtras,{once:true});else updateProfileExtras();
+    })();
+  </script>
 </body>
 </html>
