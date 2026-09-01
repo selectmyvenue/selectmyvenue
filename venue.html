@@ -18,11 +18,12 @@
   <link rel="shortcut icon" href="/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="public-pages.css">
+  <link rel="stylesheet" href="venue-profile-white.css?v=20260901-1">
   <script id="venueStructuredData" type="application/ld+json"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-  <header class="page-header">
+<body class="venue-profile-page">
+  <header class="page-header venue-white-header">
     <nav class="page-nav" aria-label="Main navigation">
       <a href="index.html" aria-label="Select My Venue home"><img class="page-logo" src="logo.png" alt="Select My Venue"></a>
       <div class="page-nav-links">
@@ -36,24 +37,24 @@
   </header>
 
   <main class="page-main venue-profile-main">
-    <div class="breadcrumbs">
+    <div class="breadcrumbs venue-breadcrumbs">
       <a href="index.html">Home</a><span>›</span><a href="venues.html">Verified Venues</a><span>›</span><span id="venueBreadcrumb">Venue Profile</span>
     </div>
 
-    <div id="venueProfileLoading" class="state-card">
-      <h2>Loading venue profile…</h2>
-      <p>Please wait while we prepare the verified venue details.</p>
+    <div id="venueProfileLoading" class="state-card venue-white-state">
+      <h2>Preparing this venue…</h2>
+      <p>Loading photos, venue highlights and pricing information.</p>
     </div>
 
-    <div id="venueProfileError" class="state-card" hidden>
+    <div id="venueProfileError" class="state-card venue-white-state" hidden>
       <h2>Venue profile unavailable</h2>
       <p>This venue may be private, inactive or no longer publicly listed.</p>
       <p style="margin-top:18px"><a class="button button-primary" href="venues.html">Browse Verified Venues</a></p>
     </div>
 
     <article id="venueProfile" hidden>
-      <section class="venue-profile-hero">
-        <div id="venueProfileMedia" class="venue-profile-media">
+      <section class="venue-profile-hero venue-white-card">
+        <div id="venueProfileMedia" class="venue-profile-media venue-profile-cover">
           <div id="venueProfileFallback" class="venue-profile-fallback" aria-hidden="true">🏨</div>
           <img id="venueProfileImage" alt="" hidden>
           <div class="venue-profile-overlay"></div>
@@ -61,56 +62,116 @@
             <span id="venueProfileType" class="home-venue-badge">Venue</span>
             <span class="home-venue-badge verified">✓ Verified Partner</span>
           </div>
+          <div id="venueProfileMediaCount" class="venue-media-count" hidden></div>
         </div>
 
         <div class="venue-profile-titlebar">
-          <div>
-            <p class="eyebrow">SELECT MY VENUE PARTNER NETWORK</p>
+          <div class="venue-title-copy">
+            <p class="eyebrow">SELECT MY VENUE VERIFIED PARTNER</p>
             <h1 id="venueProfileName">Venue</h1>
             <p id="venueProfileLocation" class="venue-profile-location">Location on request</p>
           </div>
           <div class="venue-profile-hero-actions">
-            <a id="venueProfileQuote" class="button button-primary" href="index.html#enquiry">Get Personalised Quote</a>
+            <button id="venueProfileQuote" class="button button-primary venue-quote-trigger" type="button">Check Price & Availability</button>
             <a id="venueProfileWhatsapp" class="button button-secondary" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp Us</a>
+            <button id="venueShareBtn" class="button button-ghost" type="button">Share</button>
           </div>
         </div>
       </section>
 
-      <section class="venue-profile-facts" aria-label="Venue highlights">
+      <section class="venue-profile-facts venue-white-card" aria-label="Venue highlights">
         <div><span>Capacity</span><strong id="venueProfileCapacity">On request</strong></div>
         <div><span>Price range</span><strong id="venueProfilePrice">Quote on request</strong></div>
         <div><span>Venue type</span><strong id="venueProfileFactType">Venue</strong></div>
-        <div><span>Verification</span><strong>✓ Verified</strong></div>
+        <div><span>Verification</span><strong class="verified-text">✓ Verified Partner</strong></div>
+      </section>
+
+      <section id="venueProfileGallerySection" class="venue-profile-panel venue-white-card venue-gallery-section" hidden>
+        <div class="venue-section-head">
+          <div>
+            <p class="eyebrow">VENUE GALLERY</p>
+            <h2>See the venue before you shortlist it.</h2>
+          </div>
+          <span id="venueGalleryCount" class="venue-section-count"></span>
+        </div>
+        <div id="venueProfileGallery" class="venue-profile-gallery"></div>
+      </section>
+
+      <section id="venueProfileVideosSection" class="venue-profile-panel venue-white-card venue-videos-section" hidden>
+        <div class="venue-section-head">
+          <div>
+            <p class="eyebrow">VIDEO TOUR</p>
+            <h2>Take a closer look.</h2>
+          </div>
+          <span id="venueVideoCount" class="venue-section-count"></span>
+        </div>
+        <div id="venueProfileVideos" class="venue-profile-videos"></div>
       </section>
 
       <div class="venue-profile-layout">
         <div class="venue-profile-content">
-          <section class="venue-profile-panel">
+          <section class="venue-profile-panel venue-white-card">
             <p class="eyebrow">ABOUT THE VENUE</p>
             <h2 id="venueAboutHeading">A venue for memorable celebrations.</h2>
             <p id="venueProfileDescription">Ask our team for availability, packages and detailed venue information.</p>
           </section>
 
-          <section class="venue-profile-panel">
+          <section class="venue-profile-panel venue-white-card">
             <p class="eyebrow">FACILITIES &amp; SERVICES</p>
             <h2>What this venue offers</h2>
             <div id="venueProfileFeatures" class="venue-profile-features"></div>
           </section>
+
+          <section class="venue-profile-panel venue-white-card">
+            <p class="eyebrow">SMART SHORTLIST</p>
+            <h2>Why this venue may fit your event</h2>
+            <div id="venueProfileHighlights" class="venue-highlight-grid"></div>
+          </section>
         </div>
 
-        <aside class="venue-profile-enquiry">
+        <aside class="venue-profile-enquiry venue-white-card">
           <span class="venue-profile-assist-badge">PERSONALISED SUPPORT</span>
           <h2>Interested in this venue?</h2>
-          <p>Share your event details once. Our team will help you check suitability, pricing and next steps.</p>
-          <a id="venueProfileQuoteAside" class="button button-primary" href="index.html#enquiry">Request Venue Quote</a>
+          <p>Tell us your event details once. We’ll use the venue, capacity and budget information already on this page to make your enquiry faster.</p>
+          <button id="venueProfileQuoteAside" class="button button-primary venue-quote-trigger" type="button">Get My Venue Quote</button>
           <a id="venueProfileMap" class="button button-secondary" href="#" target="_blank" rel="noopener" hidden>View on Google Maps</a>
-          <small>Your details go to Select My Venue—not directly to the venue.</small>
+          <div class="venue-assist-points">
+            <span>✓ Quick availability check</span>
+            <span>✓ Pricing & package guidance</span>
+            <span>✓ Requirement-based support</span>
+          </div>
+          <small>Your enquiry goes to Select My Venue for personalised assistance.</small>
         </aside>
       </div>
     </article>
   </main>
 
-  <footer class="page-footer">© 2026 Select My Venue · <a href="venues.html">Verified Venues</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://partner.selectmyvenue.com/">Partner Login</a></footer>
-  <script src="venue-profile.js"></script>
+  <footer class="page-footer venue-white-footer">© 2026 Select My Venue · <a href="venues.html">Verified Venues</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://partner.selectmyvenue.com/">Partner Login</a></footer>
+
+  <div id="venueQuoteModal" class="venue-quote-modal" hidden>
+    <div class="venue-quote-backdrop" data-close-quote></div>
+    <section class="venue-quote-card" role="dialog" aria-modal="true" aria-labelledby="venueQuoteTitle">
+      <button type="button" class="venue-quote-close" data-close-quote aria-label="Close">×</button>
+      <div class="venue-quote-kicker">✦ QUICK VENUE ENQUIRY</div>
+      <h2 id="venueQuoteTitle">Check price & availability</h2>
+      <p id="venueQuoteVenueName" class="venue-quote-venue">Venue</p>
+      <div class="venue-quote-progress"><span></span><span></span><span></span></div>
+      <form id="venueQuoteForm">
+        <div class="venue-quote-grid">
+          <label><span>YOUR NAME *</span><input id="venueQuoteName" name="customer_name" autocomplete="name" required placeholder="Your name"></label>
+          <label><span>MOBILE *</span><input id="venueQuoteMobile" name="mobile" inputmode="numeric" autocomplete="tel" required maxlength="14" placeholder="10-digit mobile"></label>
+          <label><span>EVENT *</span><select id="venueQuoteEvent" name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Corporate Event</option><option>Party</option><option>Anniversary</option><option>Other</option></select></label>
+          <label><span>EVENT DATE</span><input id="venueQuoteDate" name="event_date" type="date"></label>
+          <label><span>GUESTS</span><input id="venueQuoteGuests" name="guests" type="number" min="1" placeholder="e.g. 250"></label>
+          <label><span>BUDGET / PERSON</span><input id="venueQuoteBudget" name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></label>
+        </div>
+        <button id="venueQuoteSubmit" class="venue-quote-submit" type="submit">Get My Quote →</button>
+        <p class="venue-quote-trust">No long form. Your selected venue is attached automatically.</p>
+        <div id="venueQuoteStatus" class="venue-quote-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </div>
+
+  <script src="venue-profile.js?v=20260901-2"></script>
 </body>
 </html>
