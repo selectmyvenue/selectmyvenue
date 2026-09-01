@@ -1,0 +1,247 @@
+/* Select My Venue — Luxury Venue Profile Enhancements */
+body.venue-profile-page{
+  background:
+    radial-gradient(circle at 10% 0%,rgba(16,153,136,.06),transparent 28%),
+    radial-gradient(circle at 90% 12%,rgba(212,168,68,.08),transparent 24%),
+    #f7f7f3!important;
+  color:#173b35!important;
+}
+
+.venue-profile-main{width:min(1320px,calc(100% - 34px))!important}
+
+.venue-white-card{
+  border:1px solid rgba(19,83,72,.13)!important;
+  box-shadow:0 22px 60px rgba(24,57,51,.09)!important;
+}
+
+.venue-profile-hero{
+  box-shadow:0 30px 80px rgba(20,56,49,.14)!important;
+}
+
+.venue-profile-titlebar{
+  padding:34px 36px!important;
+  background:linear-gradient(135deg,#fffdf8 0%,#ffffff 55%,#f4fbf8 100%)!important;
+}
+
+.venue-title-copy .eyebrow,
+.venue-profile-panel .eyebrow{
+  color:#0a927f!important;
+  font-size:12px!important;
+  letter-spacing:.16em!important;
+  font-weight:950!important;
+}
+
+.venue-title-copy h1{
+  font-size:clamp(42px,4.8vw,66px)!important;
+  line-height:1!important;
+  color:#123f37!important;
+}
+
+.venue-profile-location{
+  margin-top:10px!important;
+  font-size:16px!important;
+  font-weight:700!important;
+  color:#587770!important;
+}
+
+.button{
+  min-height:50px!important;
+  padding:0 20px!important;
+  border-radius:14px!important;
+  font-size:14px!important;
+  font-weight:900!important;
+  letter-spacing:.01em!important;
+}
+
+.button.button-primary,
+.venue-quote-submit{
+  background:linear-gradient(135deg,#0fbaa3 0%,#087f71 58%,#06695e 100%)!important;
+  box-shadow:0 12px 28px rgba(8,127,113,.24),inset 0 1px 0 rgba(255,255,255,.22)!important;
+}
+.button.button-primary:hover,
+.venue-quote-submit:hover{
+  transform:translateY(-2px)!important;
+  box-shadow:0 17px 34px rgba(8,127,113,.30)!important;
+}
+
+.button.button-secondary{
+  background:linear-gradient(135deg,#fffdf8,#f7f1df)!important;
+  border-color:#e7d39d!important;
+  color:#6f5420!important;
+}
+.button.button-secondary:hover{
+  background:#f7edcf!important;
+  border-color:#d9b85f!important;
+}
+
+.button.button-ghost{
+  background:#ffffff!important;
+  border-color:#d8e5e1!important;
+  color:#40655e!important;
+}
+
+.venue-profile-facts{
+  gap:12px!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.venue-profile-facts>div{
+  border:1px solid #dfe9e6!important;
+  border-radius:18px!important;
+  padding:25px 24px!important;
+  background:linear-gradient(145deg,#ffffff,#fbfdfc)!important;
+  box-shadow:0 12px 32px rgba(18,56,50,.055)!important;
+}
+.venue-profile-facts span{
+  font-size:11px!important;
+  color:#6b8580!important;
+}
+.venue-profile-facts strong{
+  margin-top:8px!important;
+  font-size:18px!important;
+  color:#153f37!important;
+}
+
+.venue-profile-layout{grid-template-columns:minmax(0,1fr) 370px!important;gap:24px!important}
+.venue-profile-content{gap:24px!important}
+
+.venue-profile-panel{
+  padding:38px 40px!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(16,153,136,.045),transparent 32%),
+    #fff!important;
+}
+
+.venue-profile-panel h2{
+  margin:10px 0 16px!important;
+  color:#123f37!important;
+  font-size:clamp(34px,3.3vw,46px)!important;
+  line-height:1.08!important;
+  letter-spacing:-.035em!important;
+}
+
+#venueProfileDescription{
+  max-width:none!important;
+  color:#4d6b65!important;
+  font-size:17px!important;
+  line-height:1.85!important;
+  letter-spacing:.002em!important;
+}
+
+.venue-profile-features{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:14px!important;
+  margin-top:22px!important;
+}
+.venue-profile-feature{
+  min-height:78px!important;
+  padding:16px 18px!important;
+  border-radius:16px!important;
+  border:1px solid #dceae6!important;
+  background:linear-gradient(135deg,#fbfdfc,#f4faf8)!important;
+}
+.venue-profile-feature span{
+  width:42px!important;
+  height:42px!important;
+  border-radius:12px!important;
+  background:linear-gradient(135deg,#e8f8f4,#daf3ed)!important;
+  font-size:16px!important;
+}
+.venue-profile-feature strong{
+  font-size:15px!important;
+  color:#244f47!important;
+}
+
+.venue-highlight-grid{gap:14px!important;margin-top:20px!important}
+.venue-highlight{
+  min-height:130px!important;
+  padding:20px!important;
+  border-radius:17px!important;
+  border:1px solid #dfebe7!important;
+  background:linear-gradient(145deg,#ffffff,#f5faf8)!important;
+  box-shadow:0 10px 28px rgba(18,56,50,.045)!important;
+}
+.venue-highlight b{
+  font-size:14px!important;
+  color:#0b8f7d!important;
+  margin-bottom:9px!important;
+}
+.venue-highlight span{
+  font-size:13px!important;
+  line-height:1.65!important;
+  color:#58766f!important;
+}
+
+.venue-profile-enquiry{
+  padding:30px!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(218,176,79,.14),transparent 34%),
+    linear-gradient(160deg,#fffef9,#f7fbf9)!important;
+  border:1px solid #eadcb6!important;
+  box-shadow:0 22px 54px rgba(52,62,51,.10)!important;
+}
+.venue-profile-assist-badge{
+  background:#f8efd5!important;
+  color:#7c5b15!important;
+  border:1px solid #ead59c!important;
+  font-size:10px!important;
+}
+.venue-profile-enquiry h2{
+  margin:14px 0 10px!important;
+  font-size:32px!important;
+  line-height:1.05!important;
+}
+.venue-profile-enquiry p{
+  font-size:14px!important;
+  line-height:1.75!important;
+}
+.venue-assist-points span{font-size:13px!important;line-height:1.5!important}
+.venue-profile-enquiry small{font-size:11px!important}
+
+.venue-gallery-section,.venue-videos-section{padding:36px 38px!important}
+.venue-section-head h2{font-size:clamp(32px,3vw,44px)!important;color:#123f37!important}
+.venue-section-count{font-size:11px!important;padding:8px 12px!important}
+.venue-profile-gallery{grid-auto-rows:185px!important;gap:12px!important}
+.venue-gallery-photo{border-radius:18px!important;box-shadow:0 10px 26px rgba(18,56,50,.08)!important}
+.venue-profile-video{border-radius:18px!important;box-shadow:0 14px 34px rgba(8,30,27,.18)!important}
+
+.venue-quote-card{
+  border:1px solid #eadcb8!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(212,168,68,.10),transparent 30%),
+    #fff!important;
+}
+.venue-quote-card h2{font-size:38px!important}
+.venue-quote-kicker{color:#8a681d!important}
+.venue-quote-grid label span{font-size:10px!important}
+.venue-quote-grid input,.venue-quote-grid select{height:54px!important;font-size:14px!important}
+
+@media(max-width:900px){
+  .venue-profile-layout{grid-template-columns:1fr!important}
+  .venue-profile-panel{padding:30px!important}
+  #venueProfileDescription{font-size:16px!important}
+  .venue-profile-facts{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+@media(max-width:620px){
+  .venue-profile-main{width:min(100% - 16px,1320px)!important}
+  .venue-profile-titlebar{padding:24px 19px!important}
+  .venue-title-copy h1{font-size:38px!important}
+  .venue-profile-panel{padding:26px 20px!important}
+  .venue-profile-panel h2{font-size:31px!important}
+  #venueProfileDescription{font-size:15px!important;line-height:1.78!important}
+  .venue-profile-features{grid-template-columns:1fr!important}
+  .venue-profile-feature strong{font-size:14px!important}
+  .venue-profile-facts{grid-template-columns:1fr!important}
+  .venue-profile-facts>div{padding:20px!important}
+  .venue-profile-enquiry{padding:24px 20px!important}
+  .venue-profile-enquiry h2{font-size:29px!important}
+  .venue-profile-hero-actions{grid-template-columns:1fr!important}
+  .venue-profile-hero-actions .button:first-child{grid-column:auto!important}
+  .venue-gallery-section,.venue-videos-section{padding:25px 20px!important}
+}
