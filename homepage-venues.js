@@ -85,6 +85,16 @@
   }
 
   installFoundingPartnerOffer();
+
+  /* Load the customer Smart Match experience without touching index.html. */
+  if (!document.getElementById("smvSmartMatchLoader")) {
+    const smartMatchScript = document.createElement("script");
+    smartMatchScript.id = "smvSmartMatchLoader";
+    smartMatchScript.src = "smv-smart-match.js?v=20260901-smart-match-1";
+    smartMatchScript.defer = true;
+    document.head.appendChild(smartMatchScript);
+  }
+
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
   const section = document.getElementById("featuredVenues");
