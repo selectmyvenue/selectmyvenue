@@ -76,5 +76,44 @@
     show(0);
   }
 
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",loadImages,{once:true});else loadImages();
+  async function resolveSimilarImage(card){
+    if(!client||!card||card.dataset.smvImageChecked==="1")return;
+    card.dataset.smvImageChecked="1";
+    const media=card.querySelector(".venue-similar-media");
+    if(!media||media.querySelector("img"))return;
+    const href=media.getAttribute("href")||"";
+    const match=href.match(/[?&]id=([0-9a-f-]{36})/i);
+    const id=match?.[1]||"";
+    if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id))return;
+    try{
+      const root=await client.storage.from(BUCKET).list(id,{limit:100,sortBy:{column:"name",order:"asc"}});
+      let url="";
+      if(!root.error){
+        const cover=(root.data||[]).find(row=>/^cover-/i.test(row?.name||""));
+        if(cover)url=publicUrl(`${id}/${cover.name}`);
+      }
+      if(!url){
+        const gallery=await client.storage.from(BUCKET).list(`${id}/gallery`,{limit:1,sortBy:{column:"name",order:"asc"}});
+        const first=(gallery.data||[]).find(row=>row?.name&&row.name!==".emptyFolderPlaceholder");
+        if(first)url=publicUrl(`${id}/gallery/${first.name}`);
+      }
+      if(url){
+        const name=card.querySelector("h3")?.textContent?.trim()||"Venue";
+        media.innerHTML=`<img src="${url}" alt="${name.replace(/[<>\"]/g,"")} venue" loading="lazy" decoding="async">`;
+      }
+    }catch(_){ }
+  }
+
+  function watchSimilarVenueImages(){
+    const grid=document.getElementById("similarVenuesGrid");
+    if(!grid)return;
+    const process=()=>grid.querySelectorAll(".venue-similar-card").forEach(resolveSimilarImage);
+    process();
+    const observer=new MutationObserver(process);
+    observer.observe(grid,{childList:true,subtree:true});
+    setTimeout(()=>{process();observer.disconnect();},5000);
+  }
+
+  function init(){loadImages();watchSimilarVenueImages();}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
