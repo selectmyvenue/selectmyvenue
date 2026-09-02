@@ -55,3 +55,51 @@ body{
   border-top-color:rgba(111,231,213,.18)!important;
 }
 @media(max-width:620px){body{background:linear-gradient(180deg,#093732,#072d29 55%,#05241f)!important}}
+
+/* =========================================================
+   PUBLIC PAGE READABILITY + BRAND LOGO SCALE
+   ========================================================= */
+.page-nav{
+  width:min(1320px,calc(100% - 36px))!important;
+  min-height:84px!important;
+}
+.page-logo{
+  width:250px!important;
+  height:70px!important;
+  max-width:250px!important;
+  object-fit:contain!important;
+  object-position:left center!important;
+  filter:drop-shadow(0 5px 12px rgba(0,0,0,.18))!important;
+}
+.page-nav-links a{
+  color:#c6ddd8!important;
+  font-size:13px!important;
+  font-weight:800!important;
+}
+.page-hero p,.guide-heading>p:last-child,.cta-card>p,.location-card p,.requirement-grid span,.faq-item p,.info-item p,.form-intro,.legal-card p,.legal-card li,.venue-description,.venue-location{
+  color:#b8d0cb!important;
+  font-weight:600!important;
+}
+.venue-card h2,.location-card h3,.advice-card h3,.intent-link-card h3,.guide-heading h2,.cta-card h2,.state-card h2,.form-card h2,.info-card h2,.legal-card h2{
+  color:#f5fbfa!important;
+  font-weight:900!important;
+}
+.venue-fact,.venue-feature-list span,.requirement-grid strong,.faq-item summary,.form-field label,.info-item strong{
+  font-weight:800!important;
+}
+.page-footer{
+  color:#9ab9b3!important;
+  font-weight:700!important;
+}
+.page-footer a{
+  color:#bdd3cf!important;
+  font-weight:800!important;
+}
+@media(max-width:900px){
+  .page-logo{width:215px!important;height:64px!important;max-width:215px!important}
+  .page-nav{min-height:78px!important}
+}
+@media(max-width:620px){
+  .page-logo{width:190px!important;height:58px!important;max-width:190px!important}
+  .page-nav{min-height:72px!important}
+}
