@@ -86,7 +86,6 @@ body #customerEnquiryForm{
     inset 0 -1px 0 rgba(0,0,0,.28)!important;
 }
 
-/* AI strip — useful information only */
 body #customerEnquiryForm .smv-ai-form-banner{
   display:grid!important;
   grid-template-columns:minmax(0,1fr) auto!important;
@@ -96,259 +95,120 @@ body #customerEnquiryForm .smv-ai-form-banner{
   padding:12px 14px!important;
   border:1px solid rgba(244,201,79,.30)!important;
   border-radius:14px!important;
-  background:
-    linear-gradient(135deg,rgba(244,201,79,.085),rgba(25,216,189,.045))!important;
+  background:linear-gradient(135deg,rgba(244,201,79,.085),rgba(25,216,189,.045))!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 22px rgba(0,0,0,.10)!important;
 }
-body #customerEnquiryForm .smv-ai-form-banner strong{
-  display:block!important;
-  margin:0!important;
-  color:#fff!important;
-  font-size:16px!important;
-  line-height:1.2!important;
-  font-weight:950!important;
-}
+body #customerEnquiryForm .smv-ai-form-banner strong{display:block!important;margin:0!important;color:#fff!important;font-size:16px!important;line-height:1.2!important;font-weight:950!important}
 body #customerEnquiryForm .smv-ai-form-banner p{display:none!important}
-body #customerEnquiryForm .smv-ai-live{
-  display:flex!important;
-  flex-wrap:wrap!important;
-  justify-content:flex-end!important;
-  gap:7px!important;
-}
-body #customerEnquiryForm .smv-ai-live span{
-  padding:6px 10px!important;
-  border-radius:999px!important;
-  border:1px solid rgba(25,216,189,.25)!important;
-  background:rgba(25,216,189,.055)!important;
-  color:#d2ece8!important;
-  font-size:10px!important;
-  font-weight:900!important;
-  box-shadow:inset 0 1px rgba(255,255,255,.035)!important;
-}
-body #customerEnquiryForm .smv-ai-live span.ready{
-  color:#ffe89e!important;
-  border-color:rgba(244,201,79,.44)!important;
-  background:rgba(244,201,79,.085)!important;
-}
-
-body #customerEnquiryForm .form-section-title{
-  margin:11px 0 8px!important;
-  padding:0 0 7px!important;
-  border-bottom:1px solid rgba(244,201,79,.15)!important;
-  color:#f4c94f!important;
-  font-size:12px!important;
-  line-height:1.2!important;
-  font-weight:1000!important;
-  letter-spacing:.10em!important;
-}
+body #customerEnquiryForm .smv-ai-live{display:flex!important;flex-wrap:wrap!important;justify-content:flex-end!important;gap:7px!important}
+body #customerEnquiryForm .smv-ai-live span{padding:6px 10px!important;border-radius:999px!important;border:1px solid rgba(25,216,189,.25)!important;background:rgba(25,216,189,.055)!important;color:#d2ece8!important;font-size:10px!important;font-weight:900!important;box-shadow:inset 0 1px rgba(255,255,255,.035)!important}
+body #customerEnquiryForm .smv-ai-live span.ready{color:#ffe89e!important;border-color:rgba(244,201,79,.44)!important;background:rgba(244,201,79,.085)!important}
+body #customerEnquiryForm .form-section-title{margin:11px 0 8px!important;padding:0 0 7px!important;border-bottom:1px solid rgba(244,201,79,.15)!important;color:#f4c94f!important;font-size:12px!important;line-height:1.2!important;font-weight:1000!important;letter-spacing:.10em!important}
 body #customerEnquiryForm .form-section-title:first-of-type{margin-top:0!important}
-
-body #customerEnquiryForm .form-grid{
-  display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
-  gap:11px 12px!important;
-}
+body #customerEnquiryForm .form-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:11px 12px!important}
 body #customerEnquiryForm .form-grid:has(#customerName){grid-template-columns:repeat(3,minmax(0,1fr))!important}
 body #customerEnquiryForm .field{min-width:0!important}
-body #customerEnquiryForm .field label{
-  display:block!important;
-  margin:0 0 5px 2px!important;
-  color:#d9ebe8!important;
-  font-size:11px!important;
-  line-height:1.2!important;
-  font-weight:950!important;
-  letter-spacing:.035em!important;
-}
-body #customerEnquiryForm .field input,
-body #customerEnquiryForm .field select,
-body #customerEnquiryForm .field textarea{
-  width:100%!important;
-  border:1px solid rgba(255,255,255,.13)!important;
-  border-radius:12px!important;
-  background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.11))!important;
-  color:#f7fffd!important;
-  font-size:14px!important;
-  font-weight:750!important;
-  outline:none!important;
-  transition:.2s ease!important;
-  box-shadow:inset 0 1px 1px rgba(0,0,0,.20),0 1px 0 rgba(255,255,255,.025)!important;
-}
-body #customerEnquiryForm .field input,
-body #customerEnquiryForm .field select{
-  height:48px!important;
-  min-height:48px!important;
-  padding:0 14px!important;
-}
-body #customerEnquiryForm .field textarea{
-  min-height:70px!important;
-  padding:10px 12px!important;
-}
-body #customerEnquiryForm .field input::placeholder,
-body #customerEnquiryForm .field textarea::placeholder{color:#80a8a1!important;opacity:1!important}
-body #customerEnquiryForm .field input:focus,
-body #customerEnquiryForm .field select:focus,
-body #customerEnquiryForm .field textarea:focus{
-  border-color:#24ddc3!important;
-  background:rgba(18,68,61,.72)!important;
-  box-shadow:0 0 0 3px rgba(36,221,195,.08),inset 0 1px 0 rgba(255,255,255,.035)!important;
-}
-
-/* AI planner: compact, no explanatory paragraph */
-body #customerEnquiryForm .planner-summary-box{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr) auto!important;
-  column-gap:14px!important;
-  align-items:center!important;
-  margin:12px 0 0!important;
-  padding:10px 12px!important;
-  border:1px solid rgba(244,201,79,.24)!important;
-  border-radius:14px!important;
-  background:linear-gradient(125deg,rgba(244,201,79,.045),rgba(25,216,189,.028))!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
-}
-body #customerEnquiryForm .planner-summary-box>.form-section-title{
-  grid-column:1/-1!important;
-  width:100%!important;
-  margin:0 0 7px!important;
-}
+body #customerEnquiryForm .field label{display:block!important;margin:0 0 5px 2px!important;color:#d9ebe8!important;font-size:11px!important;line-height:1.2!important;font-weight:950!important;letter-spacing:.035em!important}
+body #customerEnquiryForm .field input,body #customerEnquiryForm .field select,body #customerEnquiryForm .field textarea{width:100%!important;border:1px solid rgba(255,255,255,.13)!important;border-radius:12px!important;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.11))!important;color:#f7fffd!important;font-size:14px!important;font-weight:750!important;outline:none!important;transition:.2s ease!important;box-shadow:inset 0 1px 1px rgba(0,0,0,.20),0 1px 0 rgba(255,255,255,.025)!important}
+body #customerEnquiryForm .field input,body #customerEnquiryForm .field select{height:48px!important;min-height:48px!important;padding:0 14px!important}
+body #customerEnquiryForm .field textarea{min-height:70px!important;padding:10px 12px!important}
+body #customerEnquiryForm .field input::placeholder,body #customerEnquiryForm .field textarea::placeholder{color:#80a8a1!important;opacity:1!important}
+body #customerEnquiryForm .field input:focus,body #customerEnquiryForm .field select:focus,body #customerEnquiryForm .field textarea:focus{border-color:#24ddc3!important;background:rgba(18,68,61,.72)!important;box-shadow:0 0 0 3px rgba(36,221,195,.08),inset 0 1px 0 rgba(255,255,255,.035)!important}
+body #customerEnquiryForm .planner-summary-box{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;column-gap:14px!important;align-items:center!important;margin:12px 0 0!important;padding:10px 12px!important;border:1px solid rgba(244,201,79,.24)!important;border-radius:14px!important;background:linear-gradient(125deg,rgba(244,201,79,.045),rgba(25,216,189,.028))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important}
+body #customerEnquiryForm .planner-summary-box>.form-section-title{grid-column:1/-1!important;width:100%!important;margin:0 0 7px!important}
 body #customerEnquiryForm .planner-summary-box>p{display:none!important}
-body #customerEnquiryForm #plannerSummaryPreview{
-  width:100%!important;
-  min-height:46px!important;
-  max-height:52px!important;
-  margin:0!important;
-  padding:8px 10px!important;
-  overflow:auto!important;
-  border:1px solid rgba(244,201,79,.12)!important;
-  border-radius:10px!important;
-  background:rgba(0,0,0,.08)!important;
-  color:#ddecE9!important;
-  font-size:11px!important;
-  line-height:1.4!important;
-  font-weight:750!important;
-  white-space:pre-wrap!important;
-}
-body #customerEnquiryForm #refreshPlannerSummary{
-  min-height:38px!important;
-  height:38px!important;
-  margin:0!important;
-  padding:0 14px!important;
-  border-radius:999px!important;
-  font-size:10px!important;
-  font-weight:950!important;
-  white-space:nowrap!important;
-}
-
-body #customerEnquiryForm .requirements-row{
-  margin-top:11px!important;
-  display:grid!important;
-  grid-template-columns:1fr!important;
-  gap:0!important;
-}
-body #customerEnquiryForm .submit-wrap{
-  display:grid!important;
-  grid-template-columns:auto 1fr auto!important;
-  align-items:center!important;
-  gap:12px!important;
-}
+body #customerEnquiryForm #plannerSummaryPreview{width:100%!important;min-height:46px!important;max-height:52px!important;margin:0!important;padding:8px 10px!important;overflow:auto!important;border:1px solid rgba(244,201,79,.12)!important;border-radius:10px!important;background:rgba(0,0,0,.08)!important;color:#ddece9!important;font-size:11px!important;line-height:1.4!important;font-weight:750!important;white-space:pre-wrap!important}
+body #customerEnquiryForm #refreshPlannerSummary{min-height:38px!important;height:38px!important;margin:0!important;padding:0 14px!important;border-radius:999px!important;font-size:10px!important;font-weight:950!important;white-space:nowrap!important}
+body #customerEnquiryForm .requirements-row{margin-top:11px!important;display:grid!important;grid-template-columns:1fr!important;gap:0!important}
+body #customerEnquiryForm .submit-wrap{display:grid!important;grid-template-columns:auto 1fr auto!important;align-items:center!important;gap:12px!important}
 body #customerEnquiryForm .smv-optional-field{display:none!important}
 body #customerEnquiryForm.smv-optional-open .smv-optional-field{display:grid!important}
-body #customerEnquiryForm .smv-more-preferences{
-  margin:0!important;
-  min-height:38px!important;
-  padding:0 13px!important;
-  border:1px solid rgba(25,216,189,.24)!important;
-  border-radius:10px!important;
-  background:rgba(25,216,189,.055)!important;
-  color:#d1e8e5!important;
-  font-size:10px!important;
-  font-weight:900!important;
-  white-space:nowrap!important;
-}
+body #customerEnquiryForm .smv-more-preferences{margin:0!important;min-height:38px!important;padding:0 13px!important;border:1px solid rgba(25,216,189,.24)!important;border-radius:10px!important;background:rgba(25,216,189,.055)!important;color:#d1e8e5!important;font-size:10px!important;font-weight:900!important;white-space:nowrap!important}
 body #customerEnquiryForm .smv-required-note{display:none!important}
-body #customerEnquiryForm .primary-btn[type="submit"],
-body #customerEnquiryForm button[type="submit"]{
-  width:auto!important;
-  min-width:280px!important;
-  max-width:360px!important;
-  min-height:48px!important;
-  height:48px!important;
-  padding:0 22px!important;
-  border:1px solid rgba(255,233,150,.35)!important;
-  border-radius:12px!important;
-  background:linear-gradient(180deg,#f9dc69 0%,#efc33d 55%,#dca825 100%)!important;
-  color:#241a00!important;
-  font-size:13px!important;
-  font-weight:1000!important;
-  letter-spacing:.005em!important;
-  box-shadow:0 12px 24px rgba(226,174,44,.20),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(130,88,0,.15)!important;
-}
-body #customerEnquiryForm .primary-btn[type="submit"]:hover,
-body #customerEnquiryForm button[type="submit"]:hover{
-  transform:translateY(-1px)!important;
-  filter:brightness(1.03)!important;
-  box-shadow:0 15px 30px rgba(226,174,44,.25),inset 0 1px 0 rgba(255,255,255,.6)!important;
-}
+body #customerEnquiryForm .primary-btn[type="submit"],body #customerEnquiryForm button[type="submit"]{width:auto!important;min-width:280px!important;max-width:360px!important;min-height:48px!important;height:48px!important;padding:0 22px!important;border:1px solid rgba(255,233,150,.35)!important;border-radius:12px!important;background:linear-gradient(180deg,#f9dc69 0%,#efc33d 55%,#dca825 100%)!important;color:#241a00!important;font-size:13px!important;font-weight:1000!important;letter-spacing:.005em!important;box-shadow:0 12px 24px rgba(226,174,44,.20),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(130,88,0,.15)!important}
+body #customerEnquiryForm .primary-btn[type="submit"]:hover,body #customerEnquiryForm button[type="submit"]:hover{transform:translateY(-1px)!important;filter:brightness(1.03)!important;box-shadow:0 15px 30px rgba(226,174,44,.25),inset 0 1px 0 rgba(255,255,255,.6)!important}
 body #customerEnquiryForm .form-note{display:none!important}
-body #customerEnquiryMessage{
-  margin:10px 0 0!important;
-  padding:11px 13px!important;
-  border-radius:11px!important;
-  font-size:12px!important;
-  line-height:1.4!important;
-}
+body #customerEnquiryMessage{margin:10px 0 0!important;padding:11px 13px!important;border-radius:11px!important;font-size:12px!important;line-height:1.4!important}
 
-/* ---------- HOMEPAGE VENUE SHOWCASE ---------- */
-.home-venues-section{
-  width:calc(100% - 32px)!important;
-  max-width:1760px!important;
-  margin-left:auto!important;
-  margin-right:auto!important;
-  padding-left:0!important;
-  padding-right:0!important;
-}
+.home-venues-section{width:calc(100% - 32px)!important;max-width:1760px!important;margin-left:auto!important;margin-right:auto!important;padding-left:0!important;padding-right:0!important}
 .home-venues-section .section-heading{width:100%!important;padding-left:0!important;padding-right:0!important}
 .home-venue-grid{width:100%!important;display:grid!important;grid-template-columns:repeat(auto-fit,minmax(300px,420px))!important;justify-content:center!important;gap:22px!important}
 .home-venue-grid:has(.home-venue-card:only-child){grid-template-columns:minmax(360px,500px)!important;justify-content:center!important}
 .home-venue-card{border-radius:23px!important;min-height:455px!important;border-color:rgba(45,214,193,.24)!important;box-shadow:0 24px 58px rgba(0,0,0,.27)!important}
 .home-venue-media,.home-venue-media img,.home-venue-image-fallback{height:220px!important;min-height:220px!important}
-.home-venue-content{padding:20px!important}
-.home-venue-content h3{font-size:23px!important;line-height:1.1!important}
-.home-venue-location{font-size:12px!important;margin-top:8px!important}
-.home-venue-facts{gap:9px!important;margin:16px 0 14px!important}
-.home-venue-fact{padding:12px!important;border-radius:12px!important}
-.home-venue-fact span{font-size:8px!important}
-.home-venue-fact strong{font-size:12px!important;margin-top:4px!important}
-.home-venue-features{gap:7px!important;min-height:30px!important}
-.home-venue-features span{font-size:9px!important;padding:6px 9px!important;border:1px solid rgba(25,216,189,.10)!important}
-.home-venue-actions{gap:10px!important;margin-top:20px!important}
-.home-venue-actions .primary-btn,.home-venue-actions .secondary-btn{min-height:48px!important;font-size:12px!important;border-radius:12px!important}
+.home-venue-content{padding:20px!important}.home-venue-content h3{font-size:23px!important;line-height:1.1!important}.home-venue-location{font-size:12px!important;margin-top:8px!important}.home-venue-facts{gap:9px!important;margin:16px 0 14px!important}.home-venue-fact{padding:12px!important;border-radius:12px!important}.home-venue-fact span{font-size:8px!important}.home-venue-fact strong{font-size:12px!important;margin-top:4px!important}.home-venue-features{gap:7px!important;min-height:30px!important}.home-venue-features span{font-size:9px!important;padding:6px 9px!important;border:1px solid rgba(25,216,189,.10)!important}.home-venue-actions{gap:10px!important;margin-top:20px!important}.home-venue-actions .primary-btn,.home-venue-actions .secondary-btn{min-height:48px!important;font-size:12px!important;border-radius:12px!important}
 
-@media(max-width:1050px){
-  body #enquiry{width:calc(100% - 20px)!important;padding:20px 16px 22px!important}
-  body #enquiry>.section-heading{gap:18px!important}
-  body #customerEnquiryForm .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  body #customerEnquiryForm .form-grid:has(#customerName){grid-template-columns:repeat(3,minmax(0,1fr))!important}
-  body #customerEnquiryForm .submit-wrap{grid-template-columns:auto 1fr!important}
+@media(max-width:1050px){body #enquiry{width:calc(100% - 20px)!important;padding:20px 16px 22px!important}body #enquiry>.section-heading{gap:18px!important}body #customerEnquiryForm .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}body #customerEnquiryForm .form-grid:has(#customerName){grid-template-columns:repeat(3,minmax(0,1fr))!important}body #customerEnquiryForm .submit-wrap{grid-template-columns:auto 1fr!important}}
+@media(max-width:760px){body #enquiry{width:calc(100% - 12px)!important;margin:14px auto 24px!important;padding:18px 9px 20px!important;border-radius:20px!important}body #enquiry>.section-heading{display:block!important;margin-bottom:12px!important;padding:0 5px!important}body #enquiry>.section-heading h2{font-size:31px!important}body #customerEnquiryForm{padding:12px!important;border-radius:15px!important}body #customerEnquiryForm .smv-ai-form-banner{grid-template-columns:1fr!important;padding:10px 11px!important}body #customerEnquiryForm .smv-ai-live{justify-content:flex-start!important}body #customerEnquiryForm .form-grid,body #customerEnquiryForm .form-grid:has(#customerName){grid-template-columns:1fr!important;gap:8px!important}body #customerEnquiryForm .planner-summary-box{grid-template-columns:1fr!important}body #customerEnquiryForm #refreshPlannerSummary{margin-top:7px!important;width:max-content!important}body #customerEnquiryForm .submit-wrap{grid-template-columns:1fr!important}body #customerEnquiryForm .primary-btn[type="submit"],body #customerEnquiryForm button[type="submit"]{width:100%!important;max-width:none!important;min-width:0!important}.home-venues-section{width:calc(100% - 18px)!important}.home-venue-grid,.home-venue-grid:has(.home-venue-card:only-child){grid-template-columns:1fr!important}.home-venue-card{min-height:440px!important}.home-venue-media,.home-venue-media img,.home-venue-image-fallback{height:210px!important;min-height:210px!important}.home-venue-content{padding:19px!important}.home-venue-content h3{font-size:22px!important}}
+
+/* =========================================================
+   SITE-WIDE LIGHTER EMERALD + HD DEPTH — HOMEPAGE
+   Visual only. Existing layout and JS remain unchanged.
+   ========================================================= */
+body{
+  background:
+    radial-gradient(circle at 14% 8%,rgba(43,219,194,.17),transparent 28%),
+    radial-gradient(circle at 88% 18%,rgba(244,201,79,.11),transparent 25%),
+    radial-gradient(circle at 50% 72%,rgba(22,136,121,.14),transparent 34%),
+    linear-gradient(180deg,#08312d 0%,#062a27 36%,#052420 72%,#041f1c 100%)!important;
 }
-
-@media(max-width:760px){
-  body #enquiry{width:calc(100% - 12px)!important;margin:14px auto 24px!important;padding:18px 9px 20px!important;border-radius:20px!important}
-  body #enquiry>.section-heading{display:block!important;margin-bottom:12px!important;padding:0 5px!important}
-  body #enquiry>.section-heading h2{font-size:31px!important}
-  body #customerEnquiryForm{padding:12px!important;border-radius:15px!important}
-  body #customerEnquiryForm .smv-ai-form-banner{grid-template-columns:1fr!important;padding:10px 11px!important}
-  body #customerEnquiryForm .smv-ai-live{justify-content:flex-start!important}
-  body #customerEnquiryForm .form-grid,
-  body #customerEnquiryForm .form-grid:has(#customerName){grid-template-columns:1fr!important;gap:8px!important}
-  body #customerEnquiryForm .planner-summary-box{grid-template-columns:1fr!important}
-  body #customerEnquiryForm #refreshPlannerSummary{margin-top:7px!important;width:max-content!important}
-  body #customerEnquiryForm .submit-wrap{grid-template-columns:1fr!important}
-  body #customerEnquiryForm .primary-btn[type="submit"],body #customerEnquiryForm button[type="submit"]{width:100%!important;max-width:none!important;min-width:0!important}
-  .home-venues-section{width:calc(100% - 18px)!important}
-  .home-venue-grid,.home-venue-grid:has(.home-venue-card:only-child){grid-template-columns:1fr!important}
-  .home-venue-card{min-height:440px!important}
-  .home-venue-media,.home-venue-media img,.home-venue-image-fallback{height:210px!important;min-height:210px!important}
-  .home-venue-content{padding:19px!important}
-  .home-venue-content h3{font-size:22px!important}
+body::before{
+  opacity:.26!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px)!important;
+  background-size:68px 68px!important;
+}
+.site-header{
+  background:linear-gradient(180deg,rgba(8,49,44,.95),rgba(5,35,31,.94))!important;
+  border-bottom-color:rgba(79,229,207,.20)!important;
+  box-shadow:0 10px 34px rgba(0,0,0,.18),inset 0 -1px 0 rgba(255,255,255,.025)!important;
+}
+.hero{border-bottom-color:rgba(82,230,208,.18)!important}
+.trust-strip{
+  margin-top:0!important;
+  background:linear-gradient(180deg,rgba(11,58,52,.78),rgba(7,43,39,.72))!important;
+  border-top:1px solid rgba(255,255,255,.025)!important;
+  border-bottom:1px solid rgba(68,220,199,.16)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025)!important;
+}
+.popular-section,.feature-row,.about-section,.contact-section,.home-venues-section{
+  position:relative;
+}
+.feature-card,.contact-card,.home-venue-card,.ai-result-card{
+  border-color:rgba(76,224,203,.22)!important;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(67,224,201,.08),transparent 35%),
+    linear-gradient(145deg,rgba(13,67,60,.96),rgba(6,43,39,.98))!important;
+  box-shadow:
+    0 22px 52px rgba(0,0,0,.19),
+    inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+.feature-card:hover,.contact-card:hover,.home-venue-card:hover{
+  border-color:rgba(83,235,212,.48)!important;
+  box-shadow:0 28px 64px rgba(0,0,0,.24),0 0 32px rgba(25,216,189,.08)!important;
+}
+.ai-planner-section{
+  background:
+    radial-gradient(circle at 12% 0%,rgba(43,218,194,.11),transparent 30%),
+    linear-gradient(180deg,rgba(10,56,50,.76),rgba(6,39,35,.88))!important;
+  border-color:rgba(75,222,201,.16)!important;
+}
+.planner-header,.planner-grid,.planner-extra,.planner-actions{
+  background:rgba(8,52,46,.78)!important;
+  border-color:rgba(77,222,202,.20)!important;
+}
+.about-image,.event-card,.home-venue-media{
+  box-shadow:0 18px 44px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.025)!important;
+}
+.site-footer{
+  background:linear-gradient(180deg,#052b27,#031d1a)!important;
+  border-top-color:rgba(72,218,198,.18)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025)!important;
+}
+.floating-whatsapp,.smv-final-ai-button{
+  box-shadow:0 16px 38px rgba(0,0,0,.30),0 0 30px rgba(39,221,196,.16),inset 0 1px rgba(255,255,255,.08)!important;
+}
+@media(max-width:620px){
+  body{background:linear-gradient(180deg,#07312d,#052723 55%,#041f1c)!important}
 }
