@@ -322,7 +322,7 @@
     });
 
     button.disabled = false;
-    button.textContent = "Get My Quote →";
+    button.textContent = "Check Price & Availability →";
 
     if (error) {
       console.error("Venue quote error:", error);
@@ -336,7 +336,108 @@
     event.currentTarget.reset();
   }
 
+  function installQuickEnquiryForm() {
+    const aside = document.querySelector(".venue-profile-enquiry");
+    if (!aside || byId("venueQuickEnquiryForm")) return;
+
+    const intro = aside.querySelector("p");
+    const form = document.createElement("form");
+    form.id = "venueQuickEnquiryForm";
+    form.className = "venue-quick-enquiry-form";
+    form.innerHTML = `
+      <div class="venue-quick-title">Quick Enquiry</div>
+      <label><span>Name *</span><input id="venueQuickName" autocomplete="name" required placeholder="Your name"></label>
+      <label><span>Mobile *</span><input id="venueQuickMobile" inputmode="numeric" autocomplete="tel" maxlength="14" required placeholder="10-digit mobile"></label>
+      <label><span>Event Date</span><input id="venueQuickDate" type="date"></label>
+      <label><span>Email</span><input id="venueQuickEmail" type="email" autocomplete="email" placeholder="Email (optional)"></label>
+      <label class="venue-quick-comment"><span>Comment</span><textarea id="venueQuickComment" rows="3" placeholder="Anything we should know?"></textarea></label>
+      <button id="venueQuickSubmit" type="submit">Send Quick Enquiry</button>
+      <div id="venueQuickStatus" class="venue-quick-status" role="status" aria-live="polite"></div>
+    `;
+
+    if (intro) intro.insertAdjacentElement("afterend", form);
+    else aside.prepend(form);
+
+    form.addEventListener("submit", submitQuickEnquiry);
+  }
+
+  async function submitQuickEnquiry(event) {
+    event.preventDefault();
+    if (!client || !currentVenue) return;
+
+    const name = String(byId("venueQuickName")?.value || "").trim();
+    const mobile = cleanMobile(byId("venueQuickMobile")?.value || "");
+    const eventDate = byId("venueQuickDate")?.value || null;
+    const email = String(byId("venueQuickEmail")?.value || "").trim();
+    const comment = String(byId("venueQuickComment")?.value || "").trim();
+    const status = byId("venueQuickStatus");
+    const button = byId("venueQuickSubmit");
+
+    if (name.length < 2) {
+      status.textContent = "Please enter your name.";
+      status.className = "venue-quick-status error";
+      byId("venueQuickName")?.focus();
+      return;
+    }
+
+    if (mobile.length !== 10) {
+      status.textContent = "Please enter a valid 10-digit mobile number.";
+      status.className = "venue-quick-status error";
+      byId("venueQuickMobile")?.focus();
+      return;
+    }
+
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      status.textContent = "Please enter a valid email address.";
+      status.className = "venue-quick-status error";
+      byId("venueQuickEmail")?.focus();
+      return;
+    }
+
+    const location = [currentVenue.area, currentVenue.city].filter(Boolean).join(", ") || currentVenue.city || null;
+    const requirements = [
+      `Specific venue enquiry: ${currentVenue.venue_name}`,
+      `Venue ID: ${currentVenue.id}`,
+      location ? `Venue location: ${location}` : null,
+      comment ? `Customer comment: ${comment}` : null,
+      "Submitted from venue profile quick enquiry"
+    ].filter(Boolean).join("\n");
+
+    button.disabled = true;
+    button.textContent = "Sending…";
+    status.textContent = "";
+    status.className = "venue-quick-status";
+
+    const { error } = await client.from("customer_enquiries").insert({
+      customer_name: name,
+      mobile,
+      email: email || null,
+      location,
+      occasion: "Other",
+      event_date: eventDate,
+      requirements,
+      source: "Website - Venue Profile Quick Enquiry",
+      status: "new",
+      priority: "medium"
+    });
+
+    button.disabled = false;
+    button.textContent = "Send Quick Enquiry";
+
+    if (error) {
+      console.error("Venue quick enquiry error:", error);
+      status.textContent = "Unable to send right now. Please try again or use WhatsApp.";
+      status.className = "venue-quick-status error";
+      return;
+    }
+
+    status.textContent = "✓ Thank you. Your enquiry has been received.";
+    status.className = "venue-quick-status success";
+    event.currentTarget.reset();
+  }
+
   function setupActions() {
+    installQuickEnquiryForm();
     document.querySelectorAll(".venue-quote-trigger").forEach(button => button.addEventListener("click", openQuoteModal));
     document.querySelectorAll("[data-close-quote]").forEach(node => node.addEventListener("click", closeQuoteModal));
     byId("venueQuoteForm")?.addEventListener("submit", submitQuote);
