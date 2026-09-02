@@ -212,3 +212,37 @@ body::before{
 @media(max-width:620px){
   body{background:linear-gradient(180deg,#07312d,#052723 55%,#041f1c)!important}
 }
+
+/* =========================================================
+   CONTACT + FOOTER READABILITY — STRONGER HD CONTRAST
+   ========================================================= */
+.contact-section{
+  background:linear-gradient(180deg,rgba(7,45,40,.18),rgba(3,30,27,.34))!important;
+}
+.contact-card{
+  border-color:rgba(72,218,198,.28)!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(36,210,185,.10),transparent 36%),
+    linear-gradient(145deg,#0b4a42 0%,#073a34 52%,#052d29 100%)!important;
+  box-shadow:0 20px 48px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.045)!important;
+}
+.contact-card b{color:#45e0ca!important;font-weight:950!important}
+.contact-card strong{color:#f0fbf8!important;font-size:15px!important;font-weight:900!important;letter-spacing:.005em!important}
+.contact-card span{color:#c2dcd7!important;font-size:12px!important;font-weight:750!important;line-height:1.45!important}
+.contact-card small{color:#91b8b1!important;font-size:10px!important;font-weight:700!important;line-height:1.45!important}
+.site-footer{
+  background:linear-gradient(180deg,#042722 0%,#031c19 58%,#021512 100%)!important;
+  border-top:1px solid rgba(79,223,202,.24)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025),0 -12px 40px rgba(0,0,0,.10)!important;
+}
+.footer-link-group h4{color:#f0faf8!important;font-size:12px!important;font-weight:950!important;letter-spacing:.12em!important}
+.footer-link-group a{color:#aecbc6!important;font-size:12px!important;font-weight:750!important;line-height:1.55!important}
+.footer-link-group a:hover{color:#48e4ce!important}
+.footer-bottom{color:#8fb5ae!important;font-size:10px!important;font-weight:650!important}
+.contact-section>p,.about-copy p,.popular-heading>p,.section-heading>p{color:#a9cbc5!important;font-weight:600!important}
+@media(max-width:620px){
+  .footer-link-group h4{font-size:11px!important}
+  .footer-link-group a{font-size:11px!important}
+  .contact-card strong{font-size:14px!important}
+  .contact-card span{font-size:11px!important}
+}
