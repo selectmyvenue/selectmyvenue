@@ -61,8 +61,17 @@
     return list;
   }
 
-  function publicMediaUrl(path) { if (!client || !path) return ""; return safeHttpUrl(client.storage.from(MEDIA_BUCKET).getPublicUrl(path)?.data?.publicUrl); }
-  function mediaRows(rows, folder) { return (rows || []).filter(item => item?.name && item.name !== ".emptyFolderPlaceholder").map(item => publicMediaUrl(`${venueId}/${folder}/${item.name}`)).filter(Boolean); }
+  function publicMediaUrl(path) {
+    if (!client || !path) return "";
+    return safeHttpUrl(client.storage.from(MEDIA_BUCKET).getPublicUrl(path)?.data?.publicUrl);
+  }
+
+  function mediaRows(rows, folder) {
+    return (rows || [])
+      .filter(item => item?.name && item.name !== ".emptyFolderPlaceholder")
+      .map(item => publicMediaUrl(`${venueId}/${folder}/${item.name}`))
+      .filter(Boolean);
+  }
 
   async function loadStorageMedia(venue) {
     if (!client || !validVenueId) return {cover:safeHttpUrl(venue.cover_image_url), images:[], videos:[]};
@@ -72,7 +81,10 @@
       client.storage.from(MEDIA_BUCKET).list(`${venueId}/videos`,{limit:10,sortBy:{column:"name",order:"asc"}})
     ]);
     let cover = safeHttpUrl(venue.cover_image_url);
-    if (!cover && !rootResult.error) { const coverFile=(rootResult.data||[]).find(item=>/^cover-/i.test(item?.name||"")); if(coverFile) cover=publicMediaUrl(`${venueId}/${coverFile.name}`); }
+    if (!cover && !rootResult.error) {
+      const coverFile=(rootResult.data||[]).find(item=>/^cover-/i.test(item?.name||""));
+      if(coverFile) cover=publicMediaUrl(`${venueId}/${coverFile.name}`);
+    }
     const images=galleryResult.error?[]:mediaRows(galleryResult.data,"gallery").slice(0,8);
     const videos=videoResult.error?[]:mediaRows(videoResult.data,"videos").slice(0,2);
     if(!cover&&images.length)cover=images[0];
@@ -80,15 +92,23 @@
   }
 
   function setMeta(name, description, imageUrl) {
-    const pageUrl=`https://selectmyvenue.com/venue.html?id=${encodeURIComponent(venueId)}`, title=`${name} | Verified Venue | Select My Venue`;
+    const pageUrl=`https://selectmyvenue.com/venue.html?id=${encodeURIComponent(venueId)}`;
+    const title=`${name} | Verified Venue | Select My Venue`;
     document.title=title;
-    byId("venueMetaDescription")?.setAttribute("content",description); byId("venueCanonical")?.setAttribute("href",pageUrl); byId("venueOgTitle")?.setAttribute("content",title); byId("venueOgDescription")?.setAttribute("content",description); byId("venueOgUrl")?.setAttribute("content",pageUrl); byId("venueOgImage")?.setAttribute("content",imageUrl||"https://selectmyvenue.com/logo.png");
+    byId("venueMetaDescription")?.setAttribute("content",description);
+    byId("venueCanonical")?.setAttribute("href",pageUrl);
+    byId("venueOgTitle")?.setAttribute("content",title);
+    byId("venueOgDescription")?.setAttribute("content",description);
+    byId("venueOgUrl")?.setAttribute("content",pageUrl);
+    byId("venueOgImage")?.setAttribute("content",imageUrl||"https://selectmyvenue.com/logo.png");
   }
 
   function setStructuredData(venue, images, description) {
     const location=[venue.area,venue.city].filter(Boolean).join(", ");
     const data={"@context":"https://schema.org","@type":"EventVenue","@id":`https://selectmyvenue.com/venue.html?id=${venue.id}`,name:venue.venue_name,description,url:`https://selectmyvenue.com/venue.html?id=${venue.id}`,publicAccess:true,address:{"@type":"PostalAddress",streetAddress:venue.area||undefined,addressLocality:venue.city||location||undefined,addressCountry:"IN"},maximumAttendeeCapacity:Number(venue.capacity_max||0)||undefined,image:images.length?images:undefined};
-    Object.keys(data.address).forEach(key=>data.address[key]===undefined&&delete data.address[key]); Object.keys(data).forEach(key=>data[key]===undefined&&delete data[key]); if(byId("venueStructuredData"))byId("venueStructuredData").textContent=JSON.stringify(data);
+    Object.keys(data.address).forEach(key=>data.address[key]===undefined&&delete data.address[key]);
+    Object.keys(data).forEach(key=>data[key]===undefined&&delete data[key]);
+    if(byId("venueStructuredData"))byId("venueStructuredData").textContent=JSON.stringify(data);
   }
 
   function renderHighlights(venue) {
@@ -103,41 +123,109 @@
     byId("venueProfileHighlights").innerHTML=highlights.slice(0,6).map(([title,text])=>`<div class="venue-highlight"><b>${escapeHtml(title)}</b><span>${escapeHtml(text)}</span></div>`).join("");
   }
 
-  function openLightbox(url,name){if(!url)return;const lightbox=document.createElement("div");lightbox.className="venue-lightbox";lightbox.innerHTML=`<button type="button" aria-label="Close">×</button><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} venue photo">`;const close=()=>lightbox.remove();lightbox.addEventListener("click",event=>{if(event.target===lightbox||event.target.tagName==="BUTTON")close();});document.body.appendChild(lightbox);}
+  function openLightbox(url,name){
+    if(!url)return;
+    const lightbox=document.createElement("div");
+    lightbox.className="venue-lightbox";
+    lightbox.innerHTML=`<button type="button" aria-label="Close">×</button><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} venue photo">`;
+    const close=()=>lightbox.remove();
+    lightbox.addEventListener("click",event=>{if(event.target===lightbox||event.target.tagName==="BUTTON")close();});
+    document.body.appendChild(lightbox);
+  }
 
   function renderGallery(name,media){
     const section=byId("venueProfileGallerySection"),grid=byId("venueProfileGallery"),videosSection=byId("venueProfileVideosSection"),videosGrid=byId("venueProfileVideos");
     const gallery=[...new Set(media.images.filter(url=>url&&url!==media.cover))];
-    if(gallery.length&&section&&grid){section.hidden=false;byId("venueGalleryCount").textContent=`${gallery.length} photo${gallery.length===1?"":"s"}`;grid.innerHTML=gallery.map((url,index)=>`<button type="button" class="venue-gallery-photo" data-gallery-index="${index}"><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} venue photo ${index+1}" loading="lazy" decoding="async"></button>`).join("");grid.querySelectorAll("[data-gallery-index]").forEach(button=>button.addEventListener("click",()=>openLightbox(gallery[Number(button.dataset.galleryIndex)],name)));}
-    if(media.videos.length&&videosSection&&videosGrid){videosSection.hidden=false;byId("venueVideoCount").textContent=`${media.videos.length} video${media.videos.length===1?"":"s"}`;videosGrid.innerHTML=media.videos.map(url=>`<video class="venue-profile-video" controls playsinline preload="metadata" src="${escapeHtml(url)}"></video>`).join("");}
-    const mediaCount=(media.cover?1:0)+gallery.length+media.videos.length;if(mediaCount&&byId("venueProfileMediaCount")){byId("venueProfileMediaCount").hidden=false;byId("venueProfileMediaCount").textContent=`${mediaCount} media`;}
+    if(gallery.length&&section&&grid){
+      section.hidden=false;
+      byId("venueGalleryCount").textContent=`${gallery.length} photo${gallery.length===1?"":"s"}`;
+      grid.innerHTML=gallery.map((url,index)=>`<button type="button" class="venue-gallery-photo" data-gallery-index="${index}"><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} venue photo ${index+1}" loading="lazy" decoding="async"></button>`).join("");
+      grid.querySelectorAll("[data-gallery-index]").forEach(button=>button.addEventListener("click",()=>openLightbox(gallery[Number(button.dataset.galleryIndex)],name)));
+    }
+    if(media.videos.length&&videosSection&&videosGrid){
+      videosSection.hidden=false;
+      byId("venueVideoCount").textContent=`${media.videos.length} video${media.videos.length===1?"":"s"}`;
+      videosGrid.innerHTML=media.videos.map(url=>`<video class="venue-profile-video" controls playsinline preload="metadata" src="${escapeHtml(url)}"></video>`).join("");
+    }
+    const mediaCount=(media.cover?1:0)+gallery.length+media.videos.length;
+    if(mediaCount&&byId("venueProfileMediaCount")){
+      byId("venueProfileMediaCount").hidden=false;
+      byId("venueProfileMediaCount").textContent=`${mediaCount} media`;
+    }
   }
 
   function renderProfile(venue,media){
     currentVenue=venue;currentMedia=media;
-    const name=String(venue.venue_name||"Verified Venue"),type=String(venue.venue_type||"Venue"),location=[venue.area,venue.city].filter(Boolean).join(", ")||"Location on request",description=String(venue.description||"Ask our team for availability, packages and detailed venue information."),whatsappUrl=`https://wa.me/918368322256?text=${encodeURIComponent(`Hi Select My Venue, I am interested in ${name}. Please share details and availability.`)}`,mapUrl=safeHttpUrl(venue.google_maps_url);
-    byId("venueBreadcrumb").textContent=name;byId("venueProfileName").textContent=name;byId("venueProfileType").textContent=type;byId("venueProfileFactType").textContent=type;byId("venueProfileLocation").textContent=`⌖ ${location}`;byId("venueProfileCapacity").textContent=capacity(venue);byId("venueProfilePrice").textContent=pricing(venue);byId("venueProfileDescription").textContent=description;byId("venueAboutHeading").textContent=`Discover ${name}.`;byId("venueQuoteVenueName").textContent=name;byId("venueProfileWhatsapp").href=whatsappUrl;
-    if(media.cover){const image=byId("venueProfileImage");image.src=media.cover;image.alt=`${name} venue`;image.hidden=false;byId("venueProfileFallback").hidden=true;}
+    const name=String(venue.venue_name||"Verified Venue");
+    const type=String(venue.venue_type||"Venue");
+    const location=[venue.area,venue.city].filter(Boolean).join(", ")||"Location on request";
+    const description=String(venue.description||"Ask our team for availability, packages and detailed venue information.");
+    const whatsappUrl=`https://wa.me/918368322256?text=${encodeURIComponent(`Hi Select My Venue, I am interested in ${name}. Please share details and availability.`)}`;
+    const mapUrl=safeHttpUrl(venue.google_maps_url);
+    byId("venueBreadcrumb").textContent=name;
+    byId("venueProfileName").textContent=name;
+    byId("venueProfileType").textContent=type;
+    byId("venueProfileFactType").textContent=type;
+    byId("venueProfileLocation").textContent=`⌖ ${location}`;
+    byId("venueProfileCapacity").textContent=capacity(venue);
+    byId("venueProfilePrice").textContent=pricing(venue);
+    byId("venueProfileDescription").textContent=description;
+    byId("venueAboutHeading").textContent=`Discover ${name}.`;
+    byId("venueQuoteVenueName").textContent=name;
+    byId("venueProfileWhatsapp").href=whatsappUrl;
+    if(media.cover){
+      const image=byId("venueProfileImage");image.src=media.cover;image.alt=`${name} venue`;image.hidden=false;byId("venueProfileFallback").hidden=true;
+    }
     if(mapUrl){byId("venueProfileMap").href=mapUrl;byId("venueProfileMap").hidden=false;}
-    const featureList=venueFeatures(venue);byId("venueProfileFeatures").innerHTML=featureList.length?featureList.map(([icon,label])=>`<div class="venue-profile-feature"><span>${icon}</span><strong>${escapeHtml(label)}</strong></div>`).join(""):`<div class="venue-profile-feature"><span>✦</span><strong>Venue details available on request</strong></div>`;
+    const featureList=venueFeatures(venue);
+    byId("venueProfileFeatures").innerHTML=featureList.length?featureList.map(([icon,label])=>`<div class="venue-profile-feature"><span>${icon}</span><strong>${escapeHtml(label)}</strong></div>`).join(""):`<div class="venue-profile-feature"><span>✦</span><strong>Venue details available on request</strong></div>`;
     renderHighlights(venue);renderGallery(name,media);
-    const metaDescription=`${name} in ${location}. View photos, capacity, pricing and facilities, then request a personalised quote from Select My Venue.`,structuredImages=[media.cover,...media.images].filter(Boolean);setMeta(name,metaDescription,media.cover);setStructuredData(venue,structuredImages,description);
-    byId("venueProfileLoading").hidden=true;byId("venueProfile").hidden=false;if(autoQuote)setTimeout(openQuoteModal,220);
+    const metaDescription=`${name} in ${location}. View photos, capacity, pricing and facilities, then request a personalised quote from Select My Venue.`;
+    const structuredImages=[media.cover,...media.images].filter(Boolean);
+    setMeta(name,metaDescription,media.cover);setStructuredData(venue,structuredImages,description);
+    byId("venueProfileLoading").hidden=true;byId("venueProfile").hidden=false;
+    if(autoQuote)setTimeout(openQuoteModal,220);
   }
 
   function openQuoteModal(){if(!currentVenue)return;const modal=byId("venueQuoteModal");if(!modal)return;modal.hidden=false;document.body.style.overflow="hidden";setTimeout(()=>byId("venueQuoteName")?.focus(),40);}
   function closeQuoteModal(){const modal=byId("venueQuoteModal");if(!modal)return;modal.hidden=true;document.body.style.overflow="";}
 
+  async function insertCustomerEnquiry(payload){
+    if(!client) return { error: new Error("Supabase client is not initialized.") };
+    const cleanPayload={...payload};
+    delete cleanPayload.priority;
+    delete cleanPayload.assigned_to;
+    delete cleanPayload.follow_up_at;
+    delete cleanPayload.last_contacted_at;
+    return await client.from("customer_enquiries").insert(cleanPayload);
+  }
+
   async function submitQuote(event){
     event.preventDefault();if(!client||!currentVenue)return;
-    const name=byId("venueQuoteName").value.trim(),mobile=cleanMobile(byId("venueQuoteMobile").value),occasion=byId("venueQuoteEvent").value,eventDate=byId("venueQuoteDate").value||null,guests=Number(byId("venueQuoteGuests").value||0)||null,budget=Number(byId("venueQuoteBudget").value||0)||null,status=byId("venueQuoteStatus"),button=byId("venueQuoteSubmit");
-    if(name.length<2){status.textContent="Please enter your name.";status.className="venue-quote-status error";return;}if(mobile.length!==10){status.textContent="Please enter a valid 10-digit mobile number.";status.className="venue-quote-status error";return;}if(!occasion){status.textContent="Please select your event.";status.className="venue-quote-status error";return;}
-    const location=[currentVenue.area,currentVenue.city].filter(Boolean).join(", ")||currentVenue.city||null,requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,"Submitted from venue profile quick quote"].filter(Boolean).join("\n");
+    const name=byId("venueQuoteName").value.trim();
+    const mobile=cleanMobile(byId("venueQuoteMobile").value);
+    const occasion=byId("venueQuoteEvent").value;
+    const eventDate=byId("venueQuoteDate").value||null;
+    const guests=Number(byId("venueQuoteGuests").value||0)||null;
+    const budget=Number(byId("venueQuoteBudget").value||0)||null;
+    const status=byId("venueQuoteStatus"),button=byId("venueQuoteSubmit");
+    if(name.length<2){status.textContent="Please enter your name.";status.className="venue-quote-status error";return;}
+    if(mobile.length!==10){status.textContent="Please enter a valid 10-digit mobile number.";status.className="venue-quote-status error";return;}
+    if(!occasion){status.textContent="Please select your event.";status.className="venue-quote-status error";return;}
+    const location=[currentVenue.area,currentVenue.city].filter(Boolean).join(", ")||currentVenue.city||null;
+    const requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,"Submitted from venue profile quick quote"].filter(Boolean).join("\n");
     button.disabled=true;button.textContent="Sending your enquiry…";status.textContent="";status.className="venue-quote-status";
-    const{error}=await client.from("customer_enquiries").insert({customer_name:name,mobile,location,occasion,event_date:eventDate,guests,budget_per_person:budget,requirements,source:"Website - Venue Profile",status:"new",priority:"medium"});
+    const{error}=await insertCustomerEnquiry({customer_name:name,mobile,location,occasion,event_date:eventDate,guests,budget_per_person:budget,requirements,source:"Website - Venue Profile",status:"new"});
     button.disabled=false;button.textContent="Check Price & Availability →";
-    if(error){console.error("Venue quote error:",error);status.textContent="We could not submit this enquiry right now. Please try again or use WhatsApp.";status.className="venue-quote-status error";return;}
-    status.textContent="✓ Enquiry submitted. Select My Venue will use this venue and your event details to assist you.";status.className="venue-quote-status success";event.currentTarget.reset();
+    if(error){
+      console.error("Venue quote error:",error);
+      status.textContent="We could not submit this enquiry right now. Please try again or use WhatsApp.";
+      status.className="venue-quote-status error";
+      return;
+    }
+    status.textContent="✓ Enquiry submitted. Select My Venue will use this venue and your event details to assist you.";
+    status.className="venue-quote-status success";
+    event.currentTarget.reset();
   }
 
   function installQuickEnquiryStyles(){
@@ -151,30 +239,68 @@
 
   function installQuickEnquiryForm(){
     const aside=document.querySelector(".venue-profile-enquiry");if(!aside||byId("venueQuickEnquiryForm"))return;
-    const intro=aside.querySelector("p"),form=document.createElement("form");form.id="venueQuickEnquiryForm";form.className="venue-quick-enquiry-form";
+    const intro=aside.querySelector("p"),form=document.createElement("form");
+    form.id="venueQuickEnquiryForm";form.className="venue-quick-enquiry-form";
     form.innerHTML=`<div class="venue-quick-title">Quick Enquiry</div><label><span>Name *</span><input id="venueQuickName" autocomplete="name" required placeholder="Your name"></label><label><span>Mobile *</span><input id="venueQuickMobile" inputmode="numeric" autocomplete="tel" maxlength="14" required placeholder="10-digit mobile"></label><label><span>Event Date</span><input id="venueQuickDate" type="date"></label><label><span>Email</span><input id="venueQuickEmail" type="email" autocomplete="email" placeholder="Email (optional)"></label><label class="venue-quick-comment"><span>Comment</span><textarea id="venueQuickComment" rows="3" placeholder="Anything we should know?"></textarea></label><button id="venueQuickSubmit" type="submit">Send Quick Enquiry</button><div id="venueQuickStatus" class="venue-quick-status" role="status" aria-live="polite"></div>`;
-    if(intro)intro.insertAdjacentElement("afterend",form);else aside.prepend(form);form.addEventListener("submit",submitQuickEnquiry);
+    if(intro)intro.insertAdjacentElement("afterend",form);else aside.prepend(form);
+    form.addEventListener("submit",submitQuickEnquiry);
   }
 
   async function submitQuickEnquiry(event){
     event.preventDefault();if(!client||!currentVenue)return;
-    const name=String(byId("venueQuickName")?.value||"").trim(),mobile=cleanMobile(byId("venueQuickMobile")?.value||""),eventDate=byId("venueQuickDate")?.value||null,email=String(byId("venueQuickEmail")?.value||"").trim(),comment=String(byId("venueQuickComment")?.value||"").trim(),status=byId("venueQuickStatus"),button=byId("venueQuickSubmit");
-    if(name.length<2){status.textContent="Please enter your name.";status.className="venue-quick-status error";byId("venueQuickName")?.focus();return;}if(mobile.length!==10){status.textContent="Please enter a valid 10-digit mobile number.";status.className="venue-quick-status error";byId("venueQuickMobile")?.focus();return;}if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent="Please enter a valid email address.";status.className="venue-quick-status error";byId("venueQuickEmail")?.focus();return;}
-    const location=[currentVenue.area,currentVenue.city].filter(Boolean).join(", ")||currentVenue.city||null,requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,comment?`Customer comment: ${comment}`:null,"Submitted from venue profile quick enquiry"].filter(Boolean).join("\n");
+    const name=String(byId("venueQuickName")?.value||"").trim();
+    const mobile=cleanMobile(byId("venueQuickMobile")?.value||"");
+    const eventDate=byId("venueQuickDate")?.value||null;
+    const email=String(byId("venueQuickEmail")?.value||"").trim();
+    const comment=String(byId("venueQuickComment")?.value||"").trim();
+    const status=byId("venueQuickStatus"),button=byId("venueQuickSubmit");
+    if(name.length<2){status.textContent="Please enter your name.";status.className="venue-quick-status error";byId("venueQuickName")?.focus();return;}
+    if(mobile.length!==10){status.textContent="Please enter a valid 10-digit mobile number.";status.className="venue-quick-status error";byId("venueQuickMobile")?.focus();return;}
+    if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent="Please enter a valid email address.";status.className="venue-quick-status error";byId("venueQuickEmail")?.focus();return;}
+    const location=[currentVenue.area,currentVenue.city].filter(Boolean).join(", ")||currentVenue.city||null;
+    const requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,comment?`Customer comment: ${comment}`:null,"Submitted from venue profile quick enquiry"].filter(Boolean).join("\n");
     button.disabled=true;button.textContent="Sending…";status.textContent="";status.className="venue-quick-status";
-    const{error}=await client.from("customer_enquiries").insert({customer_name:name,mobile,email:email||null,location,occasion:"Other",event_date:eventDate,requirements,source:"Website - Venue Profile Quick Enquiry",status:"new",priority:"medium"});
+    const{error}=await insertCustomerEnquiry({customer_name:name,mobile,email:email||null,location,occasion:"Other",event_date:eventDate,requirements,source:"Website - Venue Profile Quick Enquiry",status:"new"});
     button.disabled=false;button.textContent="Send Quick Enquiry";
-    if(error){console.error("Venue quick enquiry error:",error);status.textContent="Unable to send right now. Please try again or use WhatsApp.";status.className="venue-quick-status error";return;}
-    status.textContent="✓ Thank you. Your enquiry has been received.";status.className="venue-quick-status success";event.currentTarget.reset();
+    if(error){
+      console.error("Venue quick enquiry error:",error);
+      status.textContent="Unable to send right now. Please try again or use WhatsApp.";
+      status.className="venue-quick-status error";
+      return;
+    }
+    status.textContent="✓ Thank you. Your enquiry has been received.";
+    status.className="venue-quick-status success";
+    event.currentTarget.reset();
   }
 
   function setupActions(){
-    installQuickEnquiryStyles();installQuickEnquiryForm();document.querySelectorAll(".venue-quote-trigger").forEach(button=>button.addEventListener("click",openQuoteModal));document.querySelectorAll("[data-close-quote]").forEach(node=>node.addEventListener("click",closeQuoteModal));byId("venueQuoteForm")?.addEventListener("submit",submitQuote);
-    byId("venueShareBtn")?.addEventListener("click",async()=>{const shareData={title:currentVenue?.venue_name||"Select My Venue",url:window.location.href};try{if(navigator.share)await navigator.share(shareData);else{await navigator.clipboard.writeText(window.location.href);byId("venueShareBtn").textContent="Link Copied";setTimeout(()=>byId("venueShareBtn").textContent="Share",1600);}}catch(_){}});document.addEventListener("keydown",event=>{if(event.key==="Escape")closeQuoteModal();});
+    installQuickEnquiryStyles();
+    installQuickEnquiryForm();
+    document.querySelectorAll(".venue-quote-trigger").forEach(button=>button.addEventListener("click",openQuoteModal));
+    document.querySelectorAll("[data-close-quote]").forEach(node=>node.addEventListener("click",closeQuoteModal));
+    byId("venueQuoteForm")?.addEventListener("submit",submitQuote);
+    byId("venueShareBtn")?.addEventListener("click",async()=>{
+      const shareData={title:currentVenue?.venue_name||"Select My Venue",url:window.location.href};
+      try{
+        if(navigator.share)await navigator.share(shareData);
+        else{await navigator.clipboard.writeText(window.location.href);byId("venueShareBtn").textContent="Link Copied";setTimeout(()=>byId("venueShareBtn").textContent="Share",1600);}
+      }catch(_){}
+    });
+    document.addEventListener("keydown",event=>{if(event.key==="Escape")closeQuoteModal();});
   }
 
   function showError(){byId("venueProfileLoading").hidden=true;byId("venueProfileError").hidden=false;}
-  async function loadProfile(){if(!validVenueId||!client)return showError();const{data,error}=await client.rpc("smv_public_venues");if(error){console.error("Venue profile error:",error);return showError();}const venue=(Array.isArray(data)?data:[]).map(item=>item?.venue||item).find(item=>String(item?.id)===venueId);if(!venue)return showError();const media=await loadStorageMedia(venue);renderProfile(venue,media);}
 
-  setupActions();loadProfile();
+  async function loadProfile(){
+    if(!validVenueId||!client)return showError();
+    const{data,error}=await client.rpc("smv_public_venues");
+    if(error){console.error("Venue profile error:",error);return showError();}
+    const venue=(Array.isArray(data)?data:[]).map(item=>item?.venue||item).find(item=>String(item?.id)===venueId);
+    if(!venue)return showError();
+    const media=await loadStorageMedia(venue);
+    renderProfile(venue,media);
+  }
+
+  setupActions();
+  loadProfile();
 })();
