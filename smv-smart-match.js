@@ -3,6 +3,12 @@
 
   function byId(id){return document.getElementById(id);}
 
+  function neutralizePublicLeadPriority(){
+    if(typeof window.calculateLeadPriority==="function"){
+      window.calculateLeadPriority=function(){return undefined;};
+    }
+  }
+
   function loadLuxuryStyles(){
     if(document.getElementById("smvHomepageCustomerLuxury"))return;
     var link=document.createElement("link");
@@ -111,6 +117,6 @@
     setTimeout(function(){fixVenueQuoteButtons();observer.disconnect();},3500);
   }
 
-  function init(){loadLuxuryStyles();installEnquiryStyles();makeSimpleLuxuryForm();enhanceConfirmation();setupVenueQuoteWatcher();}
+  function init(){neutralizePublicLeadPriority();loadLuxuryStyles();installEnquiryStyles();makeSimpleLuxuryForm();enhanceConfirmation();setupVenueQuoteWatcher();}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
