@@ -63,7 +63,14 @@
     media.append(prev,next,nav,counter,hint);
     function show(nextIndex){
       index=(nextIndex+images.length)%images.length;media.classList.add("smv-slide-changing");
-      setTimeout(()=>{image.onload=()=>{applySharpFit(image,media);media.classList.remove("smv-slide-changing");};image.src=images[index];image.alt=`Venue photo ${index+1} of ${images.length}`;image.decoding="async";nav.querySelectorAll(".smv-cover-dot").forEach((dot,i)=>dot.classList.toggle("active",i===index));const active=nav.querySelector(".smv-cover-dot.active");if(active&&typeof active.scrollIntoView==="function")active.scrollIntoView({block:"nearest",inline:"center"});counter.textContent=`${index+1} / ${images.length} Photos`;if(image.complete&&image.naturalWidth){applySharpFit(image,media);setTimeout(()=>media.classList.remove("smv-slide-changing"),45);}},70);
+      setTimeout(()=>{
+        image.onload=()=>{applySharpFit(image,media);media.classList.remove("smv-slide-changing");};
+        image.src=images[index];image.alt=`Venue photo ${index+1} of ${images.length}`;image.decoding="async";
+        nav.querySelectorAll(".smv-cover-dot").forEach((dot,i)=>dot.classList.toggle("active",i===index));
+        /* Never call scrollIntoView here. Autoplay must not move the document scroll position. */
+        counter.textContent=`${index+1} / ${images.length} Photos`;
+        if(image.complete&&image.naturalWidth){applySharpFit(image,media);setTimeout(()=>media.classList.remove("smv-slide-changing"),45);}
+      },70);
     }
     let autoTimer=null;function startAuto(){if(autoTimer||images.length<2)return;autoTimer=setInterval(()=>show(index+1),4200)}function stopAuto(){if(autoTimer){clearInterval(autoTimer);autoTimer=null}}function restartAuto(){stopAuto();startAuto()}
     prev.addEventListener("click",()=>{show(index-1);restartAuto();});next.addEventListener("click",()=>{show(index+1);restartAuto();});
