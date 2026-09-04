@@ -1,20 +1,348 @@
 (function(){
-"use strict";
-const U="https://uajqwyoqbbswkfiwosyw.supabase.co",K="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7",B="venue-media",MAX=30,SKEY="smv_venue_shortlist_v2";
-const id=new URLSearchParams(location.search).get("id")||"",ok=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id),db=window.supabase?.createClient(U,K,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-let photos=[],i=0,timer=null,viewerI=0;
-const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])),url=p=>db?.storage.from(B).getPublicUrl(p)?.data?.publicUrl||"";
-function fit(img){if(!img)return;const f=()=>{if(!img.naturalWidth)return;img.classList.add("smv-image-contain");img.classList.remove("smv-image-cover");Object.assign(img.style,{objectFit:"contain",objectPosition:"center",filter:"none",transform:"none",imageRendering:"auto"})};img.complete&&img.naturalWidth?f():img.addEventListener("load",f,{once:true})}
-async function waitImg(){for(let n=0;n<50;n++){const x=document.getElementById("venueProfileImage");if(x&&!x.hidden&&x.src)return x;await new Promise(r=>setTimeout(r,100))}return document.getElementById("venueProfileImage")}
-function stop(){if(timer){clearInterval(timer);timer=null}}function start(show){if(!timer&&photos.length>1)timer=setInterval(()=>show(i+1),4600)}
-function styles(){if(document.getElementById("smvGalleryStyles"))return;const s=document.createElement("style");s.id="smvGalleryStyles";s.textContent=`.smv-view-all{position:absolute;z-index:10;left:20px;bottom:20px;min-height:42px;padding:0 16px;border:1px solid rgba(255,255,255,.8);border-radius:999px;background:rgba(9,46,40,.86);color:#fff;font-size:11px;font-weight:900;cursor:pointer;box-shadow:0 10px 28px rgba(0,0,0,.2);backdrop-filter:blur(10px)}.smv-view-all:hover{background:#087f71}.smv-viewer{position:fixed;z-index:99999;inset:0;display:grid;grid-template-rows:auto 1fr auto;background:rgba(3,15,13,.98);color:#fff}.smv-viewer[hidden]{display:none!important}.smv-vhead{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid rgba(255,255,255,.12)}.smv-vhead strong{font-size:14px}.smv-vcount{margin-left:8px;color:#bed0cb;font-size:11px;font-weight:800}.smv-vclose{width:42px;height:42px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:rgba(255,255,255,.1);color:#fff;font-size:25px;cursor:pointer}.smv-vstage{position:relative;min-height:0;display:grid;place-items:center;padding:18px 74px}.smv-vstage img{display:block;max-width:100%;max-height:calc(100vh - 190px);width:auto;height:auto;object-fit:contain;filter:none}.smv-varrow{position:absolute;top:50%;transform:translateY(-50%);width:50px;height:50px;border:1px solid rgba(255,255,255,.22);border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:30px;cursor:pointer}.smv-vprev{left:16px}.smv-vnext{right:16px}.smv-vthumbs{display:flex;gap:8px;overflow-x:auto;padding:10px 16px 14px;border-top:1px solid rgba(255,255,255,.1)}.smv-vthumb{flex:0 0 84px;width:84px;height:58px;padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;background:#172521;cursor:pointer;opacity:.65}.smv-vthumb.active{border-color:#35d8c1;opacity:1}.smv-vthumb img{width:100%;height:100%;object-fit:cover}@media(max-width:700px){.smv-view-all{left:10px;bottom:11px;min-height:36px;padding:0 11px;font-size:9px}.smv-vstage{padding:10px 46px}.smv-varrow{width:38px;height:38px;font-size:24px}.smv-vprev{left:5px}.smv-vnext{right:5px}.smv-vthumb{flex-basis:68px;width:68px;height:48px}}`;document.head.appendChild(s)}
-function viewerShow(n){const m=document.getElementById("smvViewer");if(!m||!photos.length)return;viewerI=(n+photos.length)%photos.length;m.querySelector(".smv-vstage img").src=photos[viewerI];m.querySelector(".smv-vcount").textContent=`${viewerI+1} / ${photos.length}`;m.querySelectorAll(".smv-vthumb").forEach((b,k)=>b.classList.toggle("active",k===viewerI));m.querySelector(`.smv-vthumb[data-i="${viewerI}"]`)?.scrollIntoView({block:"nearest",inline:"center"})}
-function closeViewer(){const m=document.getElementById("smvViewer");if(m)m.hidden=true;document.body.style.overflow="";if(window.__smvShow)start(window.__smvShow)}
-function openViewer(n){styles();let m=document.getElementById("smvViewer");if(!m){m=document.createElement("div");m.id="smvViewer";m.className="smv-viewer";m.hidden=true;m.innerHTML=`<div class="smv-vhead"><div><strong>All Venue Photos</strong><span class="smv-vcount"></span></div><button class="smv-vclose" type="button">×</button></div><div class="smv-vstage"><button class="smv-varrow smv-vprev" type="button">‹</button><img alt="Venue photo"><button class="smv-varrow smv-vnext" type="button">›</button></div><div class="smv-vthumbs">${photos.map((p,k)=>`<button class="smv-vthumb" data-i="${k}" type="button"><img src="${esc(p)}" alt="Venue photo ${k+1}" loading="lazy"></button>`).join("")}</div>`;document.body.appendChild(m);m.querySelector(".smv-vclose").onclick=closeViewer;m.querySelector(".smv-vprev").onclick=()=>viewerShow(viewerI-1);m.querySelector(".smv-vnext").onclick=()=>viewerShow(viewerI+1);m.querySelectorAll(".smv-vthumb").forEach(b=>b.onclick=()=>viewerShow(+b.dataset.i));document.addEventListener("keydown",e=>{if(m.hidden)return;if(e.key==="Escape")closeViewer();if(e.key==="ArrowLeft")viewerShow(viewerI-1);if(e.key==="ArrowRight")viewerShow(viewerI+1)})}stop();m.hidden=false;document.body.style.overflow="hidden";viewerShow(n)}
-async function load(){if(!db||!ok)return;const img=await waitImg(),cover=img?.src||"",r=await db.storage.from(B).list(`${id}/gallery`,{limit:40,sortBy:{column:"name",order:"asc"}}),gallery=r.error?[]:(r.data||[]).filter(x=>x?.name&&x.name!==".emptyFolderPlaceholder").map(x=>url(`${id}/gallery/${x.name}`)).filter(Boolean);photos=[...new Set([cover,...gallery].filter(Boolean))].slice(0,MAX);fit(img);if(photos.length>1)carousel(img)}
-function carousel(img){const media=document.getElementById("venueProfileMedia");if(!media||!img||media.dataset.smvCarousel==="1")return;media.dataset.smvCarousel="1";styles();const prev=document.createElement("button"),next=document.createElement("button"),count=document.createElement("div"),all=document.createElement("button");prev.type=next.type=all.type="button";prev.className="smv-cover-arrow smv-cover-prev";next.className="smv-cover-arrow smv-cover-next";count.className="smv-cover-counter";all.className="smv-view-all";prev.textContent="‹";next.textContent="›";all.textContent="▦ View All Photos";media.append(prev,next,count,all);function show(n){i=(n+photos.length)%photos.length;media.classList.add("smv-slide-changing");setTimeout(()=>{img.onload=()=>{fit(img);media.classList.remove("smv-slide-changing")};img.src=photos[i];img.alt=`Venue photo ${i+1} of ${photos.length}`;count.textContent=`📷 ${i+1} / ${photos.length} Photos`;if(img.complete&&img.naturalWidth){fit(img);setTimeout(()=>media.classList.remove("smv-slide-changing"),40)}},70)}window.__smvShow=show;prev.onclick=()=>{show(i-1);stop();start(show)};next.onclick=()=>{show(i+1);stop();start(show)};all.onclick=()=>openViewer(i);let sx=0;media.addEventListener("touchstart",e=>{stop();sx=e.touches[0]?.clientX||0},{passive:true});media.addEventListener("touchend",e=>{const ex=e.changedTouches[0]?.clientX||0;if(Math.abs(ex-sx)>45)show(ex<sx?i+1:i-1);start(show)},{passive:true});media.addEventListener("mouseenter",stop);media.addEventListener("mouseleave",()=>start(show));document.addEventListener("visibilitychange",()=>document.hidden?stop():start(show));show(0);start(show)}
-function quick(){let n=0;const run=()=>{const hero=document.querySelector(".venue-profile-hero"),media=document.getElementById("venueProfileMedia"),form=document.getElementById("venueQuickEnquiryForm");if(hero&&media&&form){hero.classList.add("smv-hero-with-quick");if(form.parentElement!==hero)media.insertAdjacentElement("afterend",form);fit(document.getElementById("venueProfileImage"));return}if(++n<70)setTimeout(run,100)};run()}
-function shortlist(v){const a=document.querySelector(".venue-profile-hero-actions");if(!a||document.getElementById("smvProfileShortlist"))return;const w=document.createElement("div"),b=document.createElement("button"),c=document.createElement("a");w.className="smv-profile-actions";b.id="smvProfileShortlist";b.className="smv-profile-shortlist";b.type="button";c.className="smv-profile-compare";c.href=`venues.html?compare=${encodeURIComponent(id)}`;c.textContent="Compare Venues";const read=()=>{try{return JSON.parse(localStorage.getItem(SKEY)||"[]").map(String)}catch(_){return[]}},sync=()=>{const on=read().includes(String(id));b.classList.toggle("active",on);b.textContent=on?"✓ Shortlisted":"♡ Shortlist"};b.onclick=()=>{let x=read();x=x.includes(String(id))?x.filter(y=>y!==String(id)):[...x,String(id)].slice(-8);localStorage.setItem(SKEY,JSON.stringify(x));sync()};w.append(b,c);const map=String(v.google_maps_url||"");if(/^https?:\/\//i.test(map)){const m=document.createElement("a");m.className="smv-profile-map";m.href=map;m.target="_blank";m.rel="noopener";m.textContent="⌖ View on Map";w.appendChild(m)}a.appendChild(w);sync()}
-async function publicData(){if(!db||!ok)return;try{const r=await db.rpc("smv_public_venues");if(r.error)return;const v=(Array.isArray(r.data)?r.data:[]).map(x=>x?.venue||x).find(x=>String(x?.id)===id);if(v)shortlist(v)}catch(_){}}
-function init(){load();quick();publicData()}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
+  "use strict";
+
+  const SUPABASE_URL="https://uajqwyoqbbswkfiwosyw.supabase.co";
+  const SUPABASE_ANON_KEY="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+  const BUCKET="venue-media";
+  const MAX_PHOTOS=30;
+  const SHORTLIST_KEY="smv_venue_shortlist_v2";
+  const RECENT_KEY="smv_recent_venues_v1";
+  const params=new URLSearchParams(window.location.search);
+  const venueId=params.get("id")||"";
+  const validVenueId=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(venueId);
+  const client=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+
+  let photos=[];
+  let currentIndex=0;
+  let autoTimer=null;
+  let viewerIndex=0;
+  let currentVenue=null;
+
+  const $=selector=>document.querySelector(selector);
+  const byId=id=>document.getElementById(id);
+  const escapeHtml=value=>String(value??"").replace(/[&<>'\"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"}[char]));
+  const publicUrl=path=>client?.storage.from(BUCKET).getPublicUrl(path)?.data?.publicUrl||"";
+  const money=value=>{const n=Number(value);return Number.isFinite(n)&&n>0?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n):""};
+  const getIds=key=>{try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value.map(String).filter(Boolean):[]}catch(_){return[]}};
+  const setIds=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}};
+  const cleanList=value=>Array.isArray(value)?value.map(String).filter(Boolean):String(value||"").split(/[,|]/).map(x=>x.trim()).filter(Boolean);
+
+  function applyImageFit(image){
+    if(!image)return;
+    const apply=()=>{
+      image.classList.add("smv-image-contain");
+      image.classList.remove("smv-image-cover");
+      image.style.objectFit="contain";
+      image.style.objectPosition="center center";
+      image.style.imageRendering="auto";
+      image.style.filter="none";
+      image.style.transform="none";
+    };
+    if(image.complete)apply();
+    else image.addEventListener("load",apply,{once:true});
+  }
+
+  async function waitForProfileImage(){
+    for(let attempt=0;attempt<80;attempt+=1){
+      const image=byId("venueProfileImage");
+      if(image&&!image.hidden&&image.src)return image;
+      await new Promise(resolve=>setTimeout(resolve,100));
+    }
+    return byId("venueProfileImage");
+  }
+
+  async function loadPhotos(){
+    if(!client||!validVenueId)return;
+    const image=await waitForProfileImage();
+    const cover=image?.src||"";
+    let gallery=[];
+    try{
+      const result=await client.storage.from(BUCKET).list(`${venueId}/gallery`,{limit:40,sortBy:{column:"name",order:"asc"}});
+      gallery=result.error?[]:(result.data||[])
+        .filter(item=>item?.name&&item.name!==".emptyFolderPlaceholder")
+        .map(item=>publicUrl(`${venueId}/gallery/${item.name}`))
+        .filter(Boolean);
+    }catch(_){gallery=[];}
+    photos=[...new Set([cover,...gallery].filter(Boolean))].slice(0,MAX_PHOTOS);
+    if(image){
+      image.decoding="async";
+      image.fetchPriority="high";
+      applyImageFit(image);
+    }
+    if(photos.length)installHeroGallery(image);
+  }
+
+  function stopAuto(){if(autoTimer){clearInterval(autoTimer);autoTimer=null;}}
+  function startAuto(){if(!autoTimer&&photos.length>1)autoTimer=setInterval(()=>showHeroPhoto(currentIndex+1),4400);}
+  function restartAuto(){stopAuto();startAuto();}
+
+  function showHeroPhoto(nextIndex){
+    const image=byId("venueProfileImage"),media=byId("venueProfileMedia"),counter=byId("smvHeroPhotoCounter"),progress=byId("smvHeroProgress");
+    if(!image||!photos.length)return;
+    currentIndex=(nextIndex+photos.length)%photos.length;
+    if(media)media.classList.add("smv-slide-changing");
+    window.setTimeout(()=>{
+      image.onload=()=>{applyImageFit(image);media?.classList.remove("smv-slide-changing");};
+      image.src=photos[currentIndex];
+      image.alt=`Venue photo ${currentIndex+1} of ${photos.length}`;
+      image.hidden=false;
+      applyImageFit(image);
+      if(counter)counter.textContent=`${currentIndex+1} / ${photos.length} Photos`;
+      if(progress)progress.style.setProperty("--smv-progress",`${((currentIndex+1)/photos.length)*100}%`);
+      if(image.complete&&image.naturalWidth){applyImageFit(image);window.setTimeout(()=>media?.classList.remove("smv-slide-changing"),45);}
+    },70);
+  }
+
+  function installHeroGallery(image){
+    const media=byId("venueProfileMedia");
+    if(!media||media.dataset.smvHeroGallery==="1")return;
+    media.dataset.smvHeroGallery="1";
+    media.classList.add("smv-premium-hero-media");
+    const prev=document.createElement("button");
+    prev.type="button";prev.className="smv-cover-arrow smv-cover-prev";prev.setAttribute("aria-label","Previous venue photo");prev.textContent="‹";
+    const next=document.createElement("button");
+    next.type="button";next.className="smv-cover-arrow smv-cover-next";next.setAttribute("aria-label","Next venue photo");next.textContent="›";
+    const viewAll=document.createElement("button");
+    viewAll.id="smvViewAllPhotos";viewAll.type="button";viewAll.className="smv-view-all";viewAll.textContent=`▦ View All ${photos.length} Photo${photos.length===1?"":"s"}`;
+    const counter=document.createElement("div");
+    counter.id="smvHeroPhotoCounter";counter.className="smv-cover-counter";
+    const progress=document.createElement("div");
+    progress.id="smvHeroProgress";progress.className="smv-hero-progress";
+    media.append(prev,next,viewAll,counter,progress);
+
+    prev.addEventListener("click",()=>{showHeroPhoto(currentIndex-1);restartAuto();});
+    next.addEventListener("click",()=>{showHeroPhoto(currentIndex+1);restartAuto();});
+    viewAll.addEventListener("click",()=>openViewer(currentIndex));
+    image?.addEventListener("click",()=>openViewer(currentIndex));
+
+    let touchStartX=0;
+    media.addEventListener("touchstart",event=>{stopAuto();touchStartX=event.touches[0]?.clientX||0;},{passive:true});
+    media.addEventListener("touchend",event=>{const endX=event.changedTouches[0]?.clientX||0;if(Math.abs(endX-touchStartX)>45)showHeroPhoto(endX<touchStartX?currentIndex+1:currentIndex-1);startAuto();},{passive:true});
+    media.addEventListener("mouseenter",stopAuto);
+    media.addEventListener("mouseleave",startAuto);
+    media.tabIndex=0;
+    media.addEventListener("keydown",event=>{if(event.key==="ArrowLeft"){showHeroPhoto(currentIndex-1);restartAuto();}if(event.key==="ArrowRight"){showHeroPhoto(currentIndex+1);restartAuto();}if(event.key==="Enter")openViewer(currentIndex);});
+    document.addEventListener("visibilitychange",()=>document.hidden?stopAuto():startAuto());
+    showHeroPhoto(0);
+    startAuto();
+  }
+
+  function createViewer(){
+    let viewer=byId("smvPhotoViewer");
+    if(viewer)return viewer;
+    viewer=document.createElement("div");
+    viewer.id="smvPhotoViewer";
+    viewer.className="smv-photo-viewer";
+    viewer.hidden=true;
+    viewer.innerHTML=`
+      <div class="smv-photo-viewer-head">
+        <div><strong>All Venue Photos</strong><span id="smvViewerCounter"></span></div>
+        <button type="button" class="smv-viewer-close" aria-label="Close gallery">×</button>
+      </div>
+      <div class="smv-photo-viewer-stage">
+        <button type="button" class="smv-viewer-arrow smv-viewer-prev" aria-label="Previous photo">‹</button>
+        <img id="smvViewerImage" alt="Venue photo">
+        <button type="button" class="smv-viewer-arrow smv-viewer-next" aria-label="Next photo">›</button>
+      </div>
+      <div id="smvViewerThumbs" class="smv-viewer-thumbs"></div>`;
+    document.body.appendChild(viewer);
+    viewer.querySelector(".smv-viewer-close").addEventListener("click",closeViewer);
+    viewer.querySelector(".smv-viewer-prev").addEventListener("click",()=>showViewerPhoto(viewerIndex-1));
+    viewer.querySelector(".smv-viewer-next").addEventListener("click",()=>showViewerPhoto(viewerIndex+1));
+    viewer.addEventListener("click",event=>{if(event.target===viewer)closeViewer();});
+    document.addEventListener("keydown",event=>{if(viewer.hidden)return;if(event.key==="Escape")closeViewer();if(event.key==="ArrowLeft")showViewerPhoto(viewerIndex-1);if(event.key==="ArrowRight")showViewerPhoto(viewerIndex+1);});
+    return viewer;
+  }
+
+  function openViewer(index){
+    if(!photos.length)return;
+    const viewer=createViewer();
+    const thumbs=byId("smvViewerThumbs");
+    if(thumbs&&!thumbs.dataset.loaded){
+      thumbs.innerHTML=photos.map((src,n)=>`<button type="button" class="smv-viewer-thumb" data-index="${n}"><img src="${escapeHtml(src)}" alt="Venue photo ${n+1}" loading="lazy" decoding="async"></button>`).join("");
+      thumbs.dataset.loaded="1";
+      thumbs.querySelectorAll(".smv-viewer-thumb").forEach(button=>button.addEventListener("click",()=>showViewerPhoto(Number(button.dataset.index))));
+    }
+    stopAuto();
+    viewer.hidden=false;
+    document.body.style.overflow="hidden";
+    showViewerPhoto(index);
+  }
+
+  function closeViewer(){
+    const viewer=byId("smvPhotoViewer");
+    if(viewer)viewer.hidden=true;
+    document.body.style.overflow="";
+    startAuto();
+  }
+
+  function showViewerPhoto(nextIndex){
+    if(!photos.length)return;
+    viewerIndex=(nextIndex+photos.length)%photos.length;
+    const image=byId("smvViewerImage"),counter=byId("smvViewerCounter");
+    if(image){image.src=photos[viewerIndex];image.alt=`Venue photo ${viewerIndex+1} of ${photos.length}`;}
+    if(counter)counter.textContent=`${viewerIndex+1} / ${photos.length}`;
+    document.querySelectorAll(".smv-viewer-thumb").forEach(button=>button.classList.toggle("active",Number(button.dataset.index)===viewerIndex));
+    const active=document.querySelector(`.smv-viewer-thumb[data-index="${viewerIndex}"]`);
+    if(active&&typeof active.scrollIntoView==="function")active.scrollIntoView({block:"nearest",inline:"center"});
+  }
+
+  function moveQuickEnquiryIntoHero(){
+    let tries=0;
+    let observer=null;
+    const place=()=>{
+      const hero=$(".venue-profile-hero"),media=byId("venueProfileMedia"),form=byId("venueQuickEnquiryForm");
+      if(hero&&media&&form){
+        hero.classList.add("smv-hero-with-quick");
+        if(form.parentElement!==hero)media.insertAdjacentElement("afterend",form);
+        form.classList.add("smv-hero-enquiry-form");
+        applyImageFit(byId("venueProfileImage"));
+        if(observer)observer.disconnect();
+        return true;
+      }
+      return false;
+    };
+    if(place())return;
+    observer=new MutationObserver(()=>{place();});
+    observer.observe(document.body,{childList:true,subtree:true});
+    const retry=()=>{if(place())return;tries+=1;if(tries<140)window.setTimeout(retry,100);else observer.disconnect();};
+    retry();
+  }
+
+  function installActions(venue){
+    const actions=$(".venue-profile-hero-actions");
+    if(!actions||byId("smvProfileShortlist"))return;
+    const wrap=document.createElement("div");
+    wrap.className="smv-profile-actions";
+    const shortlist=document.createElement("button");
+    shortlist.id="smvProfileShortlist";
+    shortlist.className="smv-profile-action smv-profile-shortlist";
+    shortlist.type="button";
+    const compare=document.createElement("a");
+    compare.className="smv-profile-action smv-profile-compare";
+    compare.href=`venues.html?compare=${encodeURIComponent(venueId)}`;
+    compare.textContent="⚖ Compare";
+    const call=document.createElement("a");
+    call.className="smv-profile-action smv-profile-call";
+    call.href="tel:+91836832256";
+    call.textContent="☎ Call";
+    const sync=()=>{
+      const ids=getIds(SHORTLIST_KEY),active=ids.includes(String(venueId));
+      shortlist.classList.toggle("active",active);
+      shortlist.textContent=active?"✓ Shortlisted":"♡ Shortlist";
+    };
+    shortlist.addEventListener("click",()=>{
+      let ids=getIds(SHORTLIST_KEY);
+      ids=ids.includes(String(venueId))?ids.filter(x=>x!==String(venueId)):[...ids,String(venueId)].slice(-8);
+      setIds(SHORTLIST_KEY,ids);
+      sync();
+    });
+    wrap.append(shortlist,compare,call);
+    const mapUrl=String(venue?.google_maps_url||"");
+    if(/^https?:\/\//i.test(mapUrl)){
+      const map=document.createElement("a");
+      map.className="smv-profile-action smv-profile-map";
+      map.href=mapUrl;map.target="_blank";map.rel="noopener";map.textContent="⌖ Map";
+      wrap.appendChild(map);
+    }
+    actions.appendChild(wrap);
+    sync();
+  }
+
+  function rememberVenue(venue){
+    if(!venue?.id)return;
+    try{
+      const old=JSON.parse(localStorage.getItem(RECENT_KEY)||"[]"),rows=Array.isArray(old)?old:[];
+      const next=[{id:String(venue.id),name:String(venue.venue_name||"Venue"),city:String(venue.city||""),ts:Date.now()},...rows.filter(row=>String(row?.id)!==String(venue.id))].slice(0,8);
+      localStorage.setItem(RECENT_KEY,JSON.stringify(next));
+    }catch(_){ }
+  }
+
+  function installSnapshot(venue){
+    const content=$(".venue-profile-content");
+    if(!content||byId("smvProfileSnapshot"))return;
+    const min=money(venue?.price_min_per_person),max=money(venue?.price_max_per_person);
+    const price=min&&max?`${min}–${max} / person`:min?`From ${min} / person`:max?`Up to ${max} / person`:"Quote on request";
+    const capMin=Number(venue?.capacity_min||0),capMax=Number(venue?.capacity_max||0);
+    const capacity=capMin&&capMax?`${capMin}–${capMax} guests`:capMax?`Up to ${capMax} guests`:capMin?`${capMin}+ guests`:"Capacity on request";
+    const facilities=[];
+    if(venue?.parking_available)facilities.push("Parking");
+    if(venue?.rooms_available)facilities.push("Rooms");
+    if(venue?.food_veg)facilities.push("Veg food");
+    if(venue?.food_non_veg)facilities.push("Non-veg food");
+    if(venue?.catering_available)facilities.push("Catering");
+    if(venue?.decoration_available)facilities.push("Decoration");
+    const eventTypes=cleanList(venue?.event_types||venue?.events||venue?.suitable_events).slice(0,6);
+    const section=document.createElement("section");
+    section.id="smvProfileSnapshot";
+    section.className="venue-profile-panel venue-white-card smv-profile-snapshot";
+    section.innerHTML=`<p class="eyebrow">VENUE SNAPSHOT</p><h2>Important details at a glance.</h2><div class="smv-snapshot-grid"><div><span>Starting price</span><strong>${escapeHtml(price)}</strong></div><div><span>Guest capacity</span><strong>${escapeHtml(capacity)}</strong></div><div><span>Useful facilities</span><strong>${escapeHtml(facilities.slice(0,4).join(" · ")||"Details on request")}</strong></div></div>${eventTypes.length?`<div class="smv-good-fit">${eventTypes.map(item=>`<span>✓ ${escapeHtml(item)}</span>`).join("")}</div>`:""}<small>Only real venue information is shown. Final package and availability are confirmed after your enquiry.</small>`;
+    content.prepend(section);
+  }
+
+  function installStickyBar(venue){
+    if(byId("smvStickyVenueBar"))return;
+    const name=String(venue?.venue_name||byId("venueProfileName")?.textContent||"Venue");
+    const min=money(venue?.price_min_per_person);
+    const capMin=Number(venue?.capacity_min||0),capMax=Number(venue?.capacity_max||0);
+    const cap=capMin&&capMax?`${capMin}–${capMax} guests`:capMax?`Up to ${capMax} guests`:capMin?`${capMin}+ guests`:"Capacity on request";
+    const bar=document.createElement("div");
+    bar.id="smvStickyVenueBar";
+    bar.className="smv-sticky-venue-bar";
+    bar.innerHTML=`<strong>${escapeHtml(name)}</strong><span>${escapeHtml(min?`From ${min}/person`:"Quote on request")}</span><span>${escapeHtml(cap)}</span><button type="button">Check Availability</button>`;
+    document.body.appendChild(bar);
+    bar.querySelector("button").addEventListener("click",()=>byId("venueProfileQuote")?.click());
+    const toggle=()=>bar.classList.toggle("show",window.scrollY>520);
+    window.addEventListener("scroll",toggle,{passive:true});
+    toggle();
+  }
+
+  async function loadVenueData(){
+    if(!client||!validVenueId)return;
+    try{
+      const result=await client.rpc("smv_public_venues");
+      if(result.error)return;
+      currentVenue=(Array.isArray(result.data)?result.data:[]).map(item=>item?.venue||item).find(item=>String(item?.id)===String(venueId))||null;
+      if(!currentVenue)return;
+      installActions(currentVenue);
+      installSnapshot(currentVenue);
+      installStickyBar(currentVenue);
+      rememberVenue(currentVenue);
+    }catch(_){ }
+  }
+
+  function resolveSimilarVenueImages(){
+    const grid=byId("similarVenuesGrid");
+    if(!grid||!client)return;
+    const process=()=>grid.querySelectorAll(".venue-similar-card").forEach(async card=>{
+      if(card.dataset.smvImageChecked==="1")return;
+      card.dataset.smvImageChecked="1";
+      const media=card.querySelector(".venue-similar-media");
+      if(!media||media.querySelector("img"))return;
+      const match=(media.getAttribute("href")||"").match(/[?&]id=([0-9a-f-]{36})/i);
+      const targetId=match?.[1]||"";
+      if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(targetId))return;
+      try{
+        const root=await client.storage.from(BUCKET).list(targetId,{limit:100,sortBy:{column:"name",order:"asc"}});
+        let imageUrl="";
+        if(!root.error){const cover=(root.data||[]).find(row=>/^cover-/i.test(row?.name||""));if(cover)imageUrl=publicUrl(`${targetId}/${cover.name}`);}
+        if(!imageUrl){const gallery=await client.storage.from(BUCKET).list(`${targetId}/gallery`,{limit:1,sortBy:{column:"name",order:"asc"}});const first=(gallery.data||[]).find(row=>row?.name&&row.name!==".emptyFolderPlaceholder");if(first)imageUrl=publicUrl(`${targetId}/gallery/${first.name}`);}
+        if(imageUrl){const label=card.querySelector("h3")?.textContent?.trim()||"Venue";media.innerHTML=`<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(label)} venue" loading="lazy" decoding="async">`;}
+      }catch(_){ }
+    });
+    process();
+    const observer=new MutationObserver(process);
+    observer.observe(grid,{childList:true,subtree:true});
+    window.setTimeout(()=>{process();observer.disconnect();},6000);
+  }
+
+  function init(){
+    moveQuickEnquiryIntoHero();
+    loadPhotos();
+    loadVenueData();
+    resolveSimilarVenueImages();
+  }
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
+  else init();
 })();
