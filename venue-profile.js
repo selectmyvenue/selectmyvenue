@@ -50,6 +50,12 @@
     return "Quote on request";
   }
 
+  function fullAddress(venue) {
+    const direct = String(venue.address || venue.full_address || "").trim();
+    if (direct) return direct;
+    return [venue.area, venue.city, venue.state, venue.pincode].map(value => String(value || "").trim()).filter(Boolean).join(", ") || "Address on request";
+  }
+
   function venueFeatures(venue) {
     const list = [];
     if (venue.food_veg) list.push(["🥗", "Vegetarian food"]);
@@ -105,10 +111,32 @@
 
   function setStructuredData(venue, images, description) {
     const location=[venue.area,venue.city].filter(Boolean).join(", ");
-    const data={"@context":"https://schema.org","@type":"EventVenue","@id":`https://selectmyvenue.com/venue.html?id=${venue.id}`,name:venue.venue_name,description,url:`https://selectmyvenue.com/venue.html?id=${venue.id}`,publicAccess:true,address:{"@type":"PostalAddress",streetAddress:venue.area||undefined,addressLocality:venue.city||location||undefined,addressCountry:"IN"},maximumAttendeeCapacity:Number(venue.capacity_max||0)||undefined,image:images.length?images:undefined};
+    const data={"@context":"https://schema.org","@type":"EventVenue","@id":`https://selectmyvenue.com/venue.html?id=${venue.id}`,name:venue.venue_name,description,url:`https://selectmyvenue.com/venue.html?id=${venue.id}`,publicAccess:true,address:{"@type":"PostalAddress",streetAddress:venue.address||venue.area||undefined,addressLocality:venue.city||location||undefined,addressRegion:venue.state||undefined,postalCode:venue.pincode||undefined,addressCountry:"IN"},maximumAttendeeCapacity:Number(venue.capacity_max||0)||undefined,image:images.length?images:undefined};
     Object.keys(data.address).forEach(key=>data.address[key]===undefined&&delete data.address[key]);
     Object.keys(data).forEach(key=>data[key]===undefined&&delete data[key]);
     if(byId("venueStructuredData"))byId("venueStructuredData").textContent=JSON.stringify(data);
+  }
+
+  function renderProfileDetails(venue, media) {
+    if (byId("venueProfileDetailsStrip")) return;
+    const hero = document.querySelector(".venue-profile-hero");
+    if (!hero) return;
+    const photoCount = (media.cover ? 1 : 0) + (media.images || []).filter(Boolean).length;
+    const location = [venue.area, venue.city].filter(Boolean).join(", ") || "Location on request";
+    const vegPrice = venue.price_min_per_person ? `${money(venue.price_min_per_person)} / pax` : pricing(venue);
+    const details = [
+      ["✓", "Verified", "Select My Venue partner"],
+      ["👥", "Capacity", capacity(venue)],
+      ["₹", "Veg Price", vegPrice],
+      ["📍", "Location", location],
+      ["🏠", "Address", fullAddress(venue)],
+      ["📷", "Photos", photoCount ? `${photoCount} photo${photoCount === 1 ? "" : "s"}` : "Photos on request"]
+    ];
+    const section = document.createElement("section");
+    section.id = "venueProfileDetailsStrip";
+    section.className = "venue-profile-details-strip venue-white-card";
+    section.innerHTML = details.map(([icon, label, value]) => `<div class="venue-profile-detail-item"><b>${icon}</b><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
+    hero.insertAdjacentElement("afterend", section);
   }
 
   function renderHighlights(venue) {
@@ -180,7 +208,7 @@
     if(mapUrl){byId("venueProfileMap").href=mapUrl;byId("venueProfileMap").hidden=false;}
     const featureList=venueFeatures(venue);
     byId("venueProfileFeatures").innerHTML=featureList.length?featureList.map(([icon,label])=>`<div class="venue-profile-feature"><span>${icon}</span><strong>${escapeHtml(label)}</strong></div>`).join(""):`<div class="venue-profile-feature"><span>✦</span><strong>Venue details available on request</strong></div>`;
-    renderHighlights(venue);renderGallery(name,media);
+    renderHighlights(venue);renderGallery(name,media);renderProfileDetails(venue,media);
     const metaDescription=`${name} in ${location}. View photos, capacity, pricing and facilities, then request a personalised quote from Select My Venue.`;
     const structuredImages=[media.cover,...media.images].filter(Boolean);
     setMeta(name,metaDescription,media.cover);setStructuredData(venue,structuredImages,description);
@@ -232,9 +260,9 @@
   function installQuickEnquiryStyles(){
     if(byId("venueQuickEnquiryStyles"))return;
     const style=document.createElement("style");style.id="venueQuickEnquiryStyles";style.textContent=`
-      .venue-profile-enquiry{position:sticky!important;top:96px!important;align-self:start!important}.venue-quick-enquiry-form{display:grid;gap:9px;margin:14px 0 12px;padding:16px;border:1px solid #dfe9e5;border-radius:16px;background:#fff;box-shadow:0 10px 28px rgba(18,56,50,.055)}.venue-quick-title{color:#123f37;font-size:18px;font-weight:950;margin-bottom:0}.venue-quick-subtitle{margin:-3px 0 4px;color:#6a827c;font-size:10px;line-height:1.45;font-weight:700}.venue-quick-enquiry-form label{display:grid;gap:5px}.venue-quick-enquiry-form label span{color:#59766f;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.venue-quick-enquiry-form input,.venue-quick-enquiry-form select{width:100%;box-sizing:border-box;border:1px solid #d9e5e1;border-radius:10px;background:#fbfdfc;color:#173f37;font:inherit;font-size:12px;font-weight:650;outline:none;height:40px;padding:0 10px}.venue-quick-enquiry-form input:focus,.venue-quick-enquiry-form select:focus{border-color:#0fbaa3;box-shadow:0 0 0 3px rgba(15,186,163,.08)}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.venue-quick-enquiry-form button{height:44px;border:0;border-radius:11px;background:linear-gradient(135deg,#0fbaa3,#087f71);color:#fff;font-size:12px;font-weight:950;cursor:pointer;box-shadow:0 9px 22px rgba(8,127,113,.18)}.venue-quick-enquiry-form button:disabled{opacity:.65;cursor:wait}.venue-quick-status{min-height:18px;font-size:10px;line-height:1.45;font-weight:750}.venue-quick-status.success{color:#087f71}.venue-quick-status.error{color:#b42318}#venueProfileQuoteAside{display:none!important}.venue-profile-enquiry>.venue-assist-points{margin-top:14px!important}.venue-profile-enquiry>small{display:block;margin-top:10px!important}
-      @media(max-width:900px){.venue-profile-enquiry{position:static!important}.venue-quick-enquiry-form{grid-template-columns:1fr 1fr}.venue-quick-title,.venue-quick-subtitle,.venue-quick-enquiry-form button,.venue-quick-status{grid-column:1/-1}.venue-quick-row{display:contents}}
-      @media(max-width:620px){.venue-quick-enquiry-form{grid-template-columns:1fr;padding:14px}.venue-quick-title,.venue-quick-subtitle,.venue-quick-enquiry-form button,.venue-quick-status{grid-column:auto}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr}}
+      body.venue-profile-page{font-size:18px!important;line-height:1.72!important}.venue-profile-page p,.venue-profile-page li,.venue-profile-page a,.venue-profile-page button,.venue-profile-page input,.venue-profile-page select,.venue-profile-page textarea{font-size:16px}.venue-breadcrumbs{font-size:14px!important}.venue-profile-titlebar h1,#venueProfileName{font-size:clamp(42px,5vw,66px)!important}.venue-profile-location{font-size:17px!important;font-weight:800!important}.venue-profile-facts span{font-size:12px!important}.venue-profile-facts strong{font-size:17px!important}.venue-profile-panel h2,.venue-profile-enquiry h2{font-size:clamp(32px,3.2vw,44px)!important}.venue-profile-panel>p:last-child,.venue-profile-enquiry>p,#venueProfileDescription{font-size:17px!important;line-height:1.85!important}.venue-profile-feature strong,.venue-highlight span{font-size:15px!important;line-height:1.6!important}.venue-highlight b{font-size:16px!important}.button,.venue-profile-page button,.venue-profile-page a.button{font-size:15px!important}.smv-cover-counter,.smv-view-all,.smv-profile-action{font-size:14px!important}.venue-profile-details-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;margin:18px 0!important;padding:18px!important;border:1px solid rgba(45,210,189,.18)!important;border-radius:22px!important;background:linear-gradient(145deg,rgba(12,44,40,.95),rgba(5,30,27,.98))!important;box-shadow:0 18px 45px rgba(0,0,0,.18)!important}.venue-profile-detail-item{display:grid!important;grid-template-columns:42px 1fr!important;grid-template-rows:auto auto!important;gap:3px 12px!important;align-items:center!important;min-height:76px!important;padding:14px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:16px!important;background:rgba(255,255,255,.035)!important}.venue-profile-detail-item b{grid-row:1/3;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:rgba(45,210,189,.10);color:#2dd2bd;font-size:20px}.venue-profile-detail-item span{color:#9fc1bc;font-size:12px!important;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.venue-profile-detail-item strong{color:#f3fbfa;font-size:17px!important;line-height:1.35;font-weight:900}.venue-profile-detail-item:nth-child(5),.venue-profile-detail-item:nth-child(6){grid-column:auto}.venue-profile-enquiry{position:sticky!important;top:96px!important;align-self:start!important}.venue-quick-enquiry-form{display:grid;gap:11px;margin:14px 0 12px;padding:18px;border:1px solid #dfe9e5;border-radius:17px;background:#fff;box-shadow:0 10px 28px rgba(18,56,50,.055)}.venue-quick-title{color:#123f37;font-size:22px;font-weight:950;margin-bottom:0}.venue-quick-subtitle{margin:-2px 0 5px;color:#5f746e;font-size:13px;line-height:1.5;font-weight:750}.venue-quick-enquiry-form label{display:grid;gap:6px}.venue-quick-enquiry-form label span{color:#59766f;font-size:11px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.venue-quick-enquiry-form input,.venue-quick-enquiry-form select{width:100%;box-sizing:border-box;border:1px solid #d9e5e1;border-radius:11px;background:#fbfdfc;color:#173f37;font:inherit;font-size:15px;font-weight:700;outline:none;height:46px;padding:0 12px}.venue-quick-enquiry-form input:focus,.venue-quick-enquiry-form select:focus{border-color:#0fbaa3;box-shadow:0 0 0 3px rgba(15,186,163,.08)}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.venue-quick-enquiry-form button{height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#0fbaa3,#087f71);color:#fff;font-size:15px;font-weight:950;cursor:pointer;box-shadow:0 9px 22px rgba(8,127,113,.18)}.venue-quick-enquiry-form button:disabled{opacity:.65;cursor:wait}.venue-quick-status{min-height:20px;font-size:13px;line-height:1.5;font-weight:800}.venue-quick-status.success{color:#087f71}.venue-quick-status.error{color:#b42318}#venueProfileQuoteAside{display:none!important}.venue-profile-enquiry>.venue-assist-points{margin-top:14px!important}.venue-profile-enquiry>small{display:block;margin-top:10px!important;font-size:12px!important}
+      @media(max-width:900px){.venue-profile-enquiry{position:static!important}.venue-quick-enquiry-form{grid-template-columns:1fr 1fr}.venue-quick-title,.venue-quick-subtitle,.venue-quick-enquiry-form button,.venue-quick-status{grid-column:1/-1}.venue-quick-row{display:contents}.venue-profile-details-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+      @media(max-width:620px){body.venue-profile-page{font-size:16px!important}.venue-profile-titlebar h1,#venueProfileName{font-size:36px!important}.venue-profile-details-strip{grid-template-columns:1fr!important;padding:12px!important}.venue-profile-detail-item strong{font-size:15px!important}.venue-quick-enquiry-form{grid-template-columns:1fr;padding:14px}.venue-quick-title,.venue-quick-subtitle,.venue-quick-enquiry-form button,.venue-quick-status{grid-column:auto}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr}.venue-profile-page p,.venue-profile-page li,.venue-profile-page a,.venue-profile-page button,.venue-profile-page input,.venue-profile-page select,.venue-profile-page textarea{font-size:15px}.venue-profile-panel>p:last-child,.venue-profile-enquiry>p,#venueProfileDescription{font-size:15.5px!important}}
     `;document.head.appendChild(style);
   }
 
