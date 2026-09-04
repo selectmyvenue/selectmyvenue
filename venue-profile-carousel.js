@@ -224,7 +224,7 @@
     compare.textContent="⚖ Compare";
     const call=document.createElement("a");
     call.className="smv-profile-action smv-profile-call";
-    call.href="tel:+91836832256";
+    call.href="tel:+918368322256";
     call.textContent="☎ Call";
     const sync=()=>{
       const ids=getIds(SHORTLIST_KEY),active=ids.includes(String(venueId));
