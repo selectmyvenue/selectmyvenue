@@ -19,8 +19,8 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="public-pages.css">
   <link rel="stylesheet" href="venue-profile-white.css?v=20260901-1">
-  <link rel="stylesheet" href="venue-profile-luxury.css?v=20260901-2">
-  <link rel="stylesheet" href="venue-profile-carousel.css?v=20260901-1">
+  <link rel="stylesheet" href="venue-profile-luxury.css?v=20260904-premium-1">
+  <link rel="stylesheet" href="venue-profile-carousel.css?v=20260904-premium-1">
   <script id="venueStructuredData" type="application/ld+json"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -29,226 +29,33 @@
     <nav class="page-nav" aria-label="Main navigation">
       <a href="index.html" aria-label="Select My Venue home"><img class="page-logo" src="logo.png" alt="Select My Venue"></a>
       <div class="page-nav-links">
-        <a href="venues.html">Browse Venues</a>
-        <a href="delhi-ncr-venues.html">Delhi NCR Guide</a>
-        <a href="index.html#how">How It Works</a>
-        <a href="list-your-venue.html">List Your Venue</a>
-        <a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a>
+        <a href="venues.html">Browse Venues</a><a href="delhi-ncr-venues.html">Delhi NCR Guide</a><a href="index.html#how">How It Works</a><a href="list-your-venue.html">List Your Venue</a><a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a>
       </div>
     </nav>
   </header>
-
   <main class="page-main venue-profile-main">
-    <div class="breadcrumbs venue-breadcrumbs">
-      <a href="index.html">Home</a><span>›</span><a href="venues.html">Verified Venues</a><span>›</span><span id="venueBreadcrumb">Venue Profile</span>
-    </div>
-
-    <div id="venueProfileLoading" class="state-card venue-white-state">
-      <h2>Preparing this venue…</h2>
-      <p>Loading photos, venue highlights and pricing information.</p>
-    </div>
-
-    <div id="venueProfileError" class="state-card venue-white-state" hidden>
-      <h2>Venue profile unavailable</h2>
-      <p>This venue may be private, inactive or no longer publicly listed.</p>
-      <p style="margin-top:18px"><a class="button button-primary" href="venues.html">Browse Verified Venues</a></p>
-    </div>
-
+    <div class="breadcrumbs venue-breadcrumbs"><a href="index.html">Home</a><span>›</span><a href="venues.html">Verified Venues</a><span>›</span><span id="venueBreadcrumb">Venue Profile</span></div>
+    <div id="venueProfileLoading" class="state-card venue-white-state"><h2>Preparing this venue…</h2><p>Loading photos, venue highlights and pricing information.</p></div>
+    <div id="venueProfileError" class="state-card venue-white-state" hidden><h2>Venue profile unavailable</h2><p>This venue may be private, inactive or no longer publicly listed.</p><p style="margin-top:18px"><a class="button button-primary" href="venues.html">Browse Verified Venues</a></p></div>
     <article id="venueProfile" hidden>
       <section class="venue-profile-hero venue-white-card">
-        <div id="venueProfileMedia" class="venue-profile-media venue-profile-cover">
-          <div id="venueProfileFallback" class="venue-profile-fallback" aria-hidden="true">🏨</div>
-          <img id="venueProfileImage" alt="" hidden>
-          <div class="venue-profile-overlay"></div>
-          <div class="venue-profile-badges">
-            <span id="venueProfileType" class="home-venue-badge">Venue</span>
-            <span class="home-venue-badge verified">✓ Verified Partner</span>
-          </div>
-          <div id="venueProfileMediaCount" class="venue-media-count" hidden></div>
-        </div>
-
-        <div class="venue-profile-titlebar">
-          <div class="venue-title-copy">
-            <p class="eyebrow">SELECT MY VENUE VERIFIED PARTNER</p>
-            <h1 id="venueProfileName">Venue</h1>
-            <p id="venueProfileLocation" class="venue-profile-location">Location on request</p>
-          </div>
-          <div class="venue-profile-hero-actions">
-            <button id="venueProfileQuote" class="button button-primary venue-quote-trigger" type="button">Check Price & Availability</button>
-            <a id="venueProfileWhatsapp" class="button button-secondary" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp</a>
-            <button id="venueShareBtn" class="button button-ghost" type="button">Share</button>
-          </div>
-        </div>
+        <div id="venueProfileMedia" class="venue-profile-media venue-profile-cover"><div id="venueProfileFallback" class="venue-profile-fallback" aria-hidden="true">🏨</div><img id="venueProfileImage" alt="" hidden><div class="venue-profile-overlay"></div><div class="venue-profile-badges"><span id="venueProfileType" class="home-venue-badge">Venue</span><span class="home-venue-badge verified">✓ Verified Partner</span></div><div id="venueProfileMediaCount" class="venue-media-count" hidden></div></div>
+        <div class="venue-profile-titlebar"><div class="venue-title-copy"><p class="eyebrow">SELECT MY VENUE VERIFIED PARTNER</p><h1 id="venueProfileName">Venue</h1><p id="venueProfileLocation" class="venue-profile-location">Location on request</p></div><div class="venue-profile-hero-actions"><button id="venueProfileQuote" class="button button-primary venue-quote-trigger" type="button">Check Price & Availability</button><a id="venueProfileWhatsapp" class="button button-secondary" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp</a><button id="venueShareBtn" class="button button-ghost" type="button">Share</button></div></div>
       </section>
-
-      <section class="venue-profile-facts venue-white-card" aria-label="Venue highlights">
-        <div><span>Capacity</span><strong id="venueProfileCapacity">On request</strong></div>
-        <div><span>Price range</span><strong id="venueProfilePrice">Quote on request</strong></div>
-        <div><span>Venue type</span><strong id="venueProfileFactType">Venue</strong></div>
-        <div><span>Useful for guests</span><strong id="venueProfileGuestAmenity">Verified venue</strong></div>
-      </section>
-
-      <section id="venueProfileGallerySection" class="venue-profile-panel venue-white-card venue-gallery-section" hidden>
-        <div class="venue-section-head">
-          <div>
-            <p class="eyebrow">VENUE GALLERY</p>
-            <h2>See the venue before you shortlist it.</h2>
-          </div>
-          <span id="venueGalleryCount" class="venue-section-count"></span>
-        </div>
-        <div id="venueProfileGallery" class="venue-profile-gallery"></div>
-      </section>
-
-      <section id="venueProfileVideosSection" class="venue-profile-panel venue-white-card venue-videos-section" hidden>
-        <div class="venue-section-head">
-          <div>
-            <p class="eyebrow">VIDEO TOUR</p>
-            <h2>Take a closer look.</h2>
-          </div>
-          <span id="venueVideoCount" class="venue-section-count"></span>
-        </div>
-        <div id="venueProfileVideos" class="venue-profile-videos"></div>
-      </section>
-
-      <div class="venue-profile-layout">
-        <div class="venue-profile-content">
-          <section class="venue-profile-panel venue-white-card">
-            <p class="eyebrow">ABOUT THE VENUE</p>
-            <h2 id="venueAboutHeading">A venue for memorable celebrations.</h2>
-            <p id="venueProfileDescription">Ask our team for availability, packages and detailed venue information.</p>
-          </section>
-
-          <section class="venue-profile-panel venue-white-card">
-            <p class="eyebrow">FACILITIES &amp; SERVICES</p>
-            <h2>What this venue offers</h2>
-            <div id="venueProfileFeatures" class="venue-profile-features"></div>
-          </section>
-
-          <section class="venue-profile-panel venue-white-card">
-            <p class="eyebrow">SMART SHORTLIST</p>
-            <h2>Why this venue may fit your event</h2>
-            <div id="venueProfileHighlights" class="venue-highlight-grid"></div>
-          </section>
-        </div>
-
-        <aside class="venue-profile-enquiry venue-white-card">
-          <span class="venue-profile-assist-badge">PERSONALISED SUPPORT</span>
-          <h2>Interested in this venue?</h2>
-          <p>Tell us your event details once. We’ll use the venue, capacity and budget information already on this page to make your enquiry faster.</p>
-          <button id="venueProfileQuoteAside" class="button button-primary venue-quote-trigger" type="button">Check Price & Availability</button>
-          <a id="venueProfileMap" class="button button-secondary" href="#" target="_blank" rel="noopener" hidden>View on Google Maps</a>
-          <div class="venue-assist-points">
-            <span>✓ Quick availability check</span>
-            <span>✓ Pricing & package guidance</span>
-            <span>✓ Requirement-based support</span>
-          </div>
-          <small>Your enquiry goes to Select My Venue for personalised assistance.</small>
-        </aside>
-      </div>
-
-      <section id="similarVenuesSection" class="venue-similar-section" hidden>
-        <div class="venue-similar-head">
-          <div>
-            <p class="eyebrow">YOU MAY ALSO LIKE</p>
-            <h2>Explore similar verified venues.</h2>
-          </div>
-          <a href="venues.html" class="button button-ghost">Browse All Venues</a>
-        </div>
-        <div id="similarVenuesGrid" class="venue-similar-grid"></div>
-      </section>
+      <section class="venue-profile-facts venue-white-card" aria-label="Venue highlights"><div><span>Capacity</span><strong id="venueProfileCapacity">On request</strong></div><div><span>Price range</span><strong id="venueProfilePrice">Quote on request</strong></div><div><span>Venue type</span><strong id="venueProfileFactType">Venue</strong></div><div><span>Useful for guests</span><strong id="venueProfileGuestAmenity">Verified venue</strong></div></section>
+      <section id="venueProfileGallerySection" class="venue-profile-panel venue-white-card venue-gallery-section" hidden><div class="venue-section-head"><div><p class="eyebrow">VENUE GALLERY</p><h2>See the venue before you shortlist it.</h2></div><span id="venueGalleryCount" class="venue-section-count"></span></div><div id="venueProfileGallery" class="venue-profile-gallery"></div></section>
+      <section id="venueProfileVideosSection" class="venue-profile-panel venue-white-card venue-videos-section" hidden><div class="venue-section-head"><div><p class="eyebrow">VIDEO TOUR</p><h2>Take a closer look.</h2></div><span id="venueVideoCount" class="venue-section-count"></span></div><div id="venueProfileVideos" class="venue-profile-videos"></div></section>
+      <div class="venue-profile-layout"><div class="venue-profile-content"><section class="venue-profile-panel venue-white-card"><p class="eyebrow">ABOUT THE VENUE</p><h2 id="venueAboutHeading">A venue for memorable celebrations.</h2><p id="venueProfileDescription">Ask our team for availability, packages and detailed venue information.</p></section><section class="venue-profile-panel venue-white-card"><p class="eyebrow">FACILITIES &amp; SERVICES</p><h2>What this venue offers</h2><div id="venueProfileFeatures" class="venue-profile-features"></div></section><section class="venue-profile-panel venue-white-card"><p class="eyebrow">SMART SHORTLIST</p><h2>Why this venue may fit your event</h2><div id="venueProfileHighlights" class="venue-highlight-grid"></div></section></div><aside class="venue-profile-enquiry venue-white-card"><span class="venue-profile-assist-badge">PERSONALISED SUPPORT</span><h2>Interested in this venue?</h2><p>Tell us your event details once. We’ll use the venue, capacity and budget information already on this page to make your enquiry faster.</p><button id="venueProfileQuoteAside" class="button button-primary venue-quote-trigger" type="button">Check Price & Availability</button><a id="venueProfileMap" class="button button-secondary" href="#" target="_blank" rel="noopener" hidden>View on Google Maps</a><div class="venue-assist-points"><span>✓ Quick availability check</span><span>✓ Pricing & package guidance</span><span>✓ Requirement-based support</span></div><small>Your enquiry goes to Select My Venue for personalised assistance.</small></aside></div>
+      <section id="similarVenuesSection" class="venue-similar-section" hidden><div class="venue-similar-head"><div><p class="eyebrow">YOU MAY ALSO LIKE</p><h2>Explore similar verified venues.</h2></div><a href="venues.html" class="button button-ghost">Browse All Venues</a></div><div id="similarVenuesGrid" class="venue-similar-grid"></div></section>
     </article>
   </main>
-
   <footer class="page-footer venue-white-footer">© 2026 Select My Venue · <a href="venues.html">Verified Venues</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://partner.selectmyvenue.com/">Partner Login</a></footer>
-
-  <div class="venue-mobile-actions" id="venueMobileActions" hidden>
-    <button type="button" class="venue-mobile-primary venue-quote-trigger">Check Availability</button>
-    <a id="venueMobileWhatsapp" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp</a>
-  </div>
-
-  <div id="venueQuoteModal" class="venue-quote-modal" hidden>
-    <div class="venue-quote-backdrop" data-close-quote></div>
-    <section class="venue-quote-card" role="dialog" aria-modal="true" aria-labelledby="venueQuoteTitle">
-      <button type="button" class="venue-quote-close" data-close-quote aria-label="Close">×</button>
-      <div class="venue-quote-kicker">✦ QUICK VENUE ENQUIRY</div>
-      <h2 id="venueQuoteTitle">Check price & availability</h2>
-      <p id="venueQuoteVenueName" class="venue-quote-venue">Venue</p>
-      <div class="venue-quote-progress"><span></span><span></span><span></span></div>
-      <form id="venueQuoteForm">
-        <div class="venue-quote-grid">
-          <label><span>YOUR NAME *</span><input id="venueQuoteName" name="customer_name" autocomplete="name" required placeholder="Your name"></label>
-          <label><span>MOBILE *</span><input id="venueQuoteMobile" name="mobile" inputmode="numeric" autocomplete="tel" required maxlength="14" placeholder="10-digit mobile"></label>
-          <label><span>EVENT *</span><select id="venueQuoteEvent" name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Corporate Event</option><option>Party</option><option>Anniversary</option><option>Other</option></select></label>
-          <label><span>EVENT DATE</span><input id="venueQuoteDate" name="event_date" type="date"></label>
-          <label><span>GUESTS</span><input id="venueQuoteGuests" name="guests" type="number" min="1" placeholder="e.g. 250"></label>
-          <label><span>BUDGET / PERSON</span><input id="venueQuoteBudget" name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></label>
-        </div>
-        <button id="venueQuoteSubmit" class="venue-quote-submit" type="submit">Check Price & Availability →</button>
-        <p class="venue-quote-trust">No long form. Your selected venue is attached automatically.</p>
-        <div id="venueQuoteStatus" class="venue-quote-status" role="status" aria-live="polite"></div>
-      </form>
-    </section>
-  </div>
-
+  <div class="venue-mobile-actions" id="venueMobileActions" hidden><button type="button" class="venue-mobile-primary venue-quote-trigger">Check Availability</button><a id="venueMobileWhatsapp" href="https://wa.me/918368322256" target="_blank" rel="noopener">WhatsApp</a></div>
+  <div id="venueQuoteModal" class="venue-quote-modal" hidden><div class="venue-quote-backdrop" data-close-quote></div><section class="venue-quote-card" role="dialog" aria-modal="true" aria-labelledby="venueQuoteTitle"><button type="button" class="venue-quote-close" data-close-quote aria-label="Close">×</button><div class="venue-quote-kicker">✦ QUICK VENUE ENQUIRY</div><h2 id="venueQuoteTitle">Check price & availability</h2><p id="venueQuoteVenueName" class="venue-quote-venue">Venue</p><div class="venue-quote-progress"><span></span><span></span><span></span></div><form id="venueQuoteForm"><div class="venue-quote-grid"><label><span>YOUR NAME *</span><input id="venueQuoteName" name="customer_name" autocomplete="name" required placeholder="Your name"></label><label><span>MOBILE *</span><input id="venueQuoteMobile" name="mobile" inputmode="numeric" autocomplete="tel" required maxlength="14" placeholder="10-digit mobile"></label><label><span>EVENT *</span><select id="venueQuoteEvent" name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Corporate Event</option><option>Party</option><option>Anniversary</option><option>Other</option></select></label><label><span>EVENT DATE</span><input id="venueQuoteDate" name="event_date" type="date"></label><label><span>GUESTS</span><input id="venueQuoteGuests" name="guests" type="number" min="1" placeholder="e.g. 250"></label><label><span>BUDGET / PERSON</span><input id="venueQuoteBudget" name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></label></div><button id="venueQuoteSubmit" class="venue-quote-submit" type="submit">Check Price & Availability →</button><p class="venue-quote-trust">No long form. Your selected venue is attached automatically.</p><div id="venueQuoteStatus" class="venue-quote-status" role="status" aria-live="polite"></div></form></section></div>
   <script src="venue-profile.js?v=20260901-2"></script>
-  <script src="venue-profile-carousel.js?v=20260901-1"></script>
+  <script src="venue-profile-carousel.js?v=20260904-premium-scrollfix-1"></script>
   <script>
-    (function(){
-      "use strict";
-      const SUPABASE_URL="https://uajqwyoqbbswkfiwosyw.supabase.co";
-      const SUPABASE_ANON_KEY="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-      const id=new URLSearchParams(location.search).get("id")||"";
-      const client=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-      const escapeHtml=value=>String(value??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
-      const money=value=>{const n=Number(value);return Number.isFinite(n)&&n>0?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n):"Quote on request"};
-      function updateProfileExtras(){
-        const profile=document.getElementById("venueProfile");
-        if(!profile||profile.hidden){setTimeout(updateProfileExtras,150);return;}
-        const features=[...document.querySelectorAll("#venueProfileFeatures strong")].map(x=>x.textContent.toLowerCase());
-        const amenity=document.getElementById("venueProfileGuestAmenity");
-        if(amenity){
-          if(features.some(x=>x.includes("parking")))amenity.textContent="Parking available";
-          else if(features.some(x=>x.includes("room")))amenity.textContent="Rooms available";
-          else if(features.some(x=>x.includes("vegetarian")))amenity.textContent="Vegetarian food";
-          else amenity.textContent="Verified venue";
-        }
-        const mainWhatsapp=document.getElementById("venueProfileWhatsapp");
-        const mobileWhatsapp=document.getElementById("venueMobileWhatsapp");
-        if(mainWhatsapp&&mobileWhatsapp)mobileWhatsapp.href=mainWhatsapp.href;
-        const mobileActions=document.getElementById("venueMobileActions");if(mobileActions)mobileActions.hidden=false;
-        document.querySelectorAll("#venueMobileActions .venue-quote-trigger").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("venueProfileQuote")?.click()));
-        loadSimilar();
-      }
-      async function loadSimilar(){
-        if(!client||!id)return;
-        try{
-          const currentName=document.getElementById("venueProfileName")?.textContent||"";
-          const currentLocation=(document.getElementById("venueProfileLocation")?.textContent||"").replace(/^⌖\s*/,"");
-          const currentCity=currentLocation.split(",").pop()?.trim()||"";
-          let result=await client.rpc("smv_public_venues");
-          if(result.error)return;
-          let rows=(Array.isArray(result.data)?result.data:[]).map(item=>item?.venue||item).filter(v=>String(v?.id)!==String(id));
-          rows.sort((a,b)=>{
-            const aCity=String(a.city||"")===currentCity?1:0,bCity=String(b.city||"")===currentCity?1:0;
-            return bCity-aCity;
-          });
-          rows=rows.slice(0,3);
-          if(!rows.length)return;
-          const grid=document.getElementById("similarVenuesGrid"),section=document.getElementById("similarVenuesSection");
-          if(!grid||!section)return;
-          grid.innerHTML=rows.map(v=>{
-            const name=String(v.venue_name||"Verified Venue");
-            const locationText=[v.area,v.city].filter(Boolean).join(", ")||"Location on request";
-            const cap=v.capacity_max?`Up to ${escapeHtml(v.capacity_max)} guests`:v.capacity_min?`${escapeHtml(v.capacity_min)}+ guests`:"Capacity on request";
-            const priceText=v.price_min_per_person?`From ${money(v.price_min_per_person)}/person`:"Quote on request";
-            const cover=String(v.cover_image_url||"");
-            return `<article class="venue-similar-card"><a class="venue-similar-media" href="venue.html?id=${encodeURIComponent(v.id)}">${cover?`<img src="${escapeHtml(cover)}" alt="${escapeHtml(name)}" loading="lazy">`:`<span>🏨</span>`}</a><div class="venue-similar-body"><span class="venue-similar-verified">✓ Verified</span><h3>${escapeHtml(name)}</h3><p>⌖ ${escapeHtml(locationText)}</p><div class="venue-similar-facts"><span>${cap}</span><span>${priceText}</span></div><div class="venue-similar-actions"><a href="venue.html?id=${encodeURIComponent(v.id)}">View Venue</a><a href="venue.html?id=${encodeURIComponent(v.id)}&quote=1">Check Availability</a></div></div></article>`;
-          }).join("");
-          section.hidden=false;
-        }catch(_){ }
-      }
-      if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",updateProfileExtras,{once:true});else updateProfileExtras();
-    })();
+    (function(){"use strict";const SUPABASE_URL="https://uajqwyoqbbswkfiwosyw.supabase.co",SUPABASE_ANON_KEY="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7",id=new URLSearchParams(location.search).get("id")||"",client=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}}),escapeHtml=value=>String(value??"").replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"}[c])),money=value=>{const n=Number(value);return Number.isFinite(n)&&n>0?new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(n):"Quote on request"};function updateProfileExtras(){const profile=document.getElementById("venueProfile");if(!profile||profile.hidden){setTimeout(updateProfileExtras,150);return}const features=[...document.querySelectorAll("#venueProfileFeatures strong")].map(x=>x.textContent.toLowerCase()),amenity=document.getElementById("venueProfileGuestAmenity");if(amenity){if(features.some(x=>x.includes("parking")))amenity.textContent="Parking available";else if(features.some(x=>x.includes("room")))amenity.textContent="Rooms available";else if(features.some(x=>x.includes("vegetarian")))amenity.textContent="Vegetarian food";else amenity.textContent="Verified venue"}const mainWhatsapp=document.getElementById("venueProfileWhatsapp"),mobileWhatsapp=document.getElementById("venueMobileWhatsapp");if(mainWhatsapp&&mobileWhatsapp)mobileWhatsapp.href=mainWhatsapp.href;const mobileActions=document.getElementById("venueMobileActions");if(mobileActions)mobileActions.hidden=false;document.querySelectorAll("#venueMobileActions .venue-quote-trigger").forEach(btn=>btn.addEventListener("click",()=>document.getElementById("venueProfileQuote")?.click()));loadSimilar()}async function loadSimilar(){if(!client||!id)return;try{const currentLocation=(document.getElementById("venueProfileLocation")?.textContent||"").replace(/^⌖\s*/,""),currentCity=currentLocation.split(",").pop()?.trim()||"";let result=await client.rpc("smv_public_venues");if(result.error)return;let rows=(Array.isArray(result.data)?result.data:[]).map(item=>item?.venue||item).filter(v=>String(v?.id)!==String(id));rows.sort((a,b)=>(String(b.city||"")===currentCity?1:0)-(String(a.city||"")===currentCity?1:0));rows=rows.slice(0,3);if(!rows.length)return;const grid=document.getElementById("similarVenuesGrid"),section=document.getElementById("similarVenuesSection");if(!grid||!section)return;grid.innerHTML=rows.map(v=>{const name=String(v.venue_name||"Verified Venue"),locationText=[v.area,v.city].filter(Boolean).join(", ")||"Location on request",cap=v.capacity_max?`Up to ${escapeHtml(v.capacity_max)} guests`:v.capacity_min?`${escapeHtml(v.capacity_min)}+ guests`:"Capacity on request",priceText=v.price_min_per_person?`From ${money(v.price_min_per_person)}/person`:"Quote on request",cover=String(v.cover_image_url||"");return `<article class="venue-similar-card"><a class="venue-similar-media" href="venue.html?id=${encodeURIComponent(v.id)}">${cover?`<img src="${escapeHtml(cover)}" alt="${escapeHtml(name)}" loading="lazy">`:`<span>🏨</span>`}</a><div class="venue-similar-body"><span class="venue-similar-verified">✓ Verified</span><h3>${escapeHtml(name)}</h3><p>⌖ ${escapeHtml(locationText)}</p><div class="venue-similar-facts"><span>${cap}</span><span>${priceText}</span></div><div class="venue-similar-actions"><a href="venue.html?id=${encodeURIComponent(v.id)}">View Venue</a><a href="venue.html?id=${encodeURIComponent(v.id)}&quote=1">Check Availability</a></div></div></article>`}).join("");section.hidden=false}catch(_){}}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",updateProfileExtras,{once:true});else updateProfileExtras()})();
   </script>
 </body>
 </html>
