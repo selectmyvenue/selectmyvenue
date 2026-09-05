@@ -1,69 +1,60 @@
 @import url("./venue-profile-luxury-base-20260905.css?v=90b4d69");
 
-/* =========================================================
-   STANDARD SIZE RESET — VENUE PROFILE
-   Compact premium look; keeps hero image and enquiry placement.
-   ========================================================= */
-body.venue-profile-page{font-size:13.8px!important;line-height:1.5!important}
-.venue-profile-main{padding-top:26px!important;width:min(1480px,calc(100% - 26px))!important}.venue-profile-titlebar{padding:17px 22px!important}.venue-title-copy .eyebrow,.venue-profile-panel .eyebrow{font-size:9px!important}.venue-title-copy h1{font-size:clamp(30px,2.85vw,44px)!important;line-height:1.05!important}.venue-profile-location{font-size:12.6px!important;line-height:1.42!important}.venue-profile-hero-actions{gap:6px!important}.button,.venue-profile-page button,.venue-profile-page a.button,.smv-profile-action{font-size:10.8px!important;min-height:35px!important;padding-left:11px!important;padding-right:11px!important;border-radius:10px!important}.smv-profile-action{min-height:33px!important}
-.venue-profile-facts{gap:7px!important;margin-top:14px!important;margin-bottom:14px!important}.venue-profile-facts>div{padding:11px 13px!important;border-radius:12px!important}.venue-profile-facts span,.smv-snapshot-grid span,.venue-quick-enquiry-form label span{font-size:8.4px!important}.venue-profile-facts strong{font-size:13.2px!important;line-height:1.3!important}
-.venue-profile-panel{padding:20px 22px!important;border-radius:16px!important}.venue-profile-panel h2,.venue-profile-enquiry h2{font-size:clamp(23px,2.05vw,30px)!important;line-height:1.1!important;margin-bottom:9px!important}.venue-profile-panel p,.venue-profile-enquiry p{font-size:13.2px!important;line-height:1.62!important;font-weight:570!important}#venueProfileDescription{display:block!important;margin:0!important;color:#3f5e57!important;font-size:13.2px!important;line-height:1.78!important;font-weight:570!important;white-space:pre-line!important;letter-spacing:.002em!important;max-width:1120px!important}#venueProfileDescription br{display:block!important;margin-bottom:9px!important;content:""!important}
-.venue-profile-feature{min-height:52px!important;padding:9px 10px!important;border-radius:12px!important}.venue-profile-feature span{width:28px!important;height:28px!important;border-radius:9px!important}.venue-profile-feature strong,.venue-highlight b,.smv-snapshot-grid strong{font-size:12px!important;line-height:1.34!important}.venue-highlight{min-height:84px!important;padding:11px!important;border-radius:12px!important}.venue-highlight span,.smv-profile-snapshot small,.smv-good-fit span,.venue-assist-points span{font-size:10.8px!important;line-height:1.45!important}.smv-snapshot-grid>div{padding:11px!important}.smv-good-fit span{padding:5px 8px!important}.venue-profile-features{gap:9px!important}.venue-highlight-grid,.smv-snapshot-grid{gap:9px!important}
-.venue-quick-enquiry-form .venue-quick-title{font-size:18.5px!important;line-height:1.1!important}.venue-quick-enquiry-form .venue-quick-subtitle{font-size:10.5px!important;line-height:1.4!important}.venue-quick-enquiry-form input,.venue-quick-enquiry-form select,.venue-quick-enquiry-form textarea,.venue-quote-grid input,.venue-quote-grid select{font-size:12px!important;min-height:36px!important}.venue-quick-enquiry-form button,.venue-quote-submit{font-size:11.8px!important;min-height:40px!important}.venue-quote-card{padding:24px!important}.venue-quote-card h2{font-size:25px!important}.venue-quote-kicker{font-size:8px!important}.venue-quote-venue,.venue-quote-trust,.venue-quote-status{font-size:10.4px!important}
-.smv-sticky-venue-bar{min-height:43px!important}.smv-sticky-venue-bar strong{font-size:11.4px!important}.smv-sticky-venue-bar span,.smv-sticky-venue-bar button{font-size:9.8px!important}.venue-similar-card h3{font-size:17.5px!important}.venue-similar-card p,.venue-similar-facts span,.venue-similar-actions a{font-size:10.8px!important}.venue-similar-verified{font-size:8.8px!important}
-.venue-profile-detail-item{min-height:84px!important;padding:10px 10px!important;border-radius:14px!important}.venue-profile-detail-item strong{font-size:12.4px!important;line-height:1.3!important}.venue-profile-detail-item span{font-size:8.6px!important}.venue-profile-detail-item b{font-size:13px!important}
+/* Compact launch-ready venue profile overrides */
+body.venue-profile-page{font-size:13.5px!important;line-height:1.5!important;background:radial-gradient(circle at 8% 4%,rgba(18,170,148,.06),transparent 22%),radial-gradient(circle at 92% 5%,rgba(211,164,62,.07),transparent 20%),linear-gradient(180deg,#f8fbfa,#f1f6f4)!important;color:#173b35!important}
 
-/* =========================================================
-   PREMIUM LIGHT 3D PROFILE — LAUNCH READY
-   Keep the approved light background, add depth and polish.
-   ========================================================= */
-body.venue-profile-page{background:radial-gradient(circle at 8% 5%,rgba(22,176,154,.075),transparent 22%),radial-gradient(circle at 92% 8%,rgba(214,169,72,.08),transparent 20%),linear-gradient(180deg,#f7fbfa 0%,#f2f7f6 50%,#eef4f2 100%)!important;color:#173b35!important}
-body.venue-profile-page .venue-profile-main{width:min(1560px,calc(100% - 30px))!important}
-body.venue-profile-page .venue-breadcrumbs{margin-bottom:18px!important;color:#5c7e77!important}
-body.venue-profile-page .venue-breadcrumbs a{color:#167f70!important;font-weight:800!important}
+html body.venue-profile-page .venue-white-header{min-height:72px!important;background:rgba(255,255,255,.97)!important;border-bottom:1px solid rgba(21,92,80,.12)!important;box-shadow:0 10px 28px rgba(22,67,59,.08)!important;backdrop-filter:blur(14px)!important}
+html body.venue-profile-page .venue-white-header .page-nav{width:min(1540px,calc(100% - 32px))!important;min-height:72px!important}
+html body.venue-profile-page .venue-white-header .page-logo{width:205px!important;height:auto!important;max-height:62px!important;object-fit:contain!important;filter:drop-shadow(0 5px 12px rgba(0,0,0,.10))!important}
+html body.venue-profile-page .venue-white-header .page-nav-links{gap:16px!important}
+html body.venue-profile-page .venue-white-header .page-nav-links a{color:#173f37!important;font-size:12.2px!important;font-weight:850!important;opacity:1!important}
+html body.venue-profile-page .venue-white-header .page-nav-links a:hover{color:#078a78!important;background:rgba(8,138,120,.06)!important}
+html body.venue-profile-page .venue-white-header .page-nav-cta{color:#fff!important;background:linear-gradient(135deg,#12bda6,#087f71)!important;border-color:transparent!important;box-shadow:0 8px 20px rgba(8,127,113,.18)!important}
 
-body.venue-profile-page .venue-white-card{position:relative!important;border:1px solid rgba(17,96,83,.12)!important;background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(247,251,250,.98))!important;box-shadow:0 26px 60px rgba(24,70,62,.11),0 8px 20px rgba(24,70,62,.06),inset 0 1px 0 rgba(255,255,255,.95)!important;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease!important}
-body.venue-profile-page .venue-white-card::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.72),transparent 28%,transparent 72%,rgba(25,216,189,.025));opacity:.75}
-body.venue-profile-page .venue-profile-hero{overflow:hidden!important;border-radius:26px!important;box-shadow:0 34px 80px rgba(24,70,62,.15),0 10px 24px rgba(24,70,62,.08),inset 0 1px 0 rgba(255,255,255,.95)!important}
-body.venue-profile-page .venue-profile-media{min-height:440px!important;background:linear-gradient(145deg,#dbe9e6,#eff5f3)!important}
-body.venue-profile-page .venue-profile-media img{transition:transform .55s ease,filter .35s ease!important}
-body.venue-profile-page .venue-profile-hero:hover .venue-profile-media img{transform:scale(1.018)!important;filter:saturate(1.04) contrast(1.02)!important}
-body.venue-profile-page .venue-profile-overlay{background:linear-gradient(180deg,rgba(4,24,21,.02) 25%,rgba(4,24,21,.32) 100%)!important}
-body.venue-profile-page .venue-profile-titlebar{position:relative!important;z-index:2!important;padding:22px 26px!important;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(247,251,250,.98))!important;border-top:1px solid rgba(17,96,83,.08)!important}
-body.venue-profile-page .venue-title-copy h1{color:#123f37!important;text-shadow:0 2px 0 #fff,0 10px 22px rgba(21,89,76,.08)!important}
-body.venue-profile-page .venue-profile-location{color:#5d7c76!important}
-body.venue-profile-page .venue-profile-hero-actions .button{min-height:42px!important;font-size:11.5px!important;padding:0 16px!important;border-radius:12px!important;box-shadow:0 10px 22px rgba(16,91,79,.08)!important}
-body.venue-profile-page .venue-profile-hero-actions .button-primary{background:linear-gradient(135deg,#1fd7be,#0da58f)!important;color:#052c26!important;box-shadow:0 14px 30px rgba(15,166,143,.20),inset 0 1px 0 rgba(255,255,255,.45)!important}
-body.venue-profile-page .venue-profile-hero-actions .button-secondary,body.venue-profile-page .venue-profile-hero-actions .button-ghost{background:linear-gradient(180deg,#fff,#f4f8f7)!important;color:#245d53!important;border-color:rgba(24,100,87,.15)!important}
+html body.venue-profile-page .venue-profile-main{width:min(1380px,calc(100% - 28px))!important;padding-top:18px!important;padding-bottom:38px!important}
+html body.venue-profile-page .venue-breadcrumbs{margin:0 0 10px!important;font-size:10.8px!important;color:#6b857f!important}
+html body.venue-profile-page .venue-breadcrumbs a{color:#0c7f70!important;font-weight:800!important}
+html body.venue-profile-page .venue-profile-hero{border-radius:20px!important;overflow:hidden!important;border:1px solid rgba(17,96,83,.12)!important;background:#fff!important;box-shadow:0 22px 58px rgba(24,70,62,.12)!important}
+html body.venue-profile-page .venue-profile-titlebar{padding:14px 18px!important;background:linear-gradient(135deg,#fff,#f7fbf9)!important;border-top:1px solid rgba(17,96,83,.08)!important}
+html body.venue-profile-page .venue-title-copy .eyebrow,html body.venue-profile-page .venue-profile-panel .eyebrow{font-size:8.5px!important;letter-spacing:.13em!important;color:#9b762b!important}
+html body.venue-profile-page .venue-title-copy h1{font-size:clamp(28px,2.5vw,38px)!important;line-height:1.05!important;margin:4px 0 0!important;color:#133f37!important}
+html body.venue-profile-page .venue-profile-location{font-size:11.8px!important;line-height:1.4!important;margin-top:4px!important;color:#5e7a74!important}
+html body.venue-profile-page .venue-profile-hero-actions{gap:6px!important}
+html body.venue-profile-page .venue-profile-hero-actions .button,html body.venue-profile-page .smv-profile-action{font-size:10.5px!important;min-height:34px!important;padding:0 11px!important;border-radius:9px!important}
+html body.venue-profile-page .smv-profile-call{display:none!important}
 
-body.venue-profile-page .venue-profile-facts{padding:9px!important;border-radius:18px!important;background:rgba(255,255,255,.72)!important;backdrop-filter:blur(10px)!important}
-body.venue-profile-page .venue-profile-facts>div{border:1px solid rgba(17,96,83,.09)!important;background:linear-gradient(145deg,#fff,#f4f8f7)!important;box-shadow:0 10px 24px rgba(24,70,62,.06),inset 0 1px 0 #fff!important}
-body.venue-profile-page .venue-profile-facts span{color:#6f8d87!important}
-body.venue-profile-page .venue-profile-facts strong{color:#174f45!important}
+html body.venue-profile-page .venue-profile-facts{gap:7px!important;margin:10px 0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html body.venue-profile-page .venue-profile-facts>div{padding:9px 11px!important;border-radius:11px!important;border:1px solid rgba(17,96,83,.10)!important;background:#fff!important;box-shadow:0 8px 20px rgba(24,70,62,.05)!important}
+html body.venue-profile-page .venue-profile-facts span{font-size:7.8px!important;color:#708a84!important}
+html body.venue-profile-page .venue-profile-facts strong{font-size:12.2px!important;line-height:1.25!important;margin-top:3px!important;color:#174f45!important}
+html body.venue-profile-page .venue-profile-layout{gap:12px!important}
+html body.venue-profile-page .venue-profile-content{gap:12px!important}
+html body.venue-profile-page .venue-profile-panel{padding:16px 18px!important;border-radius:14px!important;border:1px solid rgba(17,96,83,.10)!important;background:#fff!important;box-shadow:0 12px 30px rgba(24,70,62,.06)!important}
+html body.venue-profile-page .venue-profile-panel h2,html body.venue-profile-page .venue-profile-enquiry h2{font-size:clamp(20px,1.8vw,27px)!important;line-height:1.08!important;margin:5px 0 8px!important;color:#173f37!important}
+html body.venue-profile-page .venue-profile-panel p,html body.venue-profile-page #venueProfileDescription{font-size:12.3px!important;line-height:1.58!important;color:#4f6f68!important;font-weight:560!important}
+html body.venue-profile-page .venue-profile-features{gap:7px!important;margin-top:10px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+html body.venue-profile-page .venue-profile-feature{min-height:48px!important;padding:8px 9px!important;border-radius:10px!important}
+html body.venue-profile-page .venue-profile-feature span{width:26px!important;height:26px!important;border-radius:8px!important}
+html body.venue-profile-page .venue-profile-feature strong{font-size:10.8px!important;line-height:1.3!important}
+html body.venue-profile-page .venue-highlight-grid{gap:7px!important;margin-top:10px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}
+html body.venue-profile-page .venue-highlight{min-height:70px!important;padding:9px!important;border-radius:10px!important}
+html body.venue-profile-page .venue-highlight b{font-size:10.8px!important}
+html body.venue-profile-page .venue-highlight span{font-size:9.8px!important;line-height:1.4!important}
 
-body.venue-profile-page .venue-profile-panel{border-radius:20px!important;padding:24px 26px!important}
-body.venue-profile-page .venue-profile-panel:hover{transform:translateY(-2px)!important;border-color:rgba(21,145,126,.18)!important;box-shadow:0 30px 70px rgba(24,70,62,.13),0 9px 22px rgba(24,70,62,.07),inset 0 1px 0 #fff!important}
-body.venue-profile-page .venue-profile-panel h2,body.venue-profile-page .venue-profile-enquiry h2{color:#173f37!important}
-body.venue-profile-page .venue-profile-panel p,body.venue-profile-page .venue-profile-enquiry p,body.venue-profile-page #venueProfileDescription{color:#4d6f68!important}
-body.venue-profile-page .eyebrow{color:#b28429!important;letter-spacing:.13em!important}
-body.venue-profile-page .venue-profile-feature,body.venue-profile-page .venue-highlight,body.venue-profile-page .venue-profile-detail-item{border:1px solid rgba(18,103,89,.10)!important;background:linear-gradient(145deg,#fff,#f5f9f8)!important;box-shadow:0 12px 28px rgba(24,70,62,.065),inset 0 1px 0 #fff!important;transition:transform .18s ease,box-shadow .18s ease!important}
-body.venue-profile-page .venue-profile-feature:hover,body.venue-profile-page .venue-highlight:hover,body.venue-profile-page .venue-profile-detail-item:hover{transform:translateY(-3px)!important;box-shadow:0 18px 38px rgba(24,70,62,.10),inset 0 1px 0 #fff!important}
-body.venue-profile-page .venue-profile-feature strong,body.venue-profile-page .venue-highlight b,body.venue-profile-page .venue-profile-detail-item strong{color:#21564c!important}
+html body.venue-profile-page .venue-similar-section{margin-top:16px!important;padding:18px!important;border-radius:16px!important}
+html body.venue-profile-page .venue-similar-head{margin-bottom:12px!important}
+html body.venue-profile-page .venue-similar-head h2{font-size:25px!important}
+html body.venue-profile-page .venue-similar-grid{gap:10px!important}
+html body.venue-profile-page .venue-similar-media{height:170px!important;min-height:170px!important}
+html body.venue-profile-page .venue-similar-body{padding:11px!important}
+html body.venue-profile-page .venue-similar-card h3{font-size:15.5px!important}
+html body.venue-profile-page .venue-similar-card p,html body.venue-profile-page .venue-similar-facts span,html body.venue-profile-page .venue-similar-actions a{font-size:9.8px!important}
+html body.venue-profile-page .venue-similar-actions a{min-height:33px!important}
 
-body.venue-profile-page .venue-profile-enquiry{position:sticky!important;top:90px!important;border-radius:22px!important;border:1px solid rgba(196,145,42,.18)!important;background:radial-gradient(circle at 100% 0%,rgba(235,191,90,.11),transparent 34%),linear-gradient(145deg,#fffefb,#f8fbfa)!important;box-shadow:0 30px 72px rgba(24,70,62,.14),0 8px 20px rgba(24,70,62,.06),inset 0 1px 0 #fff!important}
-body.venue-profile-page .venue-profile-enquiry .button-primary{min-height:44px!important;background:linear-gradient(135deg,#f6d466,#e7b838)!important;color:#302205!important;box-shadow:0 12px 28px rgba(218,166,48,.20),inset 0 1px 0 rgba(255,255,255,.55)!important}
-body.venue-profile-page .venue-assist-points span{color:#426a62!important}
-body.venue-profile-page .venue-profile-assist-badge{color:#9d7120!important;background:rgba(236,190,80,.10)!important;border-color:rgba(209,161,50,.18)!important}
+html body.venue-profile-page .venue-quote-card{padding:20px!important;border-radius:18px!important;box-shadow:0 28px 70px rgba(14,50,44,.22)!important}
+html body.venue-profile-page .venue-quote-card h2{font-size:23px!important}
+html body.venue-profile-page .venue-quote-grid input,html body.venue-profile-page .venue-quote-grid select{font-size:11.8px!important;min-height:36px!important}
+html body.venue-profile-page .venue-quote-submit{font-size:11.5px!important;min-height:40px!important}
 
-body.venue-profile-page .venue-similar-card{border:1px solid rgba(17,96,83,.11)!important;border-radius:20px!important;background:#fff!important;box-shadow:0 20px 48px rgba(24,70,62,.10),0 6px 16px rgba(24,70,62,.05)!important;overflow:hidden!important;transition:transform .2s ease,box-shadow .2s ease!important}
-body.venue-profile-page .venue-similar-card:hover{transform:translateY(-5px)!important;box-shadow:0 28px 64px rgba(24,70,62,.14),0 8px 20px rgba(24,70,62,.07)!important}
-body.venue-profile-page .venue-similar-card h3{color:#173f37!important}
-body.venue-profile-page .venue-similar-card p,body.venue-profile-page .venue-similar-facts span{color:#607e78!important}
-
-body.venue-profile-page .venue-quote-card{border-radius:22px!important;border:1px solid rgba(20,115,98,.14)!important;background:linear-gradient(145deg,#fff,#f5faf8)!important;box-shadow:0 36px 90px rgba(14,50,44,.24)!important}
-body.venue-profile-page .venue-quote-card h2{color:#153f37!important}
-body.venue-profile-page .venue-quote-grid input,body.venue-profile-page .venue-quote-grid select{border-color:rgba(20,102,88,.14)!important;background:#fff!important;color:#224f47!important;box-shadow:inset 0 2px 5px rgba(20,70,61,.04)!important}
-body.venue-profile-page .venue-quote-submit{background:linear-gradient(135deg,#1fd7be,#0da58f)!important;color:#052c26!important;box-shadow:0 14px 30px rgba(15,166,143,.18)!important}
-
-@media(max-width:900px){body.venue-profile-page .venue-profile-enquiry{position:relative!important;top:auto!important}body.venue-profile-page .venue-profile-media{min-height:360px!important}}
-@media(max-width:700px){.venue-profile-main{width:min(100% - 18px,1480px)!important}.venue-title-copy h1{font-size:27px!important}.venue-profile-location{font-size:12.4px!important}.venue-profile-titlebar{padding:16px 14px!important}.venue-profile-panel{padding:17px!important}.venue-profile-panel h2{font-size:22px!important}.venue-profile-panel p,#venueProfileDescription{font-size:12.8px!important;line-height:1.7!important}.venue-profile-facts strong{font-size:12.8px!important}.venue-mobile-actions button,.venue-mobile-actions a{font-size:11.5px!important}body.venue-profile-page .venue-profile-media{min-height:280px!important}body.venue-profile-page .venue-profile-hero{border-radius:20px!important}body.venue-profile-page .venue-profile-panel{border-radius:17px!important}}
+@media(max-width:900px){html body.venue-profile-page .venue-white-header .page-logo{width:178px!important}html body.venue-profile-page .venue-profile-main{width:min(100% - 18px,1380px)!important}.venue-profile-features,.venue-highlight-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:700px){html body.venue-profile-page .venue-white-header{min-height:62px!important}html body.venue-profile-page .venue-white-header .page-nav{min-height:62px!important;width:min(100% - 16px,1540px)!important}html body.venue-profile-page .venue-white-header .page-logo{width:158px!important;max-height:50px!important}html body.venue-profile-page .venue-profile-main{width:calc(100% - 10px)!important;padding-top:12px!important}html body.venue-profile-page .venue-profile-titlebar{padding:12px!important}html body.venue-profile-page .venue-title-copy h1{font-size:25px!important}html body.venue-profile-page .venue-profile-panel{padding:14px!important}.venue-profile-features,.venue-highlight-grid{grid-template-columns:1fr!important}html body.venue-profile-page .venue-profile-panel h2{font-size:20px!important}html body.venue-profile-page .venue-profile-panel p,html body.venue-profile-page #venueProfileDescription{font-size:11.8px!important}.venue-mobile-actions button,.venue-mobile-actions a{font-size:11px!important}}
