@@ -23,10 +23,11 @@ html body.venue-profile-page .venue-profile-hero-actions{gap:6px!important}
 html body.venue-profile-page .venue-profile-hero-actions .button,html body.venue-profile-page .smv-profile-action{font-size:10.5px!important;min-height:34px!important;padding:0 11px!important;border-radius:9px!important}
 html body.venue-profile-page .smv-profile-call{display:none!important}
 
-html body.venue-profile-page .venue-profile-facts{gap:7px!important;margin:10px 0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
-html body.venue-profile-page .venue-profile-facts>div{padding:9px 11px!important;border-radius:11px!important;border:1px solid rgba(17,96,83,.10)!important;background:#fff!important;box-shadow:0 8px 20px rgba(24,70,62,.05)!important}
-html body.venue-profile-page .venue-profile-facts span{font-size:7.8px!important;color:#708a84!important}
-html body.venue-profile-page .venue-profile-facts strong{font-size:12.2px!important;line-height:1.25!important;margin-top:3px!important;color:#174f45!important}
+/* Avoid duplicate facts: the compact four-card strip below the hero is enough */
+html body.venue-profile-page .venue-profile-facts{display:none!important}
+html body.venue-profile-page .smv-profile-snapshot{display:none!important}
+html body.venue-profile-page .venue-profile-panel:has(#venueProfileHighlights){display:none!important}
+
 html body.venue-profile-page .venue-profile-layout{gap:12px!important}
 html body.venue-profile-page .venue-profile-content{gap:12px!important}
 html body.venue-profile-page .venue-profile-panel{padding:16px 18px!important;border-radius:14px!important;border:1px solid rgba(17,96,83,.10)!important;background:#fff!important;box-shadow:0 12px 30px rgba(24,70,62,.06)!important}
