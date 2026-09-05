@@ -1,0 +1,78 @@
+/* Select My Venue — Venue Profile premium gallery, detail strip and similar venue polish
+   Safe CSS-only file. Keeps hero image size/location and quick enquiry placement unchanged. */
+
+/* Keep duplicate below-hero gallery hidden. All venue photos remain inside hero carousel + View All Photos. */
+#venueProfileGallerySection{display:none!important}
+
+/* Hero cover image controls */
+.venue-profile-cover{position:relative!important;overflow:hidden!important;background:radial-gradient(circle at center,#f7f8f5 0%,#e8efec 66%,#dce7e3 100%)!important;cursor:pointer!important}
+.venue-profile-cover #venueProfileImage{display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;object-position:center center!important;transition:opacity .34s ease!important;transform:none!important;filter:none!important;image-rendering:auto!important;background:transparent!important;backface-visibility:hidden!important}
+.venue-profile-cover.smv-slide-changing #venueProfileImage{opacity:.38!important;transform:none!important;filter:none!important}
+.venue-profile-cover #venueProfileImage.smv-image-contain,.venue-profile-cover #venueProfileImage.smv-image-cover{object-fit:contain!important;object-position:center center!important;background:transparent!important}
+#venueProfileMediaCount,.smv-cover-hint,.smv-cover-nav{display:none!important}
+.smv-cover-arrow{position:absolute;z-index:12;top:50%;width:52px;height:52px;margin-top:-26px;border:1px solid rgba(255,255,255,.82);border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.94);color:#123f38;font-size:30px;line-height:1;cursor:pointer;box-shadow:0 14px 34px rgba(0,0,0,.18);backdrop-filter:blur(10px);transition:.18s ease}
+.smv-cover-arrow:hover{transform:scale(1.05);background:#fff;color:#087f71}
+.smv-cover-prev{left:20px}.smv-cover-next{right:20px}
+.smv-cover-counter{position:absolute;z-index:12;right:20px;bottom:20px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.96);color:#244c45;font-size:13px!important;font-weight:950;box-shadow:0 8px 24px rgba(0,0,0,.11);backdrop-filter:blur(8px)}
+.smv-view-all{position:absolute;z-index:13;left:20px;bottom:20px;min-height:46px!important;padding:0 18px!important;border:1px solid rgba(255,255,255,.86);border-radius:999px;background:linear-gradient(135deg,rgba(8,67,59,.90),rgba(3,36,32,.88));color:#fff;font-size:13px!important;font-weight:950;letter-spacing:.01em;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.22);backdrop-filter:blur(10px);transition:.18s ease}
+.smv-view-all:hover{background:#087f71;transform:translateY(-1px)}
+.smv-hero-progress{position:absolute;left:0;right:0;bottom:0;z-index:11;height:3px;background:rgba(255,255,255,.28)}
+.smv-hero-progress::before{content:"";display:block;width:var(--smv-progress,0%);height:100%;background:linear-gradient(90deg,#0fbaa3,#e7c768);transition:width .35s ease}
+
+/* Desktop hero + right-side quick enquiry form. Position and size intentionally preserved. */
+@media(min-width:701px){
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick{display:grid!important;grid-template-columns:minmax(0,1fr) 390px!important;grid-template-rows:570px auto!important;gap:0!important;align-items:stretch!important;overflow:hidden!important;background:#fff!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>.venue-profile-media{grid-column:1!important;grid-row:1!important;width:100%!important;height:570px!important;min-height:570px!important;border-radius:0!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm{display:grid!important;grid-column:2!important;grid-row:1!important;width:auto!important;height:570px!important;max-height:570px!important;overflow:auto!important;margin:0!important;padding:25px 23px!important;border:0!important;border-left:1px solid #dfe9e6!important;border-radius:0!important;box-shadow:none!important;background:radial-gradient(circle at 100% 0%,rgba(212,168,68,.12),transparent 31%),linear-gradient(160deg,#fffefb,#f6fbf8)!important;align-content:start!important;gap:9px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-title{font-size:27px!important;line-height:1.08!important;color:#123f37!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-subtitle{font-size:13px!important;line-height:1.5!important;color:#637a74!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm label{gap:4px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm label span{font-size:11px!important;color:#56736c!important;font-weight:950!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm input,html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm select{height:45px!important;border-color:#d9e7e3!important;background:#fff!important;color:#123f37!important;font-size:15px!important;font-weight:750!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm button{height:51px!important;margin-top:2px!important;border-radius:12px!important;font-size:15px!important;background:linear-gradient(135deg,#0fbaa3,#087f71 60%,#06695e)!important;color:#fff!important;box-shadow:0 12px 26px rgba(8,127,113,.18)!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>.venue-profile-titlebar{grid-column:1/-1!important;grid-row:2!important;border-radius:0!important}
+}
+
+/* Fullscreen View All Photos */
+.smv-photo-viewer{position:fixed;z-index:99999;inset:0;display:grid;grid-template-rows:auto 1fr auto;background:rgba(3,15,13,.98);color:#fff}.smv-photo-viewer[hidden]{display:none!important}
+.smv-photo-viewer-head{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.12);background:rgba(2,18,16,.82);backdrop-filter:blur(14px)}
+.smv-photo-viewer-head strong{font-size:18px!important}.smv-photo-viewer-head span{margin-left:10px;color:#bed0cb;font-size:14px!important;font-weight:850}
+.smv-viewer-close{width:42px;height:42px;border:1px solid rgba(255,255,255,.22);border-radius:50%;background:rgba(255,255,255,.11);color:#fff;font-size:29px!important;cursor:pointer}
+.smv-photo-viewer-stage{position:relative;min-height:0;display:grid;place-items:center;padding:18px 76px}.smv-photo-viewer-stage img{display:block;max-width:100%;max-height:calc(100vh - 190px);width:auto;height:auto;object-fit:contain;filter:none;transform:none}
+.smv-viewer-arrow{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border:1px solid rgba(255,255,255,.22);border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:36px!important;cursor:pointer}.smv-viewer-prev{left:16px}.smv-viewer-next{right:16px}
+.smv-viewer-thumbs{display:flex;gap:8px;overflow-x:auto;padding:11px 16px 15px;border-top:1px solid rgba(255,255,255,.1);background:rgba(2,17,15,.9)}.smv-viewer-thumb{flex:0 0 96px!important;width:96px!important;height:66px!important;padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;background:#172521;cursor:pointer;opacity:.65}.smv-viewer-thumb.active{border-color:#35d8c1;opacity:1}.smv-viewer-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* WhatsApp action treatment */
+.venue-profile-page a[href*="wa.me"]{position:relative!important}.venue-profile-page .venue-profile-hero-actions a[href*="wa.me"],.venue-profile-page .venue-mobile-actions a[href*="wa.me"]{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;background:#25D366!important;border-color:#25D366!important;color:#fff!important;box-shadow:0 10px 26px rgba(37,211,102,.22)!important}
+.venue-profile-page .venue-profile-hero-actions a[href*="wa.me"]::before,.venue-profile-page .venue-mobile-actions a[href*="wa.me"]::before{content:"☎";width:18px;height:18px;display:grid;place-items:center;border-radius:50%;background:#fff;color:#25D366;font-size:11px;font-weight:950;line-height:1}
+
+/* IMPORTANT DETAILS STRIP — light premium card, no hidden dark text */
+html body.venue-profile-page #venueProfileDetailsStrip.venue-profile-details-strip{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:12px!important;margin:18px 0 18px!important;padding:16px!important;border:1px solid rgba(17,91,78,.14)!important;border-radius:24px!important;background:radial-gradient(circle at 0% 0%,rgba(18,194,170,.10),transparent 32%),radial-gradient(circle at 100% 0%,rgba(232,189,104,.14),transparent 30%),linear-gradient(135deg,#fffdf7,#ffffff 58%,#f1fbf8)!important;box-shadow:0 18px 46px rgba(25,60,52,.09)!important;color:#103d35!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item{min-height:112px!important;padding:16px 14px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;border:1px solid rgba(17,91,78,.12)!important;border-radius:18px!important;background:linear-gradient(145deg,#ffffff,#fffdf7 62%,#f1fbf8)!important;box-shadow:0 10px 24px rgba(26,60,53,.055)!important;color:#103d35!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item b{width:36px!important;height:36px!important;display:grid!important;place-items:center!important;margin-bottom:10px!important;border-radius:50%!important;background:linear-gradient(135deg,#e9fbf7,#fff4cf)!important;color:#087f71!important;font-size:16px!important;box-shadow:inset 0 0 0 1px rgba(8,127,113,.14)!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item span{display:block!important;color:#607c74!important;font-size:11px!important;font-weight:950!important;letter-spacing:.09em!important;text-transform:uppercase!important;opacity:1!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item strong{display:block!important;margin-top:7px!important;color:#0f382f!important;font-size:16px!important;line-height:1.35!important;font-weight:950!important;opacity:1!important;text-shadow:none!important}
+
+/* Main facts should remain consistent with the light premium detail strip */
+html body.venue-profile-page .venue-profile-facts>div{background:linear-gradient(145deg,#ffffff,#fffdf7 60%,#eefaf6)!important;border-color:rgba(17,91,78,.14)!important;box-shadow:0 14px 30px rgba(26,60,53,.07)!important}
+html body.venue-profile-page .venue-profile-facts span{color:#607c74!important;opacity:1!important}
+html body.venue-profile-page .venue-profile-facts strong{color:#0f382f!important;opacity:1!important}
+
+/* Similar venues — bigger premium images so cards do not feel cropped/half-visible */
+html body.venue-profile-page #similarVenuesSection .venue-similar-grid{gap:18px!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-card{overflow:hidden!important;border:1px solid rgba(17,91,78,.14)!important;border-radius:18px!important;background:#fff!important;box-shadow:0 14px 34px rgba(25,60,52,.09)!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-media{height:275px!important;min-height:275px!important;display:block!important;position:relative!important;overflow:hidden!important;background:linear-gradient(135deg,#f6f3ea,#eef8f5)!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-media img{width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;object-position:center center!important;filter:none!important;transform:none!important;transition:transform .25s ease!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-card:hover .venue-similar-media img{transform:scale(1.025)!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-body{padding:18px!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-card h3{font-size:23px!important;line-height:1.22!important;color:#103d35!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-card p{font-size:14px!important;color:#59766f!important;font-weight:650!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-facts span{font-size:14px!important;color:#234f46!important;background:#f2f8f5!important;font-weight:900!important}
+html body.venue-profile-page #similarVenuesSection .venue-similar-actions a{font-size:14px!important;font-weight:950!important}
+
+/* Duplicate cleanup: location is enough here, so the separate address tile is hidden. */
+html body.venue-profile-page #venueProfileDetailsStrip.venue-profile-details-strip{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item:nth-child(5){display:none!important}
+
+@media(max-width:1180px){html body.venue-profile-page #venueProfileDetailsStrip.venue-profile-details-strip{grid-template-columns:repeat(3,minmax(0,1fr))!important}html body.venue-profile-page #similarVenuesSection .venue-similar-media{height:250px!important;min-height:250px!important}}
+@media(max-width:700px){.smv-cover-arrow{width:40px;height:40px;margin-top:-20px;font-size:23px}.smv-cover-prev{left:10px}.smv-cover-next{right:10px}.smv-cover-counter{right:10px;bottom:11px;font-size:11px!important;padding:7px 9px}.smv-view-all{left:10px;bottom:11px;min-height:39px!important;padding:0 11px!important;font-size:11px!important}.smv-photo-viewer-stage{padding:10px 45px}.smv-viewer-arrow{width:38px;height:38px;font-size:24px!important}.smv-viewer-prev{left:5px}.smv-viewer-next{right:5px}.smv-viewer-thumb{flex-basis:68px!important;width:68px!important;height:48px!important}html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm{display:none!important}html body.venue-profile-page #venueProfileDetailsStrip.venue-profile-details-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:10px!important;gap:9px!important;border-radius:18px!important}html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item{min-height:98px!important;padding:13px 10px!important;border-radius:14px!important}html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item strong{font-size:14px!important}html body.venue-profile-page #similarVenuesSection .venue-similar-media{height:230px!important;min-height:230px!important}}
