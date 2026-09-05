@@ -24,17 +24,18 @@ html body.venue-profile-page .venue-title-copy .eyebrow,html body.venue-profile-
 html body.venue-profile-page .venue-title-copy h1{font-size:clamp(28px,2.5vw,38px)!important;line-height:1.05!important;margin:4px 0 0!important;color:#133f37!important}
 html body.venue-profile-page .venue-profile-location{font-size:11.8px!important;line-height:1.4!important;margin-top:4px!important;color:#5e7a74!important}
 html body.venue-profile-page .venue-profile-hero-actions{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important}
-html body.venue-profile-page .venue-profile-hero-actions .button{font-size:10.3px!important;min-height:36px!important;padding:0 11px!important;border-radius:10px!important}
+html body.venue-profile-page .venue-profile-hero-actions .button{font-size:10.5px!important;min-height:38px!important;padding:0 12px!important;border-radius:10px!important}
 html body.venue-profile-page .smv-profile-call{display:none!important}
 
-/* Uniform compact utility actions: shortlist / compare / share / map */
-html body.venue-profile-page .smv-profile-actions{display:flex!important;gap:6px!important;align-items:center!important;flex-wrap:wrap!important}
-html body.venue-profile-page .smv-profile-action,html body.venue-profile-page #venueShareBtn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-height:36px!important;padding:0 11px!important;border:1px solid #d8e7e3!important;border-radius:10px!important;background:linear-gradient(180deg,#fff,#f5f9f8)!important;color:#245c52!important;font-size:10px!important;font-weight:900!important;box-shadow:0 6px 16px rgba(24,70,62,.06)!important;transition:.18s ease!important}
-html body.venue-profile-page .smv-profile-action:hover,html body.venue-profile-page #venueShareBtn:hover{transform:translateY(-1px)!important;border-color:rgba(15,166,143,.35)!important;background:#f0fbf8!important;color:#087f71!important}
+/* Premium teal utility actions: shortlist / compare / share / map */
+html body.venue-profile-page .smv-profile-actions{display:flex!important;gap:7px!important;align-items:center!important;flex-wrap:wrap!important}
+html body.venue-profile-page .smv-profile-action,html body.venue-profile-page #venueShareBtn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;min-height:38px!important;padding:0 13px!important;border:1px solid rgba(20,190,164,.42)!important;border-radius:11px!important;background:linear-gradient(135deg,#16c9b0,#0a8f7d)!important;color:#fff!important;font-size:10.5px!important;font-weight:950!important;box-shadow:0 9px 20px rgba(9,137,119,.16),inset 0 1px 0 rgba(255,255,255,.20)!important;transition:.18s ease!important;text-decoration:none!important}
+html body.venue-profile-page .smv-profile-action:hover,html body.venue-profile-page #venueShareBtn:hover{transform:translateY(-1px)!important;background:linear-gradient(135deg,#1bd7bd,#0a9a86)!important;border-color:rgba(20,190,164,.58)!important;box-shadow:0 12px 24px rgba(9,137,119,.22),inset 0 1px 0 rgba(255,255,255,.24)!important;color:#fff!important}
 html body.venue-profile-page #venueShareBtn::before{content:"↗"!important;font-size:12px!important;font-weight:950!important}
-html body.venue-profile-page .smv-profile-shortlist.active{border-color:rgba(221,181,67,.5)!important;background:#fff9e7!important;color:#7b5b08!important}
-html body.venue-profile-page .smv-profile-compare::first-letter{font-size:12px!important}
-html body.venue-profile-page .smv-profile-map{color:#087f71!important;background:#f2fbf8!important}
+html body.venue-profile-page .smv-profile-shortlist.active{border-color:rgba(227,192,83,.65)!important;background:linear-gradient(135deg,#f3cf62,#d6a92f)!important;color:#2f2100!important;box-shadow:0 9px 20px rgba(195,145,28,.18)!important}
+html body.venue-profile-page .smv-profile-map{background:linear-gradient(135deg,#12bca5,#087f71)!important;color:#fff!important}
+html body.venue-profile-page .venue-profile-hero-actions .button-primary{background:linear-gradient(135deg,#19d8bd,#0da58f)!important;color:#05322b!important;box-shadow:0 10px 24px rgba(15,166,143,.20)!important}
+html body.venue-profile-page .venue-profile-hero-actions .button-secondary{border-color:#25D366!important;background:#25D366!important;color:#fff!important;box-shadow:0 9px 20px rgba(37,211,102,.16)!important}
 
 /* Avoid duplicate facts: the compact four-card strip below the hero is enough */
 html body.venue-profile-page .venue-profile-facts{display:none!important}
