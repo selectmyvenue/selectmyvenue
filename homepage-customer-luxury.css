@@ -1,51 +1,98 @@
 @import url("./homepage-customer-luxury-base-20260905.css?v=90b4d69");
 
 /* =========================================================
-   FINAL SIZE TUNE — SLIGHTLY COMPACT, STILL PREMIUM
+   FINAL SIZE TUNE V2 — MORE STANDARD / COMPACT
    Keeps all existing layout, forms and scripts working.
    ========================================================= */
-html body{font-size:16px!important;line-height:1.58!important}
-html body .hero-title,html body .hero h1{font-size:clamp(40px,5vw,68px)!important;line-height:1.04!important}
-html body .hero-subtitle,html body .hero p,html body .section-heading p,html body .popular-heading p,html body .about-copy p,html body .trust-item span{font-size:15.5px!important;line-height:1.65!important}
-html body .section-heading h2,html body .popular-heading h2,html body .about-copy h2{font-size:clamp(31px,3vw,46px)!important;line-height:1.08!important}
-html body .primary-btn,html body .secondary-btn,html body .nav-cta,html body .header-phone-pill{font-size:13.5px!important;min-height:44px!important}
+html body{font-size:15px!important;line-height:1.54!important}
 
-html body #enquiry>.section-heading h2{font-size:clamp(32px,3vw,46px)!important}
-html body #customerEnquiryForm .smv-ai-form-banner strong{font-size:15px!important}
-html body #customerEnquiryForm .smv-ai-live span{font-size:9.5px!important}
-html body #customerEnquiryForm .form-section-title{font-size:11px!important}
-html body #customerEnquiryForm .field label{font-size:10.5px!important}
-html body #customerEnquiryForm .field input,html body #customerEnquiryForm .field select,html body #customerEnquiryForm .field textarea{font-size:13.5px!important;font-weight:720!important}
-html body #customerEnquiryForm .field input,html body #customerEnquiryForm .field select{height:46px!important;min-height:46px!important}
-html body #customerEnquiryForm #plannerSummaryPreview{font-size:10.5px!important;line-height:1.45!important}
-html body #customerEnquiryForm .primary-btn[type="submit"],html body #customerEnquiryForm button[type="submit"]{font-size:12.5px!important;height:46px!important;min-height:46px!important}
+/* Header / navigation: reduce only 5–7%, keep logo premium */
+html body .site-header{height:68px!important}
+html body .header-inner{padding-left:20px!important;padding-right:20px!important}
+html body .brand{width:172px!important;height:62px!important}
+html body .brand img{width:162px!important;max-height:56px!important}
+html body #mainNav{gap:17px!important}
+html body #mainNav a{font-size:12px!important;font-weight:800!important}
+html body .nav-cta,html body .header-phone-pill{min-height:40px!important;padding:0 14px!important;font-size:12px!important}
 
-html body .home-venue-content h3{font-size:21px!important}
-html body .home-venue-location{font-size:11.5px!important}
-html body .home-venue-fact strong{font-size:11.5px!important}
-html body .home-venue-features span{font-size:8.5px!important}
-html body .home-venue-actions .primary-btn,html body .home-venue-actions .secondary-btn{font-size:11.5px!important;min-height:45px!important}
+/* Global homepage content */
+html body .hero{min-height:640px!important;padding-top:64px!important;padding-bottom:48px!important}
+html body .hero-title,html body .hero h1{font-size:clamp(36px,4.55vw,60px)!important;line-height:1.02!important}
+html body .hero-subtitle,html body .hero p,html body .section-heading p,html body .popular-heading p,html body .about-copy p,html body .trust-item span{font-size:14.5px!important;line-height:1.62!important}
+html body .section-heading h2,html body .popular-heading h2,html body .about-copy h2{font-size:clamp(28px,2.75vw,41px)!important;line-height:1.08!important}
+html body .section-kicker,html body .ai-badge{font-size:9.5px!important}
+html body .primary-btn,html body .secondary-btn{font-size:12.5px!important;min-height:42px!important;padding-left:17px!important;padding-right:17px!important}
+html body .launch-hero,html body .partner-hero,html body .owner-hero{padding-top:28px!important;padding-bottom:28px!important}
+html body .launch-hero h1,html body .partner-hero h1,html body .owner-hero h1{font-size:clamp(40px,4.6vw,66px)!important}
+html body .launch-hero p,html body .partner-hero p,html body .owner-hero p{font-size:15px!important;line-height:1.55!important}
 
-html body .contact-card strong,html body .contact-card a{font-size:16.5px!important;line-height:1.35!important}
-html body .contact-card span{font-size:13px!important;line-height:1.5!important}
-html body .contact-card small{font-size:12px!important;line-height:1.5!important}
-html body .footer-link-group h4{font-size:14px!important;line-height:1.25!important}
-html body .footer-link-group a,html body .footer-link-group p,html body .footer-bottom,html body .site-footer small,html body .site-footer span{font-size:13px!important;line-height:1.7!important}
+/* Enquiry form — keep readable but reduce box/text size */
+html body #enquiry{width:min(1310px,calc(100% - 32px))!important;margin:20px auto 30px!important;padding:20px 22px 23px!important;border-radius:24px!important}
+html body #enquiry>.section-heading{margin-bottom:12px!important;max-width:1210px!important}
+html body #enquiry>.section-heading h2{font-size:clamp(29px,2.75vw,41px)!important;line-height:1.04!important}
+html body #customerEnquiryForm{width:min(1210px,100%)!important;max-width:1210px!important;padding:15px!important;border-radius:17px!important}
+html body #customerEnquiryForm .smv-ai-form-banner{padding:10px 12px!important;margin-bottom:11px!important;border-radius:12px!important}
+html body #customerEnquiryForm .smv-ai-form-banner strong{font-size:14px!important}
+html body #customerEnquiryForm .smv-ai-live span{font-size:9px!important;padding:5px 8px!important}
+html body #customerEnquiryForm .form-section-title{font-size:10.2px!important;margin:9px 0 7px!important;padding-bottom:6px!important}
+html body #customerEnquiryForm .form-grid{gap:9px 10px!important}
+html body #customerEnquiryForm .field label{font-size:9.8px!important;margin-bottom:4px!important}
+html body #customerEnquiryForm .field input,html body #customerEnquiryForm .field select,html body #customerEnquiryForm .field textarea{font-size:12.8px!important;font-weight:720!important;border-radius:10px!important}
+html body #customerEnquiryForm .field input,html body #customerEnquiryForm .field select{height:42px!important;min-height:42px!important;padding:0 12px!important}
+html body #customerEnquiryForm .field textarea{min-height:62px!important;padding:9px 11px!important}
+html body #customerEnquiryForm .planner-summary-box{margin-top:9px!important;padding:8px 10px!important;border-radius:12px!important}
+html body #customerEnquiryForm #plannerSummaryPreview{font-size:10px!important;line-height:1.38!important;min-height:40px!important;max-height:44px!important;padding:7px 9px!important}
+html body #customerEnquiryForm #refreshPlannerSummary{font-size:9.5px!important;height:34px!important;min-height:34px!important;padding:0 12px!important}
+html body #customerEnquiryForm .smv-more-preferences{font-size:9.5px!important;min-height:34px!important;padding:0 11px!important}
+html body #customerEnquiryForm .primary-btn[type="submit"],html body #customerEnquiryForm button[type="submit"]{font-size:12px!important;height:42px!important;min-height:42px!important;min-width:255px!important;max-width:330px!important;padding:0 18px!important}
+html body #customerEnquiryMessage{font-size:11.5px!important;padding:10px 12px!important}
 
-html body #aiPlanner .section-kicker,html body .ai-planner-section .section-kicker{font-size:12.5px!important}
-html body #aiPlanner h2,html body .ai-planner-section h2{font-size:clamp(31px,3vw,47px)!important}
-html body #aiPlanner p,html body .ai-planner-section p,html body .planner-header,html body .planner-grid,html body .planner-extra,html body .planner-actions,html body .ai-results,html body .ai-result-card{font-size:15px!important;line-height:1.6!important}
-html body #aiPlanner label,html body .ai-planner-section label{font-size:12px!important}
-html body #aiPlanner input,html body #aiPlanner select,html body #aiPlanner textarea,html body .ai-planner-section input,html body .ai-planner-section select,html body .ai-planner-section textarea{font-size:14px!important;min-height:49px!important}
-html body .planner-header strong,html body .ai-result-card strong,html body .ai-result-card h3{font-size:16.5px!important}
-html body .planner-header small,html body .ai-result-card small,html body .ai-result-card li{font-size:14px!important;line-height:1.58!important}
+/* Home venue cards */
+html body .home-venue-grid{grid-template-columns:repeat(auto-fit,minmax(290px,395px))!important;gap:18px!important}
+html body .home-venue-grid:has(.home-venue-card:only-child){grid-template-columns:minmax(340px,470px)!important}
+html body .home-venue-card{min-height:420px!important;border-radius:20px!important}
+html body .home-venue-media,html body .home-venue-media img,html body .home-venue-image-fallback{height:205px!important;min-height:205px!important}
+html body .home-venue-content{padding:17px!important}
+html body .home-venue-content h3{font-size:19.5px!important;line-height:1.12!important}
+html body .home-venue-location{font-size:11px!important}
+html body .home-venue-facts{gap:7px!important;margin:13px 0 12px!important}
+html body .home-venue-fact{padding:9px!important;border-radius:10px!important}
+html body .home-venue-fact span{font-size:7.8px!important}
+html body .home-venue-fact strong{font-size:11px!important}
+html body .home-venue-features span{font-size:8px!important;padding:5px 8px!important}
+html body .home-venue-actions{gap:8px!important;margin-top:15px!important}
+html body .home-venue-actions .primary-btn,html body .home-venue-actions .secondary-btn{font-size:11px!important;min-height:41px!important;border-radius:10px!important}
+
+/* Contact, footer and AI planner */
+html body .contact-card{padding:18px!important;border-radius:18px!important}
+html body .contact-card strong,html body .contact-card a{font-size:15px!important;line-height:1.34!important}
+html body .contact-card span{font-size:12px!important;line-height:1.45!important}
+html body .contact-card small{font-size:11px!important;line-height:1.45!important}
+html body .footer-link-group h4{font-size:12.8px!important;line-height:1.22!important}
+html body .footer-link-group a,html body .footer-link-group p,html body .footer-bottom,html body .site-footer small,html body .site-footer span{font-size:12px!important;line-height:1.58!important}
+html body #aiPlanner .section-kicker,html body .ai-planner-section .section-kicker{font-size:11.5px!important}
+html body #aiPlanner h2,html body .ai-planner-section h2{font-size:clamp(28px,2.75vw,42px)!important}
+html body #aiPlanner p,html body .ai-planner-section p,html body .planner-header,html body .planner-grid,html body .planner-extra,html body .planner-actions,html body .ai-results,html body .ai-result-card{font-size:13.8px!important;line-height:1.55!important}
+html body #aiPlanner label,html body .ai-planner-section label{font-size:11px!important}
+html body #aiPlanner input,html body #aiPlanner select,html body #aiPlanner textarea,html body .ai-planner-section input,html body .ai-planner-section select,html body .ai-planner-section textarea{font-size:13px!important;min-height:45px!important}
+html body .planner-header strong,html body .ai-result-card strong,html body .ai-result-card h3{font-size:15px!important}
+html body .planner-header small,html body .ai-result-card small,html body .ai-result-card li{font-size:12.8px!important;line-height:1.52!important}
+html body .smv-final-ai-button,html body .ai-floating-button,html body .floating-whatsapp-text{font-size:12.5px!important}
 
 @media(max-width:760px){
-  html body{font-size:15.5px!important}
-  html body .hero-title,html body .hero h1{font-size:clamp(36px,9.4vw,50px)!important}
-  html body .hero-subtitle,html body .hero p,html body .section-heading p,html body .popular-heading p,html body .about-copy p{font-size:14.5px!important}
-  html body .contact-card strong,html body .contact-card a{font-size:15.5px!important}
-  html body .contact-card span,html body .footer-link-group a,html body .footer-bottom{font-size:12.5px!important}
-  html body .footer-link-group h4{font-size:13.5px!important}
-  html body #aiPlanner p,html body .ai-planner-section p{font-size:14.5px!important}
+  html body{font-size:14.5px!important}
+  html body .site-header{height:64px!important}
+  html body .brand{width:155px!important;height:58px!important}
+  html body .brand img{width:148px!important;max-height:52px!important}
+  html body .hero-title,html body .hero h1{font-size:clamp(32px,8.8vw,45px)!important}
+  html body .hero-subtitle,html body .hero p,html body .section-heading p,html body .popular-heading p,html body .about-copy p{font-size:13.8px!important}
+  html body #enquiry{width:calc(100% - 12px)!important;margin:12px auto 22px!important;padding:15px 8px 17px!important;border-radius:18px!important}
+  html body #enquiry>.section-heading h2{font-size:28px!important}
+  html body #customerEnquiryForm{padding:10px!important}
+  html body #customerEnquiryForm .field input,html body #customerEnquiryForm .field select{height:40px!important;min-height:40px!important}
+  html body #customerEnquiryForm .primary-btn[type="submit"],html body #customerEnquiryForm button[type="submit"]{width:100%!important;max-width:none!important;min-width:0!important}
+  html body .contact-card strong,html body .contact-card a{font-size:14.3px!important}
+  html body .contact-card span,html body .footer-link-group a,html body .footer-bottom{font-size:11.5px!important}
+  html body .footer-link-group h4{font-size:12.5px!important}
+  html body #aiPlanner p,html body .ai-planner-section p{font-size:13.5px!important}
 }
