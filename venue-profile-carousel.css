@@ -3,17 +3,21 @@
 /* Compact gallery + enquiry hero */
 .smv-cover-counter{font-size:9.8px!important;padding:6px 9px!important}.smv-view-all{font-size:9.8px!important;min-height:34px!important;padding:0 11px!important}.smv-cover-arrow{width:38px!important;height:38px!important;margin-top:-19px!important;font-size:21px!important}
 
+/* Desktop: full quick-enquiry form visible without an internal scrollbar */
 @media(min-width:701px){
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick{grid-template-columns:minmax(0,1fr) 355px!important;grid-template-rows:430px auto!important}
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>.venue-profile-media{height:430px!important;min-height:430px!important}
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm{height:430px!important;max-height:430px!important;padding:16px 17px!important;gap:6px!important;overflow:auto!important}
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-title{font-size:20px!important;line-height:1.08!important}
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-subtitle{font-size:10.4px!important;line-height:1.35!important;margin-bottom:2px!important}
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm label{gap:2px!important}
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm label span{font-size:8.2px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick{grid-template-columns:minmax(0,1fr) 370px!important;grid-template-rows:445px auto!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>.venue-profile-media{height:445px!important;min-height:445px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm{height:445px!important;max-height:none!important;padding:13px 15px!important;gap:4px!important;overflow:hidden!important;align-content:start!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-title{font-size:18px!important;line-height:1.05!important;margin:0!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-subtitle{font-size:9.5px!important;line-height:1.25!important;margin:0 0 2px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm label{gap:1px!important;margin:0!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm label span{font-size:7.5px!important;line-height:1.15!important}
   html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm input,
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm select{height:34px!important;min-height:34px!important;font-size:11.3px!important;padding-left:9px!important;padding-right:9px!important}
-  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm button{height:38px!important;min-height:38px!important;font-size:11px!important;margin-top:0!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm select{height:31px!important;min-height:31px!important;font-size:10.6px!important;padding:0 8px!important;border-radius:8px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-row{gap:6px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm label:has(#venueQuickEmail){display:none!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm button{height:36px!important;min-height:36px!important;font-size:10.5px!important;margin-top:2px!important;border-radius:9px!important}
+  html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm .venue-quick-status{min-height:14px!important;font-size:8.8px!important;line-height:1.2!important}
 }
 
 /* Only the four most useful detail cards: Verified, Capacity, Price, Location */
@@ -24,11 +28,9 @@ html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-ite
 html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item strong{font-size:10.8px!important;line-height:1.24!important;margin-top:3px!important}
 html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item:nth-child(5),
 html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item:nth-child(6){display:none!important}
-
-/* Keep photo browsing in the hero carousel; no separate photo count card */
 html body.venue-profile-page #venueProfileMediaCount{display:none!important}
 
-/* Similar venues should not make the profile feel endless */
+/* Similar venues remain compact */
 html body.venue-profile-page #similarVenuesSection .venue-similar-media{height:165px!important;min-height:165px!important}
 html body.venue-profile-page #similarVenuesSection .venue-similar-body{padding:10px!important}
 html body.venue-profile-page #similarVenuesSection .venue-similar-card h3{font-size:15px!important;line-height:1.18!important}
