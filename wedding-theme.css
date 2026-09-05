@@ -1,0 +1,204 @@
+/* =========================================================
+   SELECT MY VENUE — SHARED WEDDING / CELEBRATION DECOR THEME
+   Decoration only: preserves layouts, card sizes, typography and logic.
+   ========================================================= */
+:root{
+  --smv-wedding-gold:#f3c84b;
+  --smv-wedding-teal:#19d8bd;
+  --smv-wedding-deep:#021917;
+  --smv-wedding-panel:rgba(4,49,43,.88);
+  --smv-wedding-photo:url("https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=2400&q=88");
+}
+
+html body{
+  position:relative;
+  isolation:isolate;
+  background-color:#021917!important;
+  background-image:
+    linear-gradient(180deg,rgba(1,23,20,.93),rgba(2,29,26,.90) 45%,rgba(1,21,19,.95)),
+    var(--smv-wedding-photo)!important;
+  background-size:cover!important;
+  background-position:center top!important;
+  background-attachment:fixed!important;
+}
+
+/* Warm celebration light without touching page geometry */
+html body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 5% 9%,rgba(243,200,75,.16),transparent 18%),
+    radial-gradient(circle at 94% 14%,rgba(255,184,77,.13),transparent 18%),
+    radial-gradient(circle at 8% 73%,rgba(25,216,189,.10),transparent 22%),
+    radial-gradient(circle at 92% 82%,rgba(243,200,75,.09),transparent 22%),
+    repeating-radial-gradient(circle at 8% 12%,rgba(255,224,142,.14) 0 2px,transparent 3px 19px);
+  opacity:.72;
+}
+
+html body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(1,18,16,.80) 0%,transparent 13%,transparent 87%,rgba(1,18,16,.80) 100%),
+    linear-gradient(180deg,rgba(2,23,21,.10),rgba(2,23,21,.38));
+}
+
+/* Keep every content block readable over the decorative background */
+main, .page-main, .venue-profile-main{position:relative;z-index:1}
+section:not(.hero):not(.contact-section):not(.smv-owner-launch-wrap),
+.page-hero,.venue-filter-shell,.guide-panel,.form-card,.info-card,.legal-card,.location-card,.cta-card{
+  backdrop-filter:saturate(1.02);
+}
+
+/* Elegant gold celebration separators on major areas */
+.section-heading,.guide-heading,.venue-similar-head,.page-hero,.location-hero{
+  position:relative;
+}
+.section-heading::after,.guide-heading::after,.venue-similar-head::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-12px;
+  width:min(170px,28vw);
+  height:1px;
+  background:linear-gradient(90deg,var(--smv-wedding-gold),rgba(243,200,75,0));
+  box-shadow:0 0 12px rgba(243,200,75,.20);
+  pointer-events:none;
+}
+
+/* Decorative corners, intentionally subtle */
+.home-venues-section,.popular-section,.ai-planner-section,.about-section,.venue-directory-main,.venue-profile-main,.guide-section{
+  position:relative;
+}
+.home-venues-section::before,.venue-directory-main::before,.venue-profile-main::before,.guide-section::before{
+  content:"✦";
+  position:absolute;
+  top:10px;
+  right:12px;
+  color:rgba(243,200,75,.32);
+  font-size:23px;
+  line-height:1;
+  pointer-events:none;
+  text-shadow:0 0 18px rgba(243,200,75,.18);
+}
+
+/* =========================================================
+   HOMEPAGE CONTACT — APPROVED WEDDING REFERENCE DIRECTION
+   Same cards and dimensions; only decorative treatment changes.
+   ========================================================= */
+html body .contact-section{
+  position:relative!important;
+  overflow:hidden!important;
+  background:
+    linear-gradient(90deg,rgba(1,25,22,.88),rgba(3,50,44,.70) 50%,rgba(1,25,22,.88)),
+    var(--smv-wedding-photo) center 48%/cover no-repeat!important;
+  border-top:1px solid rgba(243,200,75,.40)!important;
+  border-bottom:1px solid rgba(243,200,75,.34)!important;
+  box-shadow:inset 0 20px 55px rgba(0,0,0,.22),inset 0 -20px 55px rgba(0,0,0,.24)!important;
+}
+html body .contact-section::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 7% 40%,rgba(243,200,75,.14),transparent 20%),
+    radial-gradient(circle at 93% 35%,rgba(243,200,75,.13),transparent 20%),
+    linear-gradient(180deg,rgba(1,23,20,.10),rgba(1,23,20,.36));
+}
+html body .contact-section>*{position:relative;z-index:1}
+html body .contact-section .section-kicker{color:#f7d56f!important}
+html body .contact-section h2{color:#fff!important;text-shadow:0 8px 28px rgba(0,0,0,.34)!important}
+html body .contact-section h2 span{color:#f3c84b!important}
+html body .contact-section>p{color:#d8ebe7!important;text-shadow:0 2px 10px rgba(0,0,0,.28)!important}
+html body .contact-card{
+  border-color:rgba(243,200,75,.52)!important;
+  background:linear-gradient(145deg,rgba(5,83,72,.94),rgba(2,50,45,.94))!important;
+  box-shadow:0 18px 40px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+html body .contact-card:hover{
+  border-color:rgba(243,200,75,.88)!important;
+  box-shadow:0 24px 48px rgba(0,0,0,.34),0 0 0 1px rgba(243,200,75,.10),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+html body .contact-card b{
+  color:#fff!important;
+  background:linear-gradient(145deg,#18d8bd,#087f71)!important;
+  border:1px solid rgba(255,255,255,.24)!important;
+  box-shadow:0 9px 22px rgba(0,0,0,.18),0 0 0 4px rgba(25,216,189,.08)!important;
+}
+html body .contact-card:nth-child(2) b{background:linear-gradient(145deg,#f3c84b,#c89418)!important;color:#2d2000!important}
+html body .contact-card:nth-child(3) b{background:linear-gradient(145deg,#38dc7c,#18a84e)!important}
+html body .contact-card strong{color:#fff!important}
+html body .contact-card span{color:#f5fbfa!important}
+html body .contact-card small{color:#bdd9d4!important}
+
+/* =========================================================
+   FOOTER — DEEP GREEN + GOLD TRADITIONAL CELEBRATION LOOK
+   ========================================================= */
+html body .site-footer,
+html body .page-footer{
+  position:relative!important;
+  overflow:hidden!important;
+  border-top:1px solid rgba(243,200,75,.30)!important;
+  background:
+    radial-gradient(circle at 5% 50%,rgba(243,200,75,.08),transparent 22%),
+    radial-gradient(circle at 95% 45%,rgba(25,216,189,.08),transparent 22%),
+    linear-gradient(145deg,#02352f 0%,#012820 48%,#011d1b 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035)!important;
+}
+html body .site-footer::before,
+html body .page-footer::before{
+  content:"✦   ❦   ✦";
+  position:absolute;
+  top:13px;
+  left:50%;
+  transform:translateX(-50%);
+  color:rgba(243,200,75,.42);
+  letter-spacing:.32em;
+  pointer-events:none;
+  white-space:nowrap;
+}
+html body .footer-link-group h4{color:#f6d66d!important;letter-spacing:.08em!important}
+html body .footer-link-group a,
+html body .page-footer a{color:#d7ebe7!important}
+html body .footer-link-group a:hover,
+html body .page-footer a:hover{color:#f3c84b!important}
+html body .footer-bottom{border-top-color:rgba(243,200,75,.18)!important}
+
+/* Public-page surfaces: let the celebration ambience show without hurting legibility */
+html body:not(.venue-profile-page) .page-main .page-hero,
+html body:not(.venue-profile-page) .page-main .venue-filter-shell,
+html body:not(.venue-profile-page) .page-main .form-card,
+html body:not(.venue-profile-page) .page-main .info-card,
+html body:not(.venue-profile-page) .page-main .legal-card,
+html body:not(.venue-profile-page) .page-main .location-card,
+html body:not(.venue-profile-page) .page-main .cta-card{
+  border-color:rgba(243,200,75,.18)!important;
+  box-shadow:0 22px 56px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+
+/* Venue profile is intentionally light inside cards; only outer ambience changes. */
+html body.venue-profile-page{
+  background:
+    linear-gradient(180deg,rgba(244,250,248,.90),rgba(237,246,243,.94)),
+    var(--smv-wedding-photo) center top/cover fixed!important;
+}
+html body.venue-profile-page::before{opacity:.20!important}
+html body.venue-profile-page::after{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(238,246,243,.35))!important}
+
+@media(max-width:760px){
+  html body{background-attachment:scroll!important}
+  .home-venues-section::before,.venue-directory-main::before,.venue-profile-main::before,.guide-section::before{display:none!important}
+  .section-heading::after,.guide-heading::after,.venue-similar-head::after{width:110px!important}
+  html body .site-footer::before,html body .page-footer::before{font-size:10px;top:8px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  html body{background-attachment:scroll!important}
+}
