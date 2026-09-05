@@ -1,28 +1,44 @@
 /* =========================================================
-   SELECT MY VENUE — VISIBLE WEDDING / CELEBRATION DECOR THEME
-   Decoration only: preserves layouts, card sizes, typography and logic.
+   SELECT MY VENUE — MULTI-PAGE WEDDING / CELEBRATION THEME
+   Decoration only: keeps layouts, card sizes, typography and logic intact.
+   Uses local repo assets for speed and reliability.
    ========================================================= */
 :root{
   --smv-wedding-gold:#f3c84b;
   --smv-wedding-teal:#19d8bd;
   --smv-wedding-deep:#021917;
-  --smv-wedding-panel:rgba(4,49,43,.88);
-  --smv-wedding-photo:url("https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=2400&q=90");
+  --smv-wedding-panel:rgba(4,49,43,.90);
+  --smv-page-photo:url("./assets/hero/hero-bright-celebration-v2.webp");
+  --smv-contact-photo:url("./assets/hero/hero-bright-wedding-v2.webp");
 }
+
+/* Distinct page personalities */
+html body:has(.site-header){--smv-page-photo:url("./assets/hero/hero-bright-wedding-v2.webp");--smv-contact-photo:url("./assets/hero/hero-bright-celebration-v2.webp")}
+html body:has(.venue-directory-main){--smv-page-photo:url("./assets/hero/hero-bright-garden-v2.webp")}
+html body.venue-profile-page{--smv-page-photo:url("./assets/hero/hero-bright-engagement-v2.webp")}
+html body:has(.founding-offer){--smv-page-photo:url("./assets/hero/sangeet-engagement.webp")}
+html body:has(.search-landing-main){--smv-page-photo:url("./assets/hero/hero-bright-celebration-v2.webp")}
+html body:has(input[value="Wedding"]){--smv-page-photo:url("./assets/hero/hero-bright-wedding-v2.webp")}
+html body:has(input[value="Engagement"]){--smv-page-photo:url("./assets/hero/hero-bright-engagement-v2.webp")}
+html body:has(input[value="Party"]),html body:has(input[value="Birthday"]){--smv-page-photo:url("./assets/hero/hero-bright-celebration-v2.webp")}
+html body:has(input[value="Corporate Event"]){--smv-page-photo:url("./assets/hero/hero-bright-garden-v2.webp")}
+html body:has(.location-hero){--smv-page-photo:url("./assets/hero/hero-bright-garden-v2.webp")}
+html body:has(.legal-card){--smv-page-photo:url("./assets/hero/hero-bright-engagement-v2.webp")}
 
 html body{
   position:relative;
   isolation:isolate;
   background-color:#021917!important;
   background-image:
-    linear-gradient(180deg,rgba(1,23,20,.60),rgba(2,34,30,.55) 44%,rgba(1,21,19,.66)),
-    var(--smv-wedding-photo)!important;
+    linear-gradient(180deg,rgba(1,23,20,.46),rgba(2,34,30,.42) 44%,rgba(1,21,19,.54)),
+    var(--smv-page-photo)!important;
   background-size:cover!important;
   background-position:center top!important;
   background-attachment:fixed!important;
+  background-repeat:no-repeat!important;
 }
 
-/* Visible warm wedding-light ambience */
+/* Visible warm celebration ambience */
 html body::before{
   content:"";
   position:fixed;
@@ -30,16 +46,15 @@ html body::before{
   z-index:-2;
   pointer-events:none;
   background:
-    radial-gradient(circle at 4% 8%,rgba(255,218,126,.36) 0 2px,transparent 3px 100%),
-    radial-gradient(circle at 8% 16%,rgba(255,185,72,.30) 0 3px,transparent 4px 100%),
-    radial-gradient(circle at 94% 10%,rgba(255,221,140,.34) 0 2px,transparent 3px 100%),
-    radial-gradient(circle at 90% 18%,rgba(255,171,59,.28) 0 3px,transparent 4px 100%),
-    radial-gradient(circle at 7% 72%,rgba(243,200,75,.22),transparent 21%),
-    radial-gradient(circle at 93% 78%,rgba(243,200,75,.22),transparent 21%),
+    radial-gradient(circle at 3% 7%,rgba(255,220,130,.50) 0 2px,transparent 3px 100%),
+    radial-gradient(circle at 7% 14%,rgba(255,181,64,.42) 0 3px,transparent 4px 100%),
+    radial-gradient(circle at 95% 9%,rgba(255,224,145,.48) 0 2px,transparent 3px 100%),
+    radial-gradient(circle at 91% 17%,rgba(255,169,55,.40) 0 3px,transparent 4px 100%),
+    radial-gradient(circle at 5% 72%,rgba(243,200,75,.28),transparent 19%),
+    radial-gradient(circle at 95% 78%,rgba(243,200,75,.26),transparent 19%),
     radial-gradient(circle at 50% 34%,rgba(25,216,189,.10),transparent 30%);
   opacity:1;
 }
-
 html body::after{
   content:"";
   position:fixed;
@@ -47,78 +62,106 @@ html body::after{
   z-index:-1;
   pointer-events:none;
   background:
-    linear-gradient(90deg,rgba(1,18,16,.56) 0%,transparent 11%,transparent 89%,rgba(1,18,16,.56) 100%),
-    linear-gradient(180deg,rgba(2,23,21,.02),rgba(2,23,21,.18));
+    linear-gradient(90deg,rgba(1,18,16,.48) 0%,transparent 10%,transparent 90%,rgba(1,18,16,.48) 100%),
+    linear-gradient(180deg,rgba(2,23,21,.01),rgba(2,23,21,.14));
 }
 
 main,.page-main,.venue-profile-main{position:relative;z-index:1}
 
-/* Major content areas keep readable glass surfaces while showing décor around them */
-section:not(.hero):not(.contact-section):not(.smv-owner-launch-wrap),
-.page-hero,.venue-filter-shell,.guide-panel,.form-card,.info-card,.legal-card,.location-card,.cta-card{
-  backdrop-filter:blur(1px) saturate(1.06);
+/* Readability safety: content always stays above decoration */
+main section,.page-main section,.venue-profile-main section,.contact-section,.site-footer,.page-footer{position:relative;z-index:1}
+.page-hero,.venue-filter-shell,.guide-panel,.form-card,.info-card,.legal-card,.location-card,.cta-card,
+.search-landing-hero,.search-content-section,.quick-search-card,.advice-card,.intent-link-card,.faq-item{
+  backdrop-filter:blur(5px) saturate(1.05);
+  -webkit-backdrop-filter:blur(5px) saturate(1.05);
 }
 
-/* Stronger gold decorative language */
-.section-heading,.guide-heading,.venue-similar-head,.page-hero,.location-hero{position:relative}
-.section-heading::after,.guide-heading::after,.venue-similar-head::after{
+/* Let the page image show through large homepage zones, without changing geometry */
+html body:has(.site-header) .popular-section,
+html body:has(.site-header) .features-section,
+html body:has(.site-header) .ai-planner-section,
+html body:has(.site-header) .about-section,
+html body:has(.site-header) .trust-strip{
+  background-color:rgba(2,31,28,.78)!important;
+  background-image:linear-gradient(145deg,rgba(4,48,42,.76),rgba(2,27,25,.84))!important;
+}
+
+/* Public landing surfaces remain readable while page photography is clearly visible */
+html body:not(.venue-profile-page) .page-main .page-hero,
+html body:not(.venue-profile-page) .page-main .venue-filter-shell,
+html body:not(.venue-profile-page) .page-main .form-card,
+html body:not(.venue-profile-page) .page-main .info-card,
+html body:not(.venue-profile-page) .page-main .legal-card,
+html body:not(.venue-profile-page) .page-main .location-card,
+html body:not(.venue-profile-page) .page-main .cta-card,
+html body:not(.venue-profile-page) .page-main .search-landing-hero,
+html body:not(.venue-profile-page) .page-main .search-content-section,
+html body:not(.venue-profile-page) .page-main .quick-search-card,
+html body:not(.venue-profile-page) .page-main .advice-card,
+html body:not(.venue-profile-page) .page-main .intent-link-card,
+html body:not(.venue-profile-page) .page-main .faq-item{
+  background-color:rgba(3,35,31,.84)!important;
+  border-color:rgba(243,200,75,.25)!important;
+  box-shadow:0 22px 56px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.055)!important;
+}
+
+/* Gold traditional separators */
+.section-heading,.guide-heading,.venue-similar-head,.page-hero,.location-hero,.search-content-section>header{position:relative}
+.section-heading::after,.guide-heading::after,.venue-similar-head::after,.search-content-section>header::after{
   content:"❦";
   position:absolute;
   left:0;
-  bottom:-19px;
+  bottom:-18px;
   width:190px;
   height:20px;
   display:flex;
   align-items:center;
-  justify-content:flex-start;
-  color:rgba(243,200,75,.82);
+  color:rgba(243,200,75,.88);
   font-size:15px;
   letter-spacing:.35em;
-  border-top:1px solid rgba(243,200,75,.50);
-  text-shadow:0 0 15px rgba(243,200,75,.35);
+  border-top:1px solid rgba(243,200,75,.58);
+  text-shadow:0 0 15px rgba(243,200,75,.40);
   pointer-events:none;
 }
 
-.home-venues-section,.popular-section,.ai-planner-section,.about-section,.venue-directory-main,.venue-profile-main,.guide-section{position:relative}
-.home-venues-section::before,.venue-directory-main::before,.venue-profile-main::before,.guide-section::before{
+.home-venues-section,.popular-section,.ai-planner-section,.about-section,.venue-directory-main,.venue-profile-main,.guide-section,.search-landing-main{position:relative}
+.home-venues-section::before,.venue-directory-main::before,.venue-profile-main::before,.guide-section::before,.search-landing-main::before{
   content:"✦  ❦  ✦";
   position:absolute;
   top:8px;
   right:14px;
-  color:rgba(243,200,75,.64);
+  color:rgba(243,200,75,.70);
   font-size:16px;
   line-height:1;
   pointer-events:none;
   letter-spacing:.16em;
-  text-shadow:0 0 18px rgba(243,200,75,.28);
+  text-shadow:0 0 18px rgba(243,200,75,.30);
 }
-
-/* Side festive glows — floral/lantern impression without changing layout */
-.home-venues-section::after,.popular-section::after,.ai-planner-section::after,.about-section::after,.venue-directory-main::after,.guide-section::after{
+.home-venues-section::after,.popular-section::after,.ai-planner-section::after,.about-section::after,.venue-directory-main::after,.guide-section::after,.search-landing-main::after{
   content:"";
   position:absolute;
   inset:-12px -10px;
   z-index:-1;
   pointer-events:none;
   background:
-    radial-gradient(circle at 0% 15%,rgba(243,200,75,.13),transparent 17%),
-    radial-gradient(circle at 100% 20%,rgba(255,183,72,.12),transparent 17%),
-    radial-gradient(circle at 0% 88%,rgba(25,216,189,.08),transparent 19%),
-    radial-gradient(circle at 100% 84%,rgba(243,200,75,.10),transparent 19%);
+    radial-gradient(circle at 0% 15%,rgba(243,200,75,.17),transparent 16%),
+    radial-gradient(circle at 100% 20%,rgba(255,183,72,.15),transparent 16%),
+    radial-gradient(circle at 0% 88%,rgba(25,216,189,.09),transparent 18%),
+    radial-gradient(circle at 100% 84%,rgba(243,200,75,.13),transparent 18%);
 }
 
 /* =========================================================
-   HOMEPAGE CONTACT — much closer to approved celebration image
+   CONTACT — reference-image style, with a dedicated celebration image
    ========================================================= */
 html body .contact-section{
   position:relative!important;
   overflow:hidden!important;
   background:
-    linear-gradient(90deg,rgba(1,25,22,.58),rgba(3,50,44,.38) 50%,rgba(1,25,22,.58)),
-    var(--smv-wedding-photo) center 52%/cover no-repeat!important;
-  border-top:1px solid rgba(243,200,75,.76)!important;
-  border-bottom:1px solid rgba(243,200,75,.68)!important;
-  box-shadow:inset 0 22px 60px rgba(0,0,0,.15),inset 0 -22px 60px rgba(0,0,0,.18),0 20px 55px rgba(0,0,0,.20)!important;
+    linear-gradient(90deg,rgba(1,25,22,.48),rgba(3,50,44,.30) 50%,rgba(1,25,22,.48)),
+    var(--smv-contact-photo) center 52%/cover no-repeat!important;
+  border-top:1px solid rgba(243,200,75,.82)!important;
+  border-bottom:1px solid rgba(243,200,75,.74)!important;
+  box-shadow:inset 0 22px 60px rgba(0,0,0,.12),inset 0 -22px 60px rgba(0,0,0,.16),0 20px 55px rgba(0,0,0,.20)!important;
 }
 html body .contact-section::before{
   content:"";
@@ -126,107 +169,77 @@ html body .contact-section::before{
   inset:0;
   pointer-events:none;
   background:
-    radial-gradient(circle at 3% 45%,rgba(255,211,105,.30),transparent 16%),
-    radial-gradient(circle at 97% 40%,rgba(255,184,73,.28),transparent 16%),
-    linear-gradient(180deg,rgba(1,23,20,.02),rgba(1,23,20,.18));
+    radial-gradient(circle at 2% 45%,rgba(255,211,105,.35),transparent 15%),
+    radial-gradient(circle at 98% 40%,rgba(255,184,73,.32),transparent 15%),
+    linear-gradient(180deg,rgba(1,23,20,.01),rgba(1,23,20,.16));
 }
 html body .contact-section>*{position:relative;z-index:1}
 html body .contact-section .section-kicker{color:#f7d56f!important;text-shadow:0 2px 12px rgba(0,0,0,.45)!important}
-html body .contact-section h2{color:#fff!important;text-shadow:0 8px 28px rgba(0,0,0,.48)!important}
+html body .contact-section h2{color:#fff!important;text-shadow:0 8px 28px rgba(0,0,0,.52)!important}
 html body .contact-section h2 span{color:#f3c84b!important}
-html body .contact-section>p{color:#eef9f6!important;text-shadow:0 2px 12px rgba(0,0,0,.55)!important}
+html body .contact-section>p{color:#eef9f6!important;text-shadow:0 2px 12px rgba(0,0,0,.60)!important}
 html body .contact-card{
-  border-color:rgba(243,200,75,.74)!important;
-  background:linear-gradient(145deg,rgba(5,91,78,.92),rgba(2,48,43,.94))!important;
-  box-shadow:0 20px 44px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.11)!important;
+  border-color:rgba(243,200,75,.78)!important;
+  background:linear-gradient(145deg,rgba(5,91,78,.92),rgba(2,48,43,.95))!important;
+  box-shadow:0 20px 44px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.11)!important;
 }
-html body .contact-card:hover{
-  border-color:#f3c84b!important;
-  transform:translateY(-2px)!important;
-  box-shadow:0 27px 54px rgba(0,0,0,.38),0 0 0 1px rgba(243,200,75,.18),inset 0 1px 0 rgba(255,255,255,.15)!important;
-}
-html body .contact-card b{
-  color:#fff!important;
-  background:linear-gradient(145deg,#18d8bd,#087f71)!important;
-  border:1px solid rgba(255,255,255,.32)!important;
-  box-shadow:0 10px 24px rgba(0,0,0,.22),0 0 0 5px rgba(25,216,189,.10)!important;
-}
+html body .contact-card:hover{border-color:#f3c84b!important;transform:translateY(-2px)!important;box-shadow:0 27px 54px rgba(0,0,0,.40),0 0 0 1px rgba(243,200,75,.18),inset 0 1px 0 rgba(255,255,255,.15)!important}
+html body .contact-card b{color:#fff!important;background:linear-gradient(145deg,#18d8bd,#087f71)!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:0 10px 24px rgba(0,0,0,.22),0 0 0 5px rgba(25,216,189,.10)!important}
 html body .contact-card:nth-child(2) b{background:linear-gradient(145deg,#f3c84b,#c89418)!important;color:#2d2000!important}
 html body .contact-card:nth-child(3) b{background:linear-gradient(145deg,#38dc7c,#18a84e)!important}
-html body .contact-card strong{color:#fff!important}
-html body .contact-card span{color:#fff!important}
+html body .contact-card strong,html body .contact-card span{color:#fff!important}
 html body .contact-card small{color:#d2e9e5!important}
 
 /* =========================================================
-   FOOTER — more decorative and visibly traditional
+   FOOTER — traditional deep green + gold, always readable
    ========================================================= */
-html body .site-footer,
-html body .page-footer{
+html body .site-footer,html body .page-footer{
   position:relative!important;
   overflow:hidden!important;
-  border-top:1px solid rgba(243,200,75,.58)!important;
+  border-top:1px solid rgba(243,200,75,.64)!important;
   background:
-    radial-gradient(circle at 3% 50%,rgba(243,200,75,.15),transparent 20%),
-    radial-gradient(circle at 97% 45%,rgba(243,200,75,.13),transparent 20%),
+    radial-gradient(circle at 3% 50%,rgba(243,200,75,.16),transparent 20%),
+    radial-gradient(circle at 97% 45%,rgba(243,200,75,.14),transparent 20%),
     linear-gradient(145deg,#034238 0%,#012d27 48%,#011d1b 100%)!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.05),inset 0 18px 40px rgba(0,0,0,.12)!important;
 }
-html body .site-footer::before,
-html body .page-footer::before{
+html body .site-footer::before,html body .page-footer::before{
   content:"✦   ❦   ✦";
   position:absolute;
   top:12px;
   left:50%;
   transform:translateX(-50%);
-  color:rgba(243,200,75,.78);
+  color:rgba(243,200,75,.82);
   letter-spacing:.32em;
   pointer-events:none;
   white-space:nowrap;
-  text-shadow:0 0 14px rgba(243,200,75,.35);
+  text-shadow:0 0 14px rgba(243,200,75,.38);
 }
-html body .site-footer::after,
-html body .page-footer::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 5% 82%,rgba(255,202,87,.10),transparent 15%),
-    radial-gradient(circle at 95% 78%,rgba(255,202,87,.10),transparent 15%);
-}
+html body .site-footer::after,html body .page-footer::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 5% 82%,rgba(255,202,87,.11),transparent 15%),radial-gradient(circle at 95% 78%,rgba(255,202,87,.11),transparent 15%)}
 html body .site-footer>*{position:relative;z-index:1}
 html body .footer-link-group h4{color:#f6d66d!important;letter-spacing:.08em!important}
 html body .footer-link-group a,html body .page-footer a{color:#e3f1ee!important}
 html body .footer-link-group a:hover,html body .page-footer a:hover{color:#f3c84b!important}
 html body .footer-bottom{border-top-color:rgba(243,200,75,.30)!important}
 
-/* Public-page glass surfaces allow the background to remain visible */
-html body:not(.venue-profile-page) .page-main .page-hero,
-html body:not(.venue-profile-page) .page-main .venue-filter-shell,
-html body:not(.venue-profile-page) .page-main .form-card,
-html body:not(.venue-profile-page) .page-main .info-card,
-html body:not(.venue-profile-page) .page-main .legal-card,
-html body:not(.venue-profile-page) .page-main .location-card,
-html body:not(.venue-profile-page) .page-main .cta-card{
-  border-color:rgba(243,200,75,.24)!important;
-  box-shadow:0 22px 56px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.05)!important;
-}
-
-/* Venue profile remains light, with clearer wedding ambience at the outer edges. */
+/* Venue profile remains light and highly readable, with a different celebration image at outer edges */
 html body.venue-profile-page{
   background:
-    linear-gradient(180deg,rgba(244,250,248,.76),rgba(237,246,243,.82)),
-    var(--smv-wedding-photo) center top/cover fixed!important;
+    linear-gradient(180deg,rgba(244,250,248,.68),rgba(237,246,243,.76)),
+    var(--smv-page-photo) center top/cover fixed!important;
 }
-html body.venue-profile-page::before{opacity:.38!important}
-html body.venue-profile-page::after{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(238,246,243,.18))!important}
+html body.venue-profile-page::before{opacity:.32!important}
+html body.venue-profile-page::after{background:linear-gradient(180deg,rgba(255,255,255,.01),rgba(238,246,243,.15))!important}
+html body.venue-profile-page .venue-profile-hero,
+html body.venue-profile-page .venue-profile-panel,
+html body.venue-profile-page .venue-profile-details-strip,
+html body.venue-profile-page .venue-similar-section{position:relative;z-index:2}
 
 @media(max-width:760px){
   html body{background-attachment:scroll!important;background-position:center top!important}
-  .home-venues-section::before,.venue-directory-main::before,.venue-profile-main::before,.guide-section::before{display:none!important}
-  .home-venues-section::after,.popular-section::after,.ai-planner-section::after,.about-section::after,.venue-directory-main::after,.guide-section::after{inset:-6px!important}
-  .section-heading::after,.guide-heading::after,.venue-similar-head::after{width:120px!important}
+  .home-venues-section::before,.venue-directory-main::before,.venue-profile-main::before,.guide-section::before,.search-landing-main::before{display:none!important}
+  .home-venues-section::after,.popular-section::after,.ai-planner-section::after,.about-section::after,.venue-directory-main::after,.guide-section::after,.search-landing-main::after{inset:-6px!important}
+  .section-heading::after,.guide-heading::after,.venue-similar-head::after,.search-content-section>header::after{width:120px!important}
   html body .site-footer::before,html body .page-footer::before{font-size:10px;top:8px}
 }
-
 @media(prefers-reduced-motion:reduce){html body{background-attachment:scroll!important}}
