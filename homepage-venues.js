@@ -35,19 +35,11 @@
       .smv-owner-launch-cta{display:inline-flex;align-items:center;justify-content:center;min-height:43px;padding:0 17px;border-radius:12px;border:1px solid rgba(31,235,207,.50);background:linear-gradient(135deg,#20dcc3,#0fc8b0);color:#02211c;font-size:12px!important;font-weight:1000;text-decoration:none;white-space:nowrap;box-shadow:0 10px 24px rgba(15,200,176,.16);animation:smvHomepageCtaPulse 2.1s ease-in-out infinite;transition:.2s ease}
       .smv-owner-launch-cta:hover{transform:translateY(-1px);filter:brightness(1.05)}
       .smv-owner-launch-trust{margin-top:9px;color:#8fb8b3;font-size:10.5px!important;line-height:1.45!important}
-
-      /* Standard desktop navigation sizing */
-      .site-header{height:62px!important}.header-inner{padding-left:14px!important;padding-right:14px!important;gap:8px!important}.brand{width:140px!important;flex:0 0 140px!important;height:58px!important}.brand img{width:132px!important;max-height:50px!important;object-fit:contain!important}#mainNav{min-width:0!important;gap:4px!important;margin-left:auto!important;justify-content:flex-end!important;align-items:center!important}#mainNav>a:not(.smv-header-action){position:relative;display:inline-flex!important;align-items:center;justify-content:center;min-height:34px;padding:0 7px!important;border-radius:9px;color:#b9cfcc!important;font-size:11.4px!important;font-weight:800!important;white-space:nowrap;background:rgba(255,255,255,.015);border:1px solid transparent;transition:.18s ease}#mainNav>a:not(.smv-header-action)::after{display:none!important}#mainNav>a:not(.smv-header-action):hover{color:#f3fbfa!important;background:rgba(25,216,189,.065);border-color:rgba(25,216,189,.13)}#mainNav>a:not(.smv-header-action).active{color:#fff!important;background:rgba(25,216,189,.08);border-color:rgba(25,216,189,.18);box-shadow:inset 0 -2px 0 #19d8bd}#mainNav .smv-header-action{min-height:36px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-size:11.6px!important;transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease,color .2s ease}#mainNav a.smv-find-nav{padding:0 10px!important;border:1px solid rgba(25,216,189,.44)!important;background:linear-gradient(180deg,rgba(25,216,189,.08),rgba(25,216,189,.02))!important;color:#2ce3ca!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 16px rgba(0,0,0,.10)}#mainNav a.smv-find-nav::after{display:none!important}#mainNav a.smv-header-phone{position:relative;padding:0 9px!important;gap:5px;color:#f3fbfa!important;font-weight:900!important;white-space:nowrap;border:1px solid rgba(25,216,189,.16);background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(25,216,189,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}#mainNav a.smv-header-phone::before{content:"☎";width:20px;height:20px;display:grid;place-items:center;border-radius:50%;color:#02211c;background:linear-gradient(135deg,#2ce3ca,#19d8bd);font-size:10px;line-height:1;box-shadow:0 0 12px rgba(25,216,189,.14)}#mainNav a.smv-header-phone::after{display:none!important}#mainNav a.smv-owner-nav-offer{position:relative;padding:0 10px!important;border:1px solid rgba(243,200,75,.48);border-radius:999px;color:#ffe47a!important;background:linear-gradient(180deg,rgba(243,200,75,.08),rgba(243,200,75,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 16px rgba(0,0,0,.10);animation:smvOwnerNavGlow 2.4s ease-in-out infinite}#mainNav a.smv-owner-nav-offer::before{content:"FREE";position:absolute;top:-8px;right:7px;min-width:27px;height:15px;padding:0 4px;display:grid;place-items:center;border-radius:999px;border:2px solid #031817;background:#19d8bd;color:#02211c;font-size:6px;font-weight:1000;letter-spacing:.07em;box-shadow:0 0 10px rgba(25,216,189,.22)}#mainNav a.smv-owner-nav-offer::after{display:none!important}#mainNav a.smv-find-nav:hover,#mainNav a.smv-header-phone:hover,#mainNav a.smv-owner-nav-offer:hover{transform:translateY(-1px)}
+      .site-header{height:62px!important}.header-inner{padding-left:14px!important;padding-right:14px!important;gap:8px!important}.brand{width:140px!important;flex:0 0 140px!important;height:58px!important}.brand img{width:132px!important;max-height:50px!important;object-fit:contain!important}#mainNav{min-width:0!important;gap:4px!important;margin-left:auto!important;justify-content:flex-end!important;align-items:center!important}#mainNav>a:not(.smv-header-action){position:relative;display:inline-flex!important;align-items:center;justify-content:center;min-height:34px;padding:0 7px!important;border-radius:9px;color:#b9cfcc!important;font-size:11.4px!important;font-weight:800!important;white-space:nowrap;background:rgba(255,255,255,.015);border:1px solid transparent;transition:.18s ease}#mainNav>a:not(.smv-header-action)::after{display:none!important}#mainNav>a:not(.smv-header-action).active{color:#fff!important;background:rgba(25,216,189,.08);border-color:rgba(25,216,189,.18);box-shadow:inset 0 -2px 0 #19d8bd}#mainNav .smv-header-action{min-height:36px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;font-size:11.6px!important;transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease,color .2s ease}#mainNav a.smv-find-nav{padding:0 10px!important;border:1px solid rgba(25,216,189,.44)!important;background:linear-gradient(180deg,rgba(25,216,189,.08),rgba(25,216,189,.02))!important;color:#2ce3ca!important}#mainNav a.smv-header-phone{position:relative;padding:0 9px!important;gap:5px;color:#f3fbfa!important;font-weight:900!important;white-space:nowrap;border:1px solid rgba(25,216,189,.16);background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(25,216,189,.02))}#mainNav a.smv-header-phone::before{content:"☎";width:20px;height:20px;display:grid;place-items:center;border-radius:50%;color:#02211c;background:linear-gradient(135deg,#2ce3ca,#19d8bd);font-size:10px}#mainNav a.smv-owner-nav-offer{position:relative;padding:0 10px!important;border:1px solid rgba(243,200,75,.48);border-radius:999px;color:#ffe47a!important;background:linear-gradient(180deg,rgba(243,200,75,.08),rgba(243,200,75,.02))}#mainNav a.smv-owner-nav-offer::before{content:"FREE";position:absolute;top:-8px;right:7px;min-width:27px;height:15px;padding:0 4px;display:grid;place-items:center;border-radius:999px;border:2px solid #031817;background:#19d8bd;color:#02211c;font-size:6px;font-weight:1000;letter-spacing:.07em}#mainNav a.smv-find-nav::after,#mainNav a.smv-header-phone::after,#mainNav a.smv-owner-nav-offer::after{display:none!important}
       @media(max-width:1650px){.brand{width:126px!important;flex-basis:126px!important}.brand img{width:120px!important}#mainNav{gap:3px!important}#mainNav>a:not(.smv-header-action){font-size:10.8px!important;padding:0 5px!important;min-height:33px}#mainNav .smv-header-action{font-size:10.8px!important;min-height:34px}#mainNav a.smv-find-nav,#mainNav a.smv-owner-nav-offer{padding:0 8px!important}#mainNav a.smv-header-phone{padding:0 7px!important}}
       @media(max-width:1450px){#mainNav a[href="#aiPlanner"],#mainNav a[href="delhi-ncr-venues.html"],#mainNav a[href="#smart"]{display:none!important}.brand{width:132px!important;flex-basis:132px!important}.brand img{width:126px!important}}
-
       #home{min-height:390px!important}#home .hero-inner{min-height:390px!important;padding-top:42px!important;padding-bottom:38px!important}#home h1{font-size:clamp(34px,3.9vw,58px)!important;line-height:1.02!important}
-      @keyframes smvHomepageDotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.78)}}
-      @keyframes smvHomepageFreePulse{0%,100%{opacity:1;filter:brightness(1)}50%{opacity:.86;filter:brightness(1.12)}}
-      @keyframes smvTrialGlow{0%,100%{box-shadow:0 0 0 rgba(243,200,75,0)}50%{box-shadow:0 0 14px rgba(243,200,75,.12)}}
-      @keyframes smvHomepageCtaPulse{0%,100%{box-shadow:0 10px 24px rgba(15,200,176,.16)}50%{box-shadow:0 10px 27px rgba(15,200,176,.22)}}
-      @keyframes smvOwnerNavGlow{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 16px rgba(0,0,0,.10)}50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 18px rgba(243,200,75,.08)}}
-      @keyframes smvHomepageOfferShine{0%,72%,100%{transform:translateX(-74%)}86%{transform:translateX(74%)}}
+      @keyframes smvHomepageDotPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.78)}}@keyframes smvHomepageFreePulse{0%,100%{opacity:1;filter:brightness(1)}50%{opacity:.86;filter:brightness(1.12)}}@keyframes smvTrialGlow{0%,100%{box-shadow:0 0 0 rgba(243,200,75,0)}50%{box-shadow:0 0 14px rgba(243,200,75,.12)}}@keyframes smvHomepageCtaPulse{0%,100%{box-shadow:0 10px 24px rgba(15,200,176,.16)}50%{box-shadow:0 10px 27px rgba(15,200,176,.22)}}@keyframes smvOwnerNavGlow{0%,100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 16px rgba(0,0,0,.10)}50%{box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 6px 18px rgba(243,200,75,.08)}}@keyframes smvHomepageOfferShine{0%,72%,100%{transform:translateX(-74%)}86%{transform:translateX(74%)}}
       @media(max-width:1100px){.smv-owner-launch-panel{grid-template-columns:1fr;gap:14px;padding:18px}.smv-owner-launch-right{padding:16px 18px}.smv-owner-launch-heading{font-size:clamp(32px,6.2vw,48px)}}
       @media(max-width:760px){.smv-owner-launch-wrap{padding:10px}.smv-owner-launch-panel{padding:15px 13px;border-radius:19px}.smv-owner-launch-heading{font-size:clamp(32px,10vw,44px)}.smv-owner-launch-benefit-grid{grid-template-columns:1fr}.smv-owner-launch-copy{font-size:12.5px!important}.smv-owner-launch-limited{font-size:10px!important}#home{min-height:360px!important}#home .hero-inner{min-height:360px!important;padding-top:34px!important;padding-bottom:34px!important}}
       @media(max-width:520px){.smv-owner-launch-kicker{font-size:8.5px!important;min-height:29px;padding:0 10px}.smv-owner-launch-heading{font-size:34px}.smv-owner-launch-chips{gap:6px}.smv-owner-launch-chips span{min-height:31px;padding:0 9px;font-size:9px!important}.smv-owner-launch-right{padding:14px}.smv-owner-launch-right h3{font-size:16px!important}.smv-owner-launch-cta{width:100%;font-size:11px!important}}
@@ -69,14 +61,23 @@
     const findLink = document.querySelector('#mainNav a.nav-cta[href="#enquiry"]');
     if (findLink) findLink.classList.add("smv-header-action", "smv-find-nav");
     const navOffer = document.querySelector('#mainNav a[href="list-your-venue.html"]');
-    if (navOffer) {navOffer.classList.add("smv-header-action", "smv-owner-nav-offer");navOffer.setAttribute("title", "Founding Venue Partner Offer — List Your Venue FREE");navOffer.setAttribute("aria-label", "List Your Venue FREE — Founding Venue Partner Offer");}
+    if (navOffer) {
+      navOffer.classList.add("smv-header-action", "smv-owner-nav-offer");
+      navOffer.setAttribute("title", "Founding Venue Partner Offer — List Your Venue FREE");
+      navOffer.setAttribute("aria-label", "List Your Venue FREE — Founding Venue Partner Offer");
+    }
     const contactLink = document.querySelector('#mainNav a[href="#contact"]');
-    if (contactLink) {contactLink.textContent = "+91 83683 22256";contactLink.href = "tel:+918368322256";contactLink.classList.add("smv-header-action", "smv-header-phone");contactLink.setAttribute("aria-label", "Call Select My Venue at +91 83683 22256");contactLink.setAttribute("title", "Call +91 83683 22256");}
+    if (contactLink) {
+      contactLink.textContent = "+91 83683 22256";
+      contactLink.href = "tel:+918368322256";
+      contactLink.classList.add("smv-header-action", "smv-header-phone");
+      contactLink.setAttribute("aria-label", "Call Select My Venue at +91 83683 22256");
+      contactLink.setAttribute("title", "Call +91 83683 22256");
+    }
   }
 
   installFoundingPartnerOffer();
 
-  /* Load the customer Smart Match experience without touching index.html. */
   if (!document.getElementById("smvSmartMatchLoader")) {
     const smartMatchScript = document.createElement("script");
     smartMatchScript.id = "smvSmartMatchLoader";
@@ -90,16 +91,93 @@
   const section = document.getElementById("featuredVenues");
   const grid = document.getElementById("homeVenueGrid");
   if (!section || !grid) return;
-  const client = window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
-  const escapeHtml=value=>String(value??"").replace(/[&<>'\"]/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"})[character]);
-  function safeHttpUrl(value){try{const url=new URL(String(value||""));return["http:","https:"].includes(url.protocol)?url.href:""}catch(_){return""}}
-  function money(value){const number=Number(value);if(!Number.isFinite(number)||number<=0)return null;return new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(number)}
-  function capacity(venue){const minimum=Number(venue.capacity_min||0),maximum=Number(venue.capacity_max||0);if(minimum&&maximum)return`${minimum}–${maximum} guests`;if(maximum)return`Up to ${maximum} guests`;if(minimum)return`${minimum}+ guests`;return"On request"}
-  function pricing(venue){const minimum=money(venue.price_min_per_person),maximum=money(venue.price_max_per_person);if(minimum&&maximum)return`${minimum}–${maximum}/person`;if(minimum)return`${minimum}+/person`;if(maximum)return`Up to ${maximum}/person`;return"Quote on request"}
-  function features(venue){const items=[];if(venue.food_veg)items.push("Vegetarian");if(venue.food_non_veg)items.push("Non-Vegetarian");if(venue.parking_available)items.push("Parking");if(venue.rooms_available)items.push("Rooms");if(venue.catering_available)items.push("Catering");if(venue.decoration_available)items.push("Decoration");return items.slice(0,4)}
-  function renderVenue(venue){const id=encodeURIComponent(String(venue.id||""));const name=String(venue.venue_name||"Venue Partner");const imageUrl=safeHttpUrl(venue.cover_image_url);const location=[venue.area,venue.city].filter(Boolean).join(", ")||"Location on request";const featureList=features(venue);const profileUrl=`venue.html?id=${id}`;const quoteUrl=`index.html?venue=${id}&venue_name=${encodeURIComponent(name)}#enquiry`;const media=imageUrl?`<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async">`:`<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>`;const featureHtml=featureList.length?featureList.map(item=>`<span>✓ ${escapeHtml(item)}</span>`).join(""):`<span>Details on request</span>`;return`<article class="home-venue-card"><div class="home-venue-media">${media}<div class="home-venue-badges"><span class="home-venue-badge">${escapeHtml(venue.venue_type||"Venue")}</span><span class="home-venue-badge verified">✓ Verified</span></div></div><div class="home-venue-content"><h3>${escapeHtml(name)}</h3><p class="home-venue-location">⌖ ${escapeHtml(location)}</p><div class="home-venue-facts"><div class="home-venue-fact"><span>Capacity</span><strong>${escapeHtml(capacity(venue))}</strong></div><div class="home-venue-fact"><span>Starting range</span><strong>${escapeHtml(pricing(venue))}</strong></div></div><div class="home-venue-features">${featureHtml}</div><div class="home-venue-actions"><a class="secondary-btn" href="${profileUrl}">View Profile</a><a class="primary-btn" href="${quoteUrl}">Get Quote</a></div></div></article>`}
-  function hideShowcase(){grid.innerHTML="";section.hidden=true;section.setAttribute("aria-busy","false")}
-  function showShowcase(){section.hidden=false;section.setAttribute("aria-busy","false")}
-  async function loadHomepageVenues(){if(!client){hideShowcase();return}const{data,error}=await client.rpc("smv_public_venues");if(error){console.error("Homepage venue showcase error:",error);hideShowcase();return}const venues=Array.isArray(data)?data.map(item=>item?.venue||item).filter(Boolean):[];if(!venues.length){hideShowcase();return}showShowcase();grid.innerHTML=venues.map(renderVenue).join("")}
+
+  const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+  });
+
+  const escapeHtml = value => String(value ?? "").replace(/[&<>'\"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '\"': "&quot;" })[character]);
+  function safeHttpUrl(value) {
+    try {
+      const url = new URL(String(value || ""));
+      return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+    } catch (_) {
+      return "";
+    }
+  }
+  function money(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number) || number <= 0) return null;
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(number);
+  }
+  function capacity(venue) {
+    const minimum = Number(venue.capacity_min || 0), maximum = Number(venue.capacity_max || 0);
+    if (minimum && maximum) return `${minimum}–${maximum} guests`;
+    if (maximum) return `Up to ${maximum} guests`;
+    if (minimum) return `${minimum}+ guests`;
+    return "On request";
+  }
+  function pricing(venue) {
+    const minimum = money(venue.price_min_per_person), maximum = money(venue.price_max_per_person);
+    if (minimum && maximum) return `${minimum}–${maximum}/person`;
+    if (minimum) return `${minimum}+/person`;
+    if (maximum) return `Up to ${maximum}/person`;
+    return "Quote on request";
+  }
+  function features(venue) {
+    const items = [];
+    if (venue.food_veg) items.push("Vegetarian");
+    if (venue.food_non_veg) items.push("Non-Vegetarian");
+    if (venue.parking_available) items.push("Parking");
+    if (venue.rooms_available) items.push("Rooms");
+    if (venue.catering_available) items.push("Catering");
+    if (venue.decoration_available) items.push("Decoration");
+    return items.slice(0, 4);
+  }
+  function renderVenue(venue) {
+    const id = encodeURIComponent(String(venue.id || ""));
+    const rawId = String(venue.id || "");
+    const name = String(venue.venue_name || "Venue Partner");
+    const imageUrl = safeHttpUrl(venue.cover_image_url);
+    const location = [venue.area, venue.city].filter(Boolean).join(", ") || "Location on request";
+    const featureList = features(venue);
+    const profileUrl = `venue.html?id=${id}`;
+    const quoteUrl = `index.html?venue=${id}&venue_name=${encodeURIComponent(name)}#enquiry`;
+    const media = imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async">` : `<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>`;
+    const featureHtml = featureList.length ? featureList.map(item => `<span>✓ ${escapeHtml(item)}</span>`).join("") : `<span>Details on request</span>`;
+    return `<article class="home-venue-card" data-venue-id="${escapeHtml(rawId)}" data-profile-url="${escapeHtml(profileUrl)}" role="link" tabindex="0" aria-label="Open ${escapeHtml(name)} venue profile"><div class="home-venue-media">${media}<div class="home-venue-badges"><span class="home-venue-badge">${escapeHtml(venue.venue_type || "Venue")}</span><span class="home-venue-badge verified">✓ Verified</span></div></div><div class="home-venue-content"><h3>${escapeHtml(name)}</h3><p class="home-venue-location">⌖ ${escapeHtml(location)}</p><div class="home-venue-facts"><div class="home-venue-fact"><span>Capacity</span><strong>${escapeHtml(capacity(venue))}</strong></div><div class="home-venue-fact"><span>Starting range</span><strong>${escapeHtml(pricing(venue))}</strong></div></div><div class="home-venue-features">${featureHtml}</div><div class="home-venue-actions"><a class="secondary-btn" href="${profileUrl}">View Profile</a><a class="primary-btn" href="${quoteUrl}">Get Quote</a></div></div></article>`;
+  }
+  function hideShowcase() {
+    grid.innerHTML = "";
+    section.hidden = true;
+    section.setAttribute("aria-busy", "false");
+  }
+  function showShowcase() {
+    section.hidden = false;
+    section.setAttribute("aria-busy", "false");
+  }
+  async function loadHomepageVenues() {
+    if (!client) { hideShowcase(); return; }
+    const { data, error } = await client.rpc("smv_public_venues");
+    if (error) { console.error("Homepage venue showcase error:", error); hideShowcase(); return; }
+    const venues = Array.isArray(data) ? data.map(item => item?.venue || item).filter(Boolean) : [];
+    if (!venues.length) { hideShowcase(); return; }
+    showShowcase();
+    grid.innerHTML = venues.map(renderVenue).join("");
+  }
+
+  grid.addEventListener("click", event => {
+    if (event.target.closest("a,button,input,select,textarea,label")) return;
+    const card = event.target.closest(".home-venue-card[data-profile-url]");
+    if (card?.dataset.profileUrl) window.location.href = card.dataset.profileUrl;
+  });
+  grid.addEventListener("keydown", event => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const card = event.target.closest(".home-venue-card[data-profile-url]");
+    if (!card?.dataset.profileUrl) return;
+    event.preventDefault();
+    window.location.href = card.dataset.profileUrl;
+  });
+
   loadHomepageVenues();
 })();
