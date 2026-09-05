@@ -1,25 +1,22 @@
 @import url("./venue-profile-luxury-base-20260905.css?v=90b4d69");
 
 /* =========================================================
-   FINAL VENUE PROFILE SIZE + DESCRIPTION SPACING TUNE
-   Slightly compact, keeps premium look, hero image and enquiry placement.
+   FINAL VENUE PROFILE SIZE + DESCRIPTION SPACING TUNE V2
+   More standard size; keeps premium look, hero image and enquiry placement.
    ========================================================= */
-body.venue-profile-page{font-size:15.5px!important;line-height:1.58!important}
-.venue-title-copy .eyebrow,.venue-profile-panel .eyebrow{font-size:11px!important}
-.venue-title-copy h1{font-size:clamp(39px,3.55vw,58px)!important;line-height:1.04!important}
-.venue-profile-location{font-size:15px!important;line-height:1.48!important}
-.button,.venue-profile-page button,.venue-profile-page a.button,.smv-profile-action{font-size:13px!important;min-height:43px!important}
-.venue-profile-facts span,.smv-snapshot-grid span,.venue-quick-enquiry-form label span{font-size:10px!important}
-.venue-profile-facts strong{font-size:16.5px!important;line-height:1.34!important}
-.venue-profile-panel h2,.venue-profile-enquiry h2{font-size:clamp(30px,2.7vw,40px)!important;line-height:1.1!important}
-.venue-profile-panel p,.venue-profile-enquiry p{font-size:16px!important;line-height:1.72!important;font-weight:600!important}
-#venueProfileDescription{display:block!important;margin:0!important;color:#3f5e57!important;font-size:16px!important;line-height:1.92!important;font-weight:600!important;white-space:pre-line!important;letter-spacing:.005em!important;max-width:1180px!important}
-.venue-profile-feature strong,.venue-highlight b,.smv-snapshot-grid strong{font-size:15px!important;line-height:1.42!important}
-.venue-highlight span,.smv-profile-snapshot small,.smv-good-fit span,.venue-assist-points span{font-size:13px!important;line-height:1.55!important}
-.venue-quick-enquiry-form .venue-quick-title{font-size:24px!important;line-height:1.1!important}
-.venue-quick-enquiry-form .venue-quick-subtitle{font-size:12px!important;line-height:1.45!important}
-.venue-quick-enquiry-form input,.venue-quick-enquiry-form select,.venue-quick-enquiry-form textarea,.venue-quote-grid input,.venue-quote-grid select{font-size:14.5px!important;min-height:44px!important}
-.venue-quick-enquiry-form button,.venue-quote-submit{font-size:14px!important;min-height:48px!important}
-.smv-sticky-venue-bar strong{font-size:14px!important}.smv-sticky-venue-bar span,.smv-sticky-venue-bar button{font-size:12px!important}.venue-similar-card h3{font-size:21px!important}.venue-similar-card p,.venue-similar-facts span,.venue-similar-actions a{font-size:12.5px!important}.venue-similar-verified{font-size:10px!important}
-.venue-profile-detail-item strong{font-size:14.5px!important;line-height:1.34!important}.venue-profile-detail-item span{font-size:10.5px!important}.venue-profile-detail-item b{font-size:15px!important}
-@media(max-width:700px){.venue-title-copy h1{font-size:34px!important}.venue-profile-location{font-size:14.5px!important}.venue-profile-panel h2{font-size:29px!important}.venue-profile-panel p,#venueProfileDescription{font-size:15.5px!important;line-height:1.82!important}.venue-profile-facts strong{font-size:15.5px!important}.venue-mobile-actions button,.venue-mobile-actions a{font-size:13.5px!important}}
+body.venue-profile-page{font-size:14.8px!important;line-height:1.54!important}
+.venue-profile-main{padding-top:30px!important}
+.venue-title-copy .eyebrow,.venue-profile-panel .eyebrow{font-size:10px!important}
+.venue-title-copy h1{font-size:clamp(35px,3.25vw,52px)!important;line-height:1.04!important}
+.venue-profile-location{font-size:14px!important;line-height:1.45!important}.venue-profile-titlebar{padding:19px 24px!important}
+.button,.venue-profile-page button,.venue-profile-page a.button,.smv-profile-action{font-size:12px!important;min-height:39px!important;padding-left:13px!important;padding-right:13px!important}
+.venue-profile-hero-actions{gap:7px!important}.smv-profile-actions{gap:7px!important}.smv-profile-action{min-height:36px!important}
+.venue-profile-facts{gap:8px!important;margin-top:16px!important;margin-bottom:16px!important}.venue-profile-facts>div{padding:13px 15px!important;border-radius:13px!important}.venue-profile-facts span,.smv-snapshot-grid span,.venue-quick-enquiry-form label span{font-size:9px!important}.venue-profile-facts strong{font-size:15px!important;line-height:1.32!important}
+.venue-profile-panel{padding:24px 26px!important;border-radius:18px!important}.venue-profile-panel h2,.venue-profile-enquiry h2{font-size:clamp(26px,2.45vw,35px)!important;line-height:1.1!important;margin-bottom:11px!important}.venue-profile-panel p,.venue-profile-enquiry p{font-size:14.8px!important;line-height:1.68!important;font-weight:590!important}
+#venueProfileDescription{display:block!important;margin:0!important;color:#3f5e57!important;font-size:14.8px!important;line-height:1.86!important;font-weight:590!important;white-space:pre-line!important;letter-spacing:.003em!important;max-width:1180px!important}
+#venueProfileDescription br{display:block!important;margin-bottom:10px!important;content:""!important}
+.venue-profile-feature{min-height:58px!important;padding:10px 12px!important}.venue-profile-feature span{width:31px!important;height:31px!important}.venue-profile-feature strong,.venue-highlight b,.smv-snapshot-grid strong{font-size:13.5px!important;line-height:1.38!important}.venue-highlight{min-height:94px!important;padding:13px!important}.venue-highlight span,.smv-profile-snapshot small,.smv-good-fit span,.venue-assist-points span{font-size:12px!important;line-height:1.5!important}.smv-snapshot-grid>div{padding:13px!important}.smv-good-fit span{padding:6px 9px!important}
+.venue-quick-enquiry-form .venue-quick-title{font-size:21.5px!important;line-height:1.1!important}.venue-quick-enquiry-form .venue-quick-subtitle{font-size:11.5px!important;line-height:1.42!important}.venue-quick-enquiry-form input,.venue-quick-enquiry-form select,.venue-quick-enquiry-form textarea,.venue-quote-grid input,.venue-quote-grid select{font-size:13.3px!important;min-height:40px!important}.venue-quick-enquiry-form button,.venue-quote-submit{font-size:13px!important;min-height:44px!important}.venue-quote-card h2{font-size:29px!important}.venue-quote-kicker{font-size:9px!important}.venue-quote-venue,.venue-quote-trust,.venue-quote-status{font-size:11.5px!important}
+.smv-sticky-venue-bar{min-height:48px!important}.smv-sticky-venue-bar strong{font-size:12.8px!important}.smv-sticky-venue-bar span,.smv-sticky-venue-bar button{font-size:11px!important}.venue-similar-card h3{font-size:19.5px!important}.venue-similar-card p,.venue-similar-facts span,.venue-similar-actions a{font-size:11.8px!important}.venue-similar-verified{font-size:9.5px!important}
+.venue-profile-detail-item{min-height:98px!important;padding:13px 12px!important}.venue-profile-detail-item strong{font-size:13.6px!important;line-height:1.32!important}.venue-profile-detail-item span{font-size:9.5px!important}.venue-profile-detail-item b{font-size:14px!important}
+@media(max-width:700px){.venue-title-copy h1{font-size:31px!important}.venue-profile-location{font-size:13.5px!important}.venue-profile-titlebar{padding:18px 15px!important}.venue-profile-panel{padding:19px!important}.venue-profile-panel h2{font-size:25px!important}.venue-profile-panel p,#venueProfileDescription{font-size:14px!important;line-height:1.78!important}.venue-profile-facts strong{font-size:14.3px!important}.venue-mobile-actions button,.venue-mobile-actions a{font-size:12.5px!important}}
