@@ -1,0 +1,61 @@
+/* SELECT MY VENUE — CLEAN PREMIUM VENUE PROFILE POLISH
+   Restores a settled branded profile; no experimental AI override. */
+
+html body.venue-profile-page .venue-profile-main{width:min(1420px,calc(100% - 28px))!important;padding-top:18px!important;padding-bottom:42px!important}
+html body.venue-profile-page .venue-profile-hero{border-radius:22px!important;border:1px solid rgba(15,116,99,.13)!important;box-shadow:0 28px 70px rgba(20,74,64,.13),0 7px 18px rgba(20,74,64,.05)!important;background:#fff!important}
+html body.venue-profile-page .venue-profile-titlebar{padding:16px 20px!important;background:radial-gradient(circle at 94% 0%,rgba(243,200,75,.09),transparent 28%),linear-gradient(135deg,#fff 0%,#f7fbf9 100%)!important}
+html body.venue-profile-page .venue-title-copy .eyebrow{display:inline-flex!important;align-items:center!important;gap:6px!important;color:#8a6a25!important;font-size:8.8px!important;font-weight:950!important;letter-spacing:.13em!important}
+html body.venue-profile-page .venue-title-copy .eyebrow::before{content:"✓";display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#0b9a85;color:#fff;font-size:9px;box-shadow:0 5px 12px rgba(11,154,133,.18)}
+html body.venue-profile-page .venue-title-copy h1{font-size:clamp(30px,2.8vw,42px)!important;color:#113f36!important;letter-spacing:-.035em!important}
+html body.venue-profile-page .venue-profile-location{font-size:12.4px!important;color:#55756e!important;font-weight:650!important}
+html body.venue-profile-page .venue-profile-hero-actions{gap:8px!important}
+html body.venue-profile-page .venue-profile-hero-actions .button,html body.venue-profile-page .smv-profile-action,html body.venue-profile-page #venueShareBtn{min-height:40px!important;border-radius:11px!important;font-size:11px!important;font-weight:900!important}
+
+/* Four key cards are the primary at-a-glance venue information. */
+html body.venue-profile-page #venueProfileDetailsStrip.venue-profile-details-strip{margin:16px 0 18px!important;gap:14px!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item{min-height:108px!important;border-radius:18px!important;border-color:rgba(15,116,99,.13)!important;background:linear-gradient(145deg,#fff 0%,#fbfdfc 65%,#f2f8f6 100%)!important;box-shadow:0 16px 36px rgba(22,72,63,.09),0 4px 11px rgba(22,72,63,.04),inset 0 1px 0 #fff!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item:hover{transform:translateY(-3px)!important;box-shadow:0 22px 44px rgba(22,72,63,.12),0 5px 12px rgba(22,72,63,.05),inset 0 1px 0 #fff!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item strong{font-size:19px!important;color:#143b34!important}
+html body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item span{font-size:10.5px!important;color:#4c6f67!important}
+
+/* Keep profile information simple and clearly grouped. */
+html body.venue-profile-page .venue-profile-layout{grid-template-columns:minmax(0,1.65fr) minmax(300px,.58fr)!important;gap:16px!important;align-items:start!important}
+html body.venue-profile-page .venue-profile-content{gap:14px!important}
+html body.venue-profile-page .venue-profile-panel,html body.venue-profile-page .venue-profile-enquiry{border-radius:18px!important;border:1px solid rgba(17,96,83,.10)!important;background:#fff!important;box-shadow:0 15px 38px rgba(24,70,62,.07),inset 0 1px 0 #fff!important}
+html body.venue-profile-page .venue-profile-panel{padding:20px 22px!important}
+html body.venue-profile-page .venue-profile-panel .eyebrow{color:#927127!important;font-size:8.7px!important;font-weight:950!important;letter-spacing:.13em!important}
+html body.venue-profile-page .venue-profile-panel h2,html body.venue-profile-page .venue-profile-enquiry h2{font-size:clamp(21px,1.9vw,28px)!important;color:#153f37!important;margin:5px 0 9px!important}
+html body.venue-profile-page .venue-profile-panel p,html body.venue-profile-page #venueProfileDescription{font-size:12.7px!important;line-height:1.62!important;color:#4d6e67!important}
+
+/* About venue gets one restrained branded accent. */
+html body.venue-profile-page .venue-profile-content>.venue-profile-panel:first-child{border-left:4px solid #16bca4!important;background:linear-gradient(135deg,#fff,#f7fbf9)!important}
+
+/* Facilities: premium icon cards without oversizing the page. */
+html body.venue-profile-page .venue-profile-features{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;margin-top:12px!important}
+html body.venue-profile-page .venue-profile-feature{min-height:62px!important;padding:10px 10px 10px 48px!important;position:relative!important;border:1px solid rgba(15,116,99,.10)!important;border-radius:13px!important;background:linear-gradient(145deg,#fbfefd,#f1f8f5)!important;box-shadow:0 8px 19px rgba(24,70,62,.045)!important}
+html body.venue-profile-page .venue-profile-feature span{position:absolute!important;left:10px!important;width:29px!important;height:29px!important;display:grid!important;place-items:center!important;border-radius:9px!important;background:linear-gradient(145deg,#dff9f4,#fff2bd)!important;color:#087f70!important;font-size:14px!important;box-shadow:0 5px 12px rgba(13,139,120,.09)!important}
+html body.venue-profile-page .venue-profile-feature strong{font-size:11px!important;color:#274f47!important;line-height:1.3!important}
+
+/* Remove the experimental AI / smart-shortlist visual block completely.
+   Data remains available in code but does not clutter the venue showcase. */
+html body.venue-profile-page .venue-profile-panel:has(#venueProfileHighlights){display:none!important}
+
+/* Premium concierge card — focused on one conversion action. */
+html body.venue-profile-page .venue-profile-enquiry{position:sticky!important;top:92px!important;padding:20px!important;background:radial-gradient(circle at 100% 0%,rgba(243,200,75,.09),transparent 28%),linear-gradient(160deg,#fffefb,#f4faf7)!important;box-shadow:0 20px 46px rgba(24,70,62,.10)!important}
+html body.venue-profile-page .venue-profile-assist-badge{display:inline-flex!important;padding:5px 8px!important;border-radius:999px!important;border:1px solid rgba(13,156,135,.16)!important;background:#edf9f6!important;color:#087d6e!important;font-size:8px!important;font-weight:1000!important;letter-spacing:.10em!important}
+html body.venue-profile-page .venue-profile-enquiry p{font-size:12px!important;line-height:1.55!important;color:#5b766f!important}
+html body.venue-profile-page .venue-profile-enquiry .button-primary{min-height:44px!important;border-radius:11px!important;background:linear-gradient(135deg,#19d8bd,#0b9d88)!important;color:#fff!important;font-weight:950!important;box-shadow:0 12px 24px rgba(11,157,136,.18)!important}
+html body.venue-profile-page .venue-assist-points{gap:7px!important;margin:13px 0!important}
+html body.venue-profile-page .venue-assist-points span{font-size:10.5px!important;color:#486b63!important}
+
+/* Gallery/video sections should read like showroom sections, not giant blocks. */
+html body.venue-profile-page .venue-gallery-section,html body.venue-profile-page .venue-videos-section{border-radius:18px!important;padding:18px 20px!important;box-shadow:0 15px 38px rgba(24,70,62,.07)!important}
+html body.venue-profile-page .venue-section-head h2{font-size:25px!important;color:#153f37!important}
+
+/* Similar venues are deliberately secondary. */
+html body.venue-profile-page .venue-similar-section{margin-top:18px!important;padding:18px!important;border-radius:18px!important;background:rgba(255,255,255,.90)!important;border:1px solid rgba(17,96,83,.09)!important;box-shadow:0 14px 34px rgba(24,70,62,.055)!important}
+
+html body.venue-profile-page .smv-profile-call,html body.venue-profile-page a[href^="tel:"]{display:none!important}
+
+@media(max-width:980px){html body.venue-profile-page .venue-profile-layout{grid-template-columns:1fr!important}.venue-profile-enquiry{position:static!important}.venue-profile-features{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:700px){html body.venue-profile-page .venue-profile-main{width:calc(100% - 10px)!important}html body.venue-profile-page .venue-profile-panel{padding:15px!important}.venue-profile-features{grid-template-columns:1fr!important}html body.venue-profile-page #venueProfileDetailsStrip.venue-profile-details-strip{grid-template-columns:1fr 1fr!important}}
