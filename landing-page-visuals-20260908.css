@@ -1,0 +1,35 @@
+/* Select My Venue — page-specific landing visuals */
+
+/* Keep every sitelink destination visually distinct instead of repeating one generic gallery. */
+.wedding-landing .search-landing-copy{background-position:center 46%!important}
+.party-landing .search-landing-copy{background-position:center 48%!important}
+.corporate-landing .search-landing-copy{background-position:center 40%!important}
+.city-landing .search-landing-copy{background-position:center 42%!important}
+
+.wedding-landing .celebration-tile:nth-child(1){background-image:url('assets/hero/hero-bright-wedding-v2.webp')!important}
+.wedding-landing .celebration-tile:nth-child(2){background-image:url('assets/hero/hero-bright-garden-v2.webp')!important}
+.wedding-landing .celebration-tile:nth-child(3){background-image:url('assets/hero/hero-bright-engagement-v2.webp')!important}
+.wedding-landing .celebration-tile:nth-child(4){background-image:url('assets/hero/sangeet-engagement.webp')!important}
+
+.party-landing .celebration-tile:nth-child(1){background-image:url('assets/hero/hero-bright-celebration-v2.webp')!important}
+.party-landing .celebration-tile:nth-child(2){background-image:url('assets/hero/sangeet-engagement.webp')!important}
+.party-landing .celebration-tile:nth-child(3){background-image:url('assets/hero/hero-bright-engagement-v2.webp')!important}
+.party-landing .celebration-tile:nth-child(4){background-image:url('assets/hero/hero-bright-garden-v2.webp')!important}
+
+.corporate-landing .celebration-tile:nth-child(1){background-image:url('assets/hero/hero-bright-garden-v2.webp')!important}
+.corporate-landing .celebration-tile:nth-child(2){background-image:url('assets/hero/hero-bright-celebration-v2.webp')!important}
+.corporate-landing .celebration-tile:nth-child(3){background-image:url('assets/hero/hero-bright-wedding-v2.webp')!important;background-position:center 35%!important}
+.corporate-landing .celebration-tile:nth-child(4){background-image:url('assets/hero/hero-bright-engagement-v2.webp')!important}
+
+.city-landing .celebration-tile:nth-child(1){background-image:url('assets/hero/hero-bright-engagement-v2.webp')!important}
+.city-landing .celebration-tile:nth-child(2){background-image:url('assets/hero/hero-bright-garden-v2.webp')!important}
+.city-landing .celebration-tile:nth-child(3){background-image:url('assets/hero/hero-bright-wedding-v2.webp')!important}
+.city-landing .celebration-tile:nth-child(4){background-image:url('assets/hero/hero-bright-celebration-v2.webp')!important}
+
+/* Small category accents so the pages feel intentionally different. */
+.wedding-landing .search-landing-hero{box-shadow:0 32px 80px rgba(117,50,42,.28)!important}
+.party-landing .search-landing-hero{box-shadow:0 32px 80px rgba(91,38,111,.24)!important}
+.corporate-landing .search-landing-hero{box-shadow:0 32px 80px rgba(18,70,83,.28)!important}
+.city-landing .search-landing-hero{box-shadow:0 32px 80px rgba(91,74,27,.24)!important}
+
+.quick-enquiry-success{font-size:13px!important;line-height:1.55!important}
