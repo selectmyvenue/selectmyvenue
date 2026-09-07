@@ -1,59 +1,45 @@
 <!DOCTYPE html>
 <html lang="en-IN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Party Halls in Delhi & Gurgaon | Select My Venue</title>
-  <meta name="description" content="Find party halls in Delhi and Gurgaon for birthdays, anniversaries, engagements and private celebrations. Share your location, guest count and budget.">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Party Venues in Delhi & Gurgaon | Select My Venue</title>
+  <meta name="description" content="Find party venues in Delhi and Gurgaon for birthdays, anniversaries and private celebrations. Submit a quick enquiry in seconds.">
   <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
   <link rel="canonical" href="https://selectmyvenue.com/party-halls-delhi-ncr.html">
-  <meta property="og:type" content="website"><meta property="og:locale" content="en_IN"><meta property="og:title" content="Party Halls in Delhi & Gurgaon | Select My Venue"><meta property="og:description" content="Find suitable party venues based on location, guest count and budget."><meta property="og:url" content="https://selectmyvenue.com/party-halls-delhi-ncr.html"><meta property="og:image" content="https://selectmyvenue.com/assets/hero/hero-bright-celebration-v2.webp"><meta property="og:site_name" content="Select My Venue">
+  <meta property="og:type" content="website"><meta property="og:locale" content="en_IN"><meta property="og:title" content="Party Venues in Delhi & Gurgaon | Select My Venue"><meta property="og:description" content="Quick party venue discovery for Delhi and Gurgaon."><meta property="og:url" content="https://selectmyvenue.com/party-halls-delhi-ncr.html"><meta property="og:image" content="https://selectmyvenue.com/assets/hero/hero-bright-celebration-v2.webp"><meta property="og:site_name" content="Select My Venue">
   <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512"><link rel="shortcut icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
-  <link rel="stylesheet" href="public-pages.css?v=20260908-ads-ready-1">
+  <link rel="stylesheet" href="public-pages.css?v=20260908-quick-enquiry-1">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-  <header class="page-header"><nav class="page-nav" aria-label="Main navigation"><a href="index.html"><img class="page-logo" src="logo.png" alt="Select My Venue"></a><div class="page-nav-links"><a href="venues.html">Browse Venues</a><a href="wedding-venues-delhi-ncr.html">Wedding Venues</a><a href="delhi-ncr-venues.html">Delhi & Gurgaon</a><a class="page-nav-cta" href="index.html#enquiry">Find My Venue</a></div></nav></header>
+<body class="party-landing">
+  <header class="page-header"><nav class="page-nav" aria-label="Main navigation"><a href="index.html"><img class="page-logo" src="logo.png" alt="Select My Venue"></a><div class="page-nav-links"><a href="venues.html">Browse Venues</a><a href="wedding-venues-delhi-ncr.html">Wedding Venues</a><a href="corporate-event-venues-delhi-ncr.html">Corporate Venues</a><a href="delhi-ncr-venues.html">Delhi & Gurgaon</a><a class="page-nav-cta" href="#quickEnquiry">Quick Enquiry</a></div></nav></header>
   <main class="page-main search-landing-main">
-    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>›</span><span>Party Halls</span></nav>
-
+    <nav class="breadcrumbs" aria-label="Breadcrumb"><a href="index.html">Home</a><span>›</span><span>Party Venues</span></nav>
     <section class="search-landing-hero">
-      <div class="search-landing-copy">
-        <p class="eyebrow">PARTY VENUES · DELHI & GURGAON</p>
-        <h1>Find a party hall that fits your celebration.</h1>
-        <p>Planning a birthday, anniversary, engagement, baby shower or private party? Share the location, guest count and budget that matter to you and focus on relevant venue options instead of endless scrolling.</p>
-        <div class="search-landing-points"><span>Birthdays</span><span>Anniversaries</span><span>Engagements</span><span>Baby showers</span><span>Private parties</span></div>
-      </div>
-      <aside class="quick-search-card">
-        <p class="eyebrow">QUICK PARTY SEARCH</p><h2>Tell us the party basics</h2><p>Start here and continue to the complete venue enquiry form.</p>
-        <form class="quick-search-form" action="index.html#enquiry" method="get">
-          <input type="hidden" name="event_type" value="Party"><input type="hidden" name="source_page" value="Party Halls">
-          <div class="form-field full"><label for="partyLocation">CITY / AREA</label><input id="partyLocation" name="location" placeholder="e.g. Delhi, Rohini, Gurgaon" required></div>
-          <div class="form-field"><label for="partyGuests">GUESTS</label><input id="partyGuests" name="guests" type="number" min="1" placeholder="e.g. 80"></div>
-          <div class="form-field"><label for="partyBudget">BUDGET / PERSON</label><input id="partyBudget" name="budget" type="number" min="0" placeholder="e.g. 1200"></div>
-          <div class="form-field full"><button class="button button-primary" type="submit">Find Party Venues →</button></div>
+      <div class="search-landing-copy"><p class="eyebrow">CELEBRATE · LAUGH · REMEMBER</p><h1>Find a party venue that makes the celebration feel special.</h1><p>Birthdays, anniversaries, engagements, baby showers and private parties deserve a venue that feels right for your guest count, budget and vibe.</p><div class="search-landing-points"><span>✓ Birthdays</span><span>✓ Anniversaries</span><span>✓ Engagements</span><span>✓ Baby showers</span><span>✓ Private parties</span></div></div>
+      <aside class="quick-enquiry-card" id="quickEnquiry"><p class="eyebrow">QUICK PARTY ENQUIRY</p><h2>Tell us the party basics</h2><p>Share only the essentials. Your requirement is saved directly to our CRM—no long form or redirect.</p>
+        <form class="quick-enquiry-form" data-smv-quick-enquiry data-event-type="Party" data-source="Google Ads - Party Landing">
+          <input type="hidden" name="occasion" value="Party">
+          <div class="form-field"><label>YOUR NAME *</label><input name="customer_name" autocomplete="name" placeholder="Your name" required></div>
+          <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
+          <div class="form-field full"><label>PREFERRED LOCATION *</label><select name="location" required><option value="">Select location</option><option>Delhi</option><option>Gurgaon</option><option>Delhi & Gurgaon</option></select></div>
+          <div class="form-field full"><label>EVENT DATE *</label><input name="event_date" type="date" required></div>
+          <div class="form-field"><label>GUESTS</label><input name="guests" type="number" min="1" placeholder="e.g. 80"></div>
+          <div class="form-field"><label>BUDGET / PERSON</label><input name="budget_per_person" type="number" min="0" placeholder="e.g. 1200"></div>
+          <div class="form-field full"><button class="button button-primary" type="submit">Get Party Venue Options →</button></div><p class="quick-enquiry-message" data-quick-message aria-live="polite"></p>
         </form>
-        <p class="landing-contact-note">Availability and final pricing depend on your event date and requirements.</p>
+        <div class="quick-enquiry-trust"><span>✓ Quick enquiry<br>Under a minute</span><span>✓ Relevant options<br>Based on your needs</span><span>✓ Direct follow-up<br>By our team</span></div>
+        <div class="quick-enquiry-success" data-quick-success hidden>Want to explore now? <a href="venues.html">Browse listed venues →</a></div>
       </aside>
     </section>
 
-    <section class="search-content-section"><header><p class="eyebrow">WHAT TO COMPARE</p><h2>Shortlist by fit, not just by distance.</h2><p>A nearby venue is useful only when its capacity, catering, timing and total cost match the event you are planning.</p></header>
-      <div class="advice-grid">
-        <article class="advice-card"><span>01</span><h3>Right-sized capacity</h3><p>Check seating, dining, stage and movement space for your actual guest count.</p></article>
-        <article class="advice-card"><span>02</span><h3>Food & package</h3><p>Compare menu options, minimum guarantee, taxes and important add-on charges.</p></article>
-        <article class="advice-card"><span>03</span><h3>Timing & convenience</h3><p>Confirm music rules, parking, access, setup time and travel convenience.</p></article>
-      </div>
-    </section>
+    <section class="celebration-strip" aria-label="Party venue inspiration"><article class="celebration-tile"><h3>Elegant Banquets</h3><p>Great for milestone birthdays and family celebrations.</p></article><article class="celebration-tile"><h3>Open-Air Parties</h3><p>More room for décor, music and relaxed guest flow.</p></article><article class="celebration-tile"><h3>Engagement Celebrations</h3><p>Balance ceremony space, dining and photography.</p></article><article class="celebration-tile"><h3>Private Gatherings</h3><p>Smaller venues can create a warmer celebration.</p></article></section>
 
-    <section class="search-content-section"><header><p class="eyebrow">EXPLORE</p><h2>Continue with the venue option that fits your plan.</h2></header>
-      <div class="intent-link-grid">
-        <article class="intent-link-card"><h3>Browse listed venues</h3><p>View live venue profiles and compare useful details.</p><a href="venues.html">Browse venues →</a></article>
-        <article class="intent-link-card"><h3>Wedding venues</h3><p>Explore wedding and engagement venue options in Delhi and Gurgaon.</p><a href="wedding-venues-delhi-ncr.html">Wedding venues →</a></article>
-        <article class="intent-link-card"><h3>Delhi & Gurgaon guide</h3><p>Start your venue search by city and event type.</p><a href="delhi-ncr-venues.html">Explore locations →</a></article>
-      </div>
-    </section>
+    <section class="search-content-section"><header><p class="eyebrow">PARTY PLANNING SHORTCUTS</p><h2>Useful details to confirm before paying an advance.</h2></header><div class="advice-grid"><article class="advice-card"><span>01</span><h3>Timing & music</h3><p>Confirm DJ/live music rules, event closing time, setup access and overtime charges.</p></article><article class="advice-card"><span>02</span><h3>Food package</h3><p>Check minimum guarantees, menu inclusions, child pricing, taxes and add-ons.</p></article><article class="advice-card"><span>03</span><h3>Right-sized space</h3><p>A venue that fits the guest count usually feels livelier and avoids unnecessary cost.</p></article></div></section>
 
-    <section class="cta-card"><p class="eyebrow">READY TO SEARCH?</p><h2>Share your party requirement.</h2><p>Tell us your location, occasion, guest count and budget so we can understand what you need.</p><div class="hero-cta-row"><a class="button button-primary" href="index.html#enquiry">Submit Party Requirement</a><a class="button button-secondary" href="venues.html">Browse Venues</a></div></section>
+    <section class="search-content-section"><header><p class="eyebrow">KEEP EXPLORING</p><h2>Find the route that matches your celebration.</h2></header><div class="intent-link-grid"><article class="intent-link-card"><h3>Browse listed venues</h3><p>Compare current venue profiles and useful details.</p><a href="venues.html">Browse venues →</a></article><article class="intent-link-card"><h3>Wedding venues</h3><p>For weddings, receptions and larger engagement functions.</p><a href="wedding-venues-delhi-ncr.html">Wedding venues →</a></article><article class="intent-link-card"><h3>Delhi & Gurgaon guide</h3><p>Explore venue discovery by city and event.</p><a href="delhi-ncr-venues.html">Explore locations →</a></article></div></section>
   </main>
   <footer class="page-footer">© 2026 Select My Venue · <a href="index.html">Home</a><a href="venues.html">Venues</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></footer>
+  <script src="quick-enquiry.js?v=20260908-1"></script>
 </body>
 </html>
