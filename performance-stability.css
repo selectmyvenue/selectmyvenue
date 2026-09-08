@@ -1,87 +1,201 @@
 /* Select My Venue — performance + layout stability hotfix (2026-09-08)
-   Purpose: reduce scroll jank, visual shaking and layout shifts on desktop/mobile.
-   This file is intentionally override-only and does not change forms/CRM logic. */
+   Purpose: eliminate scroll jank, visual shaking and layout shifts on desktop/mobile.
+   Override-only: no form, CRM, Supabase or enquiry logic is changed. */
 
 html{
   scroll-behavior:auto !important;
   scrollbar-gutter:stable;
+  max-width:100%;
+  overflow-x:hidden;
 }
 
 body{
-  overflow-x:hidden;
+  max-width:100%;
+  overflow-x:hidden !important;
   overflow-anchor:auto;
+  overscroll-behavior-y:auto;
+}
+
+img,
+video,
+svg{
+  max-width:100%;
 }
 
 img{
   height:auto;
 }
 
-/* Prevent reveal effects from making cards repaint/reposition while scrolling. */
+/* ---------------------------------------------------------
+   1) STOP CONTINUOUS FULL-SCREEN MOVEMENT
+   The old hero used translate/scale animation continuously. That makes the
+   page feel like it is moving while the visitor scrolls and is expensive on
+   mobile GPUs. Keep the premium hero image, but keep the layer physically
+   stable. Only the first hero image is shown.
+--------------------------------------------------------- */
+.hero-slide{
+  animation:none !important;
+  transform:none !important;
+  will-change:auto !important;
+  opacity:0 !important;
+}
+.hero-slide-1{
+  opacity:1 !important;
+}
+
+/* No pulsing / transform animation in the sticky header while scrolling. */
+.nav-cta{
+  animation:none !important;
+}
+
+/* ---------------------------------------------------------
+   2) PREVENT SCROLL-REVEAL REPAINT / REPOSITIONING
+--------------------------------------------------------- */
 .feature-card,
 .ai-result-card,
 .contact-card,
-.event-card{
+.event-card,
+.celebration-tile,
+.advice-card,
+.intent-link-card,
+.location-card,
+.venue-card,
+.home-venue-card{
   opacity:1 !important;
   transform:none !important;
   will-change:auto !important;
 }
 
-/* Reserve useful space while venue data is loading so async cards do not push
-   the rest of the page up/down when Supabase responds. */
+/* ---------------------------------------------------------
+   3) REMOVE EXPENSIVE BLUR FROM STICKY/FIXED SURFACES
+   Backdrop-filter on large fixed elements is a frequent cause of scroll
+   stutter in Chrome/Edge and mobile browsers.
+--------------------------------------------------------- */
+.site-header,
+.page-header,
+.search-card,
+.search-landing-points span,
+.floating-whatsapp,
+.smv-final-ai-button,
+.smv-final-ai-panel,
+.enquiry-popup,
+.enquiry-popup-overlay{
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* The decorative fixed grid is visually subtle but forces full-page repaints. */
+body::before{
+  display:none !important;
+}
+
+/* ---------------------------------------------------------
+   4) RESERVE SPACE FOR ASYNC VENUE CONTENT
+   Prevent Supabase results from pushing the whole page up/down after load.
+--------------------------------------------------------- */
 .home-venue-grid{
   min-height:420px;
 }
 #venueGrid{
   min-height:520px;
 }
+.home-venue-media,
+.home-venue-media img{
+  aspect-ratio:16 / 10;
+}
 
-/* Full-screen animated layers + blur are expensive on phones/tablets and can
-   cause visible scroll judder. Keep the premium image, but make it static on
-   touch/smaller devices. */
+/* ---------------------------------------------------------
+   5) STABILISE PUBLIC LANDING PAGES
+--------------------------------------------------------- */
+.search-landing-hero,
+.search-landing-copy,
+.quick-enquiry-card,
+.search-content-section,
+.celebration-strip,
+.cta-card{
+  transform:none !important;
+  will-change:auto !important;
+}
+
+.search-landing-copy{
+  background-attachment:scroll !important;
+}
+
+.page-main,
+.search-landing-main,
+.page-nav,
+.page-nav-links{
+  min-width:0;
+}
+
+/* Avoid browser width recalculation from horizontal nav scrolling. */
+.page-nav-links{
+  scrollbar-width:none;
+}
+.page-nav-links::-webkit-scrollbar{
+  display:none;
+}
+
+/* ---------------------------------------------------------
+   6) FIXED WIDGETS — NO TRANSFORM WHILE PAGE IS MOVING
+--------------------------------------------------------- */
+.floating-whatsapp,
+.smv-final-ai-button,
+.smv-final-ai-panel{
+  will-change:auto !important;
+}
+
+/* ---------------------------------------------------------
+   7) MOBILE / TABLET EXTRA SAFETY
+--------------------------------------------------------- */
 @media (max-width:1024px), (hover:none) and (pointer:coarse){
-  body::before{
-    display:none !important;
-  }
-
-  .hero-slide{
-    animation:none !important;
-    opacity:0 !important;
-    transform:none !important;
-    will-change:auto !important;
-  }
-  .hero-slide-1{
-    opacity:1 !important;
+  html,
+  body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden !important;
   }
 
   .site-header,
-  .search-card,
-  .floating-whatsapp,
-  .smv-final-ai-button,
-  .smv-final-ai-panel{
-    backdrop-filter:none !important;
-    -webkit-backdrop-filter:none !important;
+  .page-header{
+    transform:none !important;
+    will-change:auto !important;
+  }
+
+  .hero,
+  .search-landing-copy,
+  .celebration-tile{
+    background-attachment:scroll !important;
+  }
+
+  .primary-btn:hover,
+  .secondary-btn:hover,
+  .contact-card:hover,
+  .event-card:hover,
+  .floating-whatsapp:hover,
+  .smv-final-ai-button:hover{
+    transform:none !important;
   }
 }
 
-/* Respect accessibility settings and also guarantee a stable first hero. */
+/* ---------------------------------------------------------
+   8) ACCESSIBILITY / LOW-MOTION GUARANTEE
+--------------------------------------------------------- */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{
     scroll-behavior:auto !important;
-  }
-  .hero-slide{
-    animation:none !important;
-    opacity:0 !important;
-    transform:none !important;
-  }
-  .hero-slide-1{
-    opacity:1 !important;
-  }
-  .nav-cta{
-    animation:none !important;
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
   }
 }
 
 @media (max-width:620px){
   .home-venue-grid{min-height:360px}
   #venueGrid{min-height:430px}
+
+  /* Keep fixed widgets lightweight and away from browser UI edges. */
+  .floating-whatsapp,
+  .smv-final-ai-button{
+    box-shadow:0 8px 22px rgba(0,0,0,.24) !important;
+  }
 }
