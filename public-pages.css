@@ -2,4 +2,15 @@
 @import url("./smv-standard-header.css?v=20260905-header-1");
 @import url("./public-pages-ads-ready.css?v=20260908-ads-ready-1");
 @import url("./landing-page-visuals-20260908.css?v=20260908-1");
-@import url("./performance-stability.css?v=20260908-2");
+@import url("./performance-stability.css?v=20260909-no-whatsapp-1");
+
+/* Removed optional WhatsApp copy/send checkbox from all public enquiry forms. */
+.smv-whatsapp-opt,
+.smv-quick-whatsapp-opt,
+.smv-venue-whatsapp-opt,
+[data-smv-whatsapp-option],
+label:has(input[name="send_whatsapp"]),
+#customerWhatsappOpt,
+input[name="send_whatsapp"]{
+  display:none!important;
+}
