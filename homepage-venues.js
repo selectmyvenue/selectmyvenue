@@ -5,11 +5,10 @@
     const link = document.createElement("link");
     link.id = "smvPerformanceStability";
     link.rel = "stylesheet";
-    link.href = "performance-stability.css?v=20260909-lead-fixes-1";
+    link.href = "performance-stability.css?v=20260909-compact-lead-2";
     document.head.appendChild(link);
   }
 
-  const WHATSAPP_NUMBER = "918368322256";
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
@@ -18,6 +17,17 @@
   const escapeHtml = value => String(value ?? "").replace(/[&<>'\"]/g, character => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '\"': "&quot;"
   })[character]);
+
+  function shortPageName() {
+    const path = (location.pathname || "/").toLowerCase();
+    if (path === "/" || path.endsWith("/index.html")) return "Home page";
+    if (path.includes("wedding")) return "Wedding venues page";
+    if (path.includes("party")) return "Party halls page";
+    if (path.includes("corporate")) return "Corporate venues page";
+    if (path.includes("delhi-ncr")) return "Delhi NCR page";
+    if (path.includes("venues")) return "Browse venues page";
+    return "Website page";
+  }
 
   function pageLabel() {
     return `${document.title || "Select My Venue"} (${location.pathname || "/"})`;
@@ -32,15 +42,16 @@
     };
   }
 
+  function simpleLeadSource() {
+    const venue = selectedVenueContext();
+    if (venue.name) return `Website - ${venue.name}`.slice(0, 180);
+    return `Website - ${shortPageName()}`;
+  }
+
   function applyLeadSourceContext() {
     const sourceField = document.getElementById("leadSource");
     if (!sourceField) return;
-    const venue = selectedVenueContext();
-    const parts = ["Website - Main Enquiry", `Page: ${pageLabel()}`];
-    if (venue.name) parts.push(`Venue: ${venue.name}`);
-    if (venue.id) parts.push(`Venue ID: ${venue.id}`);
-    if (venue.sourcePage) parts.push(`Source page: ${venue.sourcePage}`);
-    sourceField.value = parts.join(" | ");
+    sourceField.value = simpleLeadSource();
   }
 
   function injectHomePartnerOffer() {
@@ -54,14 +65,14 @@
         <div class="smv-home-offer-copy">
           <div class="smv-home-offer-kicker">📣 <b>Launch Offer</b> • Founding Venue Partners</div>
           <h2 id="smvHomeOfferTitle">List Your Venue <span>FREE.</span></h2>
-          <p class="smv-home-offer-lead">Join the Select My Venue partner network during our launch phase. Professional venue presence + relevant customer enquiry opportunities.</p>
+          <p class="smv-home-offer-lead">Professional venue presence + relevant customer enquiry opportunities during launch.</p>
           <div class="smv-home-offer-badges" aria-label="Launch offer highlights">
             <div class="smv-home-offer-badge"><strong>₹0</strong><small>JOINING FEE</small></div>
             <div class="smv-home-offer-badge"><strong>FREE</strong><small>VENUE LISTING</small></div>
             <div class="smv-home-offer-badge"><strong>PARTNER</strong><small>CRM ACCESS</small></div>
-            <div class="smv-home-offer-badge gold"><strong>10-DAY</strong><small>COMPLIMENTARY TRIAL</small></div>
+            <div class="smv-home-offer-badge gold"><strong>10-DAY</strong><small>TRIAL</small></div>
           </div>
-          <div class="smv-home-offer-strip">🎁 LIMITED LAUNCH OFFER — NO PAYMENT REQUIRED TO GET STARTED ✨</div>
+          <div class="smv-home-offer-strip">🎁 LIMITED LAUNCH OFFER — NO PAYMENT REQUIRED ✨</div>
         </div>
         <aside class="smv-home-offer-side">
           <h3>Your Founding Partner <span>launch benefits</span></h3>
@@ -69,7 +80,7 @@
             <li>Professional venue profile</li>
             <li>₹0 joining fee</li>
             <li>Partner CRM access</li>
-            <li>Relevant enquiry opportunities</li>
+            <li>Relevant enquiries</li>
             <li>Verified Partner opportunity</li>
             <li>No commission to join</li>
             <li>10-day complimentary trial</li>
@@ -79,53 +90,11 @@
             <a class="smv-home-offer-btn" href="list-your-venue.html">LIST YOUR VENUE FREE →</a>
             <div class="smv-home-offer-growth"><b>♛</b>Grow your bookings<br>with us!</div>
           </div>
-          <p class="smv-home-offer-note">You stay in control. Joining does not guarantee enquiries or bookings, and there is no obligation to continue after the complimentary period.</p>
+          <p class="smv-home-offer-note">Joining does not guarantee enquiries or bookings. No obligation after the complimentary period.</p>
         </aside>
       </section>
     `;
     main.insertAdjacentElement("afterbegin", offer);
-  }
-
-  function buildWhatsappText(details) {
-    const lines = [
-      "Hi Select My Venue, I submitted my venue requirement on the website.",
-      details.name ? `Name: ${details.name}` : "",
-      details.mobile ? `Mobile: ${details.mobile}` : "",
-      details.location ? `Location: ${details.location}` : "",
-      details.eventType ? `Event: ${details.eventType}` : "",
-      details.eventDate ? `Event date: ${details.eventDate}` : "",
-      details.guests ? `Guests: ${details.guests}` : "",
-      details.budget ? `Budget/person: ₹${details.budget}` : "",
-      details.food ? `Food: ${details.food}` : "",
-      details.venueName ? `Interested venue: ${details.venueName}` : "",
-      `Page: ${pageLabel()}`,
-      "Please call me with suitable venue options."
-    ];
-    return lines.filter(Boolean).join("\n");
-  }
-
-  function openWhatsapp(details, messageNode) {
-    const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(buildWhatsappText(details));
-    const opened = window.open(url, "_blank", "noopener,noreferrer");
-    if (!opened && messageNode && !messageNode.querySelector(".smv-whatsapp-fallback")) {
-      const link = document.createElement("a");
-      link.className = "smv-whatsapp-fallback";
-      link.href = url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.textContent = " Tap here to send the same details on WhatsApp.";
-      messageNode.appendChild(link);
-    }
-  }
-
-  function installMainWhatsappOption(form) {
-    if (!form || document.getElementById("customerWhatsappOpt")) return;
-    const submitWrap = form.querySelector(".submit-wrap") || form.querySelector("button[type='submit']")?.parentElement;
-    if (!submitWrap) return;
-    const label = document.createElement("label");
-    label.className = "smv-whatsapp-opt";
-    label.innerHTML = '<input id="customerWhatsappOpt" type="checkbox"> <span>Send the details on WhatsApp as well.</span>';
-    submitWrap.insertAdjacentElement("afterbegin", label);
   }
 
   function collectMainDetails() {
@@ -142,8 +111,7 @@
       food: clean(document.getElementById("customerFood")?.value),
       requirements: clean(document.getElementById("customerRequirements")?.value),
       venueName: venue.name,
-      venueId: venue.id,
-      wantsWhatsapp: !!document.getElementById("customerWhatsappOpt")?.checked
+      venueId: venue.id
     };
   }
 
@@ -171,16 +139,12 @@
   function showFrontSuccess(message, details, duplicate) {
     if (!message) return;
     message.textContent = duplicate
-      ? "✓ Your requirement is already received. Our team will get back to you or call you within 30 minutes to 1 hour."
-      : "✓ Requirement received! Our team will get back to you or call you within 30 minutes to 1 hour with suitable venue options.";
+      ? "✓ Your request is already received. Our team will call you within 1 hour."
+      : "✓ Thank you! Your venue request has been received. Our team will call you within 1 hour with suitable venue options.";
     message.className = "form-message success smv-front-success";
     const form = document.getElementById("customerEnquiryForm");
     if (form) form.classList.add("is-sent");
     setTimeout(() => message.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
-    if (!duplicate && details && details.wantsWhatsapp && !details.whatsappOpened) {
-      details.whatsappOpened = true;
-      setTimeout(() => openWhatsapp(details, message), 250);
-    }
   }
 
   function installMainEnquiryEnhancements() {
@@ -188,7 +152,6 @@
     const message = document.getElementById("customerEnquiryMessage");
     if (!form || !message || form.dataset.smvLeadFix === "1") return;
     form.dataset.smvLeadFix = "1";
-    installMainWhatsappOption(form);
     applyLeadSourceContext();
 
     form.addEventListener("input", applyLeadSourceContext, true);
@@ -224,7 +187,6 @@
   injectHomePartnerOffer();
   installMainEnquiryEnhancements();
 
-  /* Keep useful header actions without changing header dimensions at runtime. */
   const contactLink = document.querySelector('#mainNav a[href="#contact"]');
   if (contactLink) {
     contactLink.textContent = "+91 83683 22256";
@@ -309,7 +271,7 @@
     const locationText = [venue.area, venue.city].filter(Boolean).join(", ") || "Location on request";
     const featureList = features(venue);
     const profileUrl = `venue.html?id=${id}`;
-    const quoteUrl = `index.html?venue=${id}&venue_name=${encodeURIComponent(name)}&source_page=${encodeURIComponent("Homepage Verified Venue Card")}#enquiry`;
+    const quoteUrl = `index.html?venue=${id}&venue_name=${encodeURIComponent(name)}&source_page=${encodeURIComponent("Homepage Venue Card")}#enquiry`;
     const media = imageUrl
       ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async" width="640" height="400">`
       : `<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>`;
