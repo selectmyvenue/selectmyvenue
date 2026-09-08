@@ -1,0 +1,87 @@
+/* Select My Venue — performance + layout stability hotfix (2026-09-08)
+   Purpose: reduce scroll jank, visual shaking and layout shifts on desktop/mobile.
+   This file is intentionally override-only and does not change forms/CRM logic. */
+
+html{
+  scroll-behavior:auto !important;
+  scrollbar-gutter:stable;
+}
+
+body{
+  overflow-x:hidden;
+  overflow-anchor:auto;
+}
+
+img{
+  height:auto;
+}
+
+/* Prevent reveal effects from making cards repaint/reposition while scrolling. */
+.feature-card,
+.ai-result-card,
+.contact-card,
+.event-card{
+  opacity:1 !important;
+  transform:none !important;
+  will-change:auto !important;
+}
+
+/* Reserve useful space while venue data is loading so async cards do not push
+   the rest of the page up/down when Supabase responds. */
+.home-venue-grid{
+  min-height:420px;
+}
+#venueGrid{
+  min-height:520px;
+}
+
+/* Full-screen animated layers + blur are expensive on phones/tablets and can
+   cause visible scroll judder. Keep the premium image, but make it static on
+   touch/smaller devices. */
+@media (max-width:1024px), (hover:none) and (pointer:coarse){
+  body::before{
+    display:none !important;
+  }
+
+  .hero-slide{
+    animation:none !important;
+    opacity:0 !important;
+    transform:none !important;
+    will-change:auto !important;
+  }
+  .hero-slide-1{
+    opacity:1 !important;
+  }
+
+  .site-header,
+  .search-card,
+  .floating-whatsapp,
+  .smv-final-ai-button,
+  .smv-final-ai-panel{
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+}
+
+/* Respect accessibility settings and also guarantee a stable first hero. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    scroll-behavior:auto !important;
+  }
+  .hero-slide{
+    animation:none !important;
+    opacity:0 !important;
+    transform:none !important;
+  }
+  .hero-slide-1{
+    opacity:1 !important;
+  }
+  .nav-cta{
+    animation:none !important;
+  }
+}
+
+@media (max-width:620px){
+  .home-venue-grid{min-height:360px}
+  #venueGrid{min-height:430px}
+}
