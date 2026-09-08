@@ -4,6 +4,7 @@
 (function () {
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+  const PREMIUM_SUCCESS = "✓ Requirement received. Our venue experts are reviewing your details and will call you within 1–2 hours with suitable venue options.";
 
   function clean(value) {
     return String(value == null ? "" : value).trim();
@@ -110,8 +111,9 @@
     style.id = "smvQuickEnquiryFixStyles";
     style.textContent = `
       .quick-enquiry-message.success{
-        display:block!important;margin:12px 0!important;padding:14px 15px!important;border:1px solid rgba(7,127,92,.22)!important;border-radius:14px!important;background:linear-gradient(135deg,#eafff8,#f7fffb)!important;color:#06704f!important;font-size:14px!important;font-weight:900!important;line-height:1.4!important;box-shadow:0 10px 26px rgba(5,95,72,.08)!important
+        display:block!important;margin:12px 0!important;padding:14px 16px 14px 48px!important;border:1px solid rgba(20,150,105,.22)!important;border-radius:16px!important;background:linear-gradient(135deg,#edfff8 0%,#fbfffd 58%,#fff8df 100%)!important;color:#06664a!important;font-size:13.5px!important;font-weight:900!important;line-height:1.38!important;box-shadow:0 12px 28px rgba(5,95,72,.10),inset 0 1px 0 rgba(255,255,255,.82)!important;position:relative!important
       }
+      .quick-enquiry-message.success:before{content:"✓";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#19c99e,#087f61);color:#fff;font-size:14px;font-weight:950;box-shadow:0 6px 16px rgba(8,127,97,.22)}
       .quick-enquiry-message.error{display:block!important;margin:12px 0!important;padding:12px!important;border-radius:12px!important;background:#fff1f1!important;color:#a4161a!important;font-weight:850!important}
       .smv-quick-whatsapp-opt,[data-smv-whatsapp-option],input[name="send_whatsapp"]{display:none!important}
       form[data-smv-quick-enquiry].is-submitted{outline:2px solid rgba(19,155,141,.16)!important;outline-offset:4px!important}
@@ -148,7 +150,7 @@
     };
 
     if (isDuplicate(details)) {
-      setMessage(form, "✓ Your requirement is already received. Our team will call you within 1 hour with suitable venue options.", "success");
+      setMessage(form, PREMIUM_SUCCESS, "success");
       getMessageNode(form)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -221,10 +223,13 @@
 
       markDuplicate(details);
       form.classList.add("is-submitted");
-      setMessage(form, "✓ Requirement received! Our team will call you within 1 hour with suitable venue options.", "success");
+      setMessage(form, PREMIUM_SUCCESS, "success");
 
       const successPanel = form.closest(".quick-enquiry-card") && form.closest(".quick-enquiry-card").querySelector("[data-quick-success]");
-      if (successPanel) successPanel.hidden = false;
+      if (successPanel) {
+        successPanel.hidden = false;
+        successPanel.textContent = PREMIUM_SUCCESS;
+      }
 
       form.reset();
       const occasionField = form.elements.occasion;
