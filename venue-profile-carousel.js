@@ -26,6 +26,8 @@
   const getIds=key=>{try{const value=JSON.parse(localStorage.getItem(key)||"[]");return Array.isArray(value)?value.map(String).filter(Boolean):[]}catch(_){return[]}};
   const setIds=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value))}catch(_){}};
   const cleanList=value=>Array.isArray(value)?value.map(String).filter(Boolean):String(value||"").split(/[,|]/).map(x=>x.trim()).filter(Boolean);
+  const clean=value=>String(value==null?"":value).trim();
+  const cleanMobile=value=>String(value||"").replace(/\D/g,"").slice(-10);
 
   function applyImageFit(image){
     if(!image)return;
@@ -58,17 +60,10 @@
     let gallery=[];
     try{
       const result=await client.storage.from(BUCKET).list(`${venueId}/gallery`,{limit:40,sortBy:{column:"name",order:"asc"}});
-      gallery=result.error?[]:(result.data||[])
-        .filter(item=>item?.name&&item.name!==".emptyFolderPlaceholder")
-        .map(item=>publicUrl(`${venueId}/gallery/${item.name}`))
-        .filter(Boolean);
+      gallery=result.error?[]:(result.data||[]).filter(item=>item?.name&&item.name!==".emptyFolderPlaceholder").map(item=>publicUrl(`${venueId}/gallery/${item.name}`)).filter(Boolean);
     }catch(_){gallery=[];}
     photos=[...new Set([cover,...gallery].filter(Boolean))].slice(0,MAX_PHOTOS);
-    if(image){
-      image.decoding="async";
-      image.fetchPriority="high";
-      applyImageFit(image);
-    }
+    if(image){image.decoding="async";image.fetchPriority="high";applyImageFit(image);}
     if(photos.length)installHeroGallery(image);
   }
 
@@ -98,23 +93,16 @@
     if(!media||media.dataset.smvHeroGallery==="1")return;
     media.dataset.smvHeroGallery="1";
     media.classList.add("smv-premium-hero-media");
-    const prev=document.createElement("button");
-    prev.type="button";prev.className="smv-cover-arrow smv-cover-prev";prev.setAttribute("aria-label","Previous venue photo");prev.textContent="‹";
-    const next=document.createElement("button");
-    next.type="button";next.className="smv-cover-arrow smv-cover-next";next.setAttribute("aria-label","Next venue photo");next.textContent="›";
-    const viewAll=document.createElement("button");
-    viewAll.id="smvViewAllPhotos";viewAll.type="button";viewAll.className="smv-view-all";viewAll.textContent=`▦ View All ${photos.length} Photo${photos.length===1?"":"s"}`;
-    const counter=document.createElement("div");
-    counter.id="smvHeroPhotoCounter";counter.className="smv-cover-counter";
-    const progress=document.createElement("div");
-    progress.id="smvHeroProgress";progress.className="smv-hero-progress";
+    const prev=document.createElement("button");prev.type="button";prev.className="smv-cover-arrow smv-cover-prev";prev.setAttribute("aria-label","Previous venue photo");prev.textContent="‹";
+    const next=document.createElement("button");next.type="button";next.className="smv-cover-arrow smv-cover-next";next.setAttribute("aria-label","Next venue photo");next.textContent="›";
+    const viewAll=document.createElement("button");viewAll.id="smvViewAllPhotos";viewAll.type="button";viewAll.className="smv-view-all";viewAll.textContent=`▦ View All ${photos.length} Photo${photos.length===1?"":"s"}`;
+    const counter=document.createElement("div");counter.id="smvHeroPhotoCounter";counter.className="smv-cover-counter";
+    const progress=document.createElement("div");progress.id="smvHeroProgress";progress.className="smv-hero-progress";
     media.append(prev,next,viewAll,counter,progress);
-
     prev.addEventListener("click",()=>{showHeroPhoto(currentIndex-1);restartAuto();});
     next.addEventListener("click",()=>{showHeroPhoto(currentIndex+1);restartAuto();});
     viewAll.addEventListener("click",()=>openViewer(currentIndex));
     image?.addEventListener("click",()=>openViewer(currentIndex));
-
     let touchStartX=0;
     media.addEventListener("touchstart",event=>{stopAuto();touchStartX=event.touches[0]?.clientX||0;},{passive:true});
     media.addEventListener("touchend",event=>{const endX=event.changedTouches[0]?.clientX||0;if(Math.abs(endX-touchStartX)>45)showHeroPhoto(endX<touchStartX?currentIndex+1:currentIndex-1);startAuto();},{passive:true});
@@ -123,28 +111,14 @@
     media.tabIndex=0;
     media.addEventListener("keydown",event=>{if(event.key==="ArrowLeft"){showHeroPhoto(currentIndex-1);restartAuto();}if(event.key==="ArrowRight"){showHeroPhoto(currentIndex+1);restartAuto();}if(event.key==="Enter")openViewer(currentIndex);});
     document.addEventListener("visibilitychange",()=>document.hidden?stopAuto():startAuto());
-    showHeroPhoto(0);
-    startAuto();
+    showHeroPhoto(0);startAuto();
   }
 
   function createViewer(){
     let viewer=byId("smvPhotoViewer");
     if(viewer)return viewer;
-    viewer=document.createElement("div");
-    viewer.id="smvPhotoViewer";
-    viewer.className="smv-photo-viewer";
-    viewer.hidden=true;
-    viewer.innerHTML=`
-      <div class="smv-photo-viewer-head">
-        <div><strong>All Venue Photos</strong><span id="smvViewerCounter"></span></div>
-        <button type="button" class="smv-viewer-close" aria-label="Close gallery">×</button>
-      </div>
-      <div class="smv-photo-viewer-stage">
-        <button type="button" class="smv-viewer-arrow smv-viewer-prev" aria-label="Previous photo">‹</button>
-        <img id="smvViewerImage" alt="Venue photo">
-        <button type="button" class="smv-viewer-arrow smv-viewer-next" aria-label="Next photo">›</button>
-      </div>
-      <div id="smvViewerThumbs" class="smv-viewer-thumbs"></div>`;
+    viewer=document.createElement("div");viewer.id="smvPhotoViewer";viewer.className="smv-photo-viewer";viewer.hidden=true;
+    viewer.innerHTML=`<div class="smv-photo-viewer-head"><div><strong>All Venue Photos</strong><span id="smvViewerCounter"></span></div><button type="button" class="smv-viewer-close" aria-label="Close gallery">×</button></div><div class="smv-photo-viewer-stage"><button type="button" class="smv-viewer-arrow smv-viewer-prev" aria-label="Previous photo">‹</button><img id="smvViewerImage" alt="Venue photo"><button type="button" class="smv-viewer-arrow smv-viewer-next" aria-label="Next photo">›</button></div><div id="smvViewerThumbs" class="smv-viewer-thumbs"></div>`;
     document.body.appendChild(viewer);
     viewer.querySelector(".smv-viewer-close").addEventListener("click",closeViewer);
     viewer.querySelector(".smv-viewer-prev").addEventListener("click",()=>showViewerPhoto(viewerIndex-1));
@@ -163,18 +137,10 @@
       thumbs.dataset.loaded="1";
       thumbs.querySelectorAll(".smv-viewer-thumb").forEach(button=>button.addEventListener("click",()=>showViewerPhoto(Number(button.dataset.index))));
     }
-    stopAuto();
-    viewer.hidden=false;
-    document.body.style.overflow="hidden";
-    showViewerPhoto(index);
+    stopAuto();viewer.hidden=false;document.body.style.overflow="hidden";showViewerPhoto(index);
   }
 
-  function closeViewer(){
-    const viewer=byId("smvPhotoViewer");
-    if(viewer)viewer.hidden=true;
-    document.body.style.overflow="";
-    startAuto();
-  }
+  function closeViewer(){const viewer=byId("smvPhotoViewer");if(viewer)viewer.hidden=true;document.body.style.overflow="";startAuto();}
 
   function showViewerPhoto(nextIndex){
     if(!photos.length)return;
@@ -188,74 +154,35 @@
   }
 
   function moveQuickEnquiryIntoHero(){
-    let tries=0;
-    let observer=null;
+    let tries=0;let observer=null;
     const place=()=>{
       const hero=$(".venue-profile-hero"),media=byId("venueProfileMedia"),form=byId("venueQuickEnquiryForm");
-      if(hero&&media&&form){
-        hero.classList.add("smv-hero-with-quick");
-        if(form.parentElement!==hero)media.insertAdjacentElement("afterend",form);
-        form.classList.add("smv-hero-enquiry-form");
-        applyImageFit(byId("venueProfileImage"));
-        if(observer)observer.disconnect();
-        return true;
-      }
+      if(hero&&media&&form){hero.classList.add("smv-hero-with-quick");if(form.parentElement!==hero)media.insertAdjacentElement("afterend",form);form.classList.add("smv-hero-enquiry-form");applyImageFit(byId("venueProfileImage"));if(observer)observer.disconnect();return true;}
       return false;
     };
     if(place())return;
-    observer=new MutationObserver(()=>{place();});
-    observer.observe(document.body,{childList:true,subtree:true});
-    const retry=()=>{if(place())return;tries+=1;if(tries<140)window.setTimeout(retry,100);else observer.disconnect();};
-    retry();
+    observer=new MutationObserver(()=>{place();});observer.observe(document.body,{childList:true,subtree:true});
+    const retry=()=>{if(place())return;tries+=1;if(tries<140)window.setTimeout(retry,100);else observer.disconnect();};retry();
   }
 
   function installActions(venue){
     const actions=$(".venue-profile-hero-actions");
     if(!actions||byId("smvProfileShortlist"))return;
-    const wrap=document.createElement("div");
-    wrap.className="smv-profile-actions";
-    const shortlist=document.createElement("button");
-    shortlist.id="smvProfileShortlist";
-    shortlist.className="smv-profile-action smv-profile-shortlist";
-    shortlist.type="button";
-    const compare=document.createElement("a");
-    compare.className="smv-profile-action smv-profile-compare";
-    compare.href=`venues.html?compare=${encodeURIComponent(venueId)}`;
-    compare.textContent="⚖ Compare";
-    const call=document.createElement("a");
-    call.className="smv-profile-action smv-profile-call";
-    call.href="tel:+918368322256";
-    call.textContent="☎ Call";
-    const sync=()=>{
-      const ids=getIds(SHORTLIST_KEY),active=ids.includes(String(venueId));
-      shortlist.classList.toggle("active",active);
-      shortlist.textContent=active?"✓ Shortlisted":"♡ Shortlist";
-    };
-    shortlist.addEventListener("click",()=>{
-      let ids=getIds(SHORTLIST_KEY);
-      ids=ids.includes(String(venueId))?ids.filter(x=>x!==String(venueId)):[...ids,String(venueId)].slice(-8);
-      setIds(SHORTLIST_KEY,ids);
-      sync();
-    });
+    const wrap=document.createElement("div");wrap.className="smv-profile-actions";
+    const shortlist=document.createElement("button");shortlist.id="smvProfileShortlist";shortlist.className="smv-profile-action smv-profile-shortlist";shortlist.type="button";
+    const compare=document.createElement("a");compare.className="smv-profile-action smv-profile-compare";compare.href=`venues.html?compare=${encodeURIComponent(venueId)}`;compare.textContent="⚖ Compare";
+    const call=document.createElement("a");call.className="smv-profile-action smv-profile-call";call.href="tel:+918368322256";call.textContent="☎ Call";
+    const sync=()=>{const ids=getIds(SHORTLIST_KEY),active=ids.includes(String(venueId));shortlist.classList.toggle("active",active);shortlist.textContent=active?"✓ Shortlisted":"♡ Shortlist";};
+    shortlist.addEventListener("click",()=>{let ids=getIds(SHORTLIST_KEY);ids=ids.includes(String(venueId))?ids.filter(x=>x!==String(venueId)):[...ids,String(venueId)].slice(-8);setIds(SHORTLIST_KEY,ids);sync();});
     wrap.append(shortlist,compare,call);
     const mapUrl=String(venue?.google_maps_url||"");
-    if(/^https?:\/\//i.test(mapUrl)){
-      const map=document.createElement("a");
-      map.className="smv-profile-action smv-profile-map";
-      map.href=mapUrl;map.target="_blank";map.rel="noopener";map.textContent="⌖ Map";
-      wrap.appendChild(map);
-    }
-    actions.appendChild(wrap);
-    sync();
+    if(/^https?:\/\//i.test(mapUrl)){const map=document.createElement("a");map.className="smv-profile-action smv-profile-map";map.href=mapUrl;map.target="_blank";map.rel="noopener";map.textContent="⌖ Map";wrap.appendChild(map);}
+    actions.appendChild(wrap);sync();
   }
 
   function rememberVenue(venue){
     if(!venue?.id)return;
-    try{
-      const old=JSON.parse(localStorage.getItem(RECENT_KEY)||"[]"),rows=Array.isArray(old)?old:[];
-      const next=[{id:String(venue.id),name:String(venue.venue_name||"Venue"),city:String(venue.city||""),ts:Date.now()},...rows.filter(row=>String(row?.id)!==String(venue.id))].slice(0,8);
-      localStorage.setItem(RECENT_KEY,JSON.stringify(next));
-    }catch(_){ }
+    try{const old=JSON.parse(localStorage.getItem(RECENT_KEY)||"[]"),rows=Array.isArray(old)?old:[];const next=[{id:String(venue.id),name:String(venue.venue_name||"Venue"),city:String(venue.city||""),ts:Date.now()},...rows.filter(row=>String(row?.id)!==String(venue.id))].slice(0,8);localStorage.setItem(RECENT_KEY,JSON.stringify(next));}catch(_){ }
   }
 
   function installSnapshot(venue){
@@ -266,16 +193,9 @@
     const capMin=Number(venue?.capacity_min||0),capMax=Number(venue?.capacity_max||0);
     const capacity=capMin&&capMax?`${capMin}–${capMax} guests`:capMax?`Up to ${capMax} guests`:capMin?`${capMin}+ guests`:"Capacity on request";
     const facilities=[];
-    if(venue?.parking_available)facilities.push("Parking");
-    if(venue?.rooms_available)facilities.push("Rooms");
-    if(venue?.food_veg)facilities.push("Veg food");
-    if(venue?.food_non_veg)facilities.push("Non-veg food");
-    if(venue?.catering_available)facilities.push("Catering");
-    if(venue?.decoration_available)facilities.push("Decoration");
+    if(venue?.parking_available)facilities.push("Parking");if(venue?.rooms_available)facilities.push("Rooms");if(venue?.food_veg)facilities.push("Veg food");if(venue?.food_non_veg)facilities.push("Non-veg food");if(venue?.catering_available)facilities.push("Catering");if(venue?.decoration_available)facilities.push("Decoration");
     const eventTypes=cleanList(venue?.event_types||venue?.events||venue?.suitable_events).slice(0,6);
-    const section=document.createElement("section");
-    section.id="smvProfileSnapshot";
-    section.className="venue-profile-panel venue-white-card smv-profile-snapshot";
+    const section=document.createElement("section");section.id="smvProfileSnapshot";section.className="venue-profile-panel venue-white-card smv-profile-snapshot";
     section.innerHTML=`<p class="eyebrow">VENUE SNAPSHOT</p><h2>Important details at a glance.</h2><div class="smv-snapshot-grid"><div><span>Starting price</span><strong>${escapeHtml(price)}</strong></div><div><span>Guest capacity</span><strong>${escapeHtml(capacity)}</strong></div><div><span>Useful facilities</span><strong>${escapeHtml(facilities.slice(0,4).join(" · ")||"Details on request")}</strong></div></div>${eventTypes.length?`<div class="smv-good-fit">${eventTypes.map(item=>`<span>✓ ${escapeHtml(item)}</span>`).join("")}</div>`:""}<small>Only real venue information is shown. Final package and availability are confirmed after your enquiry.</small>`;
     content.prepend(section);
   }
@@ -286,54 +206,57 @@
     const min=money(venue?.price_min_per_person);
     const capMin=Number(venue?.capacity_min||0),capMax=Number(venue?.capacity_max||0);
     const cap=capMin&&capMax?`${capMin}–${capMax} guests`:capMax?`Up to ${capMax} guests`:capMin?`${capMin}+ guests`:"Capacity on request";
-    const bar=document.createElement("div");
-    bar.id="smvStickyVenueBar";
-    bar.className="smv-sticky-venue-bar";
+    const bar=document.createElement("div");bar.id="smvStickyVenueBar";bar.className="smv-sticky-venue-bar";
     bar.innerHTML=`<strong>${escapeHtml(name)}</strong><span>${escapeHtml(min?`From ${min}/person`:"Quote on request")}</span><span>${escapeHtml(cap)}</span><button type="button">Check Availability</button>`;
-    document.body.appendChild(bar);
-    bar.querySelector("button").addEventListener("click",()=>byId("venueProfileQuote")?.click());
-    const toggle=()=>bar.classList.toggle("show",window.scrollY>520);
-    window.addEventListener("scroll",toggle,{passive:true});
-    toggle();
+    document.body.appendChild(bar);bar.querySelector("button").addEventListener("click",()=>byId("venueProfileQuote")?.click());
+    const toggle=()=>bar.classList.toggle("show",window.scrollY>520);window.addEventListener("scroll",toggle,{passive:true});toggle();
   }
 
   async function loadVenueData(){
     if(!client||!validVenueId)return;
-    try{
-      const result=await client.rpc("smv_public_venues");
-      if(result.error)return;
-      currentVenue=(Array.isArray(result.data)?result.data:[]).map(item=>item?.venue||item).find(item=>String(item?.id)===String(venueId))||null;
-      if(!currentVenue)return;
-      installActions(currentVenue);
-      installSnapshot(currentVenue);
-      installStickyBar(currentVenue);
-      rememberVenue(currentVenue);
-    }catch(_){ }
+    try{const result=await client.rpc("smv_public_venues");if(result.error)return;currentVenue=(Array.isArray(result.data)?result.data:[]).map(item=>item?.venue||item).find(item=>String(item?.id)===String(venueId))||null;if(!currentVenue)return;installActions(currentVenue);installSnapshot(currentVenue);installStickyBar(currentVenue);rememberVenue(currentVenue);installVenueLeadSourceOverride();}catch(_){ }
   }
 
   function resolveSimilarVenueImages(){
-    const grid=byId("similarVenuesGrid");
-    if(!grid||!client)return;
+    const grid=byId("similarVenuesGrid");if(!grid||!client)return;
     const process=()=>grid.querySelectorAll(".venue-similar-card").forEach(async card=>{
-      if(card.dataset.smvImageChecked==="1")return;
-      card.dataset.smvImageChecked="1";
-      const media=card.querySelector(".venue-similar-media");
-      if(!media||media.querySelector("img"))return;
-      const match=(media.getAttribute("href")||"").match(/[?&]id=([0-9a-f-]{36})/i);
-      const targetId=match?.[1]||"";
+      if(card.dataset.smvImageChecked==="1")return;card.dataset.smvImageChecked="1";
+      const media=card.querySelector(".venue-similar-media");if(!media||media.querySelector("img"))return;
+      const match=(media.getAttribute("href")||"").match(/[?&]id=([0-9a-f-]{36})/i);const targetId=match?.[1]||"";
       if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(targetId))return;
-      try{
-        const root=await client.storage.from(BUCKET).list(targetId,{limit:100,sortBy:{column:"name",order:"asc"}});
-        let imageUrl="";
-        if(!root.error){const cover=(root.data||[]).find(row=>/^cover-/i.test(row?.name||""));if(cover)imageUrl=publicUrl(`${targetId}/${cover.name}`);}
-        if(!imageUrl){const gallery=await client.storage.from(BUCKET).list(`${targetId}/gallery`,{limit:1,sortBy:{column:"name",order:"asc"}});const first=(gallery.data||[]).find(row=>row?.name&&row.name!==".emptyFolderPlaceholder");if(first)imageUrl=publicUrl(`${targetId}/gallery/${first.name}`);}
-        if(imageUrl){const label=card.querySelector("h3")?.textContent?.trim()||"Venue";media.innerHTML=`<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(label)} venue" loading="lazy" decoding="async">`;}
-      }catch(_){ }
+      try{const root=await client.storage.from(BUCKET).list(targetId,{limit:100,sortBy:{column:"name",order:"asc"}});let imageUrl="";if(!root.error){const cover=(root.data||[]).find(row=>/^cover-/i.test(row?.name||""));if(cover)imageUrl=publicUrl(`${targetId}/${cover.name}`);}if(!imageUrl){const gallery=await client.storage.from(BUCKET).list(`${targetId}/gallery`,{limit:1,sortBy:{column:"name",order:"asc"}});const first=(gallery.data||[]).find(row=>row?.name&&row.name!==".emptyFolderPlaceholder");if(first)imageUrl=publicUrl(`${targetId}/gallery/${first.name}`);}if(imageUrl){const label=card.querySelector("h3")?.textContent?.trim()||"Venue";media.innerHTML=`<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(label)} venue" loading="lazy" decoding="async">`;}}catch(_){ }
     });
-    process();
-    const observer=new MutationObserver(process);
-    observer.observe(grid,{childList:true,subtree:true});
-    window.setTimeout(()=>{process();observer.disconnect();},6000);
+    process();const observer=new MutationObserver(process);observer.observe(grid,{childList:true,subtree:true});window.setTimeout(()=>{process();observer.disconnect();},6000);
+  }
+
+  function venueSource(){return `Website - Venue: ${clean(currentVenue?.venue_name)||"Venue profile"}`;}
+  function venueLocation(){return [currentVenue?.area,currentVenue?.city].filter(Boolean).join(", ")||currentVenue?.city||null;}
+  function installVenueLeadSourceOverride(){
+    if(!client||!currentVenue)return;
+    [byId("venueQuickEnquiryForm"),byId("venueQuoteForm")].filter(Boolean).forEach(form=>{
+      if(form.dataset.smvShortSourceOverride==="1")return;
+      form.dataset.smvShortSourceOverride="1";
+      form.addEventListener("submit",async event=>{
+        event.preventDefault();event.stopImmediatePropagation();
+        const isQuick=form.id==="venueQuickEnquiryForm";
+        const ids=isQuick?{event:"venueQuickEvent",date:"venueQuickDate",guests:"venueQuickGuests",budget:"venueQuickBudget",name:"venueQuickName",mobile:"venueQuickMobile",email:"venueQuickEmail",status:"venueQuickStatus",button:"venueQuickSubmit"}:{event:"venueQuoteEvent",date:"venueQuoteDate",guests:"venueQuoteGuests",budget:"venueQuoteBudget",name:"venueQuoteName",mobile:"venueQuoteMobile",email:"venueQuoteEmail",status:"venueQuoteStatus",button:"venueQuoteSubmit"};
+        const occasion=clean(byId(ids.event)?.value),eventDate=clean(byId(ids.date)?.value)||null,guests=Number(byId(ids.guests)?.value||0)||null,budget=Number(byId(ids.budget)?.value||0)||null,name=clean(byId(ids.name)?.value),mobile=cleanMobile(byId(ids.mobile)?.value),email=clean(byId(ids.email)?.value),status=byId(ids.status),button=byId(ids.button);
+        const setStatus=(text,type)=>{if(status){status.textContent=text;status.className=(isQuick?"venue-quick-status":"venue-quote-status")+(type?" "+type:"");}};
+        if(!occasion){setStatus("Please select your event.","error");byId(ids.event)?.focus();return;}
+        if(name.length<2){setStatus("Please enter your name.","error");byId(ids.name)?.focus();return;}
+        if(mobile.length!==10){setStatus("Please enter a valid 10-digit mobile number.","error");byId(ids.mobile)?.focus();return;}
+        if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){setStatus("Please enter a valid email address.","error");byId(ids.email)?.focus();return;}
+        const locationText=venueLocation();
+        const requirements=[`Specific venue enquiry: ${clean(currentVenue.venue_name)}`,`Venue ID: ${clean(currentVenue.id)}`,locationText?`Venue location: ${locationText}`:null,`Submitted page: ${document.title||"Venue profile"}`].filter(Boolean).join("\n");
+        const oldText=button?.textContent;if(button){button.disabled=true;button.textContent="Submitting…";}setStatus("","");
+        const {error}=await client.from("customer_enquiries").insert({customer_name:name,mobile,email:email||null,location:locationText,occasion,event_date:eventDate,guests,budget_per_person:budget||null,food_preference:null,requirements,source:venueSource(),status:"new"});
+        if(button){button.disabled=false;button.textContent=oldText||"Check Price & Availability →";}
+        if(error){console.error("Venue enquiry override error:",error);setStatus("Unable to send right now. Please try again or call +91 83683 22256.","error");return;}
+        setStatus("✓ Requirement received! Our team will call you within 1 hour with suitable venue options.","success");
+        form.reset();
+        status?.scrollIntoView({behavior:"smooth",block:"center"});
+      },true);
+    });
   }
 
   function init(){
@@ -341,6 +264,9 @@
     loadPhotos();
     loadVenueData();
     resolveSimilarVenueImages();
+    const observer=new MutationObserver(()=>installVenueLeadSourceOverride());
+    observer.observe(document.body,{childList:true,subtree:true});
+    window.setTimeout(()=>observer.disconnect(),12000);
   }
 
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
