@@ -1,5 +1,5 @@
-/* Select My Venue — performance + layout stability hotfix (2026-09-08)
-   Override-only: no form, CRM, Supabase or enquiry logic is changed. */
+/* Select My Venue — performance + layout stability override (2026-09-08)
+   Keeps CRM, Supabase, enquiry and partner logic untouched. */
 
 html{
   scroll-behavior:auto !important;
@@ -16,7 +16,6 @@ body{
 img,video,svg{max-width:100%}
 img{height:auto}
 
-/* Stop continuous hero movement */
 .hero-slide{
   animation:none !important;
   transform:none !important;
@@ -26,7 +25,6 @@ img{height:auto}
 .hero-slide-1{opacity:1 !important}
 .nav-cta{animation:none !important}
 
-/* Prevent repaint-heavy reveal movement */
 .feature-card,.ai-result-card,.contact-card,.event-card,.celebration-tile,
 .advice-card,.intent-link-card,.location-card,.venue-card,.home-venue-card{
   opacity:1 !important;
@@ -34,7 +32,6 @@ img{height:auto}
   will-change:auto !important;
 }
 
-/* Remove expensive blur from fixed/sticky surfaces */
 .site-header,.page-header,.search-card,.search-landing-points span,
 .floating-whatsapp,.smv-final-ai-button,.smv-final-ai-panel,
 .enquiry-popup,.enquiry-popup-overlay{
@@ -43,12 +40,10 @@ img{height:auto}
 }
 body::before{display:none !important}
 
-/* Reserve space for async venue content */
 .home-venue-grid{min-height:420px}
 #venueGrid{min-height:520px}
 .home-venue-media,.home-venue-media img{aspect-ratio:16 / 10}
 
-/* Public landing-page stability */
 .search-landing-hero,.search-landing-copy,.quick-enquiry-card,
 .search-content-section,.celebration-strip,.cta-card{
   transform:none !important;
@@ -60,9 +55,7 @@ body::before{display:none !important}
 .page-nav-links::-webkit-scrollbar{display:none}
 .floating-whatsapp,.smv-final-ai-button,.smv-final-ai-panel{will-change:auto !important}
 
-/* =========================================================
-   HOMEPAGE PREMIUM 3D HEADER
-========================================================= */
+/* Premium 3D homepage header */
 .site-header{
   height:88px !important;
   background:linear-gradient(180deg,#06332e 0%,#03231f 52%,#021a17 100%) !important;
@@ -169,90 +162,32 @@ body::before{display:none !important}
 }
 #mainNav a[href="list-your-venue.html"]::after{display:none !important}
 
-/* =========================================================
-   VENUE OWNER OFFER — MASTER / LUXURY TWO-PANEL BANNER
-   Uses only this existing CSS file. The existing “No Commission” strip is untouched.
-========================================================= */
-main::before,
-main::after{
-  box-sizing:border-box;
-  position:relative;
-  white-space:pre-line;
-  color:#edf9f6;
-  background:
-    radial-gradient(circle at 18% 0%,rgba(29,218,190,.16),transparent 34%),
-    radial-gradient(circle at 100% 100%,rgba(237,190,82,.08),transparent 36%),
-    linear-gradient(145deg,#073a34 0%,#042923 46%,#031f1b 100%);
-  border:1px solid rgba(46,223,198,.40);
-  box-shadow:
-    0 7px 0 rgba(0,0,0,.22),
-    0 18px 38px rgba(0,0,0,.24),
-    inset 0 1px 0 rgba(255,255,255,.08),
-    inset 0 -1px 0 rgba(232,189,104,.08),
-    0 0 0 1px rgba(232,189,104,.03);
-  text-shadow:0 1px 1px rgba(0,0,0,.35);
-}
-
+/* Exact premium free-listing launch banner recreation from the approved visual. */
 main::before{
-  content:
-    "✦  LAUNCH OFFER • FOUNDING VENUE PARTNERS\A"
-    "LIST YOUR VENUE FREE\A"
-    "Professional venue presence + relevant customer enquiry opportunities during our launch phase.\A\A"
-    "₹0 JOINING FEE   ◆   FREE VENUE LISTING   ◆   PARTNER CRM ACCESS\A"
-    "10-DAY COMPLIMENTARY LAUNCH TRIAL\A\A"
-    "✦ LIMITED LAUNCH OFFER — NO PAYMENT REQUIRED TO GET STARTED ✦";
-  float:left;
-  width:58.5%;
-  min-height:214px;
-  margin:16px 0 20px 16px;
-  padding:22px 28px;
-  border-radius:24px 10px 10px 24px;
-  border-right-color:rgba(232,189,104,.25);
-  font-size:12.5px;
-  font-weight:760;
-  line-height:1.62;
-  letter-spacing:.008em;
+  content:"" !important;
+  display:block !important;
+  width:calc(100% - 28px) !important;
+  max-width:1600px !important;
+  aspect-ratio:1600 / 420 !important;
+  margin:14px auto 20px !important;
+  padding:0 !important;
+  float:none !important;
+  border:0 !important;
+  border-radius:28px !important;
+  outline:0 !important;
+  box-shadow:0 16px 40px rgba(0,0,0,.26),0 0 0 1px rgba(46,223,198,.12) !important;
+  background-color:#03231f !important;
+  background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjQyMCIgdmlld0JveD0iMCAwIDE2MDAgNDIwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+PHN0b3Agc3RvcC1jb2xvcj0iIzA2M2MzNSIvPjxzdG9wIG9mZnNldD0iLjU1IiBzdG9wLWNvbG9yPSIjMDQyNDFmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDMxYTE3Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImdvbGQiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjZmZlNzhmIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZTdiOTRmIi8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9InRlYWwiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBzdG9wLWNvbG9yPSIjMzNlMGM1Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMGFhOTk1Ii8+PC9saW5lYXJHcmFkaWVudD48ZmlsdGVyIGlkPSJnbG93Ij48ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSI3IiByZXN1bHQ9ImIiLz48ZmVNZXJnZT48ZmVNZXJnZU5vZGUgaW49ImIiLz48ZmVNZXJnZU5vZGUgaW49IlNvdXJjZUdyYXBoaWMiLz48L2ZlTWVyZ2U+PC9maWx0ZXI+PC9kZWZzPjxyZWN0IHdpZHRoPSIxNjAwIiBoZWlnaHQ9IjQyMCIgcng9IjI4IiBmaWxsPSJ1cmwoI2JnKSIgc3Ryb2tlPSIjMjJjYmIwIiBzdHJva2Utd2lkdGg9IjIiLz48cmVjdCB4PSIyOCIgeT0iMjgiIHdpZHRoPSI4NzAiIGhlaWdodD0iMzY0IiByeD0iMjQiIGZpbGw9IiMwNjJjMjciIGZpbGwtb3BhY2l0eT0iLjcyIiBzdHJva2U9IiMxZmI5OWYiLz48cmVjdCB4PSI5MzAiIHk9IjI4IiB3aWR0aD0iNjQyIiBoZWlnaHQ9IjM2NCIgcng9IjI0IiBmaWxsPSIjMDMxZjFiIiBmaWxsLW9wYWNpdHk9Ii45IiBzdHJva2U9IiMxZmI5OWYiLz48cmVjdCB4PSI1NCIgeT0iNTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iNDYiIHJ4PSIyMyIgZmlsbD0iIzBiNGM0MyIgc3Ryb2tlPSIjMmNlMGMyIi8+PHRleHQgeD0iODAiIHk9IjgwIiBmaWxsPSIjZmZkNjZiIiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSI3MDAiPvCfk6MgIExBVU5DSCBPRkZFUiDigKIgRk9VTkRJTkcgVkVOVUUgUEFSVE5FUlM8L3RleHQ+PHRleHQgeD0iNTYiIHk9IjE2MiIgZmlsbD0iI2Y0ZmJmOSIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjY0IiBmb250LXdlaWdodD0iODAwIj5MaXN0IFlvdXIgVmVudWUgPHRzcGFuIGZpbGw9IiMyYWQ5YzAiPkZSRUUuPC90c3Bhbj48L3RleHQ+PHBhdGggZD0iTTY5MCAxNzggUTc4MiAxODggODYwIDE4MCIgc3Ryb2tlPSIjZjFiZTRmIiBzdHJva2Utd2lkdGg9IjYiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjx0ZXh0IHg9IjU2IiB5PSIyMDUiIGZpbGw9IiNjOGRkZGEiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMCI+Sm9pbiB0aGUgU2VsZWN0IE15IFZlbnVlIHBhcnRuZXIgbmV0d29yayBkdXJpbmcgb3VyIGxhdW5jaCBwaGFzZS48L3RleHQ+PHRleHQgeD0iNTYiIHk9IjIzMiIgZmlsbD0iI2M4ZGRkYSIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjIwIj5Qcm9mZXNzaW9uYWwgdmVudWUgcHJlc2VuY2UgKyByZWxldmFudCBjdXN0b21lciBlbnF1aXJ5IG9wcG9ydHVuaXRpZXMuPC90ZXh0PjxnIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjcwMCI+PHJlY3QgeD0iNTYiIHk9IjI2MCIgd2lkdGg9IjE3MCIgaGVpZ2h0PSI3NiIgcng9IjE4IiBmaWxsPSIjMDczNjJmIiBzdHJva2U9IiMyMWJmYTUiLz48dGV4dCB4PSI3NiIgeT0iMjkyIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZkNjZiIj7igrkwPC90ZXh0Pjx0ZXh0IHg9Ijc2IiB5PSIzMTciIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiNmNGZiZjkiPkpPSU5JTkcgRkVFPC90ZXh0PjxyZWN0IHg9IjI0MCIgeT0iMjYwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9Ijc2IiByeD0iMTgiIGZpbGw9IiMwNzM2MmYiIHN0cm9rZT0iIzIxYmZhNSIvPjx0ZXh0IHg9IjI2MCIgeT0iMjkyIiBmb250LXNpemU9IjIzIiBmaWxsPSIjZmZkNjZiIj5GUkVFPC90ZXh0Pjx0ZXh0IHg9IjI2MCIgeT0iMzE3IiBmb250LXNpemU9IjE1IiBmaWxsPSIjZjRmYmY5Ij5WRU5VRSBMSVNUSU5HPC90ZXh0PjxyZWN0IHg9IjQzNCIgeT0iMjYwIiB3aWR0aD0iMTkwIiBoZWlnaHQ9Ijc2IiByeD0iMTgiIGZpbGw9IiMwNzM2MmYiIHN0cm9rZT0iIzIxYmZhNSIvPjx0ZXh0IHg9IjQ1NCIgeT0iMjkyIiBmb250LXNpemU9IjIyIiBmaWxsPSIjZDZmOWYzIj5QQVJUTkVSPC90ZXh0Pjx0ZXh0IHg9IjQ1NCIgeT0iMzE3IiBmb250LXNpemU9IjE1IiBmaWxsPSIjZjRmYmY5Ij5DUk0gQUNDRVNTPC90ZXh0PjxyZWN0IHg9IjYzOCIgeT0iMjYwIiB3aWR0aD0iMjI2IiBoZWlnaHQ9Ijc2IiByeD0iMTgiIGZpbGw9IiMwNzM2MmYiIHN0cm9rZT0iI2M4OWIzMiIvPjx0ZXh0IHg9IjY1OCIgeT0iMjkyIiBmb250LXNpemU9IjIyIiBmaWxsPSIjZmZkNjZiIj4xMC1EQVk8L3RleHQ+PHRleHQgeD0iNjU4IiB5PSIzMTciIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiNmNGZiZjkiPkNPTVBMSU1FTlRBUlkgVFJJQUw8L3RleHQ+PC9nPjxyZWN0IHg9IjU2IiB5PSIzNDgiIHdpZHRoPSI4MDgiIGhlaWdodD0iMzQiIHJ4PSIxNyIgZmlsbD0iIzE2M2EyZiIgc3Ryb2tlPSIjYzg5YjMyIi8+PHRleHQgeD0iNDYwIiB5PSIzNzEiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiNmZmQ2NmIiIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgZm9udC13ZWlnaHQ9IjcwMCI+8J+OgSBMSU1JVEVEIExBVU5DSCBPRkZFUiDigJQgTk8gUEFZTUVOVCBSRVFVSVJFRCBUTyBHRVQgU1RBUlRFRCDinKg8L3RleHQ+PHRleHQgeD0iOTU4IiB5PSI3NiIgZmlsbD0iI2Y3ZmJmYSIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjMwIiBmb250LXdlaWdodD0iODAwIj5Zb3VyIEZvdW5kaW5nIFBhcnRuZXIgPHRzcGFuIGZpbGw9IiMzMWRjYzIiPmxhdW5jaCBiZW5lZml0czwvdHNwYW4+PC90ZXh0PjxnIGZvbnQtZmFtaWx5PSJBcmlhbCxIZWx2ZXRpY2Esc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2U4ZjRmMSI+PHRleHQgeD0iOTU4IiB5PSIxMjQiPuKckyAgUHJvZmVzc2lvbmFsIHZlbnVlIHByb2ZpbGU8L3RleHQ+PHRleHQgeD0iOTU4IiB5PSIxNjQiPuKckyAgUGFydG5lciBDUk0gYWNjZXNzPC90ZXh0Pjx0ZXh0IHg9Ijk1OCIgeT0iMjA0Ij7inJMgIFZlcmlmaWVkIFBhcnRuZXIgb3Bwb3J0dW5pdHk8L3RleHQ+PHRleHQgeD0iOTU4IiB5PSIyNDQiPuKckyAgMTAtZGF5IGNvbXBsaW1lbnRhcnkgdHJpYWw8L3RleHQ+PHRleHQgeD0iMTI2MCIgeT0iMTI0Ij7inJMgIOKCuTAgam9pbmluZyBmZWU8L3RleHQ+PHRleHQgeD0iMTI2MCIgeT0iMTY0Ij7inJMgIFJlbGV2YW50IGVucXVpcnkgb3Bwb3J0dW5pdGllczwvdGV4dD48dGV4dCB4PSIxMjYwIiB5PSIyMDQiPuKckyAgTm8gY29tbWlzc2lvbiB0byBqb2luPC90ZXh0Pjx0ZXh0IHg9IjEyNjAiIHk9IjI0NCI+4pyTICBObyBsb25nLXRlcm0gY29tbWl0bWVudDwvdGV4dD48L2c+PHJlY3QgeD0iOTU4IiB5PSIyODYiIHdpZHRoPSI0MTAiIGhlaWdodD0iNzQiIHJ4PSIxOCIgZmlsbD0idXJsKCNnb2xkKSIgc3Ryb2tlPSIjZmZlYWE3IiBzdHJva2Utd2lkdGg9IjIiIGZpbHRlcj0idXJsKCNnbG93KSIvPjx0ZXh0IHg9IjExNjMiIHk9IjMzMiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzA4MjMxZiIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iOTAwIj5MSVNUIFlPVVIgVkVOVUUgRlJFRSAg4oaSPC90ZXh0Pjx0ZXh0IHg9IjE0MDUiIHk9IjMwNiIgZmlsbD0iI2ZmZDY2YiIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIj7imZs8L3RleHQ+PHRleHQgeD0iMTQwNSIgeT0iMzM2IiBmaWxsPSIjZmZkNjZiIiBmb250LWZhbWlseT0iQXJpYWwsSGVsdmV0aWNhLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTciIGZvbnQtc3R5bGU9Iml0YWxpYyI+R3JvdyB5b3VyIGJvb2tpbmdzPC90ZXh0Pjx0ZXh0IHg9IjE0MDUiIHk9IjM1OSIgZmlsbD0iI2ZmZDY2YiIgZm9udC1mYW1pbHk9IkFyaWFsLEhlbHZldGljYSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE3IiBmb250LXN0eWxlPSJpdGFsaWMiPndpdGggdXMhPC90ZXh0Pjwvc3ZnPg==") !important;
+  background-position:center !important;
+  background-repeat:no-repeat !important;
+  background-size:100% 100% !important;
+  overflow:hidden !important;
+  pointer-events:none !important;
 }
+main::after{display:none !important}
+main > .hero:first-of-type{clear:both}
 
-main::after{
-  content:
-    "FOUNDING PARTNER LAUNCH BENEFITS\A\A"
-    "✓ Professional venue profile          ✓ ₹0 joining fee\A"
-    "✓ Partner CRM access                  ✓ Relevant enquiry opportunities\A"
-    "✓ Verified Partner opportunity        ✓ No commission to join\A"
-    "✓ 10-day complimentary trial          ✓ No long-term commitment\A\A"
-    "LIST YOUR VENUE FREE  →";
-  float:right;
-  width:38.5%;
-  min-height:214px;
-  margin:16px 16px 20px 0;
-  padding:22px 24px;
-  border-radius:10px 24px 24px 10px;
-  border-left-color:rgba(232,189,104,.25);
-  font-size:11.5px;
-  font-weight:700;
-  line-height:1.72;
-  letter-spacing:.004em;
-}
-
-/* Make the first actual homepage section begin below both offer panels. */
-main > .hero:first-of-type{
-  clear:both;
-}
-
-/* Premium gold/teal edge and subtle top highlight to visually join both panels. */
-main::before{
-  outline:1px solid rgba(232,189,104,.10);
-  outline-offset:-5px;
-}
-main::after{
-  outline:1px solid rgba(232,189,104,.10);
-  outline-offset:-5px;
-}
-
-/* =========================================================
-   CLASSIC WHATSAPP FLOATING ICON
-========================================================= */
+/* Classic WhatsApp floating icon */
 .floating-whatsapp{
   right:22px !important;
   bottom:22px !important;
@@ -286,14 +221,11 @@ main::after{
 .floating-whatsapp-icon svg{width:32px !important;height:32px !important}
 .floating-whatsapp-text{display:none !important}
 
-/* Responsive safety */
 @media (max-width:1320px){
   .brand{width:250px !important;flex-basis:250px !important}
   .brand img{width:238px !important}
   #mainNav{gap:5px !important}
   #mainNav a{min-height:41px !important;padding:0 9px !important;font-size:10.8px !important}
-  main::before{width:57.5%;padding:20px 22px;font-size:11.5px}
-  main::after{width:39.5%;padding:20px 20px;font-size:10.7px}
 }
 
 @media (max-width:1120px){
@@ -301,16 +233,7 @@ main::after{
   .brand{width:210px !important;flex-basis:210px !important;height:72px !important}
   .brand img{width:202px !important;max-height:66px !important}
   #mainNav a{padding:0 7px !important;font-size:10px !important}
-  main::before,
-  main::after{
-    float:none;
-    width:calc(100% - 24px);
-    min-height:auto;
-    margin:12px auto 0;
-    border-radius:18px;
-  }
-  main::after{margin-bottom:16px}
-  main > .hero:first-of-type{clear:none}
+  main::before{width:calc(100% - 20px) !important;margin:12px auto 16px !important}
 }
 
 @media (max-width:1024px), (hover:none) and (pointer:coarse){
@@ -356,13 +279,10 @@ main::after{
     font-size:12px !important;
   }
   #mainNav .nav-cta{justify-content:center !important}
-  main::before,
-  main::after{
-    width:calc(100% - 20px);
-    padding:17px 17px;
-    font-size:10.3px;
-    line-height:1.62;
-    border-radius:16px;
+  main::before{
+    width:calc(100% - 14px) !important;
+    margin:10px auto 14px !important;
+    border-radius:16px !important;
   }
 }
 
@@ -370,13 +290,7 @@ main::after{
   .home-venue-grid{min-height:360px}
   #venueGrid{min-height:430px}
   .floating-whatsapp,.smv-final-ai-button{box-shadow:0 8px 22px rgba(0,0,0,.24) !important}
-  main::before,
-  main::after{
-    width:calc(100% - 16px);
-    padding:15px 14px;
-    font-size:9.7px;
-    border-radius:14px;
-  }
+  main::before{width:calc(100% - 10px) !important;border-radius:12px !important}
 }
 
 @media (prefers-reduced-motion:reduce){
