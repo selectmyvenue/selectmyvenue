@@ -17,3 +17,14 @@ main::before{display:none!important;content:none!important}.smv-home-offer-wrap{
 @media(max-width:780px){.site-header{height:auto!important;min-height:70px!important}.header-inner{height:auto!important;min-height:70px!important;padding:8px 12px!important;gap:10px!important;align-items:center!important}.brand{width:196px!important;height:58px!important;flex:0 0 196px!important}.brand img{width:188px!important;max-height:54px!important}.menu-toggle{display:flex!important}.smv-home-offer-wrap{width:calc(100% - 16px);margin:8px auto 10px}.smv-home-offer{border-radius:18px;padding:18px 14px;grid-template-columns:1fr;gap:14px}.smv-home-offer:before{display:none}.smv-home-offer-kicker{font-size:11px;padding:8px 11px;line-height:1.2}.smv-home-offer h2{font-size:34px;line-height:1;margin-top:14px}.smv-home-offer-lead{font-size:13px;line-height:1.45}.smv-home-offer-badges{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.smv-home-offer-badge{min-height:52px;border-radius:13px;padding:8px 10px}.smv-home-offer-badge strong{font-size:22px}.smv-home-offer-badge small{font-size:10px}.smv-home-offer-strip{font-size:11px;padding:9px 10px;line-height:1.35}.smv-home-offer-side{padding:15px 14px;border-radius:16px}.smv-home-offer-side h3{font-size:24px!important}.smv-home-offer-list{grid-template-columns:1fr;gap:9px}.smv-home-offer-list li{font-size:13px}.smv-home-offer-cta-row{display:block}.smv-home-offer-btn{width:100%;min-height:50px;font-size:16px}.smv-home-offer-growth{margin-top:10px;text-align:center}.form-message.smv-front-success{font-size:15.5px!important;margin-top:14px!important;padding:15px!important}}
 @media(max-width:430px){.smv-home-offer h2{font-size:30px}.smv-home-offer-badges{grid-template-columns:1fr}.smv-home-offer-side h3{font-size:22px!important}.smv-home-offer-btn{font-size:14px;padding:0 16px}}
 @media(prefers-reduced-motion:reduce){.smv-home-offer:before{animation:none!important}}
+
+/* Removed optional WhatsApp copy/send checkbox from all website enquiry forms. */
+.smv-whatsapp-opt,
+.smv-quick-whatsapp-opt,
+.smv-venue-whatsapp-opt,
+[data-smv-whatsapp-option],
+label:has(input[name="send_whatsapp"]),
+#customerWhatsappOpt,
+input[name="send_whatsapp"]{
+  display:none!important;
+}
