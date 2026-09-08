@@ -32,21 +32,6 @@
     return score >= 3 ? "high" : score >= 1 ? "medium" : "low";
   }
 
-  function shortPageName() {
-    const path = (location.pathname || "/").toLowerCase();
-    if (path === "/" || path.endsWith("/index.html")) return "Home page";
-    if (path.includes("wedding")) return "Wedding venues page";
-    if (path.includes("party")) return "Party halls page";
-    if (path.includes("corporate")) return "Corporate venues page";
-    if (path.includes("delhi-ncr")) return "Delhi NCR page";
-    if (path.includes("venues")) return "Browse venues page";
-    return "Website page";
-  }
-
-  function pageLabel() {
-    return `${document.title || "Select My Venue"} (${location.pathname || "/"})`;
-  }
-
   function setMessage(form, text, type) {
     const node = form.querySelector("[data-quick-message]");
     if (!node) return;
@@ -65,6 +50,22 @@
     button.textContent = busy ? "Submitting…" : button.dataset.originalText;
   }
 
+  function pageLabel() {
+    const path = (location.pathname || "/").replace(/^\//, "") || "Home page";
+    if (path === "index.html" || path === "Home page") return "Home page";
+    return path.replace(/\.html$/i, "").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function pageSource() {
+    const label = pageLabel().toLowerCase();
+    if (label.includes("wedding")) return "Website - Wedding page";
+    if (label.includes("party")) return "Website - Party page";
+    if (label.includes("corporate")) return "Website - Corporate page";
+    if (label.includes("delhi ncr")) return "Website - Delhi NCR page";
+    if (label.includes("venue")) return "Website - Venue page";
+    return "Website - Home page";
+  }
+
   function sourceContext(form) {
     const params = new URLSearchParams(location.search);
     const venueName = clean(
@@ -74,11 +75,10 @@
       params.get("venueName") ||
       document.querySelector("[data-current-venue-name]")?.getAttribute("data-current-venue-name") ||
       ""
-    ).slice(0, 160);
-    const venueId = clean(form.dataset.venueId || params.get("venue") || params.get("id") || params.get("venue_id") || "").slice(0, 120);
-    const page = clean(form.dataset.source) || shortPageName();
-    const source = venueName ? `Website - ${venueName}` : `Website - ${page}`;
-    return { source: source.slice(0, 180), venueName, venueId };
+    ).slice(0, 80);
+    const venueId = clean(form.dataset.venueId || params.get("venue") || params.get("id") || params.get("venue_id") || "").slice(0, 80);
+    const source = venueName ? `Website - Venue: ${venueName}` : pageSource();
+    return { source, venueName, venueId, page: pageLabel() };
   }
 
   function duplicateKey(details) {
@@ -110,7 +110,7 @@
     style.id = "smvQuickEnquiryFixStyles";
     style.textContent = `
       .quick-enquiry-message.success{
-        display:block!important;margin:14px 0!important;padding:14px 15px!important;border:1px solid rgba(7,127,92,.22)!important;border-radius:14px!important;background:linear-gradient(135deg,#eafff8,#f7fffb,#fff8df)!important;color:#06704f!important;font-size:14px!important;font-weight:900!important;line-height:1.4!important;box-shadow:0 10px 26px rgba(5,95,72,.08)!important
+        display:block!important;margin:12px 0!important;padding:14px 15px!important;border:1px solid rgba(7,127,92,.22)!important;border-radius:14px!important;background:linear-gradient(135deg,#eafff8,#f7fffb)!important;color:#06704f!important;font-size:14px!important;font-weight:900!important;line-height:1.4!important;box-shadow:0 10px 26px rgba(5,95,72,.08)!important
       }
       .quick-enquiry-message.error{display:block!important;margin:12px 0!important;padding:12px!important;border-radius:12px!important;background:#fff1f1!important;color:#a4161a!important;font-weight:850!important}
       .smv-quick-whatsapp-opt,[data-smv-whatsapp-option],input[name="send_whatsapp"]{display:none!important}
@@ -148,7 +148,7 @@
     };
 
     if (isDuplicate(details)) {
-      setMessage(form, "✓ Your request is already received. Our team will call you within 1 hour.", "success");
+      setMessage(form, "✓ Your requirement is already received. Our team will call you within 1 hour with suitable venue options.", "success");
       getMessageNode(form)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
@@ -180,7 +180,7 @@
     }
 
     if (!window.supabase || typeof window.supabase.createClient !== "function") {
-      setMessage(form, "Unable to connect right now. Please call or WhatsApp us on +91 83683 22256.", "error");
+      setMessage(form, "Unable to connect right now. Please call us on +91 83683 22256.", "error");
       return;
     }
 
@@ -189,10 +189,10 @@
     try {
       const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       const requirements = [
-        "Quick enquiry from: " + context.source,
+        "Quick enquiry source: " + context.source,
         context.venueName ? "Interested venue: " + context.venueName : "",
         context.venueId ? "Venue ID: " + context.venueId : "",
-        "Submitted page: " + pageLabel(),
+        "Submitted page: " + context.page,
         guests ? "Guests: " + guests : "",
         budget ? "Budget/person: ₹" + budget : ""
       ].filter(Boolean).join("\n");
@@ -221,7 +221,7 @@
 
       markDuplicate(details);
       form.classList.add("is-submitted");
-      setMessage(form, "✓ Thank you! Your venue request has been received. Our team will call you within 1 hour with suitable venue options.", "success");
+      setMessage(form, "✓ Requirement received! Our team will call you within 1 hour with suitable venue options.", "success");
 
       const successPanel = form.closest(".quick-enquiry-card") && form.closest(".quick-enquiry-card").querySelector("[data-quick-success]");
       if (successPanel) successPanel.hidden = false;
@@ -235,7 +235,7 @@
       const text = String((error && (error.message || error.details)) || "").toLowerCase();
       const friendly = text.includes("network")
         ? "Please check your internet connection and try again."
-        : "We could not submit the enquiry right now. Please call or WhatsApp +91 83683 22256.";
+        : "We could not submit the enquiry right now. Please call +91 83683 22256.";
       setMessage(form, friendly, "error");
     } finally {
       setBusy(button, false);
@@ -247,7 +247,7 @@
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
       const dateField = form.elements.event_date;
       if (dateField) dateField.min = todayIso();
-      form.querySelectorAll("[data-smv-whatsapp-option], .smv-quick-whatsapp-opt, input[name='send_whatsapp']").forEach(node => node.remove());
+      form.querySelectorAll("[data-smv-whatsapp-option],.smv-quick-whatsapp-opt,input[name='send_whatsapp']").forEach(node => node.remove());
       form.addEventListener("submit", handleSubmit);
     });
   });
