@@ -56,6 +56,11 @@
     return [venue.area, venue.city, venue.state, venue.pincode].map(value => String(value || "").trim()).filter(Boolean).join(", ") || "Address on request";
   }
 
+  function venueSource() {
+    const name = String(currentVenue?.venue_name || "Venue Profile").trim();
+    return `Website - ${name}`.slice(0, 180);
+  }
+
   function venueFeatures(venue) {
     const list = [];
     if (venue.food_veg) list.push(["🥗", "Vegetarian food"]);
@@ -163,19 +168,19 @@
 
   function renderGallery(name,media){
     const section=byId("venueProfileGallerySection"),grid=byId("venueProfileGallery"),videosSection=byId("venueProfileVideosSection"),videosGrid=byId("venueProfileVideos");
-    const gallery=[...new Set(media.images.filter(url=>url&&url!==media.cover))];
+    const gallery=[...new Set((media.images||[]).filter(url=>url&&url!==media.cover))];
     if(gallery.length&&section&&grid){
       section.hidden=false;
       byId("venueGalleryCount").textContent=`${gallery.length} photo${gallery.length===1?"":"s"}`;
       grid.innerHTML=gallery.map((url,index)=>`<button type="button" class="venue-gallery-photo" data-gallery-index="${index}"><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} venue photo ${index+1}" loading="lazy" decoding="async"></button>`).join("");
       grid.querySelectorAll("[data-gallery-index]").forEach(button=>button.addEventListener("click",()=>openLightbox(gallery[Number(button.dataset.galleryIndex)],name)));
     }
-    if(media.videos.length&&videosSection&&videosGrid){
+    if((media.videos||[]).length&&videosSection&&videosGrid){
       videosSection.hidden=false;
       byId("venueVideoCount").textContent=`${media.videos.length} video${media.videos.length===1?"":"s"}`;
       videosGrid.innerHTML=media.videos.map(url=>`<video class="venue-profile-video" controls playsinline preload="metadata" src="${escapeHtml(url)}"></video>`).join("");
     }
-    const mediaCount=(media.cover?1:0)+gallery.length+media.videos.length;
+    const mediaCount=(media.cover?1:0)+gallery.length+(media.videos||[]).length;
     if(mediaCount&&byId("venueProfileMediaCount")){
       byId("venueProfileMediaCount").hidden=false;
       byId("venueProfileMediaCount").textContent=`${mediaCount} media`;
@@ -242,27 +247,28 @@
     if(mobile.length!==10){status.textContent="Please enter a valid 10-digit mobile number.";status.className="venue-quote-status error";return;}
     if(!occasion){status.textContent="Please select your event.";status.className="venue-quote-status error";return;}
     const location=[currentVenue.area,currentVenue.city].filter(Boolean).join(", ")||currentVenue.city||null;
-    const requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,"Submitted from venue profile quick quote"].filter(Boolean).join("\n");
-    button.disabled=true;button.textContent="Sending your enquiry…";status.textContent="";status.className="venue-quote-status";
-    const{error}=await insertCustomerEnquiry({customer_name:name,mobile,location,occasion,event_date:eventDate,guests,budget_per_person:budget,requirements,source:"Website - Venue Profile",status:"new"});
+    const requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,"Submitted from venue profile quick quote",`Page: ${location.pathname||"/venue.html"}`].filter(Boolean).join("\n");
+    button.disabled=true;button.textContent="Sending…";status.textContent="";status.className="venue-quote-status";
+    const{error}=await insertCustomerEnquiry({customer_name:name,mobile,location,occasion,event_date:eventDate,guests,budget_per_person:budget,requirements,source:venueSource(),status:"new"});
     button.disabled=false;button.textContent="Check Price & Availability →";
     if(error){
       console.error("Venue quote error:",error);
-      status.textContent="We could not submit this enquiry right now. Please try again or use WhatsApp.";
+      status.textContent="We could not submit this enquiry right now. Please try again or call +91 83683 22256.";
       status.className="venue-quote-status error";
       return;
     }
-    status.textContent="✓ Enquiry submitted. Select My Venue will use this venue and your event details to assist you.";
+    status.textContent="✓ Thank you! Your venue request has been received. Our team will call you within 1 hour with suitable options.";
     status.className="venue-quote-status success";
     event.currentTarget.reset();
+    setTimeout(()=>status.scrollIntoView({behavior:"smooth",block:"center"}),80);
   }
 
   function installQuickEnquiryStyles(){
     if(byId("venueQuickEnquiryStyles"))return;
     const style=document.createElement("style");style.id="venueQuickEnquiryStyles";style.textContent=`
-      body.venue-profile-page{font-size:18px!important;line-height:1.72!important}.venue-profile-page p,.venue-profile-page li,.venue-profile-page a,.venue-profile-page button,.venue-profile-page input,.venue-profile-page select,.venue-profile-page textarea{font-size:16px}.venue-breadcrumbs{font-size:14px!important}.venue-profile-titlebar h1,#venueProfileName{font-size:clamp(42px,5vw,66px)!important}.venue-profile-location{font-size:17px!important;font-weight:800!important}.venue-profile-facts span{font-size:12px!important}.venue-profile-facts strong{font-size:17px!important}.venue-profile-panel h2,.venue-profile-enquiry h2{font-size:clamp(32px,3.2vw,44px)!important}.venue-profile-panel>p:last-child,.venue-profile-enquiry>p,#venueProfileDescription{font-size:17px!important;line-height:1.85!important}.venue-profile-feature strong,.venue-highlight span{font-size:15px!important;line-height:1.6!important}.venue-highlight b{font-size:16px!important}.button,.venue-profile-page button,.venue-profile-page a.button{font-size:15px!important}.smv-cover-counter,.smv-view-all,.smv-profile-action{font-size:14px!important}.venue-profile-details-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;margin:18px 0!important;padding:18px!important;border:1px solid rgba(45,210,189,.18)!important;border-radius:22px!important;background:linear-gradient(145deg,rgba(12,44,40,.95),rgba(5,30,27,.98))!important;box-shadow:0 18px 45px rgba(0,0,0,.18)!important}.venue-profile-detail-item{display:grid!important;grid-template-columns:42px 1fr!important;grid-template-rows:auto auto!important;gap:3px 12px!important;align-items:center!important;min-height:76px!important;padding:14px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:16px!important;background:rgba(255,255,255,.035)!important}.venue-profile-detail-item b{grid-row:1/3;width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:rgba(45,210,189,.10);color:#2dd2bd;font-size:20px}.venue-profile-detail-item span{color:#9fc1bc;font-size:12px!important;font-weight:950;letter-spacing:.08em;text-transform:uppercase}.venue-profile-detail-item strong{color:#f3fbfa;font-size:17px!important;line-height:1.35;font-weight:900}.venue-profile-detail-item:nth-child(5),.venue-profile-detail-item:nth-child(6){grid-column:auto}.venue-profile-enquiry{position:sticky!important;top:96px!important;align-self:start!important}.venue-quick-enquiry-form{display:grid;gap:11px;margin:14px 0 12px;padding:18px;border:1px solid #dfe9e5;border-radius:17px;background:#fff;box-shadow:0 10px 28px rgba(18,56,50,.055)}.venue-quick-title{color:#123f37;font-size:22px;font-weight:950;margin-bottom:0}.venue-quick-subtitle{margin:-2px 0 5px;color:#5f746e;font-size:13px;line-height:1.5;font-weight:750}.venue-quick-enquiry-form label{display:grid;gap:6px}.venue-quick-enquiry-form label span{color:#59766f;font-size:11px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}.venue-quick-enquiry-form input,.venue-quick-enquiry-form select{width:100%;box-sizing:border-box;border:1px solid #d9e5e1;border-radius:11px;background:#fbfdfc;color:#173f37;font:inherit;font-size:15px;font-weight:700;outline:none;height:46px;padding:0 12px}.venue-quick-enquiry-form input:focus,.venue-quick-enquiry-form select:focus{border-color:#0fbaa3;box-shadow:0 0 0 3px rgba(15,186,163,.08)}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.venue-quick-enquiry-form button{height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#0fbaa3,#087f71);color:#fff;font-size:15px;font-weight:950;cursor:pointer;box-shadow:0 9px 22px rgba(8,127,113,.18)}.venue-quick-enquiry-form button:disabled{opacity:.65;cursor:wait}.venue-quick-status{min-height:20px;font-size:13px;line-height:1.5;font-weight:800}.venue-quick-status.success{color:#087f71}.venue-quick-status.error{color:#b42318}#venueProfileQuoteAside{display:none!important}.venue-profile-enquiry>.venue-assist-points{margin-top:14px!important}.venue-profile-enquiry>small{display:block;margin-top:10px!important;font-size:12px!important}
+      body.venue-profile-page{font-size:14px!important;line-height:1.55!important}.venue-profile-page p,.venue-profile-page li,.venue-profile-page a,.venue-profile-page button,.venue-profile-page input,.venue-profile-page select,.venue-profile-page textarea{font-size:13.5px!important}.venue-breadcrumbs{font-size:12px!important}.venue-profile-titlebar h1,#venueProfileName{font-size:clamp(31px,3.6vw,48px)!important}.venue-profile-location{font-size:14px!important;font-weight:800!important}.venue-profile-facts span{font-size:10px!important}.venue-profile-facts strong{font-size:14px!important}.venue-profile-panel h2,.venue-profile-enquiry h2{font-size:clamp(22px,2.25vw,32px)!important}.venue-profile-panel>p:last-child,.venue-profile-enquiry>p,#venueProfileDescription{font-size:13.5px!important;line-height:1.55!important}.venue-profile-feature strong,.venue-highlight span{font-size:13px!important;line-height:1.45!important}.venue-highlight b{font-size:14px!important}.button,.venue-profile-page button,.venue-profile-page a.button{font-size:13px!important}.venue-profile-details-strip{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:9px!important;margin:12px 0!important;padding:12px!important;border:1px solid rgba(45,210,189,.18)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(12,44,40,.95),rgba(5,30,27,.98))!important}.venue-profile-detail-item{display:grid!important;grid-template-columns:34px 1fr!important;grid-template-rows:auto auto!important;gap:2px 9px!important;align-items:center!important;min-height:58px!important;padding:10px!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:13px!important;background:rgba(255,255,255,.035)!important}.venue-profile-detail-item b{grid-row:1/3;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:rgba(45,210,189,.10);color:#2dd2bd;font-size:16px}.venue-profile-detail-item span{color:#9fc1bc;font-size:9.5px!important;font-weight:950;letter-spacing:.07em;text-transform:uppercase}.venue-profile-detail-item strong{color:#f3fbfa;font-size:13px!important;line-height:1.25;font-weight:900}.venue-profile-enquiry{position:sticky!important;top:90px!important;align-self:start!important}.venue-quick-enquiry-form{display:grid;gap:8px;margin:10px 0 8px;padding:13px;border:1px solid #dfe9e5;border-radius:14px;background:#fff;box-shadow:0 8px 22px rgba(18,56,50,.045)}.venue-quick-title{color:#123f37;font-size:18px!important;font-weight:950;margin-bottom:0}.venue-quick-subtitle{margin:-2px 0 4px;color:#5f746e;font-size:11.5px!important;line-height:1.35;font-weight:750}.venue-quick-enquiry-form label{display:grid;gap:5px}.venue-quick-enquiry-form label span{color:#59766f;font-size:9.5px!important;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.venue-quick-enquiry-form input,.venue-quick-enquiry-form select{width:100%;box-sizing:border-box;border:1px solid #d9e5e1;border-radius:10px;background:#fbfdfc;color:#173f37;font:inherit;font-size:13px!important;font-weight:700;outline:none;height:40px;padding:0 10px}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.venue-quick-enquiry-form button{height:44px;min-height:44px;border:0;border-radius:11px;background:linear-gradient(135deg,#0fbaa3,#087f71);color:#fff;font-size:13.5px!important;font-weight:950;cursor:pointer;box-shadow:0 9px 22px rgba(8,127,113,.18);display:flex!important;align-items:center!important;justify-content:center!important}.venue-quick-enquiry-form button:disabled{opacity:.65;cursor:wait}.venue-quick-status{min-height:18px;font-size:13px!important;line-height:1.4;font-weight:850}.venue-quick-status.success,.venue-quote-status.success{display:block!important;margin:10px 0!important;padding:13px!important;border:1px solid rgba(7,127,92,.22)!important;border-radius:13px!important;background:linear-gradient(135deg,#eafff8,#f7fffb,#fff8df)!important;color:#06704f!important;box-shadow:0 10px 26px rgba(5,95,72,.08)!important}.venue-quick-status.error,.venue-quote-status.error{color:#b42318;font-weight:850}.venue-quote-card{max-height:min(92vh,680px)!important;overflow:auto!important}.venue-quote-submit,#venueQuoteSubmit{display:flex!important;visibility:visible!important;opacity:1!important;position:sticky!important;bottom:0!important;z-index:5!important;width:100%!important;min-height:46px!important;margin-top:12px!important;align-items:center!important;justify-content:center!important}#venueProfileQuoteAside{display:none!important}.venue-profile-enquiry>.venue-assist-points{margin-top:10px!important}.venue-profile-enquiry>small{display:block;margin-top:8px!important;font-size:11px!important}
       @media(max-width:900px){.venue-profile-enquiry{position:static!important}.venue-quick-enquiry-form{grid-template-columns:1fr 1fr}.venue-quick-title,.venue-quick-subtitle,.venue-quick-enquiry-form button,.venue-quick-status{grid-column:1/-1}.venue-quick-row{display:contents}.venue-profile-details-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
-      @media(max-width:620px){body.venue-profile-page{font-size:16px!important}.venue-profile-titlebar h1,#venueProfileName{font-size:36px!important}.venue-profile-details-strip{grid-template-columns:1fr!important;padding:12px!important}.venue-profile-detail-item strong{font-size:15px!important}.venue-quick-enquiry-form{grid-template-columns:1fr;padding:14px}.venue-quick-title,.venue-quick-subtitle,.venue-quick-enquiry-form button,.venue-quick-status{grid-column:auto}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr}.venue-profile-page p,.venue-profile-page li,.venue-profile-page a,.venue-profile-page button,.venue-profile-page input,.venue-profile-page select,.venue-profile-page textarea{font-size:15px}.venue-profile-panel>p:last-child,.venue-profile-enquiry>p,#venueProfileDescription{font-size:15.5px!important}}
+      @media(max-width:620px){body.venue-profile-page{font-size:13px!important}.venue-profile-titlebar h1,#venueProfileName{font-size:31px!important}.venue-profile-details-strip{grid-template-columns:1fr!important;padding:10px!important}.venue-profile-detail-item strong{font-size:12.5px!important}.venue-quick-enquiry-form{grid-template-columns:1fr;padding:12px}.venue-quick-title,.venue-quick-subtitle,.venue-quick-enquiry-form button,.venue-quick-status{grid-column:auto}.venue-quick-row{display:grid;grid-template-columns:1fr 1fr}.venue-profile-page p,.venue-profile-page li,.venue-profile-page a,.venue-profile-page button,.venue-profile-page input,.venue-profile-page select,.venue-profile-page textarea{font-size:13px!important}}
     `;document.head.appendChild(style);
   }
 
@@ -270,7 +276,7 @@
     const aside=document.querySelector(".venue-profile-enquiry");if(!aside||byId("venueQuickEnquiryForm"))return;
     const intro=aside.querySelector("p"),form=document.createElement("form");
     form.id="venueQuickEnquiryForm";form.className="venue-quick-enquiry-form";
-    form.innerHTML=`<div class="venue-quick-title">Check Availability & Prices</div><div class="venue-quick-subtitle">For <strong id="venueQuickVenueName">this venue</strong> · one quick request, no long form.</div><label><span>Event *</span><select id="venueQuickEvent" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Corporate Event</option><option>Party</option><option>Anniversary</option><option>Other</option></select></label><label><span>Event Date</span><input id="venueQuickDate" type="date"></label><div class="venue-quick-row"><label><span>Guests</span><input id="venueQuickGuests" type="number" min="1" placeholder="e.g. 250"></label><label><span>Budget / Person</span><input id="venueQuickBudget" type="number" min="0" placeholder="₹ e.g. 1500"></label></div><label><span>Name *</span><input id="venueQuickName" autocomplete="name" required placeholder="Your name"></label><label><span>Mobile *</span><input id="venueQuickMobile" inputmode="numeric" autocomplete="tel" maxlength="14" required placeholder="10-digit mobile"></label><label><span>Email</span><input id="venueQuickEmail" type="email" autocomplete="email" placeholder="Email (optional)"></label><button id="venueQuickSubmit" type="submit">Check Price & Availability →</button><div id="venueQuickStatus" class="venue-quick-status" role="status" aria-live="polite"></div>`;
+    form.innerHTML=`<div class="venue-quick-title">Check Availability & Prices</div><div class="venue-quick-subtitle">For <strong id="venueQuickVenueName">this venue</strong> · one quick request.</div><label><span>Event *</span><select id="venueQuickEvent" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Corporate Event</option><option>Party</option><option>Anniversary</option><option>Other</option></select></label><label><span>Event Date</span><input id="venueQuickDate" type="date"></label><div class="venue-quick-row"><label><span>Guests</span><input id="venueQuickGuests" type="number" min="1" placeholder="e.g. 250"></label><label><span>Budget / Person</span><input id="venueQuickBudget" type="number" min="0" placeholder="₹ e.g. 1500"></label></div><label><span>Name *</span><input id="venueQuickName" autocomplete="name" required placeholder="Your name"></label><label><span>Mobile *</span><input id="venueQuickMobile" inputmode="numeric" autocomplete="tel" maxlength="14" required placeholder="10-digit mobile"></label><button id="venueQuickSubmit" type="submit">Check Price & Availability →</button><div id="venueQuickStatus" class="venue-quick-status" role="status" aria-live="polite"></div>`;
     if(intro)intro.insertAdjacentElement("afterend",form);else aside.prepend(form);
     form.addEventListener("submit",submitQuickEnquiry);
   }
@@ -283,26 +289,25 @@
     const budget=Number(byId("venueQuickBudget")?.value||0)||null;
     const name=String(byId("venueQuickName")?.value||"").trim();
     const mobile=cleanMobile(byId("venueQuickMobile")?.value||"");
-    const email=String(byId("venueQuickEmail")?.value||"").trim();
     const status=byId("venueQuickStatus"),button=byId("venueQuickSubmit");
     if(!occasion){status.textContent="Please select your event.";status.className="venue-quick-status error";byId("venueQuickEvent")?.focus();return;}
     if(name.length<2){status.textContent="Please enter your name.";status.className="venue-quick-status error";byId("venueQuickName")?.focus();return;}
     if(mobile.length!==10){status.textContent="Please enter a valid 10-digit mobile number.";status.className="venue-quick-status error";byId("venueQuickMobile")?.focus();return;}
-    if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent="Please enter a valid email address.";status.className="venue-quick-status error";byId("venueQuickEmail")?.focus();return;}
     const location=[currentVenue.area,currentVenue.city].filter(Boolean).join(", ")||currentVenue.city||null;
-    const requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,"Submitted from venue profile availability panel"].filter(Boolean).join("\n");
+    const requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,location?`Venue location: ${location}`:null,"Submitted from venue profile availability panel",`Page: ${window.location.pathname||"/venue.html"}`].filter(Boolean).join("\n");
     button.disabled=true;button.textContent="Checking…";status.textContent="";status.className="venue-quick-status";
-    const{error}=await insertCustomerEnquiry({customer_name:name,mobile,email:email||null,location,occasion,event_date:eventDate,guests,budget_per_person:budget,requirements,source:"Website - Venue Profile Quick Enquiry",status:"new"});
+    const{error}=await insertCustomerEnquiry({customer_name:name,mobile,email:null,location,occasion,event_date:eventDate,guests,budget_per_person:budget,requirements,source:venueSource(),status:"new"});
     button.disabled=false;button.textContent="Check Price & Availability →";
     if(error){
       console.error("Venue quick enquiry error:",error);
-      status.textContent="Unable to send right now. Please try again or use WhatsApp.";
+      status.textContent="Unable to send right now. Please try again or call +91 83683 22256.";
       status.className="venue-quick-status error";
       return;
     }
-    status.textContent="✓ Requirement received. We’ll check this venue using your event details.";
+    status.textContent="✓ Thank you! Your venue request has been received. Our team will call you within 1 hour with suitable options.";
     status.className="venue-quick-status success";
     event.currentTarget.reset();
+    setTimeout(()=>status.scrollIntoView({behavior:"smooth",block:"center"}),80);
   }
 
   function setupActions(){
