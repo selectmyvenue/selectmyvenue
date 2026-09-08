@@ -14,44 +14,20 @@
   <meta property="og:image" content="https://selectmyvenue.com/logo.png">
   <meta property="og:site_name" content="Select My Venue">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="List Your Venue FREE | Select My Venue">
-  <meta name="twitter:description" content="Join the Founding Venue Partner launch offer with free listing and ₹0 joining fee.">
-  <meta name="twitter:image" content="https://selectmyvenue.com/logo.png">
   <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512">
   <link rel="shortcut icon" href="/favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="public-pages.css">
   <style>
     :root{--smv-bg:#031817;--smv-bg2:#041f1d;--smv-panel:#062522;--smv-teal:#19d8bd;--smv-teal2:#0fc8b0;--smv-text:#f3fbfa;--smv-muted:#8fb8b3;--smv-gold:#f3c84b}
-    .founding-offer-wrap{max-width:1440px;margin:26px auto 4px;padding:0 24px}
-    .founding-offer{position:relative;overflow:hidden;border:1px solid rgba(25,216,189,.42);border-radius:24px;background:radial-gradient(circle at 88% 18%,rgba(243,200,75,.14),transparent 25%),radial-gradient(circle at 10% 100%,rgba(25,216,189,.16),transparent 30%),linear-gradient(135deg,#042824 0%,#031d1a 50%,#061f1d 100%);box-shadow:0 24px 70px rgba(0,0,0,.28),0 0 44px rgba(25,216,189,.08);padding:30px;display:grid;grid-template-columns:1.18fr .82fr;gap:28px;align-items:center}
-    .founding-offer:before{content:"";position:absolute;inset:-40%;background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.08) 50%,transparent 58%);transform:translateX(-45%);animation:smvOfferShine 5s ease-in-out infinite;pointer-events:none}
-    .offer-copy,.offer-side{position:relative;z-index:1}
-    .offer-kicker{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border:1px solid rgba(25,216,189,.42);border-radius:999px;color:var(--smv-teal);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;background:rgba(25,216,189,.06)}
-    .offer-kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--smv-teal);box-shadow:0 0 14px rgba(25,216,189,.9);animation:smvBlink 1.25s ease-in-out infinite}
-    .founding-offer h1{margin:16px 0 10px;color:var(--smv-text);font-size:clamp(34px,4.1vw,62px);line-height:.98;letter-spacing:-.045em}
-    .founding-offer h1 .free{color:var(--smv-teal);font-weight:950;text-shadow:0 0 20px rgba(25,216,189,.18);animation:smvOfferPulse 1.55s ease-in-out infinite}
-    .offer-lead{max-width:780px;color:#a8c9c4;font-size:15px;line-height:1.7;margin:0 0 18px}
-    .offer-badges{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
-    .offer-badge{padding:9px 12px;border-radius:12px;border:1px solid rgba(25,216,189,.22);background:rgba(25,216,189,.055);color:#d8f6f1;font-weight:800;font-size:12px}
-    .offer-badge.gold{border-color:rgba(243,200,75,.34);background:rgba(243,200,75,.07);color:#ffe48a}
-    .offer-side{border:1px solid rgba(25,216,189,.20);border-radius:18px;background:rgba(2,24,22,.68);padding:20px}
-    .offer-side h2{margin:0 0 13px;color:var(--smv-text);font-size:18px}
-    .offer-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
-    .offer-list li{position:relative;padding-left:22px;color:#cfe9e5;font-size:13px;line-height:1.4}
-    .offer-list li:before{content:"✓";position:absolute;left:0;top:0;color:var(--smv-teal);font-weight:950}
-    .offer-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-    .offer-btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 19px;border-radius:12px;background:linear-gradient(135deg,var(--smv-teal),var(--smv-teal2));color:#02211c!important;font-weight:950;text-decoration:none;box-shadow:0 10px 26px rgba(25,216,189,.16);animation:smvButtonGlow 2s ease-in-out infinite}
-    .offer-note{margin-top:11px;color:#7fa9a3;font-size:10.5px;line-height:1.5}
-    .launch-strip{margin:14px 0 0;padding:11px 15px;border-radius:13px;border:1px solid rgba(243,200,75,.28);background:linear-gradient(90deg,rgba(243,200,75,.10),rgba(25,216,189,.05));text-align:center;color:#f7e5a1;font-weight:900;letter-spacing:.035em;animation:smvStripBlink 1.8s ease-in-out infinite}
-    @keyframes smvBlink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.82)}}
-    @keyframes smvOfferPulse{0%,100%{opacity:1}50%{opacity:.62}}
-    @keyframes smvButtonGlow{0%,100%{box-shadow:0 10px 26px rgba(25,216,189,.14)}50%{box-shadow:0 10px 32px rgba(25,216,189,.34),0 0 24px rgba(25,216,189,.14)}}
-    @keyframes smvStripBlink{0%,100%{border-color:rgba(243,200,75,.28);box-shadow:none}50%{border-color:rgba(243,200,75,.72);box-shadow:0 0 18px rgba(243,200,75,.10)}}
-    @keyframes smvOfferShine{0%,65%,100%{transform:translateX(-45%)}82%{transform:translateX(45%)}}
-    @media(max-width:900px){.founding-offer{grid-template-columns:1fr}.offer-list{grid-template-columns:1fr 1fr}}
-    @media(max-width:560px){.founding-offer-wrap{padding:0 14px;margin-top:16px}.founding-offer{padding:21px 17px;border-radius:19px}.offer-list{grid-template-columns:1fr}.offer-btn{width:100%}.launch-strip{font-size:11px}}
-    @media(prefers-reduced-motion:reduce){.offer-kicker .dot,.founding-offer h1 .free,.offer-btn,.launch-strip,.founding-offer:before{animation:none!important}}
+    body{background:radial-gradient(circle at 10% 0%,rgba(25,216,189,.11),transparent 26%),linear-gradient(180deg,#031817,#071e1c 40%,#f5faf8 40%);overflow-x:hidden}
+    .founding-offer-wrap{max-width:1440px;margin:18px auto 10px;padding:0 24px}
+    .founding-offer{position:relative;overflow:hidden;border:1px solid rgba(25,216,189,.48);border-radius:24px;background:radial-gradient(circle at 88% 18%,rgba(243,200,75,.14),transparent 25%),radial-gradient(circle at 10% 100%,rgba(25,216,189,.16),transparent 30%),linear-gradient(135deg,#042824 0%,#031d1a 50%,#061f1d 100%);box-shadow:0 24px 70px rgba(0,0,0,.28),0 0 44px rgba(25,216,189,.08);padding:26px;display:grid;grid-template-columns:1.14fr .86fr;gap:30px;align-items:center}
+    .founding-offer:before{content:"";position:absolute;inset:-40%;background:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.075) 50%,transparent 58%);transform:translateX(-45%);animation:smvOfferShine 6s ease-in-out infinite;pointer-events:none}.offer-copy,.offer-side{position:relative;z-index:1}.offer-kicker{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;border:1px solid rgba(25,216,189,.46);border-radius:999px;color:var(--smv-gold);font-size:13px;font-weight:950;letter-spacing:.02em;text-transform:uppercase;background:rgba(25,216,189,.07)}.offer-kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--smv-teal);box-shadow:0 0 14px rgba(25,216,189,.9)}.founding-offer h1{margin:16px 0 9px;color:var(--smv-text);font-size:clamp(38px,4.3vw,64px);line-height:.98;letter-spacing:-.05em}.founding-offer h1 .free{color:var(--smv-teal);font-weight:950;text-shadow:0 0 20px rgba(25,216,189,.18)}.offer-lead{max-width:780px;color:#a8c9c4;font-size:16px;line-height:1.55;margin:0 0 16px}.offer-badges{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}.offer-badge{min-height:58px;padding:10px 14px;border-radius:15px;border:1px solid rgba(25,216,189,.28);background:rgba(25,216,189,.065);color:#d8f6f1;font-weight:900;font-size:12px;display:flex;flex-direction:column;justify-content:center}.offer-badge b{display:block;color:#ffd86a;font-size:23px;line-height:1}.offer-badge.gold{border-color:rgba(243,200,75,.48);background:rgba(243,200,75,.08);color:#ffe48a}.launch-strip{margin:13px 0 0;padding:10px 14px;border-radius:13px;border:1px solid rgba(243,200,75,.34);background:linear-gradient(90deg,rgba(243,200,75,.10),rgba(25,216,189,.05));text-align:center;color:#f7e5a1;font-size:13px;font-weight:950;letter-spacing:.03em}.offer-side{border:1px solid rgba(25,216,189,.24);border-radius:20px;background:rgba(2,24,22,.70);padding:22px}.offer-side h2{margin:0 0 15px;color:var(--smv-text);font-size:clamp(25px,2.8vw,36px);line-height:1.05}.offer-side h2 span{color:#31dcc5}.offer-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:11px 18px}.offer-list li{position:relative;padding-left:22px;color:#d9ece8;font-size:15px;line-height:1.3}.offer-list li:before{content:"✓";position:absolute;left:0;top:0;color:var(--smv-teal);font-weight:950}.offer-cta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:18px}.offer-btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 28px;border-radius:15px;background:linear-gradient(180deg,#ffe68f,#efbd45);color:#06231f!important;font-size:20px;font-weight:950;text-decoration:none;box-shadow:0 12px 28px rgba(243,200,75,.22),0 0 18px rgba(243,200,75,.20),inset 0 2px 0 rgba(255,255,255,.45)}.offer-note{margin-top:11px;color:#7fa9a3;font-size:11px;line-height:1.5}.page-main{max-width:1180px;margin:0 auto;padding:20px 24px 54px}.onboarding-layout{display:grid;grid-template-columns:.72fr 1fr;gap:20px;align-items:start}.info-card,.form-card{border:1px solid rgba(8,127,113,.12);border-radius:20px;background:#fff;box-shadow:0 16px 44px rgba(18,56,50,.08);padding:22px}.info-card h2,.form-card h2{margin:0 0 12px;color:#123f37}.form-intro,.info-card p{color:#5f746e;line-height:1.6}.info-list{display:grid;gap:13px;margin-top:16px}.info-item{display:grid;grid-template-columns:34px 1fr;gap:10px}.info-number{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#e7fffa;color:#087f71;font-weight:950}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.form-field{display:grid;gap:6px}.form-field.full{grid-column:1/-1}.form-field label{font-size:11px;font-weight:900;letter-spacing:.06em;color:#52716b}.form-field input,.form-field select,.form-field textarea{width:100%;box-sizing:border-box;border:1px solid #dce7e4;border-radius:12px;padding:11px 12px;font:inherit;color:#123f37;background:#fbfdfc}.form-field textarea{min-height:92px;resize:vertical}.form-help{font-size:11px;color:#76908a}.consent{display:flex;gap:10px;margin:16px 0;color:#415b55;line-height:1.45}.consent input{width:18px;height:18px;accent-color:#0fbaa3;flex:0 0 auto}.form-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:12px;border:0;font-weight:900;text-decoration:none;cursor:pointer}.button-primary{background:linear-gradient(135deg,#13c9b0,#087f71);color:#fff;box-shadow:0 10px 24px rgba(8,127,113,.18)}.form-message{font-weight:850}.form-message.success{color:#06704f}.form-message.error{color:#a4161a}.page-footer{text-align:center;padding:24px;color:#77918b}.page-footer a{margin-left:12px;color:#087f71;font-weight:800}
+    @keyframes smvOfferShine{0%,70%,100%{transform:translateX(-45%)}86%{transform:translateX(45%)}}
+    @media(max-width:1050px){.founding-offer{grid-template-columns:1fr}.offer-badges{grid-template-columns:repeat(2,minmax(0,1fr))}.onboarding-layout{grid-template-columns:1fr}.offer-list{grid-template-columns:1fr 1fr}}
+    @media(max-width:600px){.founding-offer-wrap{padding:0 12px;margin-top:12px}.founding-offer{padding:18px 14px;border-radius:18px;gap:14px}.offer-kicker{font-size:11px;line-height:1.2}.founding-offer h1{font-size:33px}.offer-lead{font-size:13px}.offer-badges,.offer-list,.form-grid{grid-template-columns:1fr}.offer-badge{min-height:52px}.offer-side{padding:15px}.offer-side h2{font-size:23px}.offer-btn{width:100%;font-size:15px;min-height:50px}.launch-strip{font-size:11px;line-height:1.35}.page-main{padding:14px 12px 42px}.info-card,.form-card{padding:17px;border-radius:16px}.form-actions{display:block}.button{width:100%}.form-message{margin-top:12px}}
+    @media(prefers-reduced-motion:reduce){.founding-offer:before{animation:none!important}}
   </style>
 </head>
 <body>
@@ -59,6 +35,7 @@
     <nav class="page-nav" aria-label="Main navigation">
       <a href="index.html"><img class="page-logo" src="logo.png" alt="Select My Venue"></a>
       <div class="page-nav-links">
+        <a href="index.html">Home</a>
         <a href="venues.html">Browse Venues</a>
         <a href="delhi-ncr-venues.html">Delhi NCR Guide</a>
         <a href="https://partner.selectmyvenue.com/">Partner Login</a>
@@ -74,15 +51,15 @@
         <h1 id="foundingOfferTitle">List Your Venue <span class="free">FREE.</span></h1>
         <p class="offer-lead">Join the Select My Venue partner network during our launch phase. We help create your venue profile and give eligible partners access to tools for managing relevant customer enquiry opportunities.</p>
         <div class="offer-badges" aria-label="Launch offer highlights">
-          <span class="offer-badge">₹0 JOINING FEE</span>
-          <span class="offer-badge">FREE VENUE LISTING</span>
-          <span class="offer-badge">PARTNER CRM ACCESS</span>
-          <span class="offer-badge gold">10-DAY COMPLIMENTARY LAUNCH TRIAL</span>
+          <span class="offer-badge"><b>₹0</b>JOINING FEE</span>
+          <span class="offer-badge"><b>FREE</b>VENUE LISTING</span>
+          <span class="offer-badge"><b>PARTNER</b>CRM ACCESS</span>
+          <span class="offer-badge gold"><b>10-DAY</b>COMPLIMENTARY TRIAL</span>
         </div>
         <div class="launch-strip">✨ LIMITED LAUNCH OFFER — NO PAYMENT REQUIRED TO GET STARTED ✨</div>
       </div>
       <aside class="offer-side">
-        <h2>Your Founding Partner launch benefits</h2>
+        <h2>Your Founding Partner <span>launch benefits</span></h2>
         <ul class="offer-list">
           <li>Professional venue profile</li>
           <li>₹0 joining fee</li>
@@ -100,12 +77,6 @@
   </div>
 
   <main class="page-main">
-    <section class="page-hero">
-      <p class="eyebrow">VENUE PARTNER ONBOARDING</p>
-      <h1>Grow with Select My Venue.</h1>
-      <p>Share your venue information for a partner review. Your listing will never be published as verified until our team checks and approves it.</p>
-    </section>
-
     <div class="onboarding-layout">
       <aside class="info-card">
         <h2>How onboarding works</h2>
@@ -143,28 +114,33 @@
 
   <script>
   (function(){
-    const form=document.getElementById("venueApplication"),message=document.getElementById("formMessage");
-    const value=id=>document.getElementById(id).value.trim();
+    const form=document.getElementById("venueApplication"),message=document.getElementById("formMessage"),button=document.getElementById("applyButton");
+    const value=id=>(document.getElementById(id)?.value||"").trim();
+    if(!form)return;
     form.addEventListener("submit",event=>{
       event.preventDefault();message.className="form-message";message.textContent="";
       const mobile=value("mobile").replace(/\D/g,"");
       if(!form.checkValidity()){form.reportValidity();message.textContent="Please complete all required fields.";message.classList.add("error");return}
       if(mobile.length<10||mobile.length>15){message.textContent="Please enter a valid mobile number.";message.classList.add("error");document.getElementById("mobile").focus();return}
       const lines=[
-        "Hi Select My Venue, I want to apply as a Founding Venue Partner under the launch offer.","",
-        `Venue: ${value("venueName")}`,
-        `Owner/Contact: ${value("ownerName")}`,
-        `Mobile: ${mobile}`,
-        `Email: ${value("email")||"—"}`,
-        `Type: ${value("venueType")}`,
-        `Location: ${value("area")}, ${value("city")}`,
-        `Maximum Capacity: ${value("capacity")||"—"}`,
-        `Details: ${value("details")||"—"}`
-      ];
-      const url=`https://wa.me/918368322256?text=${encodeURIComponent(lines.join("\n"))}`;
-      message.textContent="Opening secure WhatsApp onboarding…";message.classList.add("success");
-      window.open(url,"_blank","noopener,noreferrer")
-    })
+        "Hi Select My Venue, I want to apply as a Founding Venue Partner.",
+        "Venue name: "+value("venueName"),
+        "Owner/contact: "+value("ownerName"),
+        "Mobile/WhatsApp: "+mobile,
+        value("email")?"Email: "+value("email"):"",
+        "Venue type: "+value("venueType"),
+        "City: "+value("city"),
+        "Area: "+value("area"),
+        value("capacity")?"Maximum capacity: "+value("capacity"):"",
+        value("details")?"Details: "+value("details"):"",
+        "Source: selectmyvenue.com/list-your-venue.html"
+      ].filter(Boolean);
+      const url="https://wa.me/918368322256?text="+encodeURIComponent(lines.join("\n"));
+      button.disabled=true;button.textContent="Opening WhatsApp…";
+      message.textContent="Opening WhatsApp. Please tap Send there to share your venue application.";message.classList.add("success");
+      window.open(url,"_blank","noopener,noreferrer");
+      setTimeout(()=>{button.disabled=false;button.textContent="Send Application on WhatsApp";},1200);
+    });
   })();
   </script>
 </body>
