@@ -6,6 +6,7 @@
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
   const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
   const GOOGLE_ADS_TAG_ID = "AW-18435642634";
+  const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18435642634/_rfMCLfZsfAcEIqq5tZE";
 
   function installGoogleAdsTag() {
     if (window.__smvGoogleAdsTagInstalled || document.querySelector(`script[src*="googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}"]`)) {
@@ -23,6 +24,20 @@
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}`;
     document.head.appendChild(script);
+  }
+
+  function fireGoogleAdsLeadConversion() {
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag("event", "conversion", {
+        send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+        value: 1.0,
+        currency: "INR"
+      });
+    } catch (error) {
+      console.warn("Google Ads conversion tracking warning:", error);
+    }
   }
 
   installGoogleAdsTag();
@@ -297,6 +312,7 @@
       const result = await client.from("customer_enquiries").insert(payload);
       if (result.error) throw result.error;
 
+      fireGoogleAdsLeadConversion();
       markDuplicate(details);
       form.classList.add("is-submitted");
       setMessage(form, PREMIUM_SUCCESS, "success");
