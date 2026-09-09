@@ -6,6 +6,21 @@
   const DUPLICATE_TEXT = SUCCESS_TEXT;
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+  const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18435642634/_rfMCLfZsfAcEIqq5tZE";
+
+  function fireGoogleAdsLeadConversion() {
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+      window.gtag("event", "conversion", {
+        send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+        value: 1.0,
+        currency: "INR"
+      });
+    } catch (error) {
+      console.warn("Google Ads conversion tracking warning:", error);
+    }
+  }
 
   if (!document.getElementById("smvPerformanceStability")) {
     const link = document.createElement("link");
@@ -113,9 +128,12 @@
 
       const originalInsert = proto.insert;
       proto.insert = function (values, options) {
+        let shouldTrackCustomerEnquiry = false;
+
         try {
           const target = String(this?.url || "");
           if (target.includes("customer_enquiries")) {
+            shouldTrackCustomerEnquiry = true;
             const comment = currentCustomerComment();
             const enrich = row => {
               if (!row || typeof row !== "object" || Array.isArray(row)) return row;
@@ -143,7 +161,23 @@
           console.warn("SMV comment bridge warning:", error);
         }
 
-        return originalInsert.call(this, values, options);
+        const result = originalInsert.call(this, values, options);
+
+        if (shouldTrackCustomerEnquiry && result && typeof result.then === "function") {
+          let conversionTracked = false;
+          const originalThen = result.then.bind(result);
+          result.then = function (onFulfilled, onRejected) {
+            return originalThen(function (response) {
+              if (!conversionTracked && response && !response.error) {
+                conversionTracked = true;
+                fireGoogleAdsLeadConversion();
+              }
+              return typeof onFulfilled === "function" ? onFulfilled(response) : response;
+            }, onRejected);
+          };
+        }
+
+        return result;
       };
 
       proto.__smvCommentBridgeInstalled = true;
