@@ -1,24 +1,39 @@
 (function () {
   "use strict";
 
+  const PERFORMANCE_CSS_VERSION = "20260909-aw-snap-fix-1";
+  const SUCCESS_TEXT = "✓ Requirement received successfully. Thank you — our venue experts will review your event details and call you within 1–2 hours with suitable venue options.";
+  const DUPLICATE_TEXT = "✓ Your requirement is already received. Our team will call you within 1–2 hours with suitable venue options.";
+  const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+
   if (!document.getElementById("smvPerformanceStability")) {
     const link = document.createElement("link");
     link.id = "smvPerformanceStability";
     link.rel = "stylesheet";
-    link.href = "performance-stability.css?v=20260909-final-confirmation-1";
+    link.href = "performance-stability.css?v=" + PERFORMANCE_CSS_VERSION;
     document.head.appendChild(link);
+  } else {
+    document.getElementById("smvPerformanceStability").href = "performance-stability.css?v=" + PERFORMANCE_CSS_VERSION;
   }
-
-  const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-  const SUCCESS_TEXT = "✓ Requirement received successfully. Thank you — our team will review your event details and call you within 1–2 hours with suitable venue options.";
-  const DUPLICATE_TEXT = "✓ Your requirement is already received. Our team will call you within 1–2 hours with suitable venue options.";
 
   const clean = value => String(value == null ? "" : value).trim();
   const mobileDigits = value => clean(value).replace(/[^0-9]/g, "").slice(-10);
   const escapeHtml = value => String(value ?? "").replace(/[&<>'\"]/g, character => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '\"': "&quot;"
   })[character]);
+
+  window.addEventListener("error", function (event) {
+    console.warn("SMV website script warning:", event.message || event.error || event);
+  });
+  window.addEventListener("unhandledrejection", function (event) {
+    console.warn("SMV website promise warning:", event.reason || event);
+  });
+
+  function onReady(callback) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", callback, { once: true });
+    else callback();
+  }
 
   function shortPageName() {
     const path = (location.pathname || "/").toLowerCase();
@@ -41,7 +56,7 @@
 
   function simpleLeadSource() {
     const venue = selectedVenueContext();
-    if (venue.name) return `Website - ${venue.name}`.slice(0, 180);
+    if (venue.name) return `Website - ${venue.name}`.slice(0, 140);
     return `Website - ${shortPageName()}`;
   }
 
@@ -99,7 +114,10 @@
     const existing = document.getElementById("customerEmail");
     if (existing) {
       const field = existing.closest(".field");
-      if (field) field.hidden = false;
+      if (field) {
+        field.hidden = false;
+        field.style.display = "";
+      }
       existing.type = "email";
       existing.placeholder = existing.placeholder || "your@email.com";
       return;
@@ -107,16 +125,14 @@
     const mobileField = document.getElementById("customerMobile")?.closest(".field");
     const emailField = document.createElement("div");
     emailField.className = "field";
-    emailField.innerHTML = `<label for="customerEmail">EMAIL</label><input id="customerEmail" type="email" placeholder="your@email.com">`;
+    emailField.innerHTML = `<label for="customerEmail">EMAIL</label><input id="customerEmail" type="email" placeholder="your@email.com" autocomplete="email">`;
     if (mobileField) mobileField.insertAdjacentElement("afterend", emailField);
   }
 
   function collectMainDetails() {
     const venue = selectedVenueContext();
     return {
-      name: clean(document.getElementById("customerName")?.value),
       mobile: mobileDigits(document.getElementById("customerMobile")?.value),
-      email: clean(document.getElementById("customerEmail")?.value),
       location: clean(document.getElementById("customerLocation")?.value),
       eventType: clean(document.getElementById("customerEventType")?.value),
       eventDate: clean(document.getElementById("customerEventDate")?.value),
@@ -155,7 +171,7 @@
     message.className = "form-message success smv-front-success";
     const form = document.getElementById("customerEnquiryForm");
     if (form) form.classList.add("is-sent");
-    setTimeout(() => message.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
+    setTimeout(() => message.scrollIntoView({ behavior: "smooth", block: "center" }), 60);
   }
 
   function installMainEnquiryEnhancements() {
@@ -181,8 +197,7 @@
 
     const observer = new MutationObserver(() => {
       const text = clean(message.textContent).toLowerCase();
-      if (!text || !message.className.includes("success")) return;
-      if (message.dataset.smvFinalSuccess === "1") return;
+      if (!text || !message.className.includes("success") || message.dataset.smvFinalSuccess === "1") return;
       if (text.includes("thank you") || text.includes("received") || text.includes("submitted") || text.includes("success")) {
         message.dataset.smvFinalSuccess = "1";
         const details = window.__smvLastMainEnquiryDetails || collectMainDetails();
@@ -199,7 +214,10 @@
 
   function installWhatsappIconCleanup() {
     document.querySelectorAll(".floating-whatsapp-text").forEach(node => { node.hidden = true; });
-    document.querySelectorAll(".floating-whatsapp").forEach(node => node.setAttribute("aria-label", "Chat with Select My Venue on WhatsApp"));
+    document.querySelectorAll(".floating-whatsapp").forEach(node => {
+      node.setAttribute("aria-label", "Chat with Select My Venue on WhatsApp");
+      node.title = "Chat with Select My Venue";
+    });
   }
 
   function installHeaderTweaks() {
@@ -215,47 +233,6 @@
       navOffer.setAttribute("title", "List Your Venue");
       navOffer.setAttribute("aria-label", "List Your Venue");
     }
-  }
-
-  function installHomeSpacingLogoFixes() {
-    if (document.getElementById("smvHomeSpacingLogoFixes")) return;
-    const style = document.createElement("style");
-    style.id = "smvHomeSpacingLogoFixes";
-    style.textContent = `
-      body:not(.venue-profile-page) .site-header{height:84px!important;min-height:84px!important}
-      body:not(.venue-profile-page) .header-inner{height:84px!important;min-height:84px!important;align-items:center!important}
-      body:not(.venue-profile-page) .site-header .brand{width:330px!important;flex:0 0 330px!important;height:84px!important;align-self:stretch!important;display:flex!important;align-items:center!important}
-      body:not(.venue-profile-page) .site-header .brand img,body:not(.venue-profile-page) .site-header .main-logo{width:320px!important;max-width:320px!important;max-height:82px!important;height:auto!important;object-fit:contain!important;object-position:left center!important}
-      body:not(.venue-profile-page) main{gap:0!important}
-      body:not(.venue-profile-page) .hero{margin-bottom:0!important;padding-bottom:16px!important}
-      body:not(.venue-profile-page) .hero .micro-note{margin-bottom:0!important}
-      body:not(.venue-profile-page) .enquiry-section{width:calc(100% - 16px)!important;max-width:none!important;margin:0 auto 0!important;padding-top:20px!important;padding-bottom:18px!important}
-      body:not(.venue-profile-page) .enquiry-section .section-heading{margin-bottom:10px!important}
-      body:not(.venue-profile-page) .form-card{padding:14px!important}
-      body:not(.venue-profile-page) #customerEmail,body:not(.venue-profile-page) #customerEmail.closest-field{display:block!important}
-      body:not(.venue-profile-page) #customerEmail{visibility:visible!important;opacity:1!important}
-      body:not(.venue-profile-page) .form-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;margin-bottom:10px!important}
-      body:not(.venue-profile-page) .form-grid.five{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;margin-bottom:10px!important}
-      body:not(.venue-profile-page) .requirements-row{margin-top:4px!important;gap:10px!important}
-      body:not(.venue-profile-page) .home-venues-section{width:calc(100% - 16px)!important;max-width:none!important;margin:0 auto!important;padding-top:8px!important;padding-bottom:26px!important}
-      body:not(.venue-profile-page) .home-venues-heading{margin-top:0!important;margin-bottom:10px!important}
-      body:not(.venue-profile-page) .floating-whatsapp{width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important;padding:0!important;right:18px!important;bottom:18px!important;display:grid!important;place-items:center!important;border-radius:50%!important;gap:0!important}
-      body:not(.venue-profile-page) .floating-whatsapp-icon{width:42px!important;height:42px!important;flex:0 0 42px!important;background:transparent!important;border:0!important;box-shadow:none!important}
-      body:not(.venue-profile-page) .floating-whatsapp-icon svg{width:32px!important;height:32px!important}
-      body:not(.venue-profile-page) .floating-whatsapp-text{display:none!important}
-      @media(max-width:1240px){body:not(.venue-profile-page) .site-header .brand{width:260px!important;flex-basis:260px!important}body:not(.venue-profile-page) .site-header .brand img,body:not(.venue-profile-page) .site-header .main-logo{width:250px!important;max-width:250px!important}}
-      @media(max-width:820px){body:not(.venue-profile-page) .site-header{height:auto!important;min-height:70px!important}body:not(.venue-profile-page) .header-inner{height:auto!important;min-height:70px!important}body:not(.venue-profile-page) .site-header .brand{width:220px!important;flex:0 0 220px!important;height:64px!important}body:not(.venue-profile-page) .site-header .brand img,body:not(.venue-profile-page) .site-header .main-logo{width:214px!important;max-width:214px!important;max-height:62px!important}body:not(.venue-profile-page) .hero{padding-bottom:10px!important}body:not(.venue-profile-page) .enquiry-section{width:calc(100% - 10px)!important;margin-top:0!important;padding:16px 10px!important}body:not(.venue-profile-page) .home-venues-section{width:calc(100% - 10px)!important;padding-top:6px!important}.form-grid.four,.form-grid.five{grid-template-columns:1fr!important}}
-    `;
-    document.head.appendChild(style);
-  }
-
-  function loadSmartMatch() {
-    if (document.getElementById("smvSmartMatchLoader")) return;
-    const smartMatchScript = document.createElement("script");
-    smartMatchScript.id = "smvSmartMatchLoader";
-    smartMatchScript.src = "smv-smart-match.js?v=20260901-smart-match-1";
-    smartMatchScript.defer = true;
-    document.head.appendChild(smartMatchScript);
   }
 
   function safeHttpUrl(value) {
@@ -308,9 +285,7 @@
     const locationText = [venue.area, venue.city].filter(Boolean).join(", ") || "Location on request";
     const profileUrl = `venue.html?id=${id}`;
     const quoteUrl = `index.html?venue=${id}&venue_name=${encodeURIComponent(name)}&source_page=${encodeURIComponent("Homepage Venue Card")}#enquiry`;
-    const media = imageUrl
-      ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async" width="640" height="400">`
-      : `<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>`;
+    const media = imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async" width="640" height="400">` : `<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>`;
     const featureList = features(venue);
     const featureHtml = featureList.length ? featureList.map(item => `<span>✓ ${escapeHtml(item)}</span>`).join("") : `<span>Details on request</span>`;
     return `<article class="home-venue-card" data-venue-id="${escapeHtml(rawId)}" data-profile-url="${escapeHtml(profileUrl)}" role="link" tabindex="0" aria-label="Open ${escapeHtml(name)} venue profile"><div class="home-venue-media">${media}<div class="home-venue-badges"><span class="home-venue-badge">${escapeHtml(venue.venue_type || "Venue")}</span><span class="home-venue-badge verified">✓ Verified</span></div></div><div class="home-venue-content"><h3>${escapeHtml(name)}</h3><p class="home-venue-location">⌖ ${escapeHtml(locationText)}</p><div class="home-venue-facts"><div class="home-venue-fact"><span>Capacity</span><strong>${escapeHtml(capacity(venue))}</strong></div><div class="home-venue-fact"><span>Starting range</span><strong>${escapeHtml(pricing(venue))}</strong></div></div><div class="home-venue-features">${featureHtml}</div><div class="home-venue-actions"><a class="secondary-btn" href="${profileUrl}">View Profile</a><a class="primary-btn" href="${quoteUrl}">Get Quote</a></div></div></article>`;
@@ -319,31 +294,37 @@
   async function loadHomepageVenues() {
     const section = document.getElementById("featuredVenues");
     const grid = document.getElementById("homeVenueGrid");
-    if (!section || !grid) return;
+    if (!section || !grid || grid.dataset.smvLoaded === "1") return;
+    grid.dataset.smvLoaded = "1";
+
     const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
     });
     if (!client) { section.hidden = true; return; }
+
     try {
       const { data, error } = await client.rpc("smv_public_venues");
       if (error) throw error;
-      const venues = Array.isArray(data) ? data.map(item => item?.venue || item).filter(Boolean) : [];
+      const venues = Array.isArray(data) ? data.map(item => item?.venue || item).filter(Boolean).slice(0, 6) : [];
       if (!venues.length) { section.hidden = true; return; }
       section.hidden = false;
       section.setAttribute("aria-busy", "false");
       grid.innerHTML = venues.map(renderVenue).join("");
-      grid.addEventListener("click", event => {
-        if (event.target.closest("a,button,input,select,textarea,label")) return;
-        const card = event.target.closest(".home-venue-card[data-profile-url]");
-        if (card?.dataset.profileUrl) window.location.href = card.dataset.profileUrl;
-      });
-      grid.addEventListener("keydown", event => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        const card = event.target.closest(".home-venue-card[data-profile-url]");
-        if (!card?.dataset.profileUrl) return;
-        event.preventDefault();
-        window.location.href = card.dataset.profileUrl;
-      });
+      if (grid.dataset.smvClickReady !== "1") {
+        grid.dataset.smvClickReady = "1";
+        grid.addEventListener("click", event => {
+          if (event.target.closest("a,button,input,select,textarea,label")) return;
+          const card = event.target.closest(".home-venue-card[data-profile-url]");
+          if (card?.dataset.profileUrl) window.location.href = card.dataset.profileUrl;
+        });
+        grid.addEventListener("keydown", event => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          const card = event.target.closest(".home-venue-card[data-profile-url]");
+          if (!card?.dataset.profileUrl) return;
+          event.preventDefault();
+          window.location.href = card.dataset.profileUrl;
+        });
+      }
     } catch (error) {
       console.error("Homepage venue showcase error:", error);
       grid.innerHTML = "";
@@ -352,12 +333,14 @@
     }
   }
 
-  installHomeSpacingLogoFixes();
-  injectHomePartnerOffer();
-  ensureEmailField();
-  installMainEnquiryEnhancements();
-  installWhatsappIconCleanup();
-  installHeaderTweaks();
-  loadSmartMatch();
-  loadHomepageVenues();
+  function safeInit() {
+    injectHomePartnerOffer();
+    ensureEmailField();
+    installMainEnquiryEnhancements();
+    installWhatsappIconCleanup();
+    installHeaderTweaks();
+    window.setTimeout(loadHomepageVenues, 350);
+  }
+
+  onReady(safeInit);
 })();
