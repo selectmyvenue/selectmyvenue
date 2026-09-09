@@ -381,7 +381,6 @@ function setupHeroSearch() {
           requirements,
           source: "Website - AI Search",
           status: "new",
-          priority: calculateLeadPriority(plan),
           assigned_to: null,
           follow_up_at: null,
           last_contacted_at: null
@@ -2560,14 +2559,17 @@ function setupCustomerEnquiry() {
 
           requirements,
 
+          contact_remark:
+            customerRequirements || null,
+
+          internal_notes:
+            customerRequirements || null,
+
           source:
             leadSource,
 
           status:
             "new",
-
-          priority:
-            calculateLeadPriority(plan),
 
           assigned_to:
             null,
@@ -2596,7 +2598,7 @@ function setupCustomerEnquiry() {
 
         showInlineMessage(
           message,
-          "✓ Thank you! Your venue requirement has been received. Select My Venue will review your event details and contact you with suitable options.",
+          "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.",
           "success"
         );
 
@@ -3466,12 +3468,7 @@ function setupAutoEnquiryPopup() {
         <div class="smv-popup-success-box">
           <div class="smv-success-icon">✓</div>
           <h3>Requirement Received!</h3>
-          <p>
-            Thank you. Your venue requirement has been submitted
-            successfully and saved with our venue enquiry team.
-            Our Select My Venue team will review your details and
-            contact you with suitable options.
-          </p>
+          <p>Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.</p>
           <button type="button" class="smv-success-close" id="smvSuccessClose">
             Continue Browsing
           </button>
@@ -3598,9 +3595,10 @@ function setupAutoEnquiryPopup() {
       budget_per_person: budget ? Number(budget) : null,
       food_preference: food || null,
       requirements: requirements,
+      contact_remark: other || null,
+      internal_notes: other || null,
       source: "Website - Enquiry Popup",
       status: "new",
-      priority: calculateLeadPriority(plan),
       assigned_to: null,
       follow_up_at: null,
       last_contacted_at: null
