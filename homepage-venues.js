@@ -93,11 +93,30 @@
     main.insertAdjacentElement("afterbegin", offer);
   }
 
+  function ensureEmailField() {
+    const form = document.getElementById("customerEnquiryForm");
+    if (!form) return;
+    const existing = document.getElementById("customerEmail");
+    if (existing) {
+      const field = existing.closest(".field");
+      if (field) field.hidden = false;
+      existing.type = "email";
+      existing.placeholder = existing.placeholder || "your@email.com";
+      return;
+    }
+    const mobileField = document.getElementById("customerMobile")?.closest(".field");
+    const emailField = document.createElement("div");
+    emailField.className = "field";
+    emailField.innerHTML = `<label for="customerEmail">EMAIL</label><input id="customerEmail" type="email" placeholder="your@email.com">`;
+    if (mobileField) mobileField.insertAdjacentElement("afterend", emailField);
+  }
+
   function collectMainDetails() {
     const venue = selectedVenueContext();
     return {
       name: clean(document.getElementById("customerName")?.value),
       mobile: mobileDigits(document.getElementById("customerMobile")?.value),
+      email: clean(document.getElementById("customerEmail")?.value),
       location: clean(document.getElementById("customerLocation")?.value),
       eventType: clean(document.getElementById("customerEventType")?.value),
       eventDate: clean(document.getElementById("customerEventDate")?.value),
@@ -144,6 +163,7 @@
     const message = document.getElementById("customerEnquiryMessage");
     if (!form || !message || form.dataset.smvLeadFix === "1") return;
     form.dataset.smvLeadFix = "1";
+    ensureEmailField();
     applyLeadSourceContext();
 
     form.addEventListener("input", applyLeadSourceContext, true);
@@ -169,6 +189,7 @@
         markSubmitted(details);
         showFrontSuccess(message, false);
         form.reset();
+        ensureEmailField();
         applyLeadSourceContext();
         setTimeout(() => { message.dataset.smvFinalSuccess = ""; }, 1200);
       }
@@ -194,6 +215,38 @@
       navOffer.setAttribute("title", "List Your Venue");
       navOffer.setAttribute("aria-label", "List Your Venue");
     }
+  }
+
+  function installHomeSpacingLogoFixes() {
+    if (document.getElementById("smvHomeSpacingLogoFixes")) return;
+    const style = document.createElement("style");
+    style.id = "smvHomeSpacingLogoFixes";
+    style.textContent = `
+      body:not(.venue-profile-page) .site-header{height:84px!important;min-height:84px!important}
+      body:not(.venue-profile-page) .header-inner{height:84px!important;min-height:84px!important;align-items:center!important}
+      body:not(.venue-profile-page) .site-header .brand{width:330px!important;flex:0 0 330px!important;height:84px!important;align-self:stretch!important;display:flex!important;align-items:center!important}
+      body:not(.venue-profile-page) .site-header .brand img,body:not(.venue-profile-page) .site-header .main-logo{width:320px!important;max-width:320px!important;max-height:82px!important;height:auto!important;object-fit:contain!important;object-position:left center!important}
+      body:not(.venue-profile-page) main{gap:0!important}
+      body:not(.venue-profile-page) .hero{margin-bottom:0!important;padding-bottom:16px!important}
+      body:not(.venue-profile-page) .hero .micro-note{margin-bottom:0!important}
+      body:not(.venue-profile-page) .enquiry-section{width:calc(100% - 16px)!important;max-width:none!important;margin:0 auto 0!important;padding-top:20px!important;padding-bottom:18px!important}
+      body:not(.venue-profile-page) .enquiry-section .section-heading{margin-bottom:10px!important}
+      body:not(.venue-profile-page) .form-card{padding:14px!important}
+      body:not(.venue-profile-page) #customerEmail,body:not(.venue-profile-page) #customerEmail.closest-field{display:block!important}
+      body:not(.venue-profile-page) #customerEmail{visibility:visible!important;opacity:1!important}
+      body:not(.venue-profile-page) .form-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;margin-bottom:10px!important}
+      body:not(.venue-profile-page) .form-grid.five{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important;margin-bottom:10px!important}
+      body:not(.venue-profile-page) .requirements-row{margin-top:4px!important;gap:10px!important}
+      body:not(.venue-profile-page) .home-venues-section{width:calc(100% - 16px)!important;max-width:none!important;margin:0 auto!important;padding-top:8px!important;padding-bottom:26px!important}
+      body:not(.venue-profile-page) .home-venues-heading{margin-top:0!important;margin-bottom:10px!important}
+      body:not(.venue-profile-page) .floating-whatsapp{width:54px!important;height:54px!important;min-width:54px!important;min-height:54px!important;padding:0!important;right:18px!important;bottom:18px!important;display:grid!important;place-items:center!important;border-radius:50%!important;gap:0!important}
+      body:not(.venue-profile-page) .floating-whatsapp-icon{width:42px!important;height:42px!important;flex:0 0 42px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+      body:not(.venue-profile-page) .floating-whatsapp-icon svg{width:32px!important;height:32px!important}
+      body:not(.venue-profile-page) .floating-whatsapp-text{display:none!important}
+      @media(max-width:1240px){body:not(.venue-profile-page) .site-header .brand{width:260px!important;flex-basis:260px!important}body:not(.venue-profile-page) .site-header .brand img,body:not(.venue-profile-page) .site-header .main-logo{width:250px!important;max-width:250px!important}}
+      @media(max-width:820px){body:not(.venue-profile-page) .site-header{height:auto!important;min-height:70px!important}body:not(.venue-profile-page) .header-inner{height:auto!important;min-height:70px!important}body:not(.venue-profile-page) .site-header .brand{width:220px!important;flex:0 0 220px!important;height:64px!important}body:not(.venue-profile-page) .site-header .brand img,body:not(.venue-profile-page) .site-header .main-logo{width:214px!important;max-width:214px!important;max-height:62px!important}body:not(.venue-profile-page) .hero{padding-bottom:10px!important}body:not(.venue-profile-page) .enquiry-section{width:calc(100% - 10px)!important;margin-top:0!important;padding:16px 10px!important}body:not(.venue-profile-page) .home-venues-section{width:calc(100% - 10px)!important;padding-top:6px!important}.form-grid.four,.form-grid.five{grid-template-columns:1fr!important}}
+    `;
+    document.head.appendChild(style);
   }
 
   function loadSmartMatch() {
@@ -299,7 +352,9 @@
     }
   }
 
+  installHomeSpacingLogoFixes();
   injectHomePartnerOffer();
+  ensureEmailField();
   installMainEnquiryEnhancements();
   installWhatsappIconCleanup();
   installHeaderTweaks();
