@@ -5,12 +5,14 @@
     const link = document.createElement("link");
     link.id = "smvPerformanceStability";
     link.rel = "stylesheet";
-    link.href = "performance-stability.css?v=20260909-compact-lead-2";
+    link.href = "performance-stability.css?v=20260909-final-confirmation-1";
     document.head.appendChild(link);
   }
 
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+  const SUCCESS_TEXT = "✓ Requirement received successfully. Thank you — our team will review your event details and call you within 1–2 hours with suitable venue options.";
+  const DUPLICATE_TEXT = "✓ Your requirement is already received. Our team will call you within 1–2 hours with suitable venue options.";
 
   const clean = value => String(value == null ? "" : value).trim();
   const mobileDigits = value => clean(value).replace(/[^0-9]/g, "").slice(-10);
@@ -29,16 +31,11 @@
     return "Website page";
   }
 
-  function pageLabel() {
-    return `${document.title || "Select My Venue"} (${location.pathname || "/"})`;
-  }
-
   function selectedVenueContext() {
     const params = new URLSearchParams(location.search);
     return {
       id: clean(params.get("venue") || params.get("id") || params.get("venue_id")),
-      name: clean(params.get("venue_name") || params.get("venueName")),
-      sourcePage: clean(params.get("source_page") || "")
+      name: clean(params.get("venue_name") || params.get("venueName"))
     };
   }
 
@@ -50,8 +47,7 @@
 
   function applyLeadSourceContext() {
     const sourceField = document.getElementById("leadSource");
-    if (!sourceField) return;
-    sourceField.value = simpleLeadSource();
+    if (sourceField) sourceField.value = simpleLeadSource();
   }
 
   function injectHomePartnerOffer() {
@@ -102,14 +98,9 @@
     return {
       name: clean(document.getElementById("customerName")?.value),
       mobile: mobileDigits(document.getElementById("customerMobile")?.value),
-      email: clean(document.getElementById("customerEmail")?.value),
       location: clean(document.getElementById("customerLocation")?.value),
       eventType: clean(document.getElementById("customerEventType")?.value),
       eventDate: clean(document.getElementById("customerEventDate")?.value),
-      guests: clean(document.getElementById("customerGuests")?.value),
-      budget: clean(document.getElementById("customerBudget")?.value),
-      food: clean(document.getElementById("customerFood")?.value),
-      requirements: clean(document.getElementById("customerRequirements")?.value),
       venueName: venue.name,
       venueId: venue.id
     };
@@ -123,7 +114,10 @@
   function markSubmitted(details) {
     const key = duplicateKey(details);
     if (!key) return;
-    try { sessionStorage.setItem("smv-last-main-enquiry-key", key); sessionStorage.setItem("smv-last-main-enquiry-time", String(Date.now())); } catch (_) {}
+    try {
+      sessionStorage.setItem("smv-last-main-enquiry-key", key);
+      sessionStorage.setItem("smv-last-main-enquiry-time", String(Date.now()));
+    } catch (_) {}
   }
 
   function isRecentDuplicate(details) {
@@ -136,11 +130,9 @@
     } catch (_) { return false; }
   }
 
-  function showFrontSuccess(message, details, duplicate) {
+  function showFrontSuccess(message, duplicate) {
     if (!message) return;
-    message.textContent = duplicate
-      ? "✓ Your request is already received. Our team will call you within 1 hour."
-      : "✓ Thank you! Your venue request has been received. Our team will call you within 1 hour with suitable venue options.";
+    message.textContent = duplicate ? DUPLICATE_TEXT : SUCCESS_TEXT;
     message.className = "form-message success smv-front-success";
     const form = document.getElementById("customerEnquiryForm");
     if (form) form.classList.add("is-sent");
@@ -163,7 +155,7 @@
       if (isRecentDuplicate(details)) {
         event.preventDefault();
         event.stopImmediatePropagation();
-        showFrontSuccess(message, details, true);
+        showFrontSuccess(message, true);
       }
     }, true);
 
@@ -171,11 +163,11 @@
       const text = clean(message.textContent).toLowerCase();
       if (!text || !message.className.includes("success")) return;
       if (message.dataset.smvFinalSuccess === "1") return;
-      if (text.includes("thank you") || text.includes("received") || text.includes("submitted")) {
+      if (text.includes("thank you") || text.includes("received") || text.includes("submitted") || text.includes("success")) {
         message.dataset.smvFinalSuccess = "1";
         const details = window.__smvLastMainEnquiryDetails || collectMainDetails();
         markSubmitted(details);
-        showFrontSuccess(message, details, false);
+        showFrontSuccess(message, false);
         form.reset();
         applyLeadSourceContext();
         setTimeout(() => { message.dataset.smvFinalSuccess = ""; }, 1200);
@@ -184,24 +176,28 @@
     observer.observe(message, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ["class"] });
   }
 
-  injectHomePartnerOffer();
-  installMainEnquiryEnhancements();
-
-  const contactLink = document.querySelector('#mainNav a[href="#contact"]');
-  if (contactLink) {
-    contactLink.textContent = "+91 83683 22256";
-    contactLink.href = "tel:+918368322256";
-    contactLink.setAttribute("aria-label", "Call Select My Venue at +91 83683 22256");
-    contactLink.setAttribute("title", "Call +91 83683 22256");
+  function installWhatsappIconCleanup() {
+    document.querySelectorAll(".floating-whatsapp-text").forEach(node => { node.hidden = true; });
+    document.querySelectorAll(".floating-whatsapp").forEach(node => node.setAttribute("aria-label", "Chat with Select My Venue on WhatsApp"));
   }
 
-  const navOffer = document.querySelector('#mainNav a[href="list-your-venue.html"]');
-  if (navOffer) {
-    navOffer.setAttribute("title", "List Your Venue");
-    navOffer.setAttribute("aria-label", "List Your Venue");
+  function installHeaderTweaks() {
+    const contactLink = document.querySelector('#mainNav a[href="#contact"]');
+    if (contactLink) {
+      contactLink.textContent = "+91 83683 22256";
+      contactLink.href = "tel:+918368322256";
+      contactLink.setAttribute("aria-label", "Call Select My Venue at +91 83683 22256");
+      contactLink.setAttribute("title", "Call +91 83683 22256");
+    }
+    const navOffer = document.querySelector('#mainNav a[href="list-your-venue.html"]');
+    if (navOffer) {
+      navOffer.setAttribute("title", "List Your Venue");
+      navOffer.setAttribute("aria-label", "List Your Venue");
+    }
   }
 
-  if (!document.getElementById("smvSmartMatchLoader")) {
+  function loadSmartMatch() {
+    if (document.getElementById("smvSmartMatchLoader")) return;
     const smartMatchScript = document.createElement("script");
     smartMatchScript.id = "smvSmartMatchLoader";
     smartMatchScript.src = "smv-smart-match.js?v=20260901-smart-match-1";
@@ -209,29 +205,17 @@
     document.head.appendChild(smartMatchScript);
   }
 
-  const section = document.getElementById("featuredVenues");
-  const grid = document.getElementById("homeVenueGrid");
-  if (!section || !grid) return;
-
-  const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
-  });
-
   function safeHttpUrl(value) {
     try {
       const url = new URL(String(value || ""));
       return ["http:", "https:"].includes(url.protocol) ? url.href : "";
-    } catch (_) {
-      return "";
-    }
+    } catch (_) { return ""; }
   }
 
   function money(value) {
     const number = Number(value);
     if (!Number.isFinite(number) || number <= 0) return null;
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency", currency: "INR", maximumFractionDigits: 0
-    }).format(number);
+    return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(number);
   }
 
   function capacity(venue) {
@@ -269,69 +253,56 @@
     const name = String(venue.venue_name || "Venue Partner");
     const imageUrl = safeHttpUrl(venue.cover_image_url);
     const locationText = [venue.area, venue.city].filter(Boolean).join(", ") || "Location on request";
-    const featureList = features(venue);
     const profileUrl = `venue.html?id=${id}`;
     const quoteUrl = `index.html?venue=${id}&venue_name=${encodeURIComponent(name)}&source_page=${encodeURIComponent("Homepage Venue Card")}#enquiry`;
     const media = imageUrl
       ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)} venue" loading="lazy" decoding="async" width="640" height="400">`
       : `<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>`;
-    const featureHtml = featureList.length
-      ? featureList.map(item => `<span>✓ ${escapeHtml(item)}</span>`).join("")
-      : `<span>Details on request</span>`;
-
+    const featureList = features(venue);
+    const featureHtml = featureList.length ? featureList.map(item => `<span>✓ ${escapeHtml(item)}</span>`).join("") : `<span>Details on request</span>`;
     return `<article class="home-venue-card" data-venue-id="${escapeHtml(rawId)}" data-profile-url="${escapeHtml(profileUrl)}" role="link" tabindex="0" aria-label="Open ${escapeHtml(name)} venue profile"><div class="home-venue-media">${media}<div class="home-venue-badges"><span class="home-venue-badge">${escapeHtml(venue.venue_type || "Venue")}</span><span class="home-venue-badge verified">✓ Verified</span></div></div><div class="home-venue-content"><h3>${escapeHtml(name)}</h3><p class="home-venue-location">⌖ ${escapeHtml(locationText)}</p><div class="home-venue-facts"><div class="home-venue-fact"><span>Capacity</span><strong>${escapeHtml(capacity(venue))}</strong></div><div class="home-venue-fact"><span>Starting range</span><strong>${escapeHtml(pricing(venue))}</strong></div></div><div class="home-venue-features">${featureHtml}</div><div class="home-venue-actions"><a class="secondary-btn" href="${profileUrl}">View Profile</a><a class="primary-btn" href="${quoteUrl}">Get Quote</a></div></div></article>`;
   }
 
-  function hideShowcase() {
-    grid.innerHTML = "";
-    section.hidden = true;
-    section.setAttribute("aria-busy", "false");
-  }
-
-  function showShowcase() {
-    section.hidden = false;
-    section.setAttribute("aria-busy", "false");
-  }
-
   async function loadHomepageVenues() {
-    if (!client) {
-      hideShowcase();
-      return;
-    }
-
-    const { data, error } = await client.rpc("smv_public_venues");
-    if (error) {
+    const section = document.getElementById("featuredVenues");
+    const grid = document.getElementById("homeVenueGrid");
+    if (!section || !grid) return;
+    const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+    if (!client) { section.hidden = true; return; }
+    try {
+      const { data, error } = await client.rpc("smv_public_venues");
+      if (error) throw error;
+      const venues = Array.isArray(data) ? data.map(item => item?.venue || item).filter(Boolean) : [];
+      if (!venues.length) { section.hidden = true; return; }
+      section.hidden = false;
+      section.setAttribute("aria-busy", "false");
+      grid.innerHTML = venues.map(renderVenue).join("");
+      grid.addEventListener("click", event => {
+        if (event.target.closest("a,button,input,select,textarea,label")) return;
+        const card = event.target.closest(".home-venue-card[data-profile-url]");
+        if (card?.dataset.profileUrl) window.location.href = card.dataset.profileUrl;
+      });
+      grid.addEventListener("keydown", event => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        const card = event.target.closest(".home-venue-card[data-profile-url]");
+        if (!card?.dataset.profileUrl) return;
+        event.preventDefault();
+        window.location.href = card.dataset.profileUrl;
+      });
+    } catch (error) {
       console.error("Homepage venue showcase error:", error);
-      hideShowcase();
-      return;
+      grid.innerHTML = "";
+      section.hidden = true;
+      section.setAttribute("aria-busy", "false");
     }
-
-    const venues = Array.isArray(data)
-      ? data.map(item => item?.venue || item).filter(Boolean)
-      : [];
-
-    if (!venues.length) {
-      hideShowcase();
-      return;
-    }
-
-    showShowcase();
-    grid.innerHTML = venues.map(renderVenue).join("");
   }
 
-  grid.addEventListener("click", event => {
-    if (event.target.closest("a,button,input,select,textarea,label")) return;
-    const card = event.target.closest(".home-venue-card[data-profile-url]");
-    if (card?.dataset.profileUrl) window.location.href = card.dataset.profileUrl;
-  });
-
-  grid.addEventListener("keydown", event => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    const card = event.target.closest(".home-venue-card[data-profile-url]");
-    if (!card?.dataset.profileUrl) return;
-    event.preventDefault();
-    window.location.href = card.dataset.profileUrl;
-  });
-
+  injectHomePartnerOffer();
+  installMainEnquiryEnhancements();
+  installWhatsappIconCleanup();
+  installHeaderTweaks();
+  loadSmartMatch();
   loadHomepageVenues();
 })();
