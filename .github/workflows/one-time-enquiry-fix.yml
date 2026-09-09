@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Apply enquiry fixes
+      - name: Apply direct storage fix
         shell: bash
         run: |
           python - <<'PY'
@@ -25,115 +25,93 @@ jobs:
           import re
 
           DESIRED = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options."
-          changed = []
-
-          def save(path, text, original):
-              if text != original:
-                  Path(path).write_text(text, encoding="utf-8")
+          changed=[]
+          def save(path,text,old):
+              if text != old:
+                  Path(path).write_text(text,encoding='utf-8')
                   changed.append(path)
 
-          # 1) Homepage: remove invalid public priority before INSERT, and save customer comment
-          #    to both the dedicated customer remark field and the CRM-visible comment field.
-          path = "homepage-venues.js"
-          original = Path(path).read_text(encoding="utf-8")
-          text = original
-          text = re.sub(r'const SUCCESS_TEXT = ".*?";', 'const SUCCESS_TEXT = ' + repr(DESIRED).replace("'", '"') + ';', text, count=1)
-          text = re.sub(r'const DUPLICATE_TEXT = .*?;', 'const DUPLICATE_TEXT = SUCCESS_TEXT;', text, count=1)
-          bridge_old = '''              const next = { ...row };\n              if (comment && !clean(next.contact_remark)) next.contact_remark = comment;'''
-          bridge_new = '''              const next = { ...row };\n              delete next.priority;\n              if (comment && !clean(next.contact_remark)) next.contact_remark = comment;\n              if (comment && !clean(next.internal_notes)) next.internal_notes = comment;'''
-          if bridge_old in text:
-              text = text.replace(bridge_old, bridge_new, 1)
-          elif "delete next.priority;" not in text or "next.internal_notes" not in text:
-              raise SystemExit("Expected homepage enquiry insert bridge was not found")
-          save(path, text, original)
+          # Directly fix the legacy homepage handlers rather than relying only on a runtime bridge.
+          path='script.js'
+          old=Path(path).read_text(encoding='utf-8')
+          text=old
 
-          # 2) Quick enquiry pages: exact confirmation, no priority, customer comments visible in CRM.
-          path = "quick-enquiry.js"
-          original = Path(path).read_text(encoding="utf-8")
-          text = original
-          text = re.sub(r'const PREMIUM_SUCCESS = ".*?";', 'const PREMIUM_SUCCESS = ' + repr(DESIRED).replace("'", '"') + ';', text, count=1)
-          text = re.sub(r'\n\s*priority:\s*getPriority\([^\n]*\),?', '', text)
-          if "if (comment) payload.contact_remark = comment;" in text and "if (comment) payload.internal_notes = comment;" not in text:
-              text = text.replace("if (comment) payload.contact_remark = comment;", "if (comment) payload.contact_remark = comment;\n      if (comment) payload.internal_notes = comment;", 1)
-          save(path, text, original)
+          # Remove every public lead priority assignment. The database check constraint has rejected
+          # legacy lowercase priority values; public website forms do not need to set priority.
+          text=re.sub(r'\n\s*priority:\s*calculateLeadPriority\(plan\),?', '', text)
 
-          # 3) Venue profile forms: same 30-minute confirmation and remove the old CSS-generated second timing line.
-          path = "venue-profile.js"
-          original = Path(path).read_text(encoding="utf-8")
-          text = original
-          text = re.sub(r'const PREMIUM_SUCCESS = ".*?";', 'const PREMIUM_SUCCESS = ' + repr(DESIRED).replace("'", '"') + ';', text, count=1)
-          text = text.replace("content:'Our team will review your requirement and call you within 1–2 hours with suitable venue options.'!important;display:block!important;", "content:none!important;display:none!important;")
-          save(path, text, original)
+          # Main homepage enquiry: preserve customer-written requirement in both customer remark and
+          # internal_notes because the Master CRM Comment column reads internal_notes.
+          main_old='''          requirements,\n\n          source:\n            leadSource,'''
+          main_new='''          requirements,\n\n          contact_remark:\n            customerRequirements || null,\n\n          internal_notes:\n            customerRequirements || null,\n\n          source:\n            leadSource,'''
+          if main_old in text and 'internal_notes:\n            customerRequirements || null' not in text:
+              text=text.replace(main_old,main_new,1)
 
-          # 4) Venue marketplace capture handler overrides venue-profile submit listeners, so standardise it too.
-          path = "venue-marketplace-upgrade.js"
-          original = Path(path).read_text(encoding="utf-8")
-          text = original
-          text = text.replace("✓ Your requirement is already received. Our team will call you within 1 hour with suitable venue options.", DESIRED)
-          text = text.replace("✓ Requirement received! Our team will call you within 1 hour with suitable venue options.", DESIRED)
-          save(path, text, original)
+          # Popup enquiry: same mapping for its OTHER REQUIREMENTS field.
+          popup_old='''      requirements: requirements,\n      source: "Website - Enquiry Popup",'''
+          popup_new='''      requirements: requirements,\n      contact_remark: other || null,\n      internal_notes: other || null,\n      source: "Website - Enquiry Popup",'''
+          if popup_old in text and 'contact_remark: other || null' not in text:
+              text=text.replace(popup_old,popup_new,1)
 
-          # 5) Browse Venues multi-venue enquiry: store typed requirements as CRM comment and use same confirmation.
-          path = "venues.js"
-          original = Path(path).read_text(encoding="utf-8")
-          text = original
-          multi_old = 'budget_per_person:budget,requirements,source:"Website - Multi Venue Enquiry",status:"new"'
-          multi_new = 'budget_per_person:budget,contact_remark:other||null,internal_notes:other||null,requirements,source:"Website - Multi Venue Enquiry",status:"new"'
-          if multi_old in text:
-              text = text.replace(multi_old, multi_new, 1)
-          text = text.replace("✓ Enquiry received. Your selected venues are attached to this request.", DESIRED)
-          save(path, text, original)
+          # Exact customer confirmation in main form and popup success screen.
+          text=text.replace('✓ Thank you! Your venue requirement has been received. Select My Venue will review your event details and contact you with suitable options.',DESIRED)
+          popup_para=re.compile(r'''<p>\s*Thank you\. Your venue requirement has been submitted\s*successfully and saved with our venue enquiry team\.\s*Our Select My Venue team will review your details and\s*contact you with suitable options\.\s*</p>''',re.S)
+          text=popup_para.sub('<p>'+DESIRED+'</p>',text)
 
-          # 6) Legacy Smart Match files: keep future/alternate form confirmation consistent too.
-          path = "smv-smart-match-core.js"
-          original = Path(path).read_text(encoding="utf-8")
-          text = original
-          old_card = '<div class="smv-success-card" id="smvSuccess"><div class="smv-success-top"><div class="smv-success-icon">✓</div><div><h5>Requirement received successfully!</h5><p>Thank you. Your Smart Match has been shared with Select My Venue.</p></div></div><div class="smv-success-next"><b>What happens next:</b> We’ll review your requirement and help identify suitable venue options for your event.</div></div>'
-          new_card = '<div class="smv-success-card" id="smvSuccess"><div class="smv-success-top"><div class="smv-success-icon">✓</div><div><h5>Requirement received!</h5><p>' + DESIRED + '</p></div></div></div>'
-          if old_card in text:
-              text = text.replace(old_card, new_card, 1)
-          save(path, text, original)
+          save(path,text,old)
 
-          path = "smv-smart-match.js"
-          original = Path(path).read_text(encoding="utf-8")
-          text = original
-          old_line = "message.innerHTML='<span class=\"smv-confirmation-title\">✓ Requirement received successfully</span><span class=\"smv-confirmation-sub\">Thank you. Our team will review your event details and help you with suitable venue options.'+waText+'</span>';"
-          new_line = "message.textContent=" + repr(DESIRED) + ";"
-          if old_line in text:
-              text = text.replace(old_line, new_line, 1)
-          save(path, text, original)
+          # Ensure active compatibility layer keeps the same rules.
+          path='homepage-venues.js'
+          old=Path(path).read_text(encoding='utf-8')
+          text=old
+          text=re.sub(r'const SUCCESS_TEXT = ".*?";', 'const SUCCESS_TEXT = '+repr(DESIRED).replace("'",'"')+';', text, count=1)
+          if 'delete next.priority;' not in text:
+              text=text.replace('const next = { ...row };','const next = { ...row };\n              delete next.priority;',1)
+          if 'next.internal_notes = comment' not in text:
+              text=text.replace('if (comment && !clean(next.contact_remark)) next.contact_remark = comment;','if (comment && !clean(next.contact_remark)) next.contact_remark = comment;\n              if (comment && !clean(next.internal_notes)) next.internal_notes = comment;',1)
+          save(path,text,old)
 
-          # 7) Cache-bust every public HTML reference to the updated form scripts.
-          versions = {
-              "homepage-venues.js": "20260909-enquiry-fix-4",
-              "quick-enquiry.js": "20260909-enquiry-fix-4",
-              "venue-profile.js": "20260909-enquiry-fix-4",
-              "venue-marketplace-upgrade.js": "20260909-enquiry-fix-4",
-              "venues.js": "20260909-enquiry-fix-4",
-              "smv-smart-match.js": "20260909-enquiry-fix-4",
-          }
+          # Standardize every remaining active form confirmation and comment routing.
+          for path in ['quick-enquiry.js','venue-profile.js','venue-marketplace-upgrade.js','venues.js','smv-smart-match.js','smv-smart-match-core.js']:
+              old=Path(path).read_text(encoding='utf-8')
+              text=old
+              text=text.replace('✓ Your requirement is already received. Our team will call you within 1 hour with suitable venue options.',DESIRED)
+              text=text.replace('✓ Requirement received! Our team will call you within 1 hour with suitable venue options.',DESIRED)
+              text=text.replace('✓ Enquiry received. Your selected venues are attached to this request.',DESIRED)
+              if path=='quick-enquiry.js':
+                  text=re.sub(r'const PREMIUM_SUCCESS = ".*?";', 'const PREMIUM_SUCCESS = '+repr(DESIRED).replace("'",'"')+';', text, count=1)
+                  if 'if (comment) payload.internal_notes = comment;' not in text:
+                      text=text.replace('if (comment) payload.contact_remark = comment;','if (comment) payload.contact_remark = comment;\n      if (comment) payload.internal_notes = comment;',1)
+              if path=='venue-profile.js':
+                  text=re.sub(r'const PREMIUM_SUCCESS = ".*?";', 'const PREMIUM_SUCCESS = '+repr(DESIRED).replace("'",'"')+';', text, count=1)
+                  text=re.sub(r"content:'Our team will review your requirement and call you within [^']*'!important;display:block!important;", "content:none!important;display:none!important;", text)
+              save(path,text,old)
+
+          # Force browsers/GitHub Pages to fetch the repaired JS rather than a stale cached copy.
           for html in Path('.').glob('*.html'):
-              original = html.read_text(encoding='utf-8')
-              text = original
-              for filename, version in versions.items():
-                  text = re.sub(re.escape(filename) + r'\?v=[^\"\']+', filename + '?v=' + version, text)
-              save(str(html), text, original)
+              old=html.read_text(encoding='utf-8')
+              text=old
+              files=['script.js','homepage-venues.js','quick-enquiry.js','venue-profile.js','venue-marketplace-upgrade.js','venues.js','smv-smart-match.js']
+              for filename in files:
+                  text=re.sub(re.escape(filename)+r'(?:\?v=[^\"\']+)?',filename+'?v=20260909-enquiry-fix-5',text)
+              save(str(html),text,old)
 
-          # Guardrails: the active files must now contain the intended behavior.
-          home = Path("homepage-venues.js").read_text(encoding="utf-8")
-          if DESIRED not in home or "delete next.priority;" not in home or "next.internal_notes = comment" not in home:
-              raise SystemExit("Homepage guardrail failed")
-          quick = Path("quick-enquiry.js").read_text(encoding="utf-8")
-          if DESIRED not in quick or "payload.internal_notes = comment" not in quick:
-              raise SystemExit("Quick enquiry guardrail failed")
-          venue = Path("venue-profile.js").read_text(encoding="utf-8")
-          market = Path("venue-marketplace-upgrade.js").read_text(encoding="utf-8")
-          if DESIRED not in venue or DESIRED not in market:
-              raise SystemExit("Venue profile guardrail failed")
+          # Guardrails.
+          script=Path('script.js').read_text(encoding='utf-8')
+          if 'priority:\n            calculateLeadPriority(plan)' in script or 'priority: calculateLeadPriority(plan)' in script:
+              raise SystemExit('Legacy website priority assignment still exists')
+          if 'internal_notes:\n            customerRequirements || null' not in script:
+              raise SystemExit('Main customer comment mapping missing')
+          if 'internal_notes: other || null' not in script:
+              raise SystemExit('Popup customer comment mapping missing')
+          home=Path('homepage-venues.js').read_text(encoding='utf-8')
+          if DESIRED not in home or 'delete next.priority;' not in home or 'next.internal_notes = comment' not in home:
+              raise SystemExit('Homepage compatibility guardrail failed')
+          if DESIRED not in Path('venue-profile.js').read_text(encoding='utf-8'):
+              raise SystemExit('Venue profile confirmation guardrail failed')
 
-          print("Changed files:")
-          for item in sorted(set(changed)):
-              print(" -", item)
+          print('Changed files:')
+          for x in sorted(set(changed)): print(' -',x)
           PY
 
       - name: Commit fixes
@@ -146,5 +124,5 @@ jobs:
           git config user.name "Select My Venue Automation"
           git config user.email "actions@users.noreply.github.com"
           git add .
-          git commit -m "Fix enquiry storage comments and confirmations"
+          git commit -m "Harden website enquiry storage and comment routing"
           git push origin HEAD:main
