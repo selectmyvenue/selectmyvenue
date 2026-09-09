@@ -6,6 +6,7 @@
   const DUPLICATE_TEXT = SUCCESS_TEXT;
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+  window.__SMV_HOMEPAGE_NOTES_FIX = "20260909-notes-permission-1";
 
   if (!document.getElementById("smvPerformanceStability")) {
     const link = document.createElement("link");
@@ -125,9 +126,6 @@
                 }
               }
 
-              // Public website inserts must stay within the fields already
-              // permitted for anonymous customer enquiries. The CRM-only
-              // contact_remark field is deliberately excluded here.
               delete next.contact_remark;
               return next;
             };
