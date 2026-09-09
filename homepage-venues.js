@@ -114,13 +114,20 @@
               if (!row || typeof row !== "object" || Array.isArray(row)) return row;
               const next = { ...row };
               delete next.priority;
+
               if (comment) {
                 const existingRequirements = clean(next.requirements);
                 const commentLine = `Customer comment: ${comment}`;
                 if (!existingRequirements.toLowerCase().includes(commentLine.toLowerCase())) {
-                  next.requirements = existingRequirements ? `${existingRequirements}\n${commentLine}` : commentLine;
+                  next.requirements = existingRequirements
+                    ? `${existingRequirements}\n${commentLine}`
+                    : commentLine;
                 }
               }
+
+              // Public website inserts must stay within the fields already
+              // permitted for anonymous customer enquiries. The CRM-only
+              // contact_remark field is deliberately excluded here.
               delete next.contact_remark;
               return next;
             };
