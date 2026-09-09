@@ -163,6 +163,9 @@
         font-weight:950;
         box-shadow:0 6px 16px rgba(8,127,97,.22);
       }
+      .quick-enquiry-form{grid-auto-rows:auto!important;align-items:start!important}
+      .quick-enquiry-message.success{grid-column:1/-1!important;height:auto!important;min-height:88px!important;max-height:none!important;overflow:visible!important;align-self:stretch!important;padding-top:16px!important;padding-bottom:16px!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important}
+      .quick-enquiry-message.success:before{top:18px!important;transform:none!important}
       .quick-enquiry-message.error{display:block!important;margin:12px 0!important;padding:12px!important;border-radius:12px!important;background:#fff1f1!important;color:#a4161a!important;font-weight:850!important}
       .smv-quick-whatsapp-opt,[data-smv-whatsapp-option],input[name="send_whatsapp"]{display:none!important}
       form[data-smv-quick-enquiry].is-submitted{outline:2px solid rgba(19,155,141,.16)!important;outline-offset:4px!important}
@@ -269,7 +272,6 @@
         last_contacted_at: null
       };
       if (comment) payload.contact_remark = comment;
-      if (comment) payload.internal_notes = comment;
 
       const result = await client.from("customer_enquiries").insert(payload);
       if (result.error) throw result.error;
@@ -280,8 +282,8 @@
 
       const successPanel = form.closest(".quick-enquiry-card") && form.closest(".quick-enquiry-card").querySelector("[data-quick-success]");
       if (successPanel) {
-        successPanel.hidden = false;
-        successPanel.textContent = PREMIUM_SUCCESS;
+        successPanel.hidden = true;
+        successPanel.textContent = "";
       }
 
       form.reset();

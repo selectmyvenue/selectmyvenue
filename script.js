@@ -2562,9 +2562,6 @@ function setupCustomerEnquiry() {
           contact_remark:
             customerRequirements || null,
 
-          internal_notes:
-            customerRequirements || null,
-
           source:
             leadSource,
 
@@ -3596,7 +3593,6 @@ function setupAutoEnquiryPopup() {
       food_preference: food || null,
       requirements: requirements,
       contact_remark: other || null,
-      internal_notes: other || null,
       source: "Website - Enquiry Popup",
       status: "new",
       assigned_to: null,
