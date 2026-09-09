@@ -5,6 +5,7 @@
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
   const MEDIA_BUCKET = "venue-media";
   const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
+  const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18435642634/_rfMCLfZsfAcEIqq5tZE";
   const params = new URLSearchParams(window.location.search);
   const venueId = params.get("id") || "";
   const autoQuote = params.get("quote") === "1";
@@ -17,6 +18,16 @@
   const byId = id => document.getElementById(id);
   let currentVenue = null;
   let currentMedia = { cover: "", images: [], videos: [] };
+
+  function fireGoogleAdsLeadConversion(){
+    try{
+      window.dataLayer=window.dataLayer||[];
+      window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
+      window.gtag("event","conversion",{send_to:GOOGLE_ADS_CONVERSION_SEND_TO,value:1.0,currency:"INR"});
+    }catch(error){
+      console.warn("Google Ads conversion tracking warning:",error);
+    }
+  }
 
   function safeHttpUrl(value) {
     try { const url = new URL(String(value || "")); return ["http:", "https:"].includes(url.protocol) ? url.href : ""; }
@@ -258,6 +269,7 @@
       status.className="venue-quote-status error";
       return;
     }
+    fireGoogleAdsLeadConversion();
     status.textContent=PREMIUM_SUCCESS;
     status.className="venue-quote-status success";
     event.currentTarget.reset();
@@ -305,6 +317,7 @@
       status.className="venue-quick-status error";
       return;
     }
+    fireGoogleAdsLeadConversion();
     status.textContent=PREMIUM_SUCCESS;
     status.className="venue-quick-status success";
     event.currentTarget.reset();
