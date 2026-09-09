@@ -33,6 +33,25 @@
     return score >= 3 ? "high" : score >= 1 ? "medium" : "low";
   }
 
+  function extractComment(form) {
+    const names = [
+      "contact_remark",
+      "comment",
+      "comments",
+      "other_requirements",
+      "requirements",
+      "message",
+      "notes"
+    ];
+    for (const name of names) {
+      const field = form.elements && form.elements[name];
+      const value = clean(field && field.value);
+      if (value) return value.slice(0, 3000);
+    }
+    const textarea = form.querySelector("textarea");
+    return clean(textarea && textarea.value).slice(0, 3000);
+  }
+
   function setMessage(form, text, type) {
     const node = form.querySelector("[data-quick-message]");
     if (!node) return;
@@ -164,6 +183,7 @@
     const guests = numberOrNull(form.elements.guests && form.elements.guests.value);
     const budget = numberOrNull(form.elements.budget_per_person && form.elements.budget_per_person.value);
     const occasion = clean(form.elements.occasion && form.elements.occasion.value) || clean(form.dataset.eventType) || "Event";
+    const comment = extractComment(form);
     const context = sourceContext(form);
 
     const details = {
@@ -174,6 +194,7 @@
       guests,
       budget,
       occasion,
+      comment,
       source: context.source,
       venueName: context.venueName,
       venueId: context.venueId
@@ -226,7 +247,8 @@
         context.venueId ? "Venue ID: " + context.venueId : "",
         "Submitted page: " + context.page,
         guests ? "Guests: " + guests : "",
-        budget ? "Budget/person: ₹" + budget : ""
+        budget ? "Budget/person: ₹" + budget : "",
+        comment ? "Customer comment: " + comment : ""
       ].filter(Boolean).join("\n");
 
       const payload = {
@@ -242,11 +264,11 @@
         requirements,
         source: context.source,
         status: "new",
-        priority: getPriority(eventDate, guests, budget),
         assigned_to: null,
         follow_up_at: null,
         last_contacted_at: null
       };
+      if (comment) payload.contact_remark = comment;
 
       const result = await client.from("customer_enquiries").insert(payload);
       if (result.error) throw result.error;
