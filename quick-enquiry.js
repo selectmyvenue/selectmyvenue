@@ -5,6 +5,27 @@
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
   const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
+  const GOOGLE_ADS_TAG_ID = "AW-18435642634";
+
+  function installGoogleAdsTag() {
+    if (window.__smvGoogleAdsTagInstalled || document.querySelector(`script[src*="googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}"]`)) {
+      window.__smvGoogleAdsTagInstalled = true;
+      return;
+    }
+
+    window.__smvGoogleAdsTagInstalled = true;
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window.gtag("js", new Date());
+    window.gtag("config", GOOGLE_ADS_TAG_ID);
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}`;
+    document.head.appendChild(script);
+  }
+
+  installGoogleAdsTag();
 
   function clean(value) {
     return String(value == null ? "" : value).trim();
