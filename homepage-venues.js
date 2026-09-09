@@ -2,8 +2,8 @@
   "use strict";
 
   const PERFORMANCE_CSS_VERSION = "20260909-aw-snap-fix-1";
-  const SUCCESS_TEXT = "✓ Requirement received successfully. Thank you — our venue experts will review your event details and call you within 1–2 hours with suitable venue options.";
-  const DUPLICATE_TEXT = "✓ Your requirement is already received. Our team will call you within 1–2 hours with suitable venue options.";
+  const SUCCESS_TEXT = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
+  const DUPLICATE_TEXT = SUCCESS_TEXT;
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
 
@@ -63,6 +63,149 @@
   function applyLeadSourceContext() {
     const sourceField = document.getElementById("leadSource");
     if (sourceField) sourceField.value = simpleLeadSource();
+  }
+
+  function stripSystemLines(value) {
+    const blocked = [
+      "interested venue:",
+      "search page:",
+      "submitted page:",
+      "venue id:"
+    ];
+    return clean(value)
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(line => line && !blocked.some(prefix => line.toLowerCase().startsWith(prefix)))
+      .join("\n")
+      .slice(0, 3000);
+  }
+
+  function currentCustomerComment() {
+    const popup = document.getElementById("enquiryPopup");
+    const popupOpen = popup && popup.classList.contains("show");
+    const popupComment = stripSystemLines(document.getElementById("smvPopupRequirements")?.value);
+    const mainComment = stripSystemLines(document.getElementById("customerRequirements")?.value);
+    if (popupOpen && popupComment) return popupComment;
+    return mainComment || popupComment || "";
+  }
+
+  function installCustomerEnquiryInsertBridge() {
+    if (window.__smvCustomerCommentBridgeInstalled) return;
+    if (!window.supabase || typeof window.supabase.createClient !== "function") return;
+
+    try {
+      const probeClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+      });
+      const probeBuilder = probeClient.from("customer_enquiries");
+      let proto = Object.getPrototypeOf(probeBuilder);
+      while (proto && !Object.prototype.hasOwnProperty.call(proto, "insert")) {
+        proto = Object.getPrototypeOf(proto);
+      }
+      if (!proto || typeof proto.insert !== "function" || proto.__smvCommentBridgeInstalled) return;
+
+      const originalInsert = proto.insert;
+      proto.insert = function (values, options) {
+        try {
+          const target = String(this?.url || "");
+          if (target.includes("customer_enquiries")) {
+            const comment = currentCustomerComment();
+            const enrich = row => {
+              if (!row || typeof row !== "object" || Array.isArray(row)) return row;
+              const next = { ...row };
+              if (comment && !clean(next.contact_remark)) next.contact_remark = comment;
+              return next;
+            };
+            values = Array.isArray(values) ? values.map(enrich) : enrich(values);
+          }
+        } catch (error) {
+          console.warn("SMV comment bridge warning:", error);
+        }
+        return originalInsert.call(this, values, options);
+      };
+      proto.__smvCommentBridgeInstalled = true;
+      window.__smvCustomerCommentBridgeInstalled = true;
+    } catch (error) {
+      console.warn("SMV comment bridge could not be installed:", error);
+    }
+  }
+
+  function installConfirmationStyles() {
+    if (document.getElementById("smvUnifiedConfirmationStyles")) return;
+    const style = document.createElement("style");
+    style.id = "smvUnifiedConfirmationStyles";
+    style.textContent = `
+      #customerEnquiryMessage.smv-front-success,
+      #customerEnquiryMessage.success.smv-front-success {
+        display:block!important;
+        width:100%!important;
+        box-sizing:border-box!important;
+        position:relative!important;
+        margin:16px 0 4px!important;
+        padding:18px 20px 18px 58px!important;
+        border:1px solid rgba(28,166,119,.34)!important;
+        border-radius:17px!important;
+        background:linear-gradient(135deg,#effff8 0%,#ffffff 58%,#fff9e5 100%)!important;
+        color:#075f4b!important;
+        font-size:14px!important;
+        line-height:1.5!important;
+        font-weight:850!important;
+        white-space:normal!important;
+        overflow:visible!important;
+        box-shadow:0 14px 34px rgba(5,95,72,.12),inset 0 1px 0 rgba(255,255,255,.9)!important;
+        text-shadow:none!important;
+      }
+      #customerEnquiryMessage.smv-front-success:before {
+        content:"✓"!important;
+        position:absolute!important;
+        left:17px!important;
+        top:17px!important;
+        width:28px!important;
+        height:28px!important;
+        display:grid!important;
+        place-items:center!important;
+        border-radius:50%!important;
+        background:linear-gradient(135deg,#20d4aa,#087f61)!important;
+        color:#fff!important;
+        font-size:16px!important;
+        font-weight:950!important;
+        box-shadow:0 6px 16px rgba(8,127,97,.22)!important;
+      }
+      @media(max-width:680px){
+        #customerEnquiryMessage.smv-front-success,
+        #customerEnquiryMessage.success.smv-front-success{
+          padding:15px 15px 15px 50px!important;
+          font-size:13px!important;
+          line-height:1.48!important;
+        }
+        #customerEnquiryMessage.smv-front-success:before{
+          left:14px!important;
+          top:14px!important;
+          width:25px!important;
+          height:25px!important;
+          font-size:14px!important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function installPopupConfirmationNormalizer() {
+    if (window.__smvPopupConfirmationNormalizerInstalled) return;
+    window.__smvPopupConfirmationNormalizerInstalled = true;
+
+    const normalize = () => {
+      document.querySelectorAll(".smv-popup-success").forEach(panel => {
+        const heading = panel.querySelector("h3");
+        const paragraph = panel.querySelector("p");
+        if (heading) heading.textContent = "Requirement received!";
+        if (paragraph) paragraph.textContent = "Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
+      });
+    };
+
+    normalize();
+    const observer = new MutationObserver(normalize);
+    observer.observe(document.body, { childList: true, subtree: true });
   }
 
   function injectHomePartnerOffer() {
@@ -334,6 +477,9 @@
   }
 
   function safeInit() {
+    installCustomerEnquiryInsertBridge();
+    installConfirmationStyles();
+    installPopupConfirmationNormalizer();
     injectHomePartnerOffer();
     ensureEmailField();
     installMainEnquiryEnhancements();
