@@ -295,10 +295,10 @@
       const venueLines=rows.map((v,i)=>`${i+1}. ${v.venue_name} | Venue ID: ${v.id} | ${[v.area,v.city].filter(Boolean).join(", ")||"Location on request"}`);
       const requirements=["MULTI-VENUE ENQUIRY",...venueLines,other?`Customer requirements: ${other}`:null,"Submitted from Browse Venues multi-venue enquiry"].filter(Boolean).join("\n");
       button.disabled=true;button.textContent="Sending…";status.textContent="";
-      const {error}=await client.from("customer_enquiries").insert({customer_name:name,mobile,location:requirement.location||rows[0]?.city||null,occasion,event_date:date,guests,budget_per_person:budget,requirements,source:"Website - Multi Venue Enquiry",status:"new"});
+      const {error}=await client.from("customer_enquiries").insert({customer_name:name,mobile,location:requirement.location||rows[0]?.city||null,occasion,event_date:date,guests,budget_per_person:budget,contact_remark:other||null,internal_notes:other||null,requirements,source:"Website - Multi Venue Enquiry",status:"new"});
       button.disabled=false;button.textContent="Send One Enquiry for Selected Venues →";
       if(error){console.error("Multi venue enquiry error:",error);status.textContent="Unable to send right now. Please try again or use WhatsApp.";status.className="smv-multi-status error";return}
-      status.textContent="✓ Enquiry received. Your selected venues are attached to this request.";status.className="smv-multi-status success";form.reset();
+      status.textContent="Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";status.className="smv-multi-status success";form.reset();
     });
   }
 

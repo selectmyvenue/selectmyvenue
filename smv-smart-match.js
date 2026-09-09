@@ -133,7 +133,7 @@
       message.dataset.smvEnhancedSuccess="1";
       var wa=byId("smvWhatsappOptIn");
       var waText=wa&&wa.checked?" Your WhatsApp preference has also been saved for venue details and enquiry updates.":"";
-      message.innerHTML='<span class="smv-confirmation-title">✓ Requirement received successfully</span><span class="smv-confirmation-sub">Thank you. Our team will review your event details and help you with suitable venue options.'+waText+'</span>';
+      message.textContent='Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.';
     });
     observer.observe(message,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:["class"]});
   }

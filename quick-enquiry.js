@@ -269,6 +269,7 @@
         last_contacted_at: null
       };
       if (comment) payload.contact_remark = comment;
+      if (comment) payload.internal_notes = comment;
 
       const result = await client.from("customer_enquiries").insert(payload);
       if (result.error) throw result.error;

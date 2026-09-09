@@ -113,7 +113,9 @@
             const enrich = row => {
               if (!row || typeof row !== "object" || Array.isArray(row)) return row;
               const next = { ...row };
+              delete next.priority;
               if (comment && !clean(next.contact_remark)) next.contact_remark = comment;
+              if (comment && !clean(next.internal_notes)) next.internal_notes = comment;
               return next;
             };
             values = Array.isArray(values) ? values.map(enrich) : enrich(values);

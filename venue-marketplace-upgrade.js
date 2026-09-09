@@ -26,7 +26,7 @@
     if(d.name.length<2){setStatus(form,"Please enter your name.","error");$(ids.name)?.focus();return;}
     if(d.mobile.length!==10){setStatus(form,"Please enter a valid 10-digit mobile number.","error");$(ids.mobile)?.focus();return;}
     if(d.email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)){setStatus(form,"Please enter a valid email address.","error");$(ids.email)?.focus();return;}
-    if(isDupe(d)){setStatus(form,"✓ Your requirement is already received. Our team will call you within 1 hour with suitable venue options.","success");return;}
+    if(isDupe(d)){setStatus(form,"Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.","success");return;}
     const button=buttonFor(form),old=button?.textContent;if(button){button.disabled=true;button.textContent="Submitting…";}setStatus(form,"","");
     const requirements=[`Specific venue enquiry: ${v.name}`,v.id?`Venue ID: ${v.id}`:"",v.location?`Venue location: ${v.location}`:"",`Submitted from venue profile page`].filter(Boolean).join("\n");
     try{
@@ -34,7 +34,7 @@
       if(!client)throw new Error("Supabase unavailable");
       const result=await client.from("customer_enquiries").insert({customer_name:d.name,mobile:d.mobile,email:d.email||null,location:v.location,occasion:d.occasion,event_date:d.eventDate,guests:d.guests,budget_per_person:d.budget||null,food_preference:null,requirements,source:d.source,status:"new"});
       if(result.error)throw result.error;
-      mark(d);form.reset();setStatus(form,"✓ Requirement received! Our team will call you within 1 hour with suitable venue options.","success");
+      mark(d);form.reset();setStatus(form,"Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.","success");
     }catch(error){console.error("Venue enquiry source restore error:",error);setStatus(form,"Unable to send right now. Please try again or call +91 83683 22256.","error");}
     finally{if(button){button.disabled=false;button.textContent=old||"Check Price & Availability →";}}
   }
