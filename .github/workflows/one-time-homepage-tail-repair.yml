@@ -1,0 +1,82 @@
+name: One-time homepage script loading repair
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-time-homepage-tail-repair.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair-homepage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Repair homepage script block
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          original = path.read_text(encoding='utf-8')
+          version = '20260909-comment-fix-7'
+          replacement = '''<!-- =====================================================
+     SUPABASE LIBRARY
+     MUST LOAD BEFORE script.js
+====================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<!-- =====================================================
+     SELECT MY VENUE WEBSITE JAVASCRIPT
+====================================================== -->
+
+<script src="script.js?v=''' + version + '''"></script>
+
+<script src="homepage-venues.js?v=''' + version + '''"></script>
+
+
+</body>
+</html>'''
+
+          pattern = re.compile(r'<!-- =====================================================\s*\n\s*SUPABASE LIBRARY[\s\S]*?</body>\s*</html>\s*$', re.I)
+          text, count = pattern.subn(replacement, original, count=1)
+          if count != 1:
+              raise SystemExit('Could not locate homepage Supabase/script tail for repair')
+
+          path.write_text(text, encoding='utf-8')
+
+          repaired = path.read_text(encoding='utf-8')
+          required = [
+              '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>',
+              'script.js?v=' + version,
+              'homepage-venues.js?v=' + version,
+              'MUST LOAD BEFORE script.js\n====================================================== -->'
+          ]
+          for item in required:
+              if item not in repaired:
+                  raise SystemExit('Homepage repair guardrail failed: ' + item)
+          if repaired.count('@supabase/supabase-js@2') != 1:
+              raise SystemExit('Unexpected Supabase script count after repair')
+          PY
+
+      - name: Commit repair
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "Select My Venue Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html
+          git commit -m "Repair homepage Supabase and enquiry script loading"
+          git push origin HEAD:main
