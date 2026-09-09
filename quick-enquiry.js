@@ -4,7 +4,7 @@
 (function () {
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-  const PREMIUM_SUCCESS = "✓ Requirement received. Our venue experts are reviewing your details and will call you within 1–2 hours with suitable venue options.";
+  const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
 
   function clean(value) {
     return String(value == null ? "" : value).trim();
@@ -111,9 +111,39 @@
     style.id = "smvQuickEnquiryFixStyles";
     style.textContent = `
       .quick-enquiry-message.success{
-        display:block!important;margin:12px 0!important;padding:14px 16px 14px 48px!important;border:1px solid rgba(20,150,105,.22)!important;border-radius:16px!important;background:linear-gradient(135deg,#edfff8 0%,#fbfffd 58%,#fff8df 100%)!important;color:#06664a!important;font-size:13.5px!important;font-weight:900!important;line-height:1.38!important;box-shadow:0 12px 28px rgba(5,95,72,.10),inset 0 1px 0 rgba(255,255,255,.82)!important;position:relative!important
+        display:block!important;
+        width:100%!important;
+        box-sizing:border-box!important;
+        margin:14px 0 4px!important;
+        padding:16px 18px 16px 54px!important;
+        border:1px solid rgba(18,157,115,.28)!important;
+        border-radius:16px!important;
+        background:linear-gradient(135deg,#effff8 0%,#ffffff 58%,#fff9e8 100%)!important;
+        color:#075f4d!important;
+        font-size:14px!important;
+        font-weight:800!important;
+        line-height:1.48!important;
+        box-shadow:0 12px 28px rgba(5,95,72,.10),inset 0 1px 0 rgba(255,255,255,.9)!important;
+        position:relative!important;
+        white-space:normal!important;
+        overflow:visible!important;
       }
-      .quick-enquiry-message.success:before{content:"✓";position:absolute;left:15px;top:50%;transform:translateY(-50%);width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#19c99e,#087f61);color:#fff;font-size:14px;font-weight:950;box-shadow:0 6px 16px rgba(8,127,97,.22)}
+      .quick-enquiry-message.success:before{
+        content:"✓";
+        position:absolute;
+        left:16px;
+        top:16px;
+        width:26px;
+        height:26px;
+        display:grid;
+        place-items:center;
+        border-radius:50%;
+        background:linear-gradient(135deg,#20d4aa,#087f61);
+        color:#fff;
+        font-size:15px;
+        font-weight:950;
+        box-shadow:0 6px 16px rgba(8,127,97,.22);
+      }
       .quick-enquiry-message.error{display:block!important;margin:12px 0!important;padding:12px!important;border-radius:12px!important;background:#fff1f1!important;color:#a4161a!important;font-weight:850!important}
       .smv-quick-whatsapp-opt,[data-smv-whatsapp-option],input[name="send_whatsapp"]{display:none!important}
       form[data-smv-quick-enquiry].is-submitted{outline:2px solid rgba(19,155,141,.16)!important;outline-offset:4px!important}
