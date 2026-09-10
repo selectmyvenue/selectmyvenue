@@ -2591,6 +2591,8 @@ function setupCustomerEnquiry() {
           throw error;
         }
 
+        trackGoogleAdsLeadConversion();
+
         form.reset();
 
         showInlineMessage(
@@ -3628,6 +3630,8 @@ function setupAutoEnquiryPopup() {
        * Keep the same enquiry information synchronized with the
        * main website form and AI planner.
        */
+      trackGoogleAdsLeadConversion();
+
       setValue("customerName", customerName);
       setValue("customerMobile", cleanMobile);
       setValue("customerEmail", customerEmail);
@@ -5603,3 +5607,37 @@ console.log(
   }
 
 })();
+
+
+/* =========================================================
+   GOOGLE ADS LEAD CONVERSION
+   Fires only after a genuine customer enquiry is saved to CRM.
+   ========================================================= */
+
+function trackGoogleAdsLeadConversion() {
+  if (typeof window.gtag !== "function") {
+    console.warn(
+      "Select My Venue: Google Ads conversion not sent because gtag is unavailable."
+    );
+    return false;
+  }
+
+  try {
+    window.gtag("event", "conversion", {
+      send_to: "AW-18435642634/_rfMCLfZsfAcEIqq5tZE",
+      value: 1.0,
+      currency: "INR"
+    });
+
+    console.log(
+      "Select My Venue: Google Ads lead conversion sent after successful CRM save."
+    );
+    return true;
+  } catch (error) {
+    console.warn(
+      "Select My Venue: Google Ads conversion tracking error:",
+      error
+    );
+    return false;
+  }
+}
