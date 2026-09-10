@@ -7,6 +7,7 @@
   const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
   const GOOGLE_ADS_TAG_ID = "AW-18435642634";
   const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18435642634/_rfMCLfZsfAcEIqq5tZE";
+  const ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1";
 
   function installGoogleAdsTag() {
     if (window.__smvGoogleAdsTagInstalled || document.querySelector(`script[src*="googletagmanager.com/gtag/js?id=${GOOGLE_ADS_TAG_ID}"]`)) {
@@ -59,6 +60,98 @@
     const now = new Date();
     const offset = now.getTimezoneOffset();
     return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
+  }
+
+  function isHumanName(value) {
+    const name = clean(value);
+    if (name.length < 2 || name.length > 80) return false;
+    if (/\d/.test(name)) return false;
+    if (!/[A-Za-z\u00C0-\u024F\u0900-\u097F]{2}/u.test(name.replace(/\s/g, ""))) return false;
+    return /^[A-Za-z\u00C0-\u024F\u0900-\u097F .'-]+$/u.test(name);
+  }
+
+  function isValidIndianMobile(value) {
+    return /^[6-9][0-9]{9}$/.test(value) && !/^(\d)\1{9}$/.test(value);
+  }
+
+  function captureAttribution() {
+    let saved = {};
+    try {
+      saved = JSON.parse(sessionStorage.getItem(ATTRIBUTION_STORAGE_KEY) || "{}") || {};
+    } catch (_) {}
+
+    const params = new URLSearchParams(location.search);
+    const keys = ["gclid", "gbraid", "wbraid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+    keys.forEach(key => {
+      const value = clean(params.get(key));
+      if (value) saved[key] = value.slice(0, 500);
+    });
+
+    if (!saved.landing_page) saved.landing_page = location.href.slice(0, 1000);
+    if (!saved.first_referrer && document.referrer) saved.first_referrer = document.referrer.slice(0, 1000);
+    saved.last_page = location.href.slice(0, 1000);
+
+    try {
+      sessionStorage.setItem(ATTRIBUTION_STORAGE_KEY, JSON.stringify(saved));
+    } catch (_) {}
+    return saved;
+  }
+
+  function getAttribution() {
+    return captureAttribution();
+  }
+
+  function isGoogleAdsTraffic(attribution) {
+    const source = clean(attribution && attribution.utm_source).toLowerCase();
+    const medium = clean(attribution && attribution.utm_medium).toLowerCase();
+    return !!(
+      attribution && (attribution.gclid || attribution.gbraid || attribution.wbraid) ||
+      source.includes("google") && /cpc|ppc|paid/.test(medium)
+    );
+  }
+
+  function clearlyOutsideDelhiGurgaon(locationValue) {
+    const value = clean(locationValue).toLowerCase();
+    return /\b(hapur|ghaziabad|noida|greater noida|faridabad|meerut|sonipat|sonepat|panipat|rohtak|bulandshahr|aligarh)\b/.test(value);
+  }
+
+  function attributionLines(attribution, locationValue) {
+    const lines = [];
+    if (isGoogleAdsTraffic(attribution)) lines.push("Traffic channel: Google Ads");
+    else if (/google\./i.test(clean(attribution.first_referrer))) lines.push("Traffic channel: Google Organic");
+    else if (attribution.first_referrer) lines.push("Traffic channel: Referral");
+    else lines.push("Traffic channel: Direct / Unknown");
+
+    if (attribution.gclid) lines.push("Google Click ID: " + attribution.gclid);
+    if (attribution.gbraid) lines.push("Google GBRAID: " + attribution.gbraid);
+    if (attribution.wbraid) lines.push("Google WBRAID: " + attribution.wbraid);
+    if (attribution.utm_source) lines.push("UTM Source: " + attribution.utm_source);
+    if (attribution.utm_medium) lines.push("UTM Medium: " + attribution.utm_medium);
+    if (attribution.utm_campaign) lines.push("UTM Campaign: " + attribution.utm_campaign);
+    if (attribution.utm_term) lines.push("UTM Term: " + attribution.utm_term);
+    if (attribution.landing_page) lines.push("Landing page: " + attribution.landing_page);
+    lines.push("Submitted URL: " + location.href.slice(0, 1000));
+    if (isGoogleAdsTraffic(attribution) && clearlyOutsideDelhiGurgaon(locationValue)) {
+      lines.push("Paid area check: Outside Delhi / Gurgaon service area");
+    }
+    return lines;
+  }
+
+  function addHoneypot(form) {
+    if (!form || form.elements._smv_company_website) return;
+    const field = document.createElement("input");
+    field.type = "text";
+    field.name = "_smv_company_website";
+    field.tabIndex = -1;
+    field.autocomplete = "off";
+    field.setAttribute("aria-hidden", "true");
+    field.style.position = "absolute";
+    field.style.left = "-10000px";
+    field.style.width = "1px";
+    field.style.height = "1px";
+    field.style.opacity = "0";
+    field.style.pointerEvents = "none";
+    form.appendChild(field);
   }
 
   function getPriority(date, guests, budget) {
@@ -224,6 +317,7 @@
     const occasion = clean(form.elements.occasion && form.elements.occasion.value) || clean(form.dataset.eventType) || "Event";
     const comment = extractComment(form);
     const context = sourceContext(form);
+    const attribution = getAttribution();
 
     const details = {
       customerName,
@@ -239,19 +333,24 @@
       venueId: context.venueId
     };
 
+    if (clean(form.elements._smv_company_website && form.elements._smv_company_website.value)) {
+      setMessage(form, "We could not verify this enquiry. Please try again.", "error");
+      return;
+    }
+
     if (isDuplicate(details)) {
       setMessage(form, PREMIUM_SUCCESS, "success");
       getMessageNode(form)?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
 
-    if (!customerName) {
-      setMessage(form, "Please enter your name.", "error");
+    if (!isHumanName(customerName)) {
+      setMessage(form, "Please enter your real name using letters only.", "error");
       form.elements.customer_name && form.elements.customer_name.focus();
       return;
     }
-    if (!/^[0-9]{10}$/.test(mobile)) {
-      setMessage(form, "Please enter a valid 10-digit mobile number.", "error");
+    if (!isValidIndianMobile(mobile)) {
+      setMessage(form, "Please enter a valid 10-digit Indian mobile number.", "error");
       form.elements.mobile && form.elements.mobile.focus();
       return;
     }
@@ -287,7 +386,8 @@
         "Submitted page: " + context.page,
         guests ? "Guests: " + guests : "",
         budget ? "Budget/person: ₹" + budget : "",
-        comment ? "Customer comment: " + comment : ""
+        comment ? "Customer comment: " + comment : "",
+        ...attributionLines(attribution, locationValue)
       ].filter(Boolean).join("\n");
 
       const payload = {
@@ -312,7 +412,9 @@
       const result = await client.from("customer_enquiries").insert(payload);
       if (result.error) throw result.error;
 
-      fireGoogleAdsLeadConversion();
+      if (!(isGoogleAdsTraffic(attribution) && clearlyOutsideDelhiGurgaon(locationValue))) {
+        fireGoogleAdsLeadConversion();
+      }
       markDuplicate(details);
       form.classList.add("is-submitted");
       setMessage(form, PREMIUM_SUCCESS, "success");
@@ -340,10 +442,12 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    captureAttribution();
     installStyles();
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
       const dateField = form.elements.event_date;
       if (dateField) dateField.min = todayIso();
+      addHoneypot(form);
       form.querySelectorAll("[data-smv-whatsapp-option],.smv-quick-whatsapp-opt,input[name='send_whatsapp']").forEach(node => node.remove());
       form.addEventListener("submit", handleSubmit);
     });
