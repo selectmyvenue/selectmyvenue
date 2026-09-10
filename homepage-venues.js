@@ -7,6 +7,7 @@
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
   const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18435642634/_rfMCLfZsfAcEIqq5tZE";
+  const ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1";
 
   function fireGoogleAdsLeadConversion() {
     try {
@@ -37,6 +38,151 @@
   const escapeHtml = value => String(value ?? "").replace(/[&<>'\"]/g, character => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '\"': "&quot;"
   })[character]);
+
+  function isHumanName(value) {
+    const name = clean(value);
+    if (name.length < 2 || name.length > 80) return false;
+    if (/\d/.test(name)) return false;
+    if (!/[A-Za-z\u00C0-\u024F\u0900-\u097F]{2}/u.test(name.replace(/\s/g, ""))) return false;
+    return /^[A-Za-z\u00C0-\u024F\u0900-\u097F .'-]+$/u.test(name);
+  }
+
+  function isValidIndianMobile(value) {
+    const mobile = mobileDigits(value);
+    return /^[6-9][0-9]{9}$/.test(mobile) && !/^(\d)\1{9}$/.test(mobile);
+  }
+
+  function captureAttribution() {
+    let saved = {};
+    try {
+      saved = JSON.parse(sessionStorage.getItem(ATTRIBUTION_STORAGE_KEY) || "{}") || {};
+    } catch (_) {}
+
+    const params = new URLSearchParams(location.search);
+    ["gclid", "gbraid", "wbraid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"].forEach(key => {
+      const value = clean(params.get(key));
+      if (value) saved[key] = value.slice(0, 500);
+    });
+
+    if (!saved.landing_page) saved.landing_page = location.href.slice(0, 1000);
+    if (!saved.first_referrer && document.referrer) saved.first_referrer = document.referrer.slice(0, 1000);
+    saved.last_page = location.href.slice(0, 1000);
+
+    try {
+      sessionStorage.setItem(ATTRIBUTION_STORAGE_KEY, JSON.stringify(saved));
+    } catch (_) {}
+    return saved;
+  }
+
+  function getAttribution() {
+    return captureAttribution();
+  }
+
+  function isGoogleAdsTraffic(attribution) {
+    const source = clean(attribution && attribution.utm_source).toLowerCase();
+    const medium = clean(attribution && attribution.utm_medium).toLowerCase();
+    return !!(
+      attribution && (attribution.gclid || attribution.gbraid || attribution.wbraid) ||
+      source.includes("google") && /cpc|ppc|paid/.test(medium)
+    );
+  }
+
+  function clearlyOutsideDelhiGurgaon(locationValue) {
+    const value = clean(locationValue).toLowerCase();
+    return /\b(hapur|ghaziabad|noida|greater noida|faridabad|meerut|sonipat|sonepat|panipat|rohtak|bulandshahr|aligarh)\b/.test(value);
+  }
+
+  function attributionLines(attribution, locationValue) {
+    const lines = [];
+    if (isGoogleAdsTraffic(attribution)) lines.push("Traffic channel: Google Ads");
+    else if (/google\./i.test(clean(attribution.first_referrer))) lines.push("Traffic channel: Google Organic");
+    else if (attribution.first_referrer) lines.push("Traffic channel: Referral");
+    else lines.push("Traffic channel: Direct / Unknown");
+
+    if (attribution.gclid) lines.push("Google Click ID: " + attribution.gclid);
+    if (attribution.gbraid) lines.push("Google GBRAID: " + attribution.gbraid);
+    if (attribution.wbraid) lines.push("Google WBRAID: " + attribution.wbraid);
+    if (attribution.utm_source) lines.push("UTM Source: " + attribution.utm_source);
+    if (attribution.utm_medium) lines.push("UTM Medium: " + attribution.utm_medium);
+    if (attribution.utm_campaign) lines.push("UTM Campaign: " + attribution.utm_campaign);
+    if (attribution.utm_term) lines.push("UTM Term: " + attribution.utm_term);
+    if (attribution.landing_page) lines.push("Landing page: " + attribution.landing_page);
+    lines.push("Submitted URL: " + location.href.slice(0, 1000));
+    if (isGoogleAdsTraffic(attribution) && clearlyOutsideDelhiGurgaon(locationValue)) {
+      lines.push("Paid area check: Outside Delhi / Gurgaon service area");
+    }
+    return lines;
+  }
+
+  function addHoneypot(form) {
+    if (!form || form.elements?._smv_company_website) return;
+    const field = document.createElement("input");
+    field.type = "text";
+    field.name = "_smv_company_website";
+    field.tabIndex = -1;
+    field.autocomplete = "off";
+    field.setAttribute("aria-hidden", "true");
+    field.style.position = "absolute";
+    field.style.left = "-10000px";
+    field.style.width = "1px";
+    field.style.height = "1px";
+    field.style.opacity = "0";
+    field.style.pointerEvents = "none";
+    form.appendChild(field);
+  }
+
+  function installFormQualityGuards() {
+    const prepareForms = () => {
+      addHoneypot(document.getElementById("customerEnquiryForm"));
+      document.querySelectorAll("form").forEach(form => {
+        if (form.querySelector("#smvPopupName")) addHoneypot(form);
+      });
+    };
+
+    prepareForms();
+    const observer = new MutationObserver(prepareForms);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    document.addEventListener("submit", function (event) {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement)) return;
+
+      const isMain = form.id === "customerEnquiryForm";
+      const popupName = form.querySelector("#smvPopupName");
+      if (!isMain && !popupName) return;
+
+      const honeypot = clean(form.elements?._smv_company_website?.value);
+      if (honeypot) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+      }
+
+      const nameField = isMain ? document.getElementById("customerName") : popupName;
+      const mobileField = isMain ? document.getElementById("customerMobile") : form.querySelector("#smvPopupMobile");
+
+      if (nameField && !isHumanName(nameField.value)) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        nameField.setCustomValidity("Please enter your real name using letters only.");
+        nameField.reportValidity();
+        nameField.focus();
+        const clear = () => { nameField.setCustomValidity(""); nameField.removeEventListener("input", clear); };
+        nameField.addEventListener("input", clear);
+        return;
+      }
+
+      if (mobileField && !isValidIndianMobile(mobileField.value)) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        mobileField.setCustomValidity("Please enter a valid 10-digit Indian mobile number.");
+        mobileField.reportValidity();
+        mobileField.focus();
+        const clear = () => { mobileField.setCustomValidity(""); mobileField.removeEventListener("input", clear); };
+        mobileField.addEventListener("input", clear);
+      }
+    }, true);
+  }
 
   window.addEventListener("error", function (event) {
     console.warn("SMV website script warning:", event.message || event.error || event);
@@ -129,41 +275,56 @@
       const originalInsert = proto.insert;
       proto.insert = function (values, options) {
         let shouldTrackCustomerEnquiry = false;
+        let hasQualifiedLead = false;
 
         try {
           const target = String(this?.url || "");
           if (target.includes("customer_enquiries")) {
             shouldTrackCustomerEnquiry = true;
             const comment = currentCustomerComment();
+            const attribution = getAttribution();
             const enrich = row => {
               if (!row || typeof row !== "object" || Array.isArray(row)) return row;
 
               const next = { ...row };
               delete next.priority;
 
+              let existingRequirements = clean(next.requirements);
+
               if (comment) {
-                const existingRequirements = clean(next.requirements);
                 const commentLine = `Customer comment: ${comment}`;
                 if (!existingRequirements.toLowerCase().includes(commentLine.toLowerCase())) {
-                  next.requirements = existingRequirements
+                  existingRequirements = existingRequirements
                     ? `${existingRequirements}\n${commentLine}`
                     : commentLine;
                 }
               }
 
+              attributionLines(attribution, clean(next.location)).forEach(line => {
+                if (!existingRequirements.toLowerCase().includes(line.toLowerCase())) {
+                  existingRequirements = existingRequirements ? `${existingRequirements}\n${line}` : line;
+                }
+              });
+
+              next.requirements = existingRequirements;
               delete next.contact_remark;
+
+              const qualifiedContact = isHumanName(next.customer_name) && isValidIndianMobile(next.mobile);
+              const outsidePaidArea = isGoogleAdsTraffic(attribution) && clearlyOutsideDelhiGurgaon(next.location);
+              if (qualifiedContact && !outsidePaidArea) hasQualifiedLead = true;
+
               return next;
             };
 
             values = Array.isArray(values) ? values.map(enrich) : enrich(values);
           }
         } catch (error) {
-          console.warn("SMV comment bridge warning:", error);
+          console.warn("SMV comment / attribution bridge warning:", error);
         }
 
         const result = originalInsert.call(this, values, options);
 
-        if (shouldTrackCustomerEnquiry && result && typeof result.then === "function") {
+        if (shouldTrackCustomerEnquiry && hasQualifiedLead && result && typeof result.then === "function") {
           let conversionTracked = false;
           const originalThen = result.then.bind(result);
           result.then = function (onFulfilled, onRejected) {
@@ -967,11 +1128,13 @@
   }
 
   function safeInit() {
+    captureAttribution();
     installCustomerEnquiryInsertBridge();
     installHomepageDisplayStyles();
     installPopupConfirmationNormalizer();
     injectHomePartnerOffer();
     ensureEmailField();
+    installFormQualityGuards();
     installMainEnquiryEnhancements();
     installWhatsappIconCleanup();
     installHeaderTweaks();
