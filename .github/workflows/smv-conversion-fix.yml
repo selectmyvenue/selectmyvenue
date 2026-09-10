@@ -1,0 +1,155 @@
+name: SMV conversion tracking fix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/smv-conversion-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch-conversion-tracking:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Patch successful CRM lead conversions only
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('script.js')
+          text = path.read_text(encoding='utf-8')
+
+          label = 'AW-18435642634/_rfMCLfZsfAcEIqq5tZE'
+          if label in text:
+              raise SystemExit('Conversion label already exists; refusing duplicate patch.')
+
+          mobile_marker = '''/* =========================================================
+   MOBILE MENU
+   ========================================================= */'''
+          if text.count(mobile_marker) != 1:
+              raise SystemExit('Expected MOBILE MENU marker exactly once.')
+
+          helper = '''/* =========================================================
+   GOOGLE ADS LEAD CONVERSION
+   Fires only after a genuine customer enquiry is saved to CRM.
+   ========================================================= */
+
+function trackGoogleAdsLeadConversion() {
+  if (typeof window.gtag !== "function") {
+    console.warn(
+      "Select My Venue: Google Ads conversion not sent because gtag is unavailable."
+    );
+    return false;
+  }
+
+  try {
+    window.gtag("event", "conversion", {
+      send_to: "AW-18435642634/_rfMCLfZsfAcEIqq5tZE",
+      value: 1.0,
+      currency: "INR"
+    });
+
+    console.log(
+      "Select My Venue: Google Ads lead conversion sent after successful CRM save."
+    );
+    return true;
+  } catch (error) {
+    console.warn(
+      "Select My Venue: Google Ads conversion tracking error:",
+      error
+    );
+    return false;
+  }
+}
+
+'''
+
+          text = text.replace(mobile_marker, helper + mobile_marker, 1)
+
+          customer_start = text.index('function setupCustomerEnquiry()')
+          popup_start = text.index('function setupAutoEnquiryPopup()', customer_start)
+          before_customer = text[:customer_start]
+          customer = text[customer_start:popup_start]
+          after_customer = text[popup_start:]
+
+          customer_needle = '''        if (error) {
+          console.error(
+            "SUPABASE DATABASE ERROR:",
+            error
+          );
+          throw error;
+        }
+
+        form.reset();'''
+          customer_replacement = '''        if (error) {
+          console.error(
+            "SUPABASE DATABASE ERROR:",
+            error
+          );
+          throw error;
+        }
+
+        trackGoogleAdsLeadConversion();
+
+        form.reset();'''
+
+          if customer.count(customer_needle) != 1:
+              raise SystemExit('Expected main enquiry success insertion point exactly once.')
+          customer = customer.replace(customer_needle, customer_replacement, 1)
+
+          popup_needle = '''      if (error) {
+        console.error(
+          "SELECT MY VENUE POPUP INSERT ERROR:",
+          error
+        );
+        throw error;
+      }
+
+      /*
+       * Keep the same enquiry information synchronized with the'''
+          popup_replacement = '''      if (error) {
+        console.error(
+          "SELECT MY VENUE POPUP INSERT ERROR:",
+          error
+        );
+        throw error;
+      }
+
+      trackGoogleAdsLeadConversion();
+
+      /*
+       * Keep the same enquiry information synchronized with the'''
+
+          if after_customer.count(popup_needle) != 1:
+              raise SystemExit('Expected popup enquiry success insertion point exactly once.')
+          after_customer = after_customer.replace(popup_needle, popup_replacement, 1)
+
+          text = before_customer + customer + after_customer
+
+          if text.count(label) != 1:
+              raise SystemExit('Conversion label should exist exactly once in helper.')
+          if text.count('trackGoogleAdsLeadConversion();') != 2:
+              raise SystemExit('Conversion helper should be called exactly twice.')
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+          node --check script.js
+
+      - name: Commit website fix and remove temporary workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/smv-conversion-fix.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add script.js .github/workflows/smv-conversion-fix.yml
+          git commit -m "Track Google Ads conversion after successful CRM enquiry save"
+          git push origin HEAD:main
