@@ -10,17 +10,10 @@
   const ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1";
 
   function fireGoogleAdsLeadConversion() {
-    try {
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
-      window.gtag("event", "conversion", {
-        send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
-        value: 1.0,
-        currency: "INR"
-      });
-    } catch (error) {
-      console.warn("Google Ads conversion tracking warning:", error);
-    }
+    // Conversion tracking is owned by script.js after a successful CRM save.
+    // Keep this compatibility function as a no-op so the insert bridge cannot
+    // send a second Google Ads conversion for the same enquiry.
+    return false;
   }
 
   if (!document.getElementById("smvPerformanceStability")) {
