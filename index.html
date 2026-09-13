@@ -2807,6 +2807,157 @@
 
 <script src="homepage-venues.js?v=20260909-comment-fix-7"></script>
 
+<script>
+(function(){
+  "use strict";
+
+  function installHomeSmartVenueFilters(){
+    var section=document.getElementById("featuredVenues");
+    var grid=document.getElementById("homeVenueGrid");
+    if(!section||!grid||grid.dataset.smartFiltersInstalled==="1")return;
+    var cards=[].slice.call(grid.querySelectorAll(".home-venue-card"));
+    if(!cards.length)return;
+    grid.dataset.smartFiltersInstalled="1";
+
+    var style=document.createElement("style");
+    style.id="smvHomeSmartFiltersStyles";
+    style.textContent=""+
+      "#featuredVenues .smv-home-filter-layout{display:grid;grid-template-columns:255px minmax(0,1fr);gap:18px;align-items:start}"+
+      "#featuredVenues .smv-home-filter-panel{position:sticky;top:96px;padding:15px;border:1px solid rgba(9,117,94,.18);border-radius:18px;background:linear-gradient(155deg,#f9fffd,#eef9f5);box-shadow:0 14px 30px rgba(3,53,44,.09)}"+
+      "#featuredVenues .smv-home-filter-panel small{display:block;color:#0b806a;font-size:8px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}"+
+      "#featuredVenues .smv-home-filter-panel h3{margin:5px 0 4px;color:#063b31;font-size:18px!important}"+
+      "#featuredVenues .smv-home-filter-panel>p{margin:0 0 12px;color:#5b786f;font-size:9.5px!important;line-height:1.45!important}"+
+      "#featuredVenues .smv-home-filter-label{margin:11px 0 6px;color:#9a6a15;font-size:8px;font-weight:950;letter-spacing:.11em;text-transform:uppercase}"+
+      "#featuredVenues .smv-home-filter-panel input,#featuredVenues .smv-home-filter-panel select{width:100%;height:40px;min-height:40px;margin:0 0 7px;padding:0 10px;border:1px solid rgba(9,117,94,.17);border-radius:10px;background:#fff;color:#123f36;font:inherit;font-size:10.5px;font-weight:800;outline:none}"+
+      "#featuredVenues .smv-home-filter-panel input:focus,#featuredVenues .smv-home-filter-panel select:focus{border-color:#0b806a;box-shadow:0 0 0 3px rgba(11,128,106,.07)}"+
+      "#featuredVenues .smv-home-quick{display:grid;grid-template-columns:1fr 1fr;gap:6px}"+
+      "#featuredVenues .smv-home-quick button{min-height:34px;padding:0 7px;border:1px solid rgba(9,117,94,.16);border-radius:9px;background:#fff;color:#35665a;font:inherit;font-size:9px;font-weight:900;cursor:pointer}"+
+      "#featuredVenues .smv-home-quick button:first-child{grid-column:1/-1}"+
+      "#featuredVenues .smv-home-quick button.active,#featuredVenues .smv-home-quick button:hover{border-color:#0b806a;background:#e1f7f0;color:#075c4e}"+
+      "#featuredVenues .smv-home-filter-footer{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid rgba(7,94,77,.10)}"+
+      "#featuredVenues .smv-home-filter-count{color:#426b61;font-size:9px;font-weight:850}"+
+      "#featuredVenues .smv-home-reset{min-height:31px;padding:0 9px;border:1px solid rgba(157,108,23,.22);border-radius:9px;background:#fff9e9;color:#8a5e12;font:inherit;font-size:8.5px;font-weight:950;cursor:pointer}"+
+      "#featuredVenues .smv-home-results{min-width:0}"+
+      "#featuredVenues .smv-home-no-results{display:none;padding:24px;border:1px dashed rgba(8,110,90,.22);border-radius:16px;background:#f8fffc;color:#456d63;text-align:center;font-size:12px;font-weight:800}"+
+      "#featuredVenues .home-venue-card{cursor:pointer}"+
+      "#featuredVenues .home-venue-card:focus-visible{outline:3px solid rgba(11,128,106,.34);outline-offset:3px}"+
+      "#featuredVenues .smv-home-filter-toggle{display:none;width:100%;min-height:43px;margin:0 0 10px;border:1px solid rgba(9,117,94,.24);border-radius:11px;background:linear-gradient(180deg,#0b806a,#075c4e);color:#fff;font:inherit;font-size:11.5px;font-weight:950}"+
+      "@media(max-width:1000px){#featuredVenues .smv-home-filter-layout{display:block}#featuredVenues .smv-home-filter-toggle{display:block}#featuredVenues .smv-home-filter-panel{display:none;position:static;margin-bottom:12px}#featuredVenues .smv-home-filter-panel.open{display:block}}"+
+      "@media(max-width:520px){#featuredVenues .smv-home-filter-panel{padding:12px}}";
+    document.head.appendChild(style);
+
+    var layout=document.createElement("div");
+    layout.className="smv-home-filter-layout";
+    var results=document.createElement("div");
+    results.className="smv-home-results";
+    var panel=document.createElement("aside");
+    panel.className="smv-home-filter-panel";
+    panel.innerHTML=''+
+      '<small>SMART VENUE FILTERS</small><h3>Find your fit faster.</h3><p>Filter these verified venues instantly instead of opening them one by one.</p>'+
+      '<div class="smv-home-filter-label">Search</div><input id="smvHomeSearch" type="search" placeholder="Venue, city or area" aria-label="Search homepage venues">'+
+      '<div class="smv-home-filter-label">Location</div><select id="smvHomeLocation"><option value="">All Locations</option></select>'+
+      '<div class="smv-home-filter-label">Guest capacity</div><select id="smvHomeCapacity"><option value="">Any Capacity</option><option value="50">Up to 50 guests</option><option value="100">Up to 100 guests</option><option value="200">Up to 200 guests</option><option value="300">Up to 300 guests</option><option value="500">Up to 500 guests</option><option value="800">Up to 800 guests</option><option value="1000">1000+ guests</option></select>'+
+      '<div class="smv-home-filter-label">Budget / person</div><select id="smvHomeBudget"><option value="">Any Price</option><option value="1000">Up to ₹1,000</option><option value="1500">Up to ₹1,500</option><option value="2000">Up to ₹2,000</option><option value="3000">Up to ₹3,000</option><option value="5000">Up to ₹5,000</option></select>'+
+      '<div class="smv-home-filter-label">Popular requirements</div><div class="smv-home-quick" id="smvHomeQuick"><button class="active" type="button" data-filter="all">All Venues</button><button type="button" data-filter="parking">Parking</button><button type="button" data-filter="rooms">Rooms</button><button type="button" data-filter="veg">Vegetarian</button><button type="button" data-filter="nonveg">Non-Veg</button><button type="button" data-filter="300plus">300+ Guests</button></div>'+
+      '<div class="smv-home-filter-footer"><span class="smv-home-filter-count" id="smvHomeCount"></span><button class="smv-home-reset" id="smvHomeReset" type="button">Reset</button></div>';
+
+    var toggle=document.createElement("button");
+    toggle.type="button";
+    toggle.className="smv-home-filter-toggle";
+    toggle.textContent="☰ Filter Venues";
+
+    grid.parentNode.insertBefore(toggle,grid);
+    grid.parentNode.insertBefore(layout,grid);
+    layout.appendChild(panel);
+    results.appendChild(grid);
+    layout.appendChild(results);
+
+    var noResults=document.createElement("div");
+    noResults.className="smv-home-no-results";
+    noResults.textContent="No matching venues found. Try another filter or browse all verified venues.";
+    results.appendChild(noResults);
+
+    var locations=[];
+    cards.forEach(function(card){
+      var locationNode=card.querySelector(".home-venue-location");
+      var locationText=locationNode?locationNode.textContent.replace("⌖","").trim():"";
+      card.dataset.smvLocation=locationText;
+      locationText.split(",").forEach(function(part){var value=part.trim();if(value&&locations.indexOf(value)===-1)locations.push(value);});
+      var facts=card.querySelectorAll(".home-venue-facts span");
+      var capacityText=facts[0]?facts[0].textContent:"";
+      var priceText=facts[1]?facts[1].textContent:"";
+      var capacityNumbers=capacityText.match(/[0-9,]+/g)||[];
+      var maxCapacity=capacityNumbers.length?Number(capacityNumbers[capacityNumbers.length-1].replace(/,/g,"")):0;
+      var priceNumber=(priceText.match(/[0-9,]+/)||[""])[0];
+      card.dataset.smvCapacity=String(maxCapacity||0);
+      card.dataset.smvPrice=String(priceNumber?Number(priceNumber.replace(/,/g,"")):0);
+      var features=(card.querySelector(".home-venue-features")?card.querySelector(".home-venue-features").textContent:"").toLowerCase();
+      card.dataset.smvFeatures=features;
+      var profile=card.querySelector('a[href*="venue.html?id="]');
+      if(profile){card.dataset.profileUrl=profile.href;card.setAttribute("role","link");card.setAttribute("tabindex","0");}
+    });
+    locations.sort();
+    var locationSelect=document.getElementById("smvHomeLocation");
+    locations.forEach(function(value){var option=document.createElement("option");option.value=value;option.textContent=value;locationSelect.appendChild(option);});
+
+    var search=document.getElementById("smvHomeSearch");
+    var capacity=document.getElementById("smvHomeCapacity");
+    var budget=document.getElementById("smvHomeBudget");
+    var quick=document.getElementById("smvHomeQuick");
+    var count=document.getElementById("smvHomeCount");
+    var reset=document.getElementById("smvHomeReset");
+    var active="all";
+
+    function applyFilters(){
+      var q=(search.value||"").trim().toLowerCase();
+      var loc=locationSelect.value||"";
+      var cap=Number(capacity.value||0);
+      var bud=Number(budget.value||0);
+      var visible=0;
+      cards.forEach(function(card){
+        var text=(card.textContent||"").toLowerCase();
+        var matches=!q||text.indexOf(q)!==-1;
+        if(matches&&loc)matches=(card.dataset.smvLocation||"").toLowerCase().indexOf(loc.toLowerCase())!==-1;
+        var cardCapacity=Number(card.dataset.smvCapacity||0);
+        var cardPrice=Number(card.dataset.smvPrice||0);
+        if(matches&&cap){matches=cap===1000?cardCapacity>=1000:cardCapacity>=cap;}
+        if(matches&&bud&&cardPrice)matches=cardPrice<=bud;
+        var f=card.dataset.smvFeatures||"";
+        if(matches&&active==="parking")matches=f.indexOf("parking")!==-1;
+        if(matches&&active==="rooms")matches=f.indexOf("rooms")!==-1;
+        if(matches&&active==="veg")matches=f.indexOf("vegetarian")!==-1;
+        if(matches&&active==="nonveg")matches=f.indexOf("non-vegetarian")!==-1;
+        if(matches&&active==="300plus")matches=cardCapacity>=300;
+        card.hidden=!matches;
+        if(matches)visible++;
+      });
+      count.textContent=visible+" venue"+(visible===1?"":"s")+" shown";
+      noResults.style.display=visible?"none":"block";
+    }
+
+    [search,locationSelect,capacity,budget].forEach(function(control){control.addEventListener(control===search?"input":"change",applyFilters);});
+    quick.addEventListener("click",function(event){var button=event.target.closest("[data-filter]");if(!button)return;active=button.dataset.filter||"all";quick.querySelectorAll("[data-filter]").forEach(function(item){item.classList.toggle("active",item===button);});applyFilters();});
+    reset.addEventListener("click",function(){search.value="";locationSelect.value="";capacity.value="";budget.value="";active="all";quick.querySelectorAll("[data-filter]").forEach(function(item){item.classList.toggle("active",item.dataset.filter==="all");});applyFilters();});
+    toggle.addEventListener("click",function(){var open=panel.classList.toggle("open");toggle.textContent=open?"✕ Close Filters":"☰ Filter Venues";});
+
+    grid.addEventListener("click",function(event){if(event.target.closest("a,button,input,select,textarea,label"))return;var card=event.target.closest(".home-venue-card[data-profile-url]");if(card&&card.dataset.profileUrl)window.location.href=card.dataset.profileUrl;});
+    grid.addEventListener("keydown",function(event){if(event.key!=="Enter"&&event.key!==" ")return;if(event.target.closest("a,button,input,select,textarea,label"))return;var card=event.target.closest(".home-venue-card[data-profile-url]");if(!card||!card.dataset.profileUrl)return;event.preventDefault();window.location.href=card.dataset.profileUrl;});
+    applyFilters();
+  }
+
+  function watchHomeVenues(){
+    var grid=document.getElementById("homeVenueGrid");
+    if(!grid)return;
+    installHomeSmartVenueFilters();
+    var observer=new MutationObserver(function(){installHomeSmartVenueFilters();});
+    observer.observe(grid,{childList:true});
+  }
+
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",watchHomeVenues,{once:true});
+  else watchHomeVenues();
+})();
+</script>
+
 
 </body>
 </html>
