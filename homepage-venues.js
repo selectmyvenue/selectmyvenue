@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const PERFORMANCE_CSS_VERSION = "20260914-filter-apply-1";
+  const PERFORMANCE_CSS_VERSION = "20260914-filter-stability-2";
   const SUCCESS_TEXT = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
   const DUPLICATE_TEXT = SUCCESS_TEXT;
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
@@ -218,13 +218,15 @@
       if(result.error)throw result.error;
       const rows=(Array.isArray(result.data)?result.data:[]).map(x=>x?.venue||x).filter(Boolean); if(!rows.length)return;
       grid.innerHTML=rows.map(item=>{
-        const name=clean(item.venue_name)||"Verified Venue",locationText=[clean(item.area),clean(item.city)].filter(Boolean).join(", ")||"Location on request",cover=clean(item.cover_image_url);
-        const max=Number(item.capacity_max||0),min=Number(item.capacity_min||0),price=Number(item.price_min_per_person||0);
+        const name=clean(item.venue_name)||"Verified Venue";
+        const city=clean(item.city),area=clean(item.area),venueType=clean(item.venue_type);
+        const locationText=[area,city].filter(Boolean).join(", ")||"Location on request";
+        const cover=clean(item.cover_image_url),max=Number(item.capacity_max||0),min=Number(item.capacity_min||0),price=Number(item.price_min_per_person||0);
         const capacity=max?`Up to ${max.toLocaleString("en-IN")} guests`:min?`${min.toLocaleString("en-IN")}+ guests`:"Capacity on request";
         const priceText=price?`From ₹${price.toLocaleString("en-IN")}/person`:"Quote on request";
         const features=[];if(item.food_veg)features.push("Vegetarian");if(item.food_non_veg)features.push("Non-Vegetarian");if(item.parking_available)features.push("Parking");if(item.rooms_available)features.push("Rooms");if(item.catering_available)features.push("Catering");if(item.decoration_available)features.push("Decoration");
         const href=`venue.html?id=${encodeURIComponent(item.id)}`;
-        return `<article class="home-venue-card" data-venue-type="${escapeHtml(clean(item.venue_type))}" data-capacity="${max||min||0}" data-price="${price||0}"><a href="${href}" class="home-venue-media" aria-label="View ${escapeHtml(name)}">${cover?`<img src="${escapeHtml(cover)}" alt="${escapeHtml(name)}" loading="lazy" decoding="async">`:'<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>'}<div class="home-venue-badges"><span class="home-venue-badge verified">✓ Verified Partner</span>${item.featured?'<span class="home-venue-badge">Featured</span>':''}</div></a><div class="home-venue-content"><p class="home-venue-location">⌖ ${escapeHtml(locationText)}</p><h3><a href="${href}">${escapeHtml(name)}</a></h3><div class="home-venue-facts"><span>${escapeHtml(capacity)}</span><span>${escapeHtml(priceText)}</span></div>${features.length?`<div class="home-venue-features">${features.slice(0,4).map(f=>`<span>${escapeHtml(f)}</span>`).join("")}</div>`:""}<div class="home-venue-actions"><a class="primary-btn" href="${href}">View Venue →</a><a class="secondary-btn" href="${href}&quote=1">Check Availability</a></div></div></article>`;
+        return `<article class="home-venue-card" data-venue-city="${escapeHtml(city)}" data-venue-area="${escapeHtml(area)}" data-venue-type="${escapeHtml(venueType)}" data-capacity="${max||min||0}" data-price="${price||0}" data-features="${escapeHtml(features.join("|"))}"><a href="${href}" class="home-venue-media" aria-label="View ${escapeHtml(name)}">${cover?`<img src="${escapeHtml(cover)}" alt="${escapeHtml(name)}" loading="lazy" decoding="async">`:'<div class="home-venue-image-fallback" aria-hidden="true">🏨</div>'}<div class="home-venue-badges"><span class="home-venue-badge verified">✓ Verified Partner</span>${item.featured?'<span class="home-venue-badge">Featured</span>':''}</div></a><div class="home-venue-content"><p class="home-venue-location">⌖ ${escapeHtml(locationText)}</p><h3><a href="${href}">${escapeHtml(name)}</a></h3><div class="home-venue-facts"><span>${escapeHtml(capacity)}</span><span>${escapeHtml(priceText)}</span></div>${features.length?`<div class="home-venue-features">${features.slice(0,4).map(f=>`<span>${escapeHtml(f)}</span>`).join("")}</div>`:""}<div class="home-venue-actions"><a class="primary-btn" href="${href}">View Venue →</a><a class="secondary-btn" href="${href}&quote=1">Check Availability</a></div></div></article>`;
       }).join("");
       simplifyHomeVenueHeading();section.hidden=false;
     }catch(error){console.warn("Homepage venues unavailable:",error);}
@@ -232,33 +234,81 @@
 
   function installHomeFilterApplyUX(){
     if(window.__smvHomeFilterApplyUX)return;window.__smvHomeFilterApplyUX=true;
-    let applied=false,stagedQuick="all";
-    const style=document.createElement("style");style.id="smvHomeFilterApplyStyles";style.textContent="#featuredVenues .smv-home-filter-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}#featuredVenues .smv-home-apply{min-height:43px;border:0;border-radius:11px;background:linear-gradient(135deg,#31dac2,#0f9482);color:#03231f;font:inherit;font-size:10.5px;font-weight:950;cursor:pointer}#featuredVenues .smv-home-clear{min-height:43px;padding:0 11px;border:1px solid rgba(232,189,104,.28);border-radius:11px;background:rgba(232,189,104,.06);color:#f0cf7b;font:inherit;font-size:9.5px;font-weight:900;cursor:pointer}#featuredVenues .smv-home-filter-status{margin-top:8px;color:#9ec0ba;font-size:9px;font-weight:800;line-height:1.4}#featuredVenues .smv-home-filter-status strong{color:#f0cf7b}@media(max-width:520px){#featuredVenues .smv-home-filter-actions{grid-template-columns:1fr}}";document.head.appendChild(style);
+    let stagedQuick="all";
+    const style=document.createElement("style");
+    style.id="smvHomeFilterApplyStyles";
+    style.textContent="#featuredVenues .smv-home-filter-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:13px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}#featuredVenues .smv-home-apply{min-height:43px;border:0;border-radius:11px;background:linear-gradient(135deg,#31dac2,#0f9482);color:#03231f;font:inherit;font-size:10.5px;font-weight:950;cursor:pointer}#featuredVenues .smv-home-clear{min-height:43px;padding:0 11px;border:1px solid rgba(232,189,104,.28);border-radius:11px;background:rgba(232,189,104,.06);color:#f0cf7b;font:inherit;font-size:9.5px;font-weight:900;cursor:pointer}#featuredVenues .smv-home-filter-status{margin-top:8px;color:#9ec0ba;font-size:9px;font-weight:800;line-height:1.4}#featuredVenues .smv-home-filter-status strong{color:#f0cf7b}@media(max-width:520px){#featuredVenues .smv-home-filter-actions{grid-template-columns:1fr}}";
+    document.head.appendChild(style);
+
     function install(){
-      const panel=document.querySelector("#featuredVenues .smv-home-filter-panel"),grid=document.getElementById("homeVenueGrid");if(!panel||!grid)return false;
-      if(!document.getElementById("smvHomeApply")){
-        const old=panel.querySelector(".smv-home-filter-footer");if(old)old.style.display="none";
-        const a=document.createElement("div");a.className="smv-home-filter-actions";a.innerHTML='<button id="smvHomeApply" class="smv-home-apply" type="button">Show Matching Venues →</button><button id="smvHomeClear" class="smv-home-clear" type="button">Clear All</button>';panel.appendChild(a);
-        const s=document.createElement("div");s.id="smvHomeFilterStatus";s.className="smv-home-filter-status";s.innerHTML='Select requirements, then press <strong>Show Matching Venues</strong>.';panel.appendChild(s);
-        document.getElementById("smvHomeApply").addEventListener("click",apply);
-        document.getElementById("smvHomeClear").addEventListener("click",clearAll);
-        const cap=document.getElementById("smvHomeCapacity");cap?.querySelectorAll("option").forEach(o=>{if(o.value&&o.value!=="1000")o.textContent="Venue capacity "+o.value+"+ guests";});
-        panel.addEventListener("input",e=>{if(e.target.id==="smvHomeSearch"){e.stopPropagation();dirty();}},true);
-        panel.addEventListener("change",e=>{if(["smvHomeLocation","smvHomeCapacity","smvHomeBudget"].includes(e.target.id)){e.stopPropagation();dirty();}},true);
-        panel.addEventListener("click",e=>{const b=e.target.closest("#smvHomeQuick [data-filter]");if(!b)return;e.stopPropagation();e.preventDefault();stagedQuick=b.dataset.filter||"all";document.querySelectorAll("#smvHomeQuick [data-filter]").forEach(x=>x.classList.toggle("active",x===b));dirty();},true);
-      }
-      if(applied)setTimeout(apply,0);return true;
+      const panel=document.querySelector("#featuredVenues .smv-home-filter-panel"),grid=document.getElementById("homeVenueGrid");
+      if(!panel||!grid)return false;
+      if(document.getElementById("smvHomeApply"))return true;
+      const old=panel.querySelector(".smv-home-filter-footer");if(old)old.style.display="none";
+      const actions=document.createElement("div");actions.className="smv-home-filter-actions";actions.innerHTML='<button id="smvHomeApply" class="smv-home-apply" type="button">Show Matching Venues →</button><button id="smvHomeClear" class="smv-home-clear" type="button">Clear All</button>';panel.appendChild(actions);
+      const status=document.createElement("div");status.id="smvHomeFilterStatus";status.className="smv-home-filter-status";status.innerHTML='Select requirements, then press <strong>Show Matching Venues</strong>.';panel.appendChild(status);
+      document.getElementById("smvHomeApply").addEventListener("click",apply);
+      document.getElementById("smvHomeClear").addEventListener("click",clearAll);
+      document.getElementById("smvHomeSearch")?.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();apply();}});
+      const cap=document.getElementById("smvHomeCapacity");cap?.querySelectorAll("option").forEach(o=>{if(o.value&&o.value!=="1000")o.textContent="Venue capacity "+o.value+"+ guests";});
+      panel.addEventListener("input",e=>{if(e.target.id==="smvHomeSearch"){e.stopPropagation();dirty();}},true);
+      panel.addEventListener("change",e=>{if(["smvHomeLocation","smvHomeCapacity","smvHomeBudget"].includes(e.target.id)){e.stopPropagation();dirty();}},true);
+      panel.addEventListener("click",e=>{const b=e.target.closest("#smvHomeQuick [data-filter]");if(!b)return;e.stopPropagation();e.preventDefault();stagedQuick=b.dataset.filter||"all";document.querySelectorAll("#smvHomeQuick [data-filter]").forEach(x=>x.classList.toggle("active",x===b));dirty();},true);
+      return true;
     }
+
     function dirty(){const s=document.getElementById("smvHomeFilterStatus");if(s)s.textContent="Requirements changed — press Show Matching Venues to update results.";}
-    function read(card){const text=(card.textContent||"").toLowerCase();const loc=(card.querySelector(".home-venue-location")?.textContent||"").replace("⌖","").trim().toLowerCase();const cap=Number(card.dataset.capacity||((card.querySelectorAll(".home-venue-facts span")[0]?.textContent||"").match(/[0-9][0-9,]*/g)||[]).pop()?.replace(/,/g,"")||0);const price=Number(card.dataset.price||((card.querySelectorAll(".home-venue-facts span")[1]?.textContent||"").match(/[0-9][0-9,]*/)||[0])[0].toString().replace(/,/g,"")||0);return{text,loc,cap,price};}
+
+    function read(card){
+      const name=(card.querySelector("h3")?.textContent||"").trim().toLowerCase();
+      const city=clean(card.dataset.venueCity).toLowerCase();
+      const area=clean(card.dataset.venueArea).toLowerCase();
+      const type=clean(card.dataset.venueType).toLowerCase();
+      const loc=(card.querySelector(".home-venue-location")?.textContent||"").replace("⌖","").trim().toLowerCase();
+      const features=(card.dataset.features||card.querySelector(".home-venue-features")?.textContent||"").toLowerCase();
+      const cap=Number(card.dataset.capacity||0),price=Number(card.dataset.price||0);
+      return{name,city,area,type,loc,features,cap,price,searchText:[name,city,area,type,loc].join(" ")};
+    }
+
+    function setVisible(card,visible){
+      card.hidden=false;
+      if(visible)card.style.removeProperty("display");
+      else card.style.setProperty("display","none","important");
+    }
+
     function apply(){
       const grid=document.getElementById("homeVenueGrid");if(!grid)return;
-      const q=clean(document.getElementById("smvHomeSearch")?.value).toLowerCase(),loc=clean(document.getElementById("smvHomeLocation")?.value).toLowerCase(),guests=Number(document.getElementById("smvHomeCapacity")?.value||0),budget=Number(document.getElementById("smvHomeBudget")?.value||0);let visible=0;
-      [...grid.querySelectorAll(".home-venue-card")].forEach(card=>{const d=read(card);let ok=!q||d.text.includes(q);if(ok&&loc)ok=d.loc.includes(loc);if(ok&&guests)ok=!!d.cap&&(guests===1000?d.cap>=1000:d.cap>=guests);if(ok&&budget)ok=!!d.price&&d.price<=budget;if(ok&&stagedQuick==="parking")ok=d.text.includes("parking");if(ok&&stagedQuick==="rooms")ok=d.text.includes("rooms");if(ok&&stagedQuick==="veg")ok=d.text.includes("vegetarian");if(ok&&stagedQuick==="nonveg")ok=d.text.includes("non-vegetarian");if(ok&&stagedQuick==="300plus")ok=d.cap>=300;card.hidden=!ok;if(ok)visible++;});
-      const no=document.querySelector("#featuredVenues .smv-home-no-results");if(no)no.style.display=visible?"none":"block";const s=document.getElementById("smvHomeFilterStatus");if(s)s.innerHTML='<strong>'+visible+'</strong> matching venue'+(visible===1?'':'s')+' shown.';applied=true;document.querySelector("#featuredVenues .smv-home-results")?.scrollIntoView({behavior:"smooth",block:"start"});
+      const q=clean(document.getElementById("smvHomeSearch")?.value).toLowerCase();
+      const loc=clean(document.getElementById("smvHomeLocation")?.value).toLowerCase();
+      const guests=Number(document.getElementById("smvHomeCapacity")?.value||0),budget=Number(document.getElementById("smvHomeBudget")?.value||0);
+      let visible=0;
+      [...grid.querySelectorAll(".home-venue-card")].forEach(card=>{
+        const d=read(card);let ok=!q||d.searchText.includes(q);
+        if(ok&&loc)ok=d.loc.includes(loc)||d.city===loc||d.area===loc;
+        if(ok&&guests)ok=!!d.cap&&(guests===1000?d.cap>=1000:d.cap>=guests);
+        if(ok&&budget)ok=!!d.price&&d.price<=budget;
+        if(ok&&stagedQuick==="parking")ok=d.features.includes("parking");
+        if(ok&&stagedQuick==="rooms")ok=d.features.includes("rooms");
+        if(ok&&stagedQuick==="veg")ok=d.features.includes("vegetarian");
+        if(ok&&stagedQuick==="nonveg")ok=d.features.includes("non-vegetarian");
+        if(ok&&stagedQuick==="300plus")ok=d.cap>=300;
+        setVisible(card,ok);if(ok)visible++;
+      });
+      const no=document.querySelector("#featuredVenues .smv-home-no-results");if(no)no.style.display=visible?"none":"block";
+      const s=document.getElementById("smvHomeFilterStatus");if(s)s.innerHTML='<strong>'+visible+'</strong> matching venue'+(visible===1?'':'s')+' shown.';
     }
-    function clearAll(){["smvHomeSearch","smvHomeLocation","smvHomeCapacity","smvHomeBudget"].forEach(id=>{const x=document.getElementById(id);if(x)x.value="";});stagedQuick="all";document.querySelectorAll("#smvHomeQuick [data-filter]").forEach(x=>x.classList.toggle("active",x.dataset.filter==="all"));document.querySelectorAll("#homeVenueGrid .home-venue-card").forEach(card=>card.hidden=false);const no=document.querySelector("#featuredVenues .smv-home-no-results");if(no)no.style.display="none";const s=document.getElementById("smvHomeFilterStatus");if(s)s.innerHTML='Filters cleared. <strong>All verified venues</strong> are shown.';applied=false;}
-    const observer=new MutationObserver(install);observer.observe(document.body,{childList:true,subtree:true});install();
+
+    function clearAll(){
+      ["smvHomeSearch","smvHomeLocation","smvHomeCapacity","smvHomeBudget"].forEach(id=>{const x=document.getElementById(id);if(x)x.value="";});
+      stagedQuick="all";document.querySelectorAll("#smvHomeQuick [data-filter]").forEach(x=>x.classList.toggle("active",x.dataset.filter==="all"));
+      document.querySelectorAll("#homeVenueGrid .home-venue-card").forEach(card=>setVisible(card,true));
+      const no=document.querySelector("#featuredVenues .smv-home-no-results");if(no)no.style.display="none";
+      const s=document.getElementById("smvHomeFilterStatus");if(s)s.innerHTML='Filters cleared. <strong>All verified venues</strong> are shown.';
+    }
+
+    const observer=new MutationObserver(()=>{if(install())observer.disconnect();});
+    observer.observe(document.body,{childList:true,subtree:true});
+    if(install())observer.disconnect();
   }
 
   function safeInit(){
