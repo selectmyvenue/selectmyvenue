@@ -4,52 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Verified Venues | Select My Venue</title>
-  <meta name="description" content="Browse approved venue partners in Delhi and Gurgaon and submit a quick venue enquiry directly from the directory.">
+  <meta name="description" content="Browse verified venue partners and filter by venue type, location, occasion, food, capacity, budget and facilities.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://selectmyvenue.com/venues.html">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Verified Venues | Select My Venue">
-  <meta property="og:description" content="Browse approved venue partners and request personalised venue options.">
-  <meta property="og:url" content="https://selectmyvenue.com/venues.html">
-  <meta property="og:image" content="https://selectmyvenue.com/assets/hero/hero-bright-wedding-v2.webp">
-  <meta property="og:site_name" content="Select My Venue">
-  <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512">
-  <link rel="shortcut icon" href="/favicon.ico" sizes="any">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+  <meta property="og:type" content="website"><meta property="og:title" content="Verified Venues | Select My Venue"><meta property="og:description" content="Browse verified venue partners and find the right venue faster."><meta property="og:url" content="https://selectmyvenue.com/venues.html"><meta property="og:image" content="https://selectmyvenue.com/assets/hero/hero-bright-wedding-v2.webp"><meta property="og:site_name" content="Select My Venue">
+  <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512"><link rel="shortcut icon" href="/favicon.ico" sizes="any"><link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
   <link rel="stylesheet" href="public-pages.css?v=20260908-customer-copy-2">
   <style>
     .venue-directory-main{width:min(1480px,calc(100% - 34px))}
     .venue-directory-hero{max-width:none;margin:0 0 24px;padding:38px;border:1px solid rgba(232,189,104,.22);border-radius:26px;background:linear-gradient(90deg,rgba(3,20,18,.96),rgba(3,20,18,.55)),url('assets/hero/hero-bright-wedding-v2.webp') center/cover;box-shadow:0 28px 70px rgba(0,0,0,.28)}
     .venue-directory-hero h1{max-width:820px}.venue-directory-hero p{max-width:760px;color:#d9ebe7!important}.venue-directory-trust{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}.venue-directory-trust span{display:inline-flex;align-items:center;min-height:34px;padding:0 12px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(2,18,16,.55);color:#fff;font-size:11px;font-weight:800}
     .directory-quick-shell{display:grid;grid-template-columns:.7fr 1.3fr;gap:20px;align-items:stretch;margin-bottom:24px}.directory-quick-copy{padding:26px;border:1px solid rgba(109,231,211,.13);border-radius:20px;background:linear-gradient(145deg,rgba(10,35,32,.92),rgba(5,23,21,.96))}.directory-quick-copy h2{margin:4px 0 10px;font-size:30px}.directory-quick-copy p{color:#b4cbc6}.directory-quick-shell .quick-enquiry-card{border-radius:20px;border:1px solid rgba(232,189,104,.28)!important}
-    .venue-directory-results{display:grid;grid-template-columns:300px minmax(0,1fr);gap:22px;align-items:start}
-    .venue-results-column{min-width:0}
-    .venue-results-intro{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 12px;padding:13px 15px;border:1px solid rgba(109,231,211,.12);border-radius:15px;background:linear-gradient(135deg,rgba(255,255,255,.025),rgba(45,210,189,.025));color:#a9c9c3}
-    .venue-results-intro strong{display:block;color:#f7ffff;font-size:13px}.venue-results-intro span{font-size:10px;font-weight:750}.venue-results-intro b{display:inline-flex;align-items:center;padding:6px 9px;border:1px solid rgba(232,189,104,.2);border-radius:999px;color:#e8c875;background:rgba(232,189,104,.05);font-size:9px;white-space:nowrap}
-    .venue-filter-shell{position:sticky;top:88px;max-height:none;overflow:visible;margin:0;padding:18px;border:1px solid rgba(109,231,211,.18);border-radius:20px;background:linear-gradient(155deg,rgba(9,42,38,.98),rgba(4,26,24,.98));box-shadow:0 18px 44px rgba(0,0,0,.2)}
-    .filter-sidebar-head{padding:2px 2px 14px;margin-bottom:13px;border-bottom:1px solid rgba(255,255,255,.07)}.filter-sidebar-head .eyebrow{margin:0 0 7px;color:#72e5d4}.filter-sidebar-head h2{margin:0 0 7px;color:#fff;font-size:22px;line-height:1.05}.filter-sidebar-head p:last-child{margin:0;color:#9ebdb7;font-size:10px;line-height:1.5}
-    .filter-group-label{margin:14px 1px 7px;color:#e7c56d;font-size:8.5px;font-weight:950;letter-spacing:.12em;text-transform:uppercase}
-    .venue-filter-shell .toolbar{display:grid;grid-template-columns:1fr!important;gap:8px;margin:0}.venue-filter-shell .toolbar input,.venue-filter-shell .toolbar select{width:100%;min-height:43px;border:1px solid rgba(109,231,211,.18);border-radius:11px;background:#092e2a;color:#e7f5f2;padding:0 11px;font:inherit;font-size:11px;font-weight:800;outline:none}.venue-filter-shell .toolbar input::placeholder{color:#7fa59e}.venue-filter-shell .toolbar input:focus,.venue-filter-shell .toolbar select:focus{border-color:rgba(58,219,194,.55);box-shadow:0 0 0 3px rgba(45,210,189,.07)}
-    .quick-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:0}.quick-filter{min-height:38px;padding:0 9px;border:1px solid rgba(109,231,211,.16);border-radius:10px;background:rgba(255,255,255,.025);color:#b9d0cc;font:inherit;font-size:9.5px;font-weight:850;cursor:pointer;text-align:center}.quick-filter:hover,.quick-filter.active{border-color:rgba(45,210,189,.5);background:rgba(45,210,189,.1);color:#80eadb}.quick-filter:first-child{grid-column:1/-1}
-    .venue-filter-shell .smv-advanced-filters{display:grid!important;grid-template-columns:1fr!important;gap:8px!important;margin-top:0!important}.venue-filter-shell .smv-advanced-filters select{width:100%!important;min-height:43px!important;border-radius:11px!important;background:#092e2a!important}.venue-filter-shell .smv-match-strip{display:block!important;margin-top:11px!important;padding:11px!important}.venue-filter-shell .smv-match-strip strong,.venue-filter-shell .smv-match-strip span{display:block}.venue-filter-shell .smv-match-strip span{margin-top:4px;line-height:1.45}
-    .smart-filter-note{margin:13px 0 0;padding:10px 11px;border:1px solid rgba(232,189,104,.16);border-radius:11px;background:rgba(232,189,104,.045);color:#aebfba;font-size:9px;line-height:1.45}.smart-filter-note strong{color:#e9ca77}
-    .venue-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-    .venue-card.smv-filter-hidden{display:none!important}
-    .smv-filter-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(255,255,255,.08)}
-    .smv-filter-apply{min-height:44px;border:0;border-radius:11px;background:linear-gradient(135deg,#32d9c2,#0f9382);color:#03241f;font:inherit;font-size:11px;font-weight:950;cursor:pointer;box-shadow:0 8px 18px rgba(22,161,140,.18)}
-    .smv-filter-clear{min-height:44px;padding:0 12px;border:1px solid rgba(232,189,104,.28);border-radius:11px;background:rgba(232,189,104,.06);color:#f0cf7b;font:inherit;font-size:10px;font-weight:900;cursor:pointer}
-    .smv-filter-status{margin-top:9px;color:#91b8b1;font-size:9.5px;font-weight:800;line-height:1.4}.smv-filter-status strong{color:#f2d47d}.smv-filter-dirty{color:#f1cd74}
-    #smvStrictNoResults{display:none}#smvStrictNoResults.show{display:block}
-    @media(max-width:1220px){.venue-directory-results{grid-template-columns:270px minmax(0,1fr)}.venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:1000px){.directory-quick-shell{grid-template-columns:1fr}.venue-directory-results{grid-template-columns:1fr}.venue-filter-shell{position:static;max-height:none;overflow:visible}.venue-filter-shell .toolbar{grid-template-columns:minmax(0,1.5fr) minmax(170px,.5fr)!important}.quick-filters{display:flex;flex-wrap:wrap}.quick-filter:first-child{grid-column:auto}.venue-filter-shell .smv-advanced-filters{grid-template-columns:repeat(2,minmax(0,1fr))!important}.venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:620px){.venue-directory-main{width:min(100% - 18px,1480px)}.venue-directory-hero{padding:26px 20px}.venue-filter-shell{padding:14px}.venue-filter-shell .toolbar{grid-template-columns:1fr!important}.venue-filter-shell .smv-advanced-filters{grid-template-columns:1fr!important}.quick-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.quick-filter:first-child{grid-column:1/-1}.venue-results-intro{align-items:flex-start;flex-direction:column}.venue-grid{grid-template-columns:1fr;gap:16px}.smv-filter-actions{grid-template-columns:1fr}.smv-filter-clear{width:100%}}
+    .venue-directory-results{display:grid;grid-template-columns:270px minmax(0,1fr);gap:18px;align-items:start}.venue-results-column{min-width:0}.venue-results-intro{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 12px;padding:13px 15px;border:1px solid rgba(109,231,211,.12);border-radius:15px;background:linear-gradient(135deg,rgba(255,255,255,.025),rgba(45,210,189,.025));color:#a9c9c3}.venue-results-intro strong{display:block;color:#f7ffff;font-size:13px}.venue-results-intro span{font-size:10px;font-weight:750}.venue-results-intro b{display:inline-flex;align-items:center;padding:6px 9px;border:1px solid rgba(232,189,104,.2);border-radius:999px;color:#e8c875;background:rgba(232,189,104,.05);font-size:9px;white-space:nowrap}
+    .venue-filter-shell{min-height:180px}.venue-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    @media(max-width:1220px){.venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:1000px){.directory-quick-shell{grid-template-columns:1fr}.venue-directory-results{grid-template-columns:1fr}.venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:620px){.venue-directory-main{width:min(100% - 18px,1480px)}.venue-directory-hero{padding:26px 20px}.venue-results-intro{align-items:flex-start;flex-direction:column}.venue-grid{grid-template-columns:1fr;gap:16px}}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header class="page-header"><nav class="page-nav" aria-label="Main navigation"><a href="index.html" aria-label="Select My Venue home"><img class="page-logo" src="logo.png" alt="Select My Venue"></a><div class="page-nav-links"><a href="wedding-venues-delhi-ncr.html">Wedding Venues</a><a href="party-halls-delhi-ncr.html">Party Venues</a><a href="corporate-event-venues-delhi-ncr.html">Corporate Venues</a><a href="delhi-ncr-venues.html">Delhi & Gurgaon</a><a class="page-nav-cta" href="#directoryQuickEnquiry">Quick Enquiry</a></div></nav></header>
   <main class="page-main venue-directory-main">
-    <section class="page-hero venue-directory-hero"><p class="eyebrow">SELECT MY VENUE PARTNER NETWORK</p><h1>Browse venues. Compare the details that matter.</h1><p>Explore approved venue partners, search by city or area, and submit one short requirement when you want personalised options.</p><div class="venue-directory-trust"><span>✓ Verified partner venues</span><span>✓ Capacity & facility details</span><span>✓ Quick personalised help</span></div></section>
+    <section class="page-hero venue-directory-hero"><p class="eyebrow">SELECT MY VENUE PARTNER NETWORK</p><h1>Browse venues. Filter faster. Compare smarter.</h1><p>Use the search bar and detailed filters to narrow verified venues by type, location, occasion, food, guest capacity, budget and facilities.</p><div class="venue-directory-trust"><span>✓ Verified partner venues</span><span>✓ Detailed smart filters</span><span>✓ Quick personalised help</span></div></section>
     <section class="directory-quick-shell" id="directoryQuickEnquiry">
       <div class="directory-quick-copy"><p class="eyebrow">NEED HELP SHORTLISTING?</p><h2>Tell us what you need in under a minute.</h2><p>If browsing feels like too much, share the essential details once. Our team can use your requirement to focus on more relevant venue options.</p></div>
       <aside class="quick-enquiry-card"><p class="eyebrow">QUICK VENUE ENQUIRY</p><h2>Get matching venue options</h2>
@@ -57,7 +34,7 @@
           <div class="form-field"><label>YOUR NAME *</label><input name="customer_name" autocomplete="name" placeholder="Your name" required></div>
           <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
           <div class="form-field"><label>EVENT TYPE *</label><select name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Birthday</option><option>Party</option><option>Corporate Event</option><option>Reception</option><option>Other</option></select></div>
-          <div class="form-field"><label>LOCATION *</label><select name="location" required><option value="">Select location</option><option>Delhi</option><option>Gurgaon</option><option>Delhi & Gurgaon</option></select></div>
+          <div class="form-field"><label>LOCATION *</label><select name="location" required><option value="">Select location</option><option>Delhi</option><option>Gurgaon</option><option>Noida</option><option>Faridabad</option><option>Delhi NCR</option></select></div>
           <div class="form-field"><label>EVENT DATE *</label><input name="event_date" type="date" required></div>
           <div class="form-field"><label>GUESTS</label><input name="guests" type="number" min="1" placeholder="e.g. 200"></div>
           <div class="form-field full"><label>BUDGET / PERSON</label><input name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></div>
@@ -68,119 +45,15 @@
       </aside>
     </section>
     <section class="venue-directory-results" aria-label="Venue directory">
-      <aside class="venue-filter-shell" aria-label="Smart venue filters">
-        <div class="filter-sidebar-head"><p class="eyebrow">SMART VENUE FILTERS</p><h2>Find your fit faster.</h2><p>Choose your requirements, then tap Show Matching Venues.</p></div>
-        <div class="filter-group-label">Search & location</div>
-        <div class="toolbar"><input id="venueSearch" type="search" placeholder="Venue, city, area or occasion" aria-label="Search venues"><select id="venueCity" aria-label="Filter by city"><option value="">All Cities</option></select></div>
-        <div class="filter-group-label">Popular requirements</div>
-        <div class="quick-filters" id="venueQuickFilters" aria-label="Quick venue filters"><button class="quick-filter active" type="button" data-filter="all">All Venues</button><button class="quick-filter" type="button" data-filter="parking">Parking</button><button class="quick-filter" type="button" data-filter="rooms">Rooms</button><button class="quick-filter" type="button" data-filter="veg">Vegetarian</button><button class="quick-filter" type="button" data-filter="nonveg">Non-Veg</button><button class="quick-filter" type="button" data-filter="300plus">300+ Guests</button></div>
-        <div class="filter-group-label">Venue, area, capacity & budget</div>
-        <p class="smart-filter-note"><strong>Smart tip:</strong> choose as many requirements as you need. Results are shown only after you press the button below.</p>
-      </aside>
+      <aside class="venue-filter-shell" aria-label="Detailed venue filters"><div class="state-card"><h2>Loading filters…</h2></div></aside>
       <div class="venue-results-column">
-        <div class="venue-results-intro"><div><strong>Verified venue results</strong><span>Click anywhere on a venue card to open its full profile, or shortlist and compare venues.</span></div><b>Smart filtered results</b></div>
+        <div class="venue-results-intro"><div><strong>Verified venue results</strong><span>Use the detailed filters on the left or search above the venue list.</span></div><b>Smart filtered results</b></div>
         <div id="venueGrid" class="venue-grid" aria-live="polite"><div class="state-card"><h2>Loading venues…</h2><p>Please wait while we prepare the verified partner directory.</p></div></div>
       </div>
     </section>
   </main>
   <footer class="page-footer">© 2026 Select My Venue · <a href="delhi-ncr-venues.html">Delhi & Gurgaon</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="https://partner.selectmyvenue.com/">Partner Login</a></footer>
-  <script src="venues.js?v=20260914-filter-stability-2"></script>
+  <script src="venues.js?v=20260914-marketplace-filters-3"></script>
   <script src="quick-enquiry.js?v=20260909-comment-fix-6"></script>
-  <script>
-  (function(){
-    "use strict";
-    const shell=document.querySelector('.venue-filter-shell');
-    const grid=document.getElementById('venueGrid');
-    if(!shell||!grid)return;
-    let stagedQuick='all',applied=false,reapplyTimer=0;
-
-    function parseNumber(text){const m=String(text||'').match(/[0-9][0-9,]*/);return m?Number(m[0].replace(/,/g,'')):0;}
-    function readCard(card){
-      const name=(card.querySelector('h2')?.textContent||'').trim().toLowerCase();
-      const loc=(card.querySelector('.venue-location')?.textContent||'').replace('⌖','').trim().toLowerCase();
-      const type=(card.querySelector('.venue-type')?.textContent||'').trim().toLowerCase();
-      const facts=card.querySelectorAll('.venue-fact');
-      const capNums=[...(facts[0]?.textContent||'').matchAll(/[0-9][0-9,]*/g)].map(x=>Number(x[0].replace(/,/g,'')));
-      const capacity=capNums.length?Math.max(...capNums):0;
-      const price=parseNumber(facts[1]?.textContent||'');
-      const featureText=(card.querySelector('.venue-feature-list')?.textContent||'').toLowerCase();
-      return{name,loc,type,capacity,price,featureText,searchText:[name,loc,type].join(' ')};
-    }
-    function controls(){return{search:document.getElementById('venueSearch'),city:document.getElementById('venueCity'),area:document.getElementById('smvAreaFilter'),type:document.getElementById('smvTypeFilter'),guest:document.getElementById('smvGuestFilter'),budget:document.getElementById('smvBudgetFilter'),sort:document.getElementById('smvSort')};}
-    function ensureActions(){
-      if(document.getElementById('smvFilterApply'))return true;
-      const c=controls();if(!c.area||!c.type||!c.guest||!c.budget)return false;
-      c.guest.querySelectorAll('option').forEach(o=>{if(o.value&&o.value!=='1000')o.textContent='Venue capacity '+o.value+'+ guests';});
-      const actions=document.createElement('div');actions.className='smv-filter-actions';actions.innerHTML='<button id="smvFilterApply" class="smv-filter-apply" type="button">Show Matching Venues →</button><button id="smvFilterClear" class="smv-filter-clear" type="button">Clear All</button>';shell.appendChild(actions);
-      const status=document.createElement('div');status.id='smvFilterStatus';status.className='smv-filter-status';status.innerHTML='Select your requirements, then press <strong>Show Matching Venues</strong>.';shell.appendChild(status);
-      document.getElementById('smvFilterApply').addEventListener('click',apply);
-      document.getElementById('smvFilterClear').addEventListener('click',clearAll);
-      c.search?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();apply();}});
-      return true;
-    }
-    function markDirty(){const status=document.getElementById('smvFilterStatus');if(status){status.classList.add('smv-filter-dirty');status.textContent='Requirements changed — press Show Matching Venues to update results.';}}
-
-    shell.addEventListener('input',e=>{if(e.target.matches('#venueSearch')){e.stopPropagation();markDirty();}},true);
-    shell.addEventListener('change',e=>{if(e.target.matches('#venueCity,#smvAreaFilter,#smvTypeFilter,#smvGuestFilter,#smvBudgetFilter,#smvSort')){e.stopPropagation();markDirty();}},true);
-    shell.addEventListener('click',e=>{
-      const b=e.target.closest('#venueQuickFilters [data-filter]');if(!b)return;
-      e.stopPropagation();e.preventDefault();stagedQuick=b.dataset.filter||'all';
-      document.querySelectorAll('#venueQuickFilters [data-filter]').forEach(x=>x.classList.toggle('active',x===b));markDirty();
-    },true);
-
-    function apply(){
-      if(!ensureActions())return;
-      const c=controls(),q=(c.search?.value||'').trim().toLowerCase(),city=(c.city?.value||'').trim().toLowerCase(),area=(c.area?.value||'').trim().toLowerCase(),type=(c.type?.value||'').trim().toLowerCase(),guests=Number(c.guest?.value||0),budget=Number(c.budget?.value||0);
-      const cards=[...grid.querySelectorAll('.venue-card')];
-      cards.forEach((card,index)=>{if(card.dataset.smvOriginalOrder==null)card.dataset.smvOriginalOrder=String(index);});
-      let visible=0;
-      cards.forEach(card=>{
-        const d=readCard(card);let ok=true;
-        if(q&&!d.searchText.includes(q))ok=false;
-        if(ok&&city&&!d.loc.includes(city))ok=false;
-        if(ok&&area&&!d.loc.includes(area))ok=false;
-        if(ok&&type&&d.type!==type)ok=false;
-        if(ok&&guests)ok=!!d.capacity&&(guests===1000?d.capacity>=1000:d.capacity>=guests);
-        if(ok&&budget)ok=!!d.price&&d.price<=budget;
-        if(ok&&stagedQuick==='parking')ok=d.featureText.includes('parking');
-        if(ok&&stagedQuick==='rooms')ok=d.featureText.includes('rooms');
-        if(ok&&stagedQuick==='veg')ok=d.featureText.includes('vegetarian');
-        if(ok&&stagedQuick==='nonveg')ok=d.featureText.includes('non-vegetarian');
-        if(ok&&stagedQuick==='300plus')ok=d.capacity>=300;
-        card.hidden=false;card.classList.toggle('smv-filter-hidden',!ok);if(ok)visible++;
-      });
-
-      const visibleCards=cards.filter(x=>!x.classList.contains('smv-filter-hidden'));
-      const mode=c.sort?.value||'recommended';
-      if(mode==='price-low')visibleCards.sort((a,b)=>(readCard(a).price||999999)-(readCard(b).price||999999));
-      else if(mode==='capacity-high')visibleCards.sort((a,b)=>readCard(b).capacity-readCard(a).capacity);
-      else if(mode==='name')visibleCards.sort((a,b)=>(a.querySelector('h2')?.textContent||'').localeCompare(b.querySelector('h2')?.textContent||''));
-      else visibleCards.sort((a,b)=>Number(a.dataset.smvOriginalOrder||0)-Number(b.dataset.smvOriginalOrder||0));
-      visibleCards.forEach((card,index)=>card.style.order=String(index));
-
-      let empty=document.getElementById('smvStrictNoResults');
-      if(!empty){empty=document.createElement('div');empty.id='smvStrictNoResults';empty.className='state-card';empty.innerHTML='<h2>No matching venues found</h2><p>Try changing one requirement or clear the filters.</p>';grid.after(empty);}
-      empty.classList.toggle('show',visible===0);
-      const status=document.getElementById('smvFilterStatus');if(status){status.classList.remove('smv-filter-dirty');status.innerHTML='<strong>'+visible+'</strong> matching venue'+(visible===1?'':'s')+' shown.';}
-      applied=true;
-    }
-
-    function clearAll(){
-      const c=controls();if(c.search)c.search.value='';if(c.city)c.city.value='';if(c.area)c.area.value='';if(c.type)c.type.value='';if(c.guest)c.guest.value='';if(c.budget)c.budget.value='';if(c.sort)c.sort.value='recommended';stagedQuick='all';
-      document.querySelectorAll('#venueQuickFilters [data-filter]').forEach(x=>x.classList.toggle('active',x.dataset.filter==='all'));
-      [...grid.querySelectorAll('.venue-card')].forEach(card=>{card.hidden=false;card.classList.remove('smv-filter-hidden');card.style.removeProperty('order');});
-      document.getElementById('smvStrictNoResults')?.classList.remove('show');
-      const status=document.getElementById('smvFilterStatus');if(status){status.classList.remove('smv-filter-dirty');status.innerHTML='Filters cleared. <strong>All verified venues</strong> are shown.';}applied=false;
-    }
-
-    const observer=new MutationObserver(()=>{
-      ensureActions();
-      if(applied){clearTimeout(reapplyTimer);reapplyTimer=setTimeout(apply,40);}
-    });
-    observer.observe(shell,{childList:true,subtree:true});
-    observer.observe(grid,{childList:true});
-    ensureActions();
-  })();
-  </script>
 </body>
 </html>
