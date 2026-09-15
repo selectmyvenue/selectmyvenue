@@ -1,113 +1,38 @@
-@import url("./public-pages-core-20260905.css?v=20260905-core-1");
-@import url("./smv-standard-header.css?v=20260905-header-1");
-@import url("./public-pages-ads-ready.css?v=20260915-seo-local-1");
-@import url("./landing-page-visuals-20260908.css?v=20260915-seo-local-1");
-@import url("./performance-stability.css?v=20260909-premium-confirmation-1");
+@import url("./public-pages-core-20260905.css?v=90b4d69");
+@import url("./wedding-theme.css?v=20260905-wedding-1");
 
-/* Removed optional WhatsApp copy/send checkbox from all public enquiry forms. */
-.smv-whatsapp-opt,
-.smv-quick-whatsapp-opt,
-.smv-venue-whatsapp-opt,
-[data-smv-whatsapp-option],
-label:has(input[name="send_whatsapp"]),
-#customerWhatsappOpt,
-input[name="send_whatsapp"]{
-  display:none!important;
+/* Venue directory presentation fix — 2026-09-16 */
+.venue-card .venue-location{
+  font-size:12.5px!important;
+  line-height:1.35!important;
+  font-weight:800!important;
+  color:#b9d8d2!important;
+  margin:0 0 2px!important;
 }
-
-/* Premium luxury polish for public pages */
-.quick-enquiry-card,
-.quick-search-card,
-.contact-card,
-.location-card,
-.intent-link-card{
-  border-color:rgba(236,199,102,.26)!important;
-  background:linear-gradient(145deg,#0a3933 0%,#062924 62%,#031b18 100%)!important;
-  box-shadow:0 16px 38px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.035)!important;
+.venue-card .venue-actions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+  width:100%!important;
+  margin-top:auto!important;
+  align-items:stretch!important;
 }
-.quick-enquiry-card:hover,
-.contact-card:hover,
-.location-card:hover,
-.intent-link-card:hover{
-  border-color:rgba(245,211,119,.56)!important;
-  box-shadow:0 20px 48px rgba(0,0,0,.28),0 0 0 1px rgba(218,181,83,.07)!important;
+.venue-card .venue-actions .button{
+  width:100%!important;
+  min-width:0!important;
+  min-height:48px!important;
+  padding:0 14px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  line-height:1.15!important;
+  font-size:12px!important;
+  font-weight:900!important;
 }
-.quick-enquiry-card .eyebrow,
-.quick-search-card .eyebrow,
-.contact-card b,
-.location-card b,
-.intent-link-card b{
-  color:#f3d27b!important;
+.venue-card .venue-actions .button-primary{
+  color:#032b25!important;
 }
-.quick-enquiry-card h2,
-.quick-search-card h2,
-.contact-card strong,
-.location-card strong,
-.intent-link-card strong{
-  color:#fff3cf!important;
+@media(max-width:420px){
+  .venue-card .venue-actions{grid-template-columns:1fr!important}
 }
-
-/* Search cards on SEO pages now match the website instead of a browser-default form. */
-.quick-search-card{padding:30px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;border-left:1px solid rgba(236,199,102,.28)!important;color:#eaf8f5!important}
-.quick-search-card>p{color:#b9d2cd!important;font-size:14px!important;line-height:1.55!important}
-.quick-search-form{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;margin-top:14px!important}
-.quick-search-form .form-field.full{grid-column:1/-1!important}
-.quick-search-form label{color:#efd586!important;font-size:10px!important;font-weight:950!important;letter-spacing:.08em!important}
-.quick-search-form input,.quick-search-form select{
-  width:100%!important;min-height:49px!important;padding:0 13px!important;
-  border:1px solid rgba(108,224,206,.22)!important;border-radius:11px!important;
-  background:#0a413a!important;color:#f3fffc!important;font-size:14px!important;outline:none!important;
-  color-scheme:dark!important;
-}
-.quick-search-form input::placeholder{color:#88ada6!important}
-.quick-search-form input:focus,.quick-search-form select:focus{border-color:#52e0cb!important;box-shadow:0 0 0 3px rgba(74,220,198,.10)!important}
-.quick-search-form select option,.quick-enquiry-form select option,.form-field select option{background:#07342f!important;color:#f2fffc!important}
-.quick-search-form .button{width:100%!important;min-height:51px!important;font-size:14px!important;background:linear-gradient(135deg,#24d9c2,#149f90)!important;color:#03231f!important;box-shadow:0 10px 24px rgba(12,138,123,.20)!important}
-
-/* Make pages that forgot a landing class still show a meaningful local/event visual. */
-html:has(link[rel="canonical"][href*="venues-in-delhi"]) .search-landing-copy{--landing-hero-image:url('assets/hero/hero-bright-wedding-v2.webp')!important;background-image:linear-gradient(90deg,rgba(2,17,15,.96) 0%,rgba(2,17,15,.67) 43%,rgba(2,17,15,.16) 100%),var(--landing-hero-image)!important;background-size:cover!important;background-position:center 46%!important}
-html:has(link[rel="canonical"][href*="venues-in-gurgaon"]) .search-landing-copy{--landing-hero-image:url('assets/hero/hero-bright-garden-v2.webp')!important;background-image:linear-gradient(90deg,rgba(2,17,15,.96) 0%,rgba(2,17,15,.67) 43%,rgba(2,17,15,.16) 100%),var(--landing-hero-image)!important;background-size:cover!important;background-position:center 43%!important}
-html:has(link[rel="canonical"][href*="venues-in-noida"]) .search-landing-copy{--landing-hero-image:url('assets/hero/hero-bright-celebration-v2.webp')!important;background-image:linear-gradient(90deg,rgba(2,17,15,.96) 0%,rgba(2,17,15,.68) 43%,rgba(2,17,15,.16) 100%),var(--landing-hero-image)!important;background-size:cover!important;background-position:center 46%!important}
-html:has(link[rel="canonical"][href*="venues-in-faridabad"]) .search-landing-copy{--landing-hero-image:url('assets/hero/hero-bright-engagement-v2.webp')!important;background-image:linear-gradient(90deg,rgba(2,17,15,.96) 0%,rgba(2,17,15,.68) 43%,rgba(2,17,15,.16) 100%),var(--landing-hero-image)!important;background-size:cover!important;background-position:center 44%!important}
-html:has(link[rel="canonical"][href*="wedding-"]) .search-landing-copy,
-html:has(link[rel="canonical"][href*="banquet-halls"]) .search-landing-copy{--landing-hero-image:url('assets/hero/hero-bright-wedding-v2.webp')!important;background-image:linear-gradient(90deg,rgba(2,17,15,.96) 0%,rgba(2,17,15,.67) 43%,rgba(2,17,15,.16) 100%),var(--landing-hero-image)!important;background-size:cover!important}
-html:has(link[rel="canonical"][href*="party-halls"]),
-html:has(link[rel="canonical"][href*="birthday-party"]),
-html:has(link[rel="canonical"][href*="reception-venues"]),
-html:has(link[rel="canonical"][href*="engagement-venues"]){--landing-hero-image:url('assets/hero/hero-bright-celebration-v2.webp')}
-html:has(link[rel="canonical"][href*="party-halls"]) .search-landing-copy,
-html:has(link[rel="canonical"][href*="birthday-party"]) .search-landing-copy,
-html:has(link[rel="canonical"][href*="reception-venues"]) .search-landing-copy,
-html:has(link[rel="canonical"][href*="engagement-venues"]) .search-landing-copy{background-image:linear-gradient(90deg,rgba(2,17,15,.96) 0%,rgba(2,17,15,.68) 43%,rgba(2,17,15,.16) 100%),var(--landing-hero-image)!important;background-size:cover!important}
-html:has(link[rel="canonical"][href*="corporate-event"]) .search-landing-copy{--landing-hero-image:url('assets/hero/hero-bright-garden-v2.webp')!important;background-image:linear-gradient(90deg,rgba(2,17,15,.96) 0%,rgba(2,17,15,.68) 43%,rgba(2,17,15,.16) 100%),var(--landing-hero-image)!important;background-size:cover!important}
-
-/* Reusable SEO local-discovery components. */
-.seo-local-panel{margin-top:28px!important;padding:30px!important;border:1px solid rgba(236,199,102,.22)!important;border-radius:22px!important;background:linear-gradient(145deg,rgba(9,43,38,.94),rgba(4,24,22,.98))!important;box-shadow:0 20px 52px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.04)!important}
-.seo-local-panel>header{max-width:920px;margin-bottom:20px}.seo-local-panel h2{margin:6px 0 8px!important;color:#f8fffd!important}.seo-local-panel>header>p:last-child{color:#aac8c2!important}
-.seo-area-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.seo-area-chip{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:0 14px;border:1px solid rgba(102,223,205,.16);border-radius:12px;background:rgba(255,255,255,.025);color:#dff2ee;font-size:13px;font-weight:800;transition:.2s ease}
-.seo-area-chip::after{content:'→';color:#efd17b}.seo-area-chip:hover{transform:translateY(-2px);border-color:rgba(238,204,112,.42);background:rgba(238,204,112,.055);color:#fff4cf}
-.seo-event-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-.seo-event-card{position:relative;min-height:190px;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;border:1px solid rgba(236,199,102,.24);border-radius:18px;background-size:cover;background-position:center;box-shadow:0 18px 42px rgba(0,0,0,.22);isolation:isolate}
-.seo-event-card::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(1,16,14,.08),rgba(1,16,14,.88) 78%)}
-.seo-event-card:nth-child(1){background-image:url('assets/hero/hero-bright-wedding-v2.webp')}.seo-event-card:nth-child(2){background-image:url('assets/hero/hero-bright-engagement-v2.webp')}.seo-event-card:nth-child(3){background-image:url('assets/hero/hero-bright-celebration-v2.webp')}.seo-event-card:nth-child(4){background-image:url('assets/hero/hero-bright-garden-v2.webp')}
-.seo-event-card h3{margin:0 0 6px!important;color:#fff!important;font-size:21px!important}.seo-event-card p{margin:0 0 12px!important;color:#dcece8!important;font-size:12.5px!important}.seo-event-card a{color:#f3d27b!important;font-size:12px!important;font-weight:900!important}
-.seo-city-banner{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:24px;padding:18px 20px;border:1px solid rgba(236,199,102,.22);border-radius:16px;background:linear-gradient(90deg,rgba(236,199,102,.08),rgba(34,213,189,.06));color:#c9dfda}.seo-city-banner strong{color:#ffe39a;font-size:14px}.seo-city-banner .button{flex:0 0 auto}
-
-/* Contextual colour cue for city landing pages. */
-html:has(link[rel="canonical"][href*="venues-in-delhi"]) .breadcrumbs span:last-child,
-html:has(link[rel="canonical"][href*="wedding-venues-in-delhi"]),
-html:has(link[rel="canonical"][href*="banquet-halls-in-delhi"]){--seo-local-accent:#f0cd70}
-
-.page-footer{
-  margin-top:28px!important;
-  padding:24px 18px!important;
-  border-top:1px solid rgba(236,199,102,.3)!important;
-  background:linear-gradient(180deg,#041f1c 0%,#021412 58%,#010b0a 100%)!important;
-  color:#9ab9b3!important;
-  box-shadow:inset 0 1px 0 rgba(246,211,119,.05)!important;
-}
-.page-footer a{color:#e7c76f!important;border-bottom:1px solid transparent}.page-footer a:hover{color:#ffe6a0!important;border-bottom-color:rgba(255,230,160,.4)!important}
-
-@media(max-width:980px){.seo-area-grid,.seo-event-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.seo-city-banner{align-items:flex-start;flex-direction:column}}
-@media(max-width:620px){.quick-search-form{grid-template-columns:1fr!important}.quick-search-form .form-field.full{grid-column:auto!important}.seo-area-grid,.seo-event-grid{grid-template-columns:1fr}.seo-local-panel{padding:20px!important}.seo-event-card{min-height:175px}}
