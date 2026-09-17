@@ -55,3 +55,4 @@ body.celebration-site #featuredVenues .smv-home-result-bar{flex-wrap:wrap!import
 body.celebration-site #featuredVenues .smv-home-result-bar button{background:#edf2e5!important;color:#416233!important;border:1px solid #cfdec4!important;padding:8px 12px!important;border-radius:4px!important;font:inherit!important;font-size:11px!important;cursor:pointer}
 body.celebration-site #featuredVenues{width:min(1280px,calc(100% - 64px))!important;max-width:1280px!important;padding:65px 0!important;margin:0 auto!important}
 @media(max-width:760px){body.celebration-site #featuredVenues{width:calc(100% - 40px)!important;padding:45px 0!important}}
+@media(min-width:761px){body.celebration-site #featuredVenues .smv-home-filter-panel{max-height:780px!important;overflow:auto!important;position:sticky!important;top:20px!important;scrollbar-width:thin}}
