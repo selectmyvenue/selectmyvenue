@@ -95,7 +95,20 @@
     const state={type:"",location:"",food:"",occasion:"",capacity:"",budget:"",more:""};
     const matches=v=>{if(state.type&&clean(v.venue_type)!==state.type)return false;if(state.location&&![clean(v.city),clean(v.area)].some(x=>normal(x)===normal(state.location)))return false;if(state.food==="Vegetarian"&&v.food_veg!==true)return false;if(state.food==="Non-Vegetarian"&&v.food_non_veg!==true)return false;if(state.occasion&&!eventTypes(v).some(e=>normal(e).includes(normal(state.occasion))||normal(state.occasion).includes(normal(e))))return false;if(state.capacity&&capacityBucket(Number(v.capacity_max||v.capacity_min||0))!==state.capacity)return false;if(state.budget){const p=Number(v.price_min_per_person||0),label=p<=1000?BUDGET_ORDER[0]:p<=1500?BUDGET_ORDER[1]:p<=2000?BUDGET_ORDER[2]:p<=3000?BUDGET_ORDER[3]:BUDGET_ORDER[4];if(!p||label!==state.budget)return false}if(state.more==="Parking"&&v.parking_available!==true)return false;if(state.more==="Rooms"&&v.rooms_available!==true)return false;if(state.more==="Catering"&&v.catering_available!==true)return false;if(state.more==="Decoration"&&v.decoration_available!==true)return false;return true};
     const clearAll=()=>{Object.keys(state).forEach(k=>state[k]="");panel.querySelectorAll("[data-filter-search]").forEach(i=>i.value="");apply()};
-    const apply=()=>{let shown=0;[...grid.querySelectorAll(".home-venue-card")].forEach(card=>{const item=rows.find(v=>String(v.id)===String(card.dataset.venueId)),ok=item?matches(item):true;card.hidden=!ok;if(ok)shown++});resultBar.innerHTML=`<span><strong>${shown}</strong> of ${rows.length} verified venues shown</span><button type="button" class="smv-home-clear-all">Clear All Filters</button>`;empty.style.display=shown?"none":"block";panel.querySelectorAll(".smv-filter-choice").forEach(b=>b.classList.toggle("active",state[b.dataset.category]===b.dataset.value));resultBar.querySelector(".smv-home-clear-all")?.addEventListener("click",clearAll)};
+    let expanded=false;
+    const apply=()=>{
+      let matched=0,shown=0;
+      [...grid.querySelectorAll(".home-venue-card")].forEach(card=>{
+        const item=rows.find(v=>String(v.id)===String(card.dataset.venueId)),ok=item?matches(item):true;
+        if(ok)matched++;
+        const visible=ok&&(expanded||shown<6);card.hidden=!visible;if(visible)shown++;
+      });
+      resultBar.innerHTML=`<span><strong>${shown}</strong> of ${matched} matching venues</span>${matched>6?`<button type="button" data-show-matches>${expanded?'Show fewer':'Show all '+matched+' venues'}</button>`:''}<button type="button" class="smv-home-clear-all">Clear All Filters</button>`;
+      empty.style.display=matched?"none":"block";
+      panel.querySelectorAll(".smv-filter-choice").forEach(b=>b.classList.toggle("active",state[b.dataset.category]===b.dataset.value));
+      resultBar.querySelector(".smv-home-clear-all")?.addEventListener("click",()=>{expanded=false;clearAll()});
+      resultBar.querySelector('[data-show-matches]')?.addEventListener('click',()=>{expanded=!expanded;apply()});
+    };
     panel.addEventListener("click",e=>{if(e.target.closest("[data-clear-filters]")){clearAll();return}const b=e.target.closest(".smv-filter-choice");if(!b)return;state[b.dataset.category]=b.dataset.value||"";apply()});
     panel.addEventListener("input",e=>{const i=e.target.closest("[data-filter-search]");if(!i)return;const t=normal(i.value),cat=i.dataset.filterSearch;panel.querySelectorAll(`[data-list="${cat}"] .smv-filter-choice`).forEach(b=>b.style.display=!t||normal(b.textContent).includes(t)?"":"none")});
     apply();

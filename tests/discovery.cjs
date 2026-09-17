@@ -18,7 +18,7 @@ function dom(file,url){const errors=[];const vc=new VirtualConsole();vc.on('jsdo
  let mutations=0;const observer=new w.MutationObserver(x=>mutations+=x.length);observer.observe(message,{subtree:true,childList:true,attributes:true});await tick(100);assert.equal(mutations,0,'confirmation observer must settle');observer.disconnect();
  assert.equal(home.errors.length,0,home.errors.join('\n'));home.window.close();console.log('PASS homepage listings, planner, CRM enquiry payload and stable confirmation');
  const directory=dom('venues.html','https://selectmyvenue.com/venues.html?city=Delhi&minGuests=200&maxPrice=1500');const dw=directory.window,dd=dw.document;dw.eval(read('venues.js'));await tick();
- assert.equal(dd.querySelectorAll('.venue-card').length,1);assert(dd.querySelector('.venue-card').textContent.includes('Garden Venue'));assert(dw.location.search.includes('minGuests=200'));
+ assert.equal(dd.querySelector('#smvBrowseCity').value,'Delhi');assert.equal(dd.querySelectorAll('.venue-card').length,1);assert(dd.querySelector('.venue-card').textContent.includes('Garden Venue'));assert(dw.location.search.includes('minGuests=200'));
  dd.querySelector('[data-shortlist]').click();assert(JSON.parse(dw.localStorage.getItem('smv_venue_shortlist_v2')).includes('a'));
  dd.querySelector('[data-compare]').click();assert(JSON.parse(dw.localStorage.getItem('smv_venue_compare_v2')).includes('a'));
  dd.querySelector('[data-clear-filters]').click();assert.equal(dd.querySelectorAll('.venue-card').length,3);assert(!dw.location.search.includes('minGuests'));
