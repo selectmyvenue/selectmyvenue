@@ -3417,7 +3417,7 @@ function setupAutoEnquiryPopup() {
     );
   }
 
-  document.addEventListener("click", startInteractionTimer, true);
+  document.querySelectorAll("[data-open-enquiry-popup]").forEach(button => button.addEventListener("click", openPopup));
 
   /* ---------------------------------------------------------
      CLOSE EVENTS
