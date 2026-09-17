@@ -72,3 +72,6 @@ body.discovery-directory .venue-card .venue-description{color:#465b4c!important}
 body.discovery-directory .venue-card .venue-feature-list span{color:#34513a!important}
 body.discovery-directory .venue-search-context,body.discovery-directory .venue-profile-index p{color:#465b4c!important}
 body.celebration-site #contact h2 span{color:#29593f!important}
+html body.discovery-directory header.page-header .page-nav-links a.page-nav-cta{color:#234a35!important;background:#eef4e8!important;border-color:#bdcfb1!important;text-shadow:none!important}
+body.discovery-directory #smvBrowseSearch::placeholder{color:#52654a!important}
+body.celebration-site #aiPlanner :is(input,select,textarea){color-scheme:dark}
