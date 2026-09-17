@@ -1,0 +1,74 @@
+/* Explicit light/dark surfaces: prevent legacy dark-theme rules from washing out content. */
+body.celebration-site .site-header .brand img,
+body.celebration-site .site-header .main-logo,
+body.celebration-site .site-footer .footer-final-logo img,
+body.discovery-directory .page-header .page-logo{
+  mix-blend-mode:normal!important;filter:none!important;opacity:1!important;
+  visibility:visible!important;object-fit:contain!important;
+}
+body.celebration-site #mainNav a,
+body.celebration-site #mainNav a[href="list-your-venue.html"]{
+  color:#183d35!important;background:#fffdf8!important;text-shadow:none!important;
+  border-color:#d2dbcf!important;box-shadow:none!important;
+}
+body.celebration-site #mainNav a.nav-cta{color:#fff!important;background:#173f35!important}
+body.celebration-site .intro{color:#465b4c!important;font-size:16px!important;line-height:1.8!important}
+body.celebration-site .hero-proof span,
+body.celebration-site .search-heading span,
+body.celebration-site .search-footnote,
+body.celebration-site .section-heading>p,
+body.celebration-site .journey-card>p,
+body.celebration-site .city-grid p,
+body.celebration-site .small-note,
+body.celebration-site .planning-grid p,
+body.celebration-site .faq-section details p{color:#465b4c!important}
+body.celebration-site .city-grid span,
+body.celebration-site .planning-grid span{color:#635035!important}
+body.celebration-site .hero-proof span,
+body.celebration-site .search-footnote{font-size:12px!important}
+body.celebration-site .celebrate-hero-image figcaption{background:#16382ee6;padding:9px 12px;border-radius:4px;color:#fff!important}
+body.celebration-site .celebrate-hero-image figcaption span{color:#fff!important;opacity:1!important}
+body.celebration-site #featuredVenues .section-kicker{color:#59623c!important}
+body.celebration-site #featuredVenues .home-venue-location{
+  color:#34563e!important;background:#edf3e6!important;border-color:#d8e4cd!important;
+  font-size:12px!important;text-shadow:none!important;
+}
+body.celebration-site #featuredVenues .home-venue-location *,
+body.celebration-site #featuredVenues .home-venue-location::before{color:#34563e!important}
+body.celebration-site #featuredVenues .home-venue-facts span{color:#294b33!important;font-size:12px!important}
+body.celebration-site #featuredVenues .home-venue-features span{color:#34513a!important;font-size:11px!important;background:#eef3e8!important}
+body.celebration-site #featuredVenues .home-venue-media img{height:100%!important;min-height:0!important}
+body.celebration-site #featuredVenues .smv-filter-choice{font-size:12px!important;color:#3d5846!important}
+body.celebration-site #featuredVenues .smv-filter-subsearch::placeholder{color:#596f5d!important}
+body.celebration-site #enquiry .section-heading h2 span,
+body.celebration-site #about h2 span{color:#29593f!important}
+body.celebration-site #enquiry .form-note{color:#465b4c!important;font-size:12px!important}
+body.celebration-site #enquiry .field label,
+body.celebration-site #enquiry .form-section-title{color:#36503c!important;font-size:11px!important}
+/* The expanded planning tool is intentionally a dark surface. */
+body.celebration-site #aiPlanner{background:#082d26!important;color:#f4f8ef!important}
+body.celebration-site #aiPlanner :is(h2,h3,p,span,strong,small,label,li,div){color:#e3efdf!important;text-shadow:none!important}
+body.celebration-site #aiPlanner :is(h2,h3,strong){color:#fff!important}
+body.celebration-site #aiPlanner .ai-result-card,
+body.celebration-site #aiPlanner .ai-planner-card{background:#103e33!important;border-color:#49705c!important}
+body.celebration-site #aiPlanner :is(input,select,textarea){background:#07271f!important;color:#fff!important;border-color:#68836c!important}
+body.celebration-site #aiPlanner :is(input,textarea)::placeholder{color:#c2d3bd!important}
+body.celebration-site #aiPlanner button{color:#fff!important;background:#205f47!important;border-color:#6e8b74!important}
+body.celebration-site #aiPlanner button *{color:inherit!important}
+body.celebration-site #about :is(p,.section-kicker){color:#46573e!important}
+body.celebration-site #about .about-points span{color:#294e35!important;border-color:#bdcdb2!important;background:#f7faef!important}
+body.celebration-site #about .about-image span{background:#103b2bd9!important;color:#fff!important;padding:12px 18px;border-radius:5px}
+body.celebration-site #contact .section-kicker{color:#466036!important}
+body.celebration-site #contact .contact-card{background:#143e31!important;border-color:#4e7156!important}
+body.celebration-site #contact .contact-card :is(strong,span,small){color:#f0f6e9!important}
+body.celebration-site #contact .contact-card span{font-size:12px!important}
+body.celebration-site #contact .contact-card small{font-size:11px!important}
+body.celebration-site .site-footer :is(h4,a,span,p){color:#e6efdd!important}
+body.celebration-site .site-footer .footer-bottom{color:#c9d9bf!important}
+/* Directory: readable controls and labels on its light cards. */
+body.discovery-directory .page-header .page-nav-links a{color:#234a35!important}
+body.discovery-directory .venue-card .venue-location{color:#34563e!important;background:#edf3e6!important}
+body.discovery-directory .venue-card .venue-description{color:#465b4c!important}
+body.discovery-directory .venue-card .venue-feature-list span{color:#34513a!important}
+body.discovery-directory .venue-search-context,body.discovery-directory .venue-profile-index p{color:#465b4c!important}
+body.celebration-site #contact h2 span{color:#29593f!important}
