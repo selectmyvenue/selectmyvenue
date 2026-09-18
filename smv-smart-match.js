@@ -14,7 +14,7 @@
     var link=document.createElement("link");
     link.id="smvHomepageCustomerLuxury";
     link.rel="stylesheet";
-    link.href="homepage-customer-luxury.css?v=20260905-launch-1";
+    link.href="homepage-customer-luxury.css?v=20260919-trust-copy-1";
     document.head.appendChild(link);
   }
 
