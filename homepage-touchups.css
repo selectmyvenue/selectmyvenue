@@ -34,6 +34,15 @@ html body .enquiry-section .section-heading h2 span,html body #featuredVenues .h
 /* Match Browse Venues filter typography. */
 html body #featuredVenues .smv-home-filter-panel{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif} html body #featuredVenues .smv-filter-choice>span{font-size:15px} html body #featuredVenues .smv-home-filter-panel .smv-filter-subsearch{font-size:12px!important;font-weight:400!important}
 
+/* Useful shortcuts that reuse existing live search pages. */
+html body .smv-popular-searches{width:min(1180px,calc(100% - 32px));margin:28px auto 8px;padding:22px;border:1px solid rgba(235,199,102,.24);border-radius:20px;background:linear-gradient(145deg,rgba(10,57,51,.96),rgba(4,29,26,.98));box-shadow:0 18px 42px rgba(0,0,0,.2);display:grid;grid-template-columns:minmax(220px,.7fr) minmax(0,1.3fr);gap:22px;align-items:center}
+html body .smv-popular-searches h2{margin:4px 0 7px;color:#fff3cf;font-size:clamp(22px,2.3vw,31px)}
+html body .smv-popular-searches p{margin:0;color:#b9d2cc;font-size:12px;line-height:1.6}
+html body .smv-popular-search-links{display:flex;flex-wrap:wrap;gap:9px}
+html body .smv-popular-search-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:1px solid rgba(92,218,198,.22);border-radius:999px;background:rgba(255,255,255,.035);color:#e8faf6;font-size:11px;font-weight:900;text-decoration:none;transition:.2s ease}
+html body .smv-popular-search-links a:hover,html body .smv-popular-search-links a:focus-visible{border-color:rgba(243,210,123,.58);background:rgba(243,210,123,.1);color:#f5da88;transform:translateY(-1px)}
+@media(max-width:760px){html body .smv-popular-searches{grid-template-columns:1fr;padding:18px}html body .smv-popular-search-links{gap:7px}html body .smv-popular-search-links a{min-height:38px;padding:0 11px;font-size:10px}}
+
 @media(max-width:1060px){html body .header-inner .menu-toggle{margin-left:auto}}
 @media(max-width:820px){html body #customerEnquiryForm .form-grid.four,html body #customerEnquiryForm .form-grid.five{grid-template-columns:1fr 1fr!important}}
 @media(max-width:520px){html body .site-header .brand{width:44vw!important;flex-basis:44vw!important}html body .site-header .brand img{width:100%!important;max-width:100%!important}html body .header-inner{gap:8px!important}html body .header-inner .header-contact{padding:0 9px;font-size:10px}html body #customerEnquiryForm{padding:16px!important}html body #customerEnquiryForm .field :is(input,select,textarea){font-size:16px!important}html body #customerEnquiryForm .form-grid.four,html body #customerEnquiryForm .form-grid.five{grid-template-columns:1fr!important}}

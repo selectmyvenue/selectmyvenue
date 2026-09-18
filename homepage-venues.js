@@ -2,7 +2,7 @@
   "use strict";
   const SUPABASE_URL="https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-  const SUCCESS_TEXT="Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
+  const SUCCESS_TEXT="Requirement received! Thank you for choosing Select My Venue. Our venue team will review your event details and contact you as soon as possible during support hours.";
   const clean=v=>String(v==null?"":v).trim();
   const normal=v=>clean(v).toLowerCase();
   const escapeHtml=v=>String(v??"").replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"})[c]);

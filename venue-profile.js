@@ -4,7 +4,7 @@
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
   const MEDIA_BUCKET = "venue-media";
-  const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
+  const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will review your event details and contact you as soon as possible during support hours.";
   const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18435642634/_rfMCLfZsfAcEIqq5tZE";
   const ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1";
   const params = new URLSearchParams(window.location.search);
@@ -19,6 +19,15 @@
   const byId = id => document.getElementById(id);
   let currentVenue = null;
   let currentMedia = { cover: "", images: [], videos: [] };
+  let quoteIntent = "availability";
+
+  function track(name,details={}){
+    try{
+      window.dataLayer=window.dataLayer||[];
+      if(typeof window.gtag==="function")window.gtag("event",name,details);
+      else window.dataLayer.push({event:name,...details});
+    }catch(_){}
+  }
 
   function fireGoogleAdsLeadConversion(){
     try{
@@ -298,7 +307,25 @@
     if(autoQuote)setTimeout(openQuoteModal,220);
   }
 
-  function openQuoteModal(){if(!currentVenue)return;const modal=byId("venueQuoteModal");if(!modal)return;modal.hidden=false;document.body.style.overflow="hidden";setTimeout(()=>byId("venueQuoteName")?.focus(),40);}
+  function openQuoteModal(event){
+    if(!currentVenue)return;
+    quoteIntent=event?.currentTarget?.dataset?.quoteIntent==="site-visit"?"site-visit":"availability";
+    const modal=byId("venueQuoteModal");if(!modal)return;
+    const title=byId("venueQuoteTitle"),submit=byId("venueQuoteSubmit"),trust=modal.querySelector(".venue-quote-trust"),kicker=modal.querySelector(".venue-quote-kicker");
+    if(quoteIntent==="site-visit"){
+      if(kicker)kicker.textContent="✦ SITE VISIT REQUEST";
+      if(title)title.textContent="Request a venue site visit";
+      if(submit)submit.textContent="Request Site Visit →";
+      if(trust)trust.textContent="Your preferred date helps our team coordinate with the venue. The visit is confirmed only after the venue accepts it.";
+    }else{
+      if(kicker)kicker.textContent="✦ QUICK VENUE ENQUIRY";
+      if(title)title.textContent="Check price & availability";
+      if(submit)submit.textContent="Check Price & Availability →";
+      if(trust)trust.textContent="No long form. Your selected venue is attached automatically.";
+    }
+    track(quoteIntent==="site-visit"?"site_visit_open":"availability_open",{venue_id:String(currentVenue.id||""),venue_name:clean(currentVenue.venue_name)});
+    modal.hidden=false;document.body.style.overflow="hidden";setTimeout(()=>byId("venueQuoteName")?.focus(),40);
+  }
   function closeQuoteModal(){const modal=byId("venueQuoteModal");if(!modal)return;modal.hidden=true;document.body.style.overflow="";}
 
   async function insertCustomerEnquiry(payload){
@@ -326,10 +353,11 @@
     if(!isValidIndianMobile(mobile)){status.textContent="Please enter a valid 10-digit Indian mobile number.";status.className="venue-quote-status error";byId("venueQuoteMobile")?.focus();return;}
     if(!occasion){status.textContent="Please select your event.";status.className="venue-quote-status error";return;}
     const venueLocation=[currentVenue.area,currentVenue.city].filter(Boolean).join(", ")||currentVenue.city||null;
-    const requirements=[`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,venueLocation?`Venue location: ${venueLocation}`:null,"Submitted from venue profile quick quote",`Page: ${window.location.pathname||"/venue.html"}`,...attributionLines()].filter(Boolean).join("\n");
+    const intentLabel=quoteIntent==="site-visit"?"Site visit request":"Price and availability request";
+    const requirements=[`Customer intent: ${intentLabel}`,`Specific venue enquiry: ${currentVenue.venue_name}`,`Venue ID: ${currentVenue.id}`,venueLocation?`Venue location: ${venueLocation}`:null,quoteIntent==="site-visit"?"Preferred visit date: "+(eventDate||"To be discussed"):null,"Submitted from venue profile quick quote",`Page: ${window.location.pathname||"/venue.html"}`,...attributionLines()].filter(Boolean).join("\n");
     button.disabled=true;button.textContent="Sending…";status.textContent="";status.className="venue-quote-status";
     const{error}=await insertCustomerEnquiry({customer_name:name,mobile,location:venueLocation,occasion,event_date:eventDate,guests,budget_per_person:budget,requirements,source:venueSource(),status:"new"});
-    button.disabled=false;button.textContent="Check Price & Availability →";
+    button.disabled=false;button.textContent=quoteIntent==="site-visit"?"Request Site Visit →":"Check Price & Availability →";
     if(error){
       console.error("Venue quote error:",error);
       status.textContent="We could not submit this enquiry right now. Please try again or call +91 83683 22256.";
@@ -337,7 +365,8 @@
       return;
     }
     fireGoogleAdsLeadConversion();
-    status.textContent=PREMIUM_SUCCESS;
+    track(quoteIntent==="site-visit"?"site_visit_submit":"availability_submit",{venue_id:String(currentVenue.id||""),venue_name:clean(currentVenue.venue_name)});
+    status.textContent=quoteIntent==="site-visit"?"Site visit request received. Our team will contact you to coordinate a suitable time with the venue. The visit is confirmed only after venue approval.":PREMIUM_SUCCESS;
     status.className="venue-quote-status success";
     event.currentTarget.reset();
     setTimeout(()=>status.scrollIntoView({behavior:"smooth",block:"center"}),80);

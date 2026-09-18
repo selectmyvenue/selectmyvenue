@@ -2597,7 +2597,7 @@ function setupCustomerEnquiry() {
 
         showInlineMessage(
           message,
-          "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.",
+          "Requirement received! Thank you for choosing Select My Venue. Our venue team will review your event details and contact you as soon as possible during support hours.",
           "success"
         );
 
@@ -3467,7 +3467,7 @@ function setupAutoEnquiryPopup() {
         <div class="smv-popup-success-box">
           <div class="smv-success-icon">✓</div>
           <h3>Requirement Received!</h3>
-          <p>Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.</p>
+          <p>Requirement received! Thank you for choosing Select My Venue. Our venue team will review your event details and contact you as soon as possible during support hours.</p>
           <button type="button" class="smv-success-close" id="smvSuccessClose">
             Continue Browsing
           </button>

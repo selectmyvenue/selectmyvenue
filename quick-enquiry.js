@@ -4,7 +4,7 @@
 (function () {
   const SUPABASE_URL = "https://uajqwyoqbbswkfiwosyw.supabase.co";
   const SUPABASE_ANON_KEY = "sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
-  const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will contact you within 30 minutes to understand your event and help you with suitable venue options.";
+  const PREMIUM_SUCCESS = "Requirement received! Thank you for choosing Select My Venue. Our venue team will review your event details and contact you as soon as possible during support hours.";
   const GOOGLE_ADS_TAG_ID = "AW-18435642634";
   const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18435642634/_rfMCLfZsfAcEIqq5tZE";
   const ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1";
