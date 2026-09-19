@@ -1,7 +1,7 @@
 /* =========================================================
    SELECT MY VENUE
    WEBSITE JAVASCRIPT
-   Exact companion for the current index.html | Popup waits 15 seconds after first interaction
+   Exact companion for the current index.html | Popup waits 60 seconds after first interaction
    Website -> AI Planner -> Customer Enquiry -> Supabase -> CRM
    ========================================================= */
 
@@ -2658,8 +2658,8 @@ function setupAutoEnquiryPopup() {
    *
    * Behaviour:
    * - NEVER opens on initial page load.
-   * - First normal website click/tap starts a 3-second timer.
-   * - Popup opens after those 3 seconds.
+   * - First normal website click/tap starts a 60-second timer.
+   * - Popup opens after those 60 seconds.
    * - Opens once per browser session.
    * - Uses the same customer-enquiry fields as the main website form.
    */
@@ -2684,10 +2684,10 @@ function setupAutoEnquiryPopup() {
       }
 
       #enquiryPopup .enquiry-popup {
-        width: min(1080px, calc(100vw - 32px)) !important;
-        max-width: 1080px !important;
-        height: min(760px, calc(100vh - 28px)) !important;
-        max-height: calc(100vh - 28px) !important;
+        width: min(920px, calc(100vw - 32px)) !important;
+        max-width: 920px !important;
+        height: auto !important;
+        max-height: min(680px, calc(100vh - 28px)) !important;
         overflow: hidden !important;
         border-radius: 18px !important;
       }
@@ -2695,9 +2695,9 @@ function setupAutoEnquiryPopup() {
       #enquiryPopup .popup-content.smv-complete-popup {
         padding: 0 !important;
         display: grid !important;
-        grid-template-columns: 34% 66% !important;
-        height: 100% !important;
-        min-height: 0 !important;
+        grid-template-columns: 36% 64% !important;
+        height: auto !important;
+        min-height: 560px !important;
         max-height: none !important;
       }
 
@@ -3014,6 +3014,30 @@ function setupAutoEnquiryPopup() {
 
       .smv-popup-success-box {
         max-width: 460px !important;
+      }
+
+      /* Keep the interruption light: only six essential fields are shown. */
+      #enquiryPopup .smv-popup-field:has(#smvPopupEmail),
+      #enquiryPopup .smv-popup-field:has(#smvPopupDate),
+      #enquiryPopup .smv-popup-field:has(#smvPopupFood),
+      #enquiryPopup .smv-popup-field:has(#smvPopupVenueType),
+      #enquiryPopup .smv-popup-field:has(#smvPopupStyle),
+      #enquiryPopup .smv-popup-field:has(#smvPopupRequirements),
+      #enquiryPopup .smv-popup-ai-summary {
+        display: none !important;
+      }
+
+      #enquiryPopup .smv-popup-form-side {
+        padding-top: 32px !important;
+        padding-bottom: 24px !important;
+      }
+
+      #enquiryPopup .smv-popup-form-head p {
+        margin-bottom: 15px !important;
+      }
+
+      #enquiryPopup .smv-popup-actions {
+        margin-top: 16px !important;
       }
 
       .smv-success-icon {
@@ -3385,12 +3409,12 @@ function setupAutoEnquiryPopup() {
   /* ---------------------------------------------------------
      TRIGGER:
      NO PAGE-LOAD TIMER.
-     First genuine website click/tap -> wait 15 seconds -> popup.
+     First genuine website click/tap -> wait 60 seconds -> popup.
 
      The visitor gets time to browse before the enquiry form appears.
      The popup never opens just because the page was loaded.
      --------------------------------------------------------- */
-  const POPUP_DELAY_AFTER_INTERACTION = 15000;
+  const POPUP_DELAY_AFTER_INTERACTION = 60000;
   let interactionTimer = null;
   let interactionDetected = false;
 
@@ -3413,7 +3437,7 @@ function setupAutoEnquiryPopup() {
     document.removeEventListener("click", startInteractionTimer, true);
 
     console.log(
-      "Select My Venue: enquiry popup scheduled 15 seconds after first website interaction."
+      "Select My Venue: enquiry popup scheduled 60 seconds after first website interaction."
     );
   }
 
