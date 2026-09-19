@@ -37,8 +37,11 @@ html body.venue-profile-page header.page-header.venue-white-header .page-nav{
   gap:18px!important;
 }
 
+/* Exact homepage brand footprint: 190px container / 178px logo / 62px maximum height. */
 html body header.page-header .page-nav>a:first-child,
-html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child{
+html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child,
+html body header.page-header a.brand,
+html body.venue-profile-page header.page-header a.brand{
   display:flex!important;
   align-items:center!important;
   flex:0 0 190px!important;
@@ -48,14 +51,22 @@ html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:f
 }
 
 html body header.page-header .page-logo,
-html body.venue-profile-page header.page-header.venue-white-header .page-logo{
+html body.venue-profile-page header.page-header.venue-white-header .page-logo,
+html body header.page-header .main-logo,
+html body header.page-header a.brand>img,
+html body header.page-header .page-nav>a:first-child>img,
+html body.venue-profile-page header.page-header a.brand>img{
   display:block!important;
   width:178px!important;
+  min-width:178px!important;
   max-width:178px!important;
   max-height:62px!important;
   height:auto!important;
   object-fit:contain!important;
   object-position:left center!important;
+  margin:0!important;
+  padding:0!important;
+  transform:none!important;
   filter:drop-shadow(0 6px 18px rgba(0,0,0,.25))!important;
 }
 
@@ -151,63 +162,34 @@ html body.venue-profile-page header.page-header.venue-white-header .page-nav-lin
 
 @media(max-width:1120px){
   html body header.page-header .page-nav-links,
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{
-    gap:12px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{gap:12px!important}
   html body header.page-header .page-nav-links a,
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{
-    font-size:10.5px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{font-size:10.5px!important}
 }
 
 @media(max-width:760px){
   html body header.page-header,
-  html body.venue-profile-page header.page-header.venue-white-header{
-    height:62px!important;
-    min-height:62px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header{height:62px!important;min-height:62px!important}
   html body header.page-header .page-nav,
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav{
-    width:100%!important;
-    height:62px!important;
-    min-height:62px!important;
-    padding:0 10px!important;
-    gap:10px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav{width:100%!important;height:62px!important;min-height:62px!important;padding:0 10px!important;gap:10px!important}
   html body header.page-header .page-nav>a:first-child,
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child{
-    flex:0 0 150px!important;
-    width:150px!important;
-    max-width:48vw!important;
-    height:56px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child,
+  html body header.page-header a.brand,
+  html body.venue-profile-page header.page-header a.brand{flex:0 0 150px!important;width:150px!important;max-width:48vw!important;height:56px!important}
   html body header.page-header .page-logo,
-  html body.venue-profile-page header.page-header.venue-white-header .page-logo{
-    width:148px!important;
-    max-width:100%!important;
-    max-height:50px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-logo,
+  html body header.page-header .main-logo,
+  html body header.page-header a.brand>img,
+  html body header.page-header .page-nav>a:first-child>img,
+  html body.venue-profile-page header.page-header a.brand>img{width:148px!important;min-width:0!important;max-width:100%!important;max-height:50px!important}
   html body header.page-header .page-nav-links,
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{
-    overflow-x:auto!important;
-    justify-content:flex-start!important;
-    gap:8px!important;
-    scrollbar-width:none!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{overflow-x:auto!important;justify-content:flex-start!important;gap:8px!important;scrollbar-width:none!important}
   html body header.page-header .page-nav-links::-webkit-scrollbar,
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links::-webkit-scrollbar{
-    display:none!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links::-webkit-scrollbar{display:none!important}
   html body header.page-header .page-nav-links a,
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{
-    min-height:36px!important;
-    font-size:9.5px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{min-height:36px!important;font-size:9.5px!important}
   html body header.page-header .page-nav-links .page-nav-cta,
   html body.venue-profile-page header.page-header.venue-white-header .page-nav-links .page-nav-cta,
   html body header.page-header .page-nav-links a[href*="list-your-venue"],
-  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a[href*="list-your-venue"]{
-    min-height:36px!important;
-    padding:0 10px!important;
-  }
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a[href*="list-your-venue"]{min-height:36px!important;padding:0 10px!important}
 }
