@@ -1,58 +1,213 @@
 @import url("./smv-trust-ticker.css?v=20260908-1");
+
 /* SELECT MY VENUE — SHARED STANDARD PUBLIC HEADER
-   Matches the approved homepage visual language. */
-:root{--smv-header-bg:#032f2a;--smv-header-bg2:#021f1c;--smv-header-teal:#19d8bd;--smv-header-gold:#f3c84b;--smv-header-text:#c9ddda}
+   Mirrors the approved homepage header visual language. */
+:root{
+  --smv-header-bg:#021311;
+  --smv-header-teal:#19d8bd;
+  --smv-header-gold:#f3c84b;
+  --smv-header-text:#c6d9d6;
+}
+
 html body header.page-header,
 html body.venue-profile-page header.page-header.venue-white-header{
-  position:sticky!important;top:0!important;z-index:1000!important;
-  min-height:74px!important;height:74px!important;
-  background:linear-gradient(180deg,rgba(5,55,49,.98),rgba(2,34,30,.985))!important;
-  border-bottom:1px solid rgba(35,216,190,.34)!important;
-  box-shadow:0 8px 26px rgba(0,0,0,.22),inset 0 -1px 0 rgba(25,216,189,.10)!important;
-  backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important;
+  position:sticky!important;
+  top:0!important;
+  z-index:1000!important;
+  min-height:74px!important;
+  height:74px!important;
+  background:rgba(2,19,17,.90)!important;
+  border-bottom:1px solid rgba(48,211,190,.14)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(18px)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
 }
+
 html body header.page-header .page-nav,
 html body.venue-profile-page header.page-header.venue-white-header .page-nav{
-  width:100%!important;max-width:none!important;height:74px!important;min-height:74px!important;
-  margin:0!important;padding:0 10px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:14px!important;
+  width:min(100%,1420px)!important;
+  max-width:1420px!important;
+  height:74px!important;
+  min-height:74px!important;
+  margin:0 auto!important;
+  padding:0 26px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:18px!important;
 }
+
 html body header.page-header .page-nav>a:first-child,
 html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child{
-  display:flex!important;align-items:center!important;flex:0 0 500px!important;max-width:31vw!important;height:70px!important;
+  display:flex!important;
+  align-items:center!important;
+  flex:0 0 190px!important;
+  width:190px!important;
+  max-width:190px!important;
+  height:68px!important;
 }
+
 html body header.page-header .page-logo,
 html body.venue-profile-page header.page-header.venue-white-header .page-logo{
-  display:block!important;width:min(490px,100%)!important;max-width:490px!important;max-height:64px!important;height:auto!important;
-  object-fit:contain!important;object-position:left center!important;filter:drop-shadow(0 6px 16px rgba(0,0,0,.24))!important;
+  display:block!important;
+  width:178px!important;
+  max-width:178px!important;
+  max-height:62px!important;
+  height:auto!important;
+  object-fit:contain!important;
+  object-position:left center!important;
+  filter:drop-shadow(0 6px 18px rgba(0,0,0,.25))!important;
 }
+
 html body header.page-header .page-nav-links,
 html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{
-  display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:6px!important;margin-left:auto!important;min-width:0!important;flex-wrap:nowrap!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:20px!important;
+  margin-left:auto!important;
+  min-width:0!important;
+  flex-wrap:nowrap!important;
 }
+
 html body header.page-header .page-nav-links a,
 html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{
-  position:relative!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:40px!important;
-  padding:0 11px!important;border-radius:10px!important;border:1px solid rgba(255,255,255,.025)!important;
-  background:rgba(255,255,255,.018)!important;color:var(--smv-header-text)!important;
-  font-size:11.5px!important;font-weight:850!important;line-height:1!important;white-space:nowrap!important;text-decoration:none!important;opacity:1!important;
-  transition:transform .18s ease,color .18s ease,background .18s ease,border-color .18s ease,box-shadow .18s ease!important;
+  position:relative!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:40px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--smv-header-text)!important;
+  font-size:12px!important;
+  font-weight:750!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+  text-decoration:none!important;
+  opacity:1!important;
+  transition:color .18s ease,transform .18s ease!important;
 }
+
+html body header.page-header .page-nav-links a:not(.page-nav-cta):not([href*="list-your-venue"])::after,
+html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a:not(.page-nav-cta):not([href*="list-your-venue"])::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:2px;
+  height:2px;
+  border-radius:99px;
+  background:var(--smv-header-teal);
+  transform:scaleX(0);
+  transition:transform .18s ease;
+}
+
 html body header.page-header .page-nav-links a:hover,
 html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a:hover{
-  color:#fff!important;background:rgba(25,216,189,.075)!important;border-color:rgba(25,216,189,.20)!important;transform:translateY(-1px)!important;
+  color:#fff!important;
+  transform:translateY(-1px)!important;
 }
+
+html body header.page-header .page-nav-links a:not(.page-nav-cta):not([href*="list-your-venue"]):hover::after,
+html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a:not(.page-nav-cta):not([href*="list-your-venue"]):hover::after{
+  transform:scaleX(1);
+}
+
 html body header.page-header .page-nav-links .page-nav-cta,
 html body.venue-profile-page header.page-header.venue-white-header .page-nav-links .page-nav-cta{
-  color:#23e2c8!important;border-color:rgba(25,216,189,.48)!important;background:linear-gradient(180deg,rgba(25,216,189,.09),rgba(25,216,189,.035))!important;
-  border-radius:999px!important;padding:0 15px!important;box-shadow:inset 0 0 18px rgba(25,216,189,.025)!important;
+  min-height:40px!important;
+  padding:0 16px!important;
+  border:1px solid rgba(25,216,189,.42)!important;
+  border-radius:999px!important;
+  background:rgba(25,216,189,.06)!important;
+  color:var(--smv-header-teal)!important;
+  box-shadow:inset 0 0 18px rgba(25,216,189,.025)!important;
 }
+
 html body header.page-header .page-nav-links .page-nav-cta:hover,
-html body.venue-profile-page header.page-header.venue-white-header .page-nav-links .page-nav-cta:hover{background:#19d8bd!important;color:#00211c!important}
+html body.venue-profile-page header.page-header.venue-white-header .page-nav-links .page-nav-cta:hover{
+  background:var(--smv-header-teal)!important;
+  color:#00211c!important;
+}
+
 html body header.page-header .page-nav-links a[href*="list-your-venue"],
 html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a[href*="list-your-venue"]{
-  color:#ffe47a!important;border-color:rgba(243,200,75,.52)!important;background:linear-gradient(180deg,rgba(243,200,75,.10),rgba(243,200,75,.035))!important;border-radius:999px!important;padding:0 15px!important;
+  min-height:40px!important;
+  padding:0 15px!important;
+  border:1px solid rgba(243,200,75,.48)!important;
+  border-radius:999px!important;
+  background:rgba(243,200,75,.065)!important;
+  color:#ffe47a!important;
 }
+
 html body header.page-header .page-nav-links a[href*="list-your-venue"]:hover,
-html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a[href*="list-your-venue"]:hover{background:#f3c84b!important;color:#241a00!important}
-@media(max-width:1350px){html body header.page-header .page-nav>a:first-child,html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child{flex-basis:340px!important;max-width:28vw!important}html body header.page-header .page-logo,html body.venue-profile-page header.page-header.venue-white-header .page-logo{width:min(330px,100%)!important}html body header.page-header .page-nav-links a,html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{font-size:10.5px!important;padding:0 8px!important}}
-@media(max-width:760px){html body header.page-header,html body.venue-profile-page header.page-header.venue-white-header{height:62px!important;min-height:62px!important}html body header.page-header .page-nav,html body.venue-profile-page header.page-header.venue-white-header .page-nav{height:62px!important;min-height:62px!important;padding:0 9px!important}html body header.page-header .page-nav>a:first-child,html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child{flex:0 0 158px!important;max-width:52vw!important;height:56px!important}html body header.page-header .page-logo,html body.venue-profile-page header.page-header.venue-white-header .page-logo{width:154px!important;max-height:50px!important}html body header.page-header .page-nav-links,html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{overflow-x:auto!important;justify-content:flex-start!important;scrollbar-width:none!important}html body header.page-header .page-nav-links::-webkit-scrollbar,html body.venue-profile-page header.page-header.venue-white-header .page-nav-links::-webkit-scrollbar{display:none!important}html body header.page-header .page-nav-links a,html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{min-height:36px!important;font-size:9.5px!important;padding:0 9px!important}}
+html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a[href*="list-your-venue"]:hover{
+  background:#f3c84b!important;
+  color:#241a00!important;
+}
+
+@media(max-width:1120px){
+  html body header.page-header .page-nav-links,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{
+    gap:12px!important;
+  }
+  html body header.page-header .page-nav-links a,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{
+    font-size:10.5px!important;
+  }
+}
+
+@media(max-width:760px){
+  html body header.page-header,
+  html body.venue-profile-page header.page-header.venue-white-header{
+    height:62px!important;
+    min-height:62px!important;
+  }
+  html body header.page-header .page-nav,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav{
+    width:100%!important;
+    height:62px!important;
+    min-height:62px!important;
+    padding:0 10px!important;
+    gap:10px!important;
+  }
+  html body header.page-header .page-nav>a:first-child,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child{
+    flex:0 0 150px!important;
+    width:150px!important;
+    max-width:48vw!important;
+    height:56px!important;
+  }
+  html body header.page-header .page-logo,
+  html body.venue-profile-page header.page-header.venue-white-header .page-logo{
+    width:148px!important;
+    max-width:100%!important;
+    max-height:50px!important;
+  }
+  html body header.page-header .page-nav-links,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links{
+    overflow-x:auto!important;
+    justify-content:flex-start!important;
+    gap:8px!important;
+    scrollbar-width:none!important;
+  }
+  html body header.page-header .page-nav-links::-webkit-scrollbar,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links::-webkit-scrollbar{
+    display:none!important;
+  }
+  html body header.page-header .page-nav-links a,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a{
+    min-height:36px!important;
+    font-size:9.5px!important;
+  }
+  html body header.page-header .page-nav-links .page-nav-cta,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links .page-nav-cta,
+  html body header.page-header .page-nav-links a[href*="list-your-venue"],
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav-links a[href*="list-your-venue"]{
+    min-height:36px!important;
+    padding:0 10px!important;
+  }
+}
