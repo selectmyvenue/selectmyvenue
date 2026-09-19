@@ -380,7 +380,7 @@ html body .smv-enquiry-main #customerEnquiryForm .form-section-title{
 }
 html body .smv-enquiry-main #customerEnquiryForm .form-grid.four,
 html body .smv-enquiry-main #customerEnquiryForm .form-grid.five{
-  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
   gap:11px 12px!important;
   margin-bottom:16px!important;
 }
@@ -633,6 +633,12 @@ html body .trust-strip>div{
   }
   html body .smv-concierge-card{
     grid-column:1/-1!important;
+  }
+}
+@media(max-width:860px){
+  html body .smv-enquiry-main #customerEnquiryForm .form-grid.four,
+  html body .smv-enquiry-main #customerEnquiryForm .form-grid.five{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
   }
 }
 @media(max-width:700px){
