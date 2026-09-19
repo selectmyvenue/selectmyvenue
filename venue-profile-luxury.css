@@ -10,3 +10,103 @@ html body.venue-profile-page .venue-profile-location{
   font-weight:800!important;
   color:#365f57!important;
 }
+
+/* 2026-09-19 — premium action hierarchy.
+   Keep conversion actions prominent; discovery tools secondary; site visit gets its own visual step. */
+html body.venue-profile-page .venue-profile-hero-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+
+/* Site visit no longer competes with the primary hero CTA. The working site-visit trigger remains in the concierge panel. */
+html body.venue-profile-page .venue-profile-hero-actions .venue-quote-trigger[data-quote-intent="site-visit"]{
+  display:none!important;
+}
+
+html body.venue-profile-page .venue-profile-hero-actions #venueProfileQuote{
+  order:1!important;
+  min-width:190px!important;
+}
+html body.venue-profile-page .venue-profile-hero-actions #venueProfileWhatsapp{
+  order:2!important;
+}
+html body.venue-profile-page .venue-profile-hero-actions #venueShareBtn{
+  order:3!important;
+  background:#fff!important;
+  border:1px solid rgba(13,139,120,.18)!important;
+  color:#52736b!important;
+  box-shadow:none!important;
+}
+
+/* Shortlist / Compare / Share are browsing utilities, intentionally lighter than enquiry actions. */
+html body.venue-profile-page .venue-profile-hero-actions :is(.smv-profile-shortlist,.smv-profile-compare,[data-shortlist],[data-compare]),
+html body.venue-profile-page :is(.smv-profile-shortlist,.smv-profile-compare){
+  min-height:38px!important;
+  padding:0 13px!important;
+  border-radius:999px!important;
+  background:#f4faf8!important;
+  border:1px solid rgba(13,139,120,.17)!important;
+  color:#167e70!important;
+  font-size:10.5px!important;
+  font-weight:900!important;
+  box-shadow:none!important;
+}
+
+/* Concierge panel: primary enquiry first, then a clearly separated site-visit invitation. */
+html body.venue-profile-page .venue-profile-enquiry #venueProfileQuoteAside{
+  width:100%!important;
+  margin-top:8px!important;
+}
+html body.venue-profile-page .venue-profile-enquiry .venue-site-visit-trigger{
+  width:100%!important;
+  min-height:48px!important;
+  margin-top:18px!important;
+  padding:0 16px!important;
+  border:1px solid rgba(196,151,39,.34)!important;
+  border-radius:13px!important;
+  background:linear-gradient(135deg,#fff9e8,#fff2c3)!important;
+  color:#755713!important;
+  font-weight:950!important;
+  box-shadow:0 10px 24px rgba(122,91,20,.08)!important;
+}
+html body.venue-profile-page .venue-profile-enquiry .venue-site-visit-trigger::before{
+  content:"⌖  ";
+  color:#0b9a85!important;
+}
+html body.venue-profile-page .venue-profile-enquiry .venue-site-visit-trigger:hover{
+  transform:translateY(-1px)!important;
+  border-color:rgba(196,151,39,.55)!important;
+  box-shadow:0 14px 28px rgba(122,91,20,.12)!important;
+}
+
+/* Map belongs visually with location/navigation rather than the booking CTA cluster. */
+html body.venue-profile-page .venue-profile-enquiry #venueProfileMap{
+  width:100%!important;
+  min-height:40px!important;
+  margin-top:10px!important;
+  background:#f5faf8!important;
+  border:1px solid rgba(13,139,120,.16)!important;
+  color:#147c6e!important;
+  box-shadow:none!important;
+}
+html body.venue-profile-page .venue-profile-enquiry #venueProfileMap::before{
+  content:"↗  ";
+}
+
+/* Keep assistance points beneath the two customer journeys, not mixed into the button row. */
+html body.venue-profile-page .venue-profile-enquiry .venue-assist-points{
+  padding-top:14px!important;
+  margin-top:16px!important;
+  border-top:1px solid rgba(13,139,120,.10)!important;
+}
+
+@media(max-width:700px){
+  html body.venue-profile-page .venue-profile-titlebar{align-items:flex-start!important}
+  html body.venue-profile-page .venue-profile-hero-actions{width:100%!important;justify-content:flex-start!important}
+  html body.venue-profile-page .venue-profile-hero-actions #venueProfileQuote{flex:1 1 100%!important;width:100%!important}
+  html body.venue-profile-page .venue-profile-hero-actions #venueProfileWhatsapp,
+  html body.venue-profile-page .venue-profile-hero-actions #venueShareBtn{flex:1 1 calc(50% - 5px)!important}
+}
