@@ -257,3 +257,25 @@ html body .smv-popular-searches{
     grid-template-columns:1fr!important;
   }
 }
+
+/* 20260920 SAFE ENQUIRY + VENUE OFFER GRID
+   Scoped only to the existing enquiry section; no hero/venue layout overrides. */
+html body #enquiry .smv-enquiry-offer-grid{width:min(1180px,100%);margin:0 auto;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,.75fr);gap:18px;align-items:stretch}
+html body #enquiry .smv-enquiry-left{min-width:0;display:flex}
+html body #enquiry .smv-enquiry-left #customerEnquiryForm{width:100%;height:100%;margin:0!important}
+html body #enquiry .smv-enquiry-offer{min-width:0;padding:22px;border:1px solid rgba(240,204,109,.5);border-radius:18px;background:radial-gradient(circle at 100% 0,rgba(238,195,75,.11),transparent 36%),linear-gradient(145deg,#092f2a,#041f1c);box-shadow:0 16px 38px rgba(0,0,0,.22);display:flex;flex-direction:column;color:#e9f7f3}
+html body #enquiry .smv-offer-kicker{color:#f1cc68;font-size:9px;font-weight:900;letter-spacing:.08em}
+html body #enquiry .smv-enquiry-offer h3{margin:9px 0 7px;color:#fff;font-size:clamp(23px,2vw,31px);line-height:1.05}
+html body #enquiry .smv-enquiry-offer h3 span{color:#20d3b8}
+html body #enquiry .smv-enquiry-offer>p{margin:0 0 13px;color:#b7d0ca;font-size:10.5px;line-height:1.55}
+html body #enquiry .smv-offer-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:13px}
+html body #enquiry .smv-offer-stats>div{padding:9px;border:1px solid rgba(67,200,177,.26);border-radius:10px;background:rgba(20,94,82,.25)}
+html body #enquiry .smv-offer-stats strong{display:block;color:#f5d16f;font-size:15px;line-height:1}
+html body #enquiry .smv-offer-stats small{display:block;margin-top:4px;color:#e7f4f0;font-size:8px;font-weight:800;text-transform:uppercase}
+html body #enquiry .smv-enquiry-offer ul{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin:0 0 14px;padding:0;list-style:none}
+html body #enquiry .smv-enquiry-offer li{position:relative;padding-left:14px;color:#d7e9e4;font-size:9.5px;line-height:1.35}
+html body #enquiry .smv-enquiry-offer li:before{content:"✓";position:absolute;left:0;color:#25d8bc;font-weight:900}
+html body #enquiry .smv-offer-cta{display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:auto;border:1px solid #f6dc8b;border-radius:11px;background:linear-gradient(180deg,#f6da80,#e9bd42);color:#112e29!important;font-size:11px;font-weight:950;text-decoration:none}
+html body #enquiry .smv-offer-note{display:block;margin-top:8px;color:#829f98;font-size:8px;line-height:1.4}
+@media(max-width:900px){html body #enquiry .smv-enquiry-offer-grid{grid-template-columns:1fr}html body #enquiry .smv-enquiry-left{display:block}html body #enquiry .smv-enquiry-offer{padding:19px}}
+@media(max-width:520px){html body #enquiry .smv-enquiry-offer{padding:16px}html body #enquiry .smv-enquiry-offer ul{grid-template-columns:1fr}}
