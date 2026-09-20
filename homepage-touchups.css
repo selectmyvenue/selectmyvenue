@@ -279,3 +279,31 @@ html body #enquiry .smv-offer-cta{display:flex;align-items:center;justify-conten
 html body #enquiry .smv-offer-note{display:block;margin-top:8px;color:#829f98;font-size:8px;line-height:1.4}
 @media(max-width:900px){html body #enquiry .smv-enquiry-offer-grid{grid-template-columns:1fr}html body #enquiry .smv-enquiry-left{display:block}html body #enquiry .smv-enquiry-offer{padding:19px}}
 @media(max-width:520px){html body #enquiry .smv-enquiry-offer{padding:16px}html body #enquiry .smv-enquiry-offer ul{grid-template-columns:1fr}}
+
+/* 20260920 HOMEPAGE COMPACT FLOW
+   Keep header + venue list intact; remove duplicated top controls and bring enquiry beside hero. */
+html body .smv-home-launch-strip{display:none!important}
+html body .smv-popular-searches{display:none!important}
+html body .hero{padding-bottom:34px!important;min-height:auto!important}
+html body .hero-inner{padding-bottom:18px!important}
+html body #featuredVenues{padding-top:34px!important;padding-bottom:38px!important}
+html body #enquiry{padding:38px 20px 42px!important}
+html body #enquiry>.section-heading{width:min(1180px,100%);margin:0 auto 18px!important}
+html body #enquiry>.section-heading h2{font-size:clamp(25px,2.4vw,36px)!important}
+html body #enquiry>.section-heading p{font-size:11px!important;line-height:1.55!important}
+html body #enquiry .smv-enquiry-offer-grid{grid-template-columns:minmax(0,1.7fr) minmax(300px,.7fr)!important}
+html body #enquiry #customerEnquiryForm{padding:20px!important}
+html body #enquiry #customerEnquiryForm .form-grid.four,
+html body #enquiry #customerEnquiryForm .form-grid.five{gap:10px!important}
+html body #enquiry #customerEnquiryForm .field input,
+html body #enquiry #customerEnquiryForm .field select{min-height:42px!important}
+html body #enquiry #customerEnquiryForm .form-submit{min-height:44px!important}
+html body .trust-strip{margin-top:0!important}
+@media(min-width:1000px){
+ html body .hero-inner{min-height:360px!important}
+ html body #enquiry{margin-top:0!important}
+}
+@media(max-width:900px){
+ html body #enquiry{padding:28px 14px 32px!important}
+ html body #enquiry .smv-enquiry-offer-grid{grid-template-columns:1fr!important}
+}
