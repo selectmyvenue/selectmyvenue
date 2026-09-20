@@ -307,3 +307,17 @@ html body .trust-strip{margin-top:0!important}
  html body #enquiry{padding:28px 14px 32px!important}
  html body #enquiry .smv-enquiry-offer-grid{grid-template-columns:1fr!important}
 }
+
+/* 20260921 LIVE POPULAR VENUE SEARCHES — reuses the existing left-side location filter. */
+html body #featuredVenues .smv-live-popular-bar{width:100%;margin:-2px 0 16px;padding:10px 12px;display:flex;align-items:center;gap:16px;border:1px solid rgba(235,199,102,.22);border-radius:14px;background:linear-gradient(90deg,rgba(9,57,50,.96),rgba(4,34,30,.98));box-sizing:border-box}
+html body #featuredVenues .smv-live-popular-copy{min-width:150px}
+html body #featuredVenues .smv-live-popular-copy small{display:block;color:#32d7bd;font-size:8px;font-weight:950;letter-spacing:.11em}
+html body #featuredVenues .smv-live-popular-copy strong{display:block;margin-top:2px;color:#fff0c2;font-size:12px}
+html body #featuredVenues .smv-live-popular-links{min-width:0;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none}
+html body #featuredVenues .smv-live-popular-links::-webkit-scrollbar{display:none}
+html body #featuredVenues .smv-live-popular-links button{flex:0 0 auto;min-height:34px;padding:0 11px;border:1px solid rgba(83,211,190,.22);border-radius:9px;background:rgba(255,255,255,.035);color:#dff3ee;font:inherit;font-size:9.5px;font-weight:900;cursor:pointer}
+html body #featuredVenues .smv-live-popular-links button span{margin-left:4px;color:#e7c861;font-size:8px}
+html body #featuredVenues .smv-live-popular-links button:hover,
+html body #featuredVenues .smv-live-popular-links button.active{border-color:#e6c65f;background:#e8c95f;color:#123b33}
+html body #featuredVenues .smv-live-popular-links button.active span{color:#123b33}
+@media(max-width:720px){html body #featuredVenues .smv-live-popular-bar{align-items:flex-start;flex-direction:column;gap:7px;padding:10px}html body #featuredVenues .smv-live-popular-copy{min-width:0}html body #featuredVenues .smv-live-popular-links{width:100%}}
