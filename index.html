@@ -2868,6 +2868,12 @@
     if(!cards.length)return;
     grid.dataset.smartFiltersInstalled="1";
 
+    var popularBar=document.createElement("div");
+    popularBar.className="smv-live-popular-bar";
+    popularBar.innerHTML='<div class="smv-live-popular-copy"><small>POPULAR VENUE SEARCHES</small><strong>Explore by location</strong></div><div class="smv-live-popular-links" id="smvLivePopularLinks"></div>';
+    var heading=section.querySelector(".home-venues-heading");
+    if(heading)heading.insertAdjacentElement("afterend",popularBar);else section.insertBefore(popularBar,section.firstChild);
+
     var style=document.createElement("style");
     style.id="smvHomeSmartFiltersStyles";
     style.textContent=""+
@@ -2949,6 +2955,15 @@
     var locationSelect=document.getElementById("smvHomeLocation");
     locations.forEach(function(value){var option=document.createElement("option");option.value=value;option.textContent=value;locationSelect.appendChild(option);});
 
+    var popularLinks=document.getElementById("smvLivePopularLinks");
+    var locationCounts={};
+    locations.forEach(function(value){locationCounts[value]=cards.filter(function(card){return (card.dataset.smvLocation||"").toLowerCase().indexOf(value.toLowerCase())!==-1;}).length;});
+    var preferred=["Delhi","Gurgaon","Noida","Chhatarpur","GT Karnal Road","Kapashera","Dwarka","Peeragarhi","Alipur"];
+    var popularLocations=[];
+    preferred.forEach(function(wanted){var found=locations.find(function(value){return value.toLowerCase().indexOf(wanted.toLowerCase())!==-1||wanted.toLowerCase().indexOf(value.toLowerCase())!==-1;});if(found&&locationCounts[found]>0&&popularLocations.indexOf(found)===-1)popularLocations.push(found);});
+    locations.forEach(function(value){if(popularLocations.length<7&&locationCounts[value]>0&&popularLocations.indexOf(value)===-1)popularLocations.push(value);});
+    popularLinks.innerHTML='<button type="button" class="active" data-location="">All Venues</button>'+popularLocations.slice(0,7).map(function(value){return '<button type="button" data-location="'+value.replace(/&/g,"&amp;").replace(/"/g,"&quot;")+'">'+value+' <span>'+locationCounts[value]+'</span></button>';}).join("");
+
     var search=document.getElementById("smvHomeSearch");
     var capacity=document.getElementById("smvHomeCapacity");
     var budget=document.getElementById("smvHomeBudget");
@@ -2984,9 +2999,10 @@
       noResults.style.display=visible?"none":"block";
     }
 
-    [search,locationSelect,capacity,budget].forEach(function(control){control.addEventListener(control===search?"input":"change",applyFilters);});
+    [search,locationSelect,capacity,budget].forEach(function(control){control.addEventListener(control===search?"input":"change",function(){if(control===locationSelect&&popularLinks)popularLinks.querySelectorAll("[data-location]").forEach(function(button){button.classList.toggle("active",button.dataset.location===locationSelect.value);});applyFilters();});});
+    if(popularLinks)popularLinks.addEventListener("click",function(event){var button=event.target.closest("[data-location]");if(!button)return;locationSelect.value=button.dataset.location||"";popularLinks.querySelectorAll("[data-location]").forEach(function(item){item.classList.toggle("active",item===button);});applyFilters();section.scrollIntoView({behavior:"smooth",block:"start"});});
     quick.addEventListener("click",function(event){var button=event.target.closest("[data-filter]");if(!button)return;active=button.dataset.filter||"all";quick.querySelectorAll("[data-filter]").forEach(function(item){item.classList.toggle("active",item===button);});applyFilters();});
-    reset.addEventListener("click",function(){search.value="";locationSelect.value="";capacity.value="";budget.value="";active="all";quick.querySelectorAll("[data-filter]").forEach(function(item){item.classList.toggle("active",item.dataset.filter==="all");});applyFilters();});
+    reset.addEventListener("click",function(){search.value="";locationSelect.value="";capacity.value="";budget.value="";active="all";quick.querySelectorAll("[data-filter]").forEach(function(item){item.classList.toggle("active",item.dataset.filter==="all");});if(popularLinks)popularLinks.querySelectorAll("[data-location]").forEach(function(item){item.classList.toggle("active",item.dataset.location==="");});applyFilters();});
     toggle.addEventListener("click",function(){var open=panel.classList.toggle("open");toggle.textContent=open?"✕ Close Filters":"☰ Filter Venues";});
 
     grid.addEventListener("click",function(event){if(event.target.closest("a,button,input,select,textarea,label"))return;var card=event.target.closest(".home-venue-card[data-profile-url]");if(card&&card.dataset.profileUrl)window.location.href=card.dataset.profileUrl;});
