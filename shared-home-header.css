@@ -1,0 +1,263 @@
+/* Select My Venue — canonical public header
+   Loaded last on every public page so page-specific CSS cannot alter it. */
+
+:root{--smv-header-bg:#011411;--smv-header-line:rgba(48,211,190,.14);--smv-header-text:#c6d9d6;--smv-header-accent:#19d8bd}
+
+html body .site-header{
+  position:sticky!important;
+  top:0!important;
+  z-index:10000!important;
+  width:100%!important;
+  height:78px!important;
+  min-height:78px!important;
+  margin:0!important;
+  padding:0!important;
+  display:block!important;
+  overflow:visible!important;
+  background:var(--smv-header-bg)!important;
+  border:0!important;
+  border-bottom:1px solid var(--smv-header-line)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.14)!important;
+  backdrop-filter:blur(18px)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+}
+
+html body .site-header .header-inner{
+  position:relative!important;
+  width:100%!important;
+  max-width:none!important;
+  height:78px!important;
+  min-height:78px!important;
+  margin:0!important;
+  padding:0 18px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:18px!important;
+  box-sizing:border-box!important;
+}
+
+html body .site-header .brand{
+  width:360px!important;
+  min-width:360px!important;
+  max-width:360px!important;
+  height:76px!important;
+  margin:0!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  flex:0 0 360px!important;
+  overflow:visible!important;
+  text-decoration:none!important;
+  background:transparent!important;
+  border:0!important;
+}
+
+html body .site-header .brand .main-logo,
+html body .site-header .main-logo{
+  display:block!important;
+  width:350px!important;
+  height:72px!important;
+  max-width:350px!important;
+  max-height:72px!important;
+  margin:0!important;
+  padding:0!important;
+  object-fit:contain!important;
+  object-position:left center!important;
+  opacity:1!important;
+  visibility:visible!important;
+  mix-blend-mode:screen!important;
+  filter:drop-shadow(0 5px 12px rgba(0,0,0,.18))!important;
+}
+
+html body .site-header #mainNav{
+  position:static!important;
+  width:auto!important;
+  height:auto!important;
+  margin:0 0 0 auto!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:clamp(10px,1vw,18px)!important;
+  flex:0 1 auto!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+
+html body .site-header #mainNav a{
+  position:relative!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:8px 0!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  color:var(--smv-header-text)!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+  font-family:inherit!important;
+  font-size:12px!important;
+  font-weight:750!important;
+  line-height:1.2!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+html body .site-header #mainNav a:hover,
+html body .site-header #mainNav a.active{color:#fff!important}
+
+html body .site-header #mainNav a:not(.nav-cta)::after{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  right:0!important;
+  bottom:1px!important;
+  height:2px!important;
+  border-radius:99px!important;
+  background:var(--smv-header-accent)!important;
+  transform:scaleX(0)!important;
+  transform-origin:center!important;
+  transition:transform .2s ease!important;
+}
+
+html body .site-header #mainNav a:hover::after,
+html body .site-header #mainNav a.active::after{transform:scaleX(1)!important}
+
+html body .site-header #mainNav .nav-cta,
+html body .site-header .header-contact{
+  min-height:40px!important;
+  height:40px!important;
+  margin:0!important;
+  padding:0 13px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:1px solid rgba(100,200,182,.55)!important;
+  border-radius:10px!important;
+  background:#0b443c!important;
+  color:#f3fffc!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  line-height:1!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+
+html body .site-header #mainNav .nav-cta:hover,
+html body .site-header .header-contact:hover{
+  background:#116052!important;
+  color:#fff!important;
+}
+
+html body .site-header .header-contact{
+  margin-left:0!important;
+  flex:0 0 auto!important;
+}
+
+html body .site-header .menu-toggle{
+  display:none!important;
+  width:42px!important;
+  height:42px!important;
+  margin-left:auto!important;
+  padding:0!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:1px solid rgba(100,200,182,.40)!important;
+  border-radius:10px!important;
+  background:#0b443c!important;
+  color:#fff!important;
+  font-size:20px!important;
+  line-height:1!important;
+  cursor:pointer!important;
+}
+
+/* Prevent legacy public-page header rules from creating a second/blank header look. */
+html body .page-header{background:var(--smv-header-bg)!important}
+html body .page-header .page-logo{opacity:1!important;visibility:visible!important}
+
+@media(max-width:1380px){
+  html body .site-header .header-inner{padding-left:14px!important;padding-right:14px!important;gap:12px!important}
+  html body .site-header .brand{
+    width:300px!important;min-width:300px!important;max-width:300px!important;flex-basis:300px!important;
+  }
+  html body .site-header .brand .main-logo,
+  html body .site-header .main-logo{
+    width:292px!important;max-width:292px!important;height:68px!important;max-height:68px!important;
+  }
+  html body .site-header #mainNav{gap:10px!important}
+  html body .site-header #mainNav a{font-size:10.5px!important}
+  html body .site-header #mainNav .nav-cta,
+  html body .site-header .header-contact{font-size:10px!important;padding-left:10px!important;padding-right:10px!important}
+}
+
+@media(max-width:1120px){
+  html body .site-header{height:70px!important;min-height:70px!important}
+  html body .site-header .header-inner{height:70px!important;min-height:70px!important;padding:0 12px!important}
+  html body .site-header .brand{
+    width:270px!important;min-width:270px!important;max-width:270px!important;height:68px!important;flex-basis:270px!important;
+  }
+  html body .site-header .brand .main-logo,
+  html body .site-header .main-logo{
+    width:262px!important;max-width:262px!important;height:64px!important;max-height:64px!important;
+  }
+  html body .site-header .menu-toggle{display:inline-flex!important}
+  html body .site-header #mainNav{
+    position:absolute!important;
+    left:12px!important;
+    right:12px!important;
+    top:74px!important;
+    z-index:10002!important;
+    display:none!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:2px!important;
+    margin:0!important;
+    padding:10px!important;
+    border:1px solid rgba(35,203,183,.18)!important;
+    border-radius:14px!important;
+    background:rgba(2,24,21,.99)!important;
+    box-shadow:0 20px 55px rgba(0,0,0,.38)!important;
+  }
+  html body .site-header #mainNav.open{display:flex!important}
+  html body .site-header #mainNav a{
+    width:100%!important;
+    padding:12px!important;
+    font-size:12px!important;
+    justify-content:flex-start!important;
+  }
+  html body .site-header #mainNav a:not(.nav-cta)::after{display:none!important}
+  html body .site-header #mainNav .nav-cta{height:42px!important}
+  html body .site-header .header-contact{margin-left:0!important}
+}
+
+@media(max-width:760px){
+  html body .site-header .brand{
+    width:220px!important;min-width:220px!important;max-width:220px!important;flex-basis:220px!important;
+  }
+  html body .site-header .brand .main-logo,
+  html body .site-header .main-logo{
+    width:214px!important;max-width:214px!important;height:60px!important;max-height:60px!important;
+  }
+  html body .site-header .header-contact{display:none!important}
+}
+
+@media(max-width:480px){
+  html body .site-header .header-inner{padding:0 8px!important;gap:6px!important}
+  html body .site-header .brand{
+    width:min(68vw,214px)!important;
+    min-width:min(68vw,214px)!important;
+    max-width:min(68vw,214px)!important;
+    flex-basis:min(68vw,214px)!important;
+  }
+  html body .site-header .brand .main-logo,
+  html body .site-header .main-logo{
+    width:100%!important;max-width:214px!important;height:58px!important;max-height:58px!important;
+  }
+  html body .site-header .menu-toggle{width:38px!important;height:38px!important}
+}
