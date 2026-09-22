@@ -6,7 +6,7 @@
   const client=window.supabase?.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
   const grid=document.getElementById("venueGrid"),shell=document.querySelector(".venue-filter-shell"),params=new URLSearchParams(location.search);
   let venues=[],shortlist=readIds(SHORTLIST_KEY),compare=readIds(COMPARE_KEY).slice(0,3);
-  const state={q:String(params.get("q")||"").trim().toLowerCase(),city:String(params.get("city")||params.get("location")||"").trim(),type:"",location:"",food:"",occasion:String(params.get("occasion")||""),capacity:"",budget:"",more:"",sort:"recommended"};
+  const state={q:String(params.get("q")||"").trim().toLowerCase(),city:String(params.get("city")||params.get("location")||"").trim(),type:String(params.get("type")||"").trim(),location:"",food:"",occasion:String(params.get("occasion")||"").trim(),capacity:String(params.get("capacity")||"").trim(),budget:String(params.get("budget")||"").trim(),more:"",sort:"recommended"};
   const clean=v=>String(v==null?"":v).trim(),normal=v=>clean(v).toLowerCase(),escapeHtml=v=>String(v??"").replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"})[c]);
   const safeUrl=v=>{try{const u=new URL(String(v||""));return["http:","https:"].includes(u.protocol)?u.href:""}catch(_){return""}};
   const eventTypes=v=>{const raw=v.event_types||v.events||v.suitable_events||[];return Array.isArray(raw)?raw.map(String).map(clean).filter(Boolean):String(raw||"").split(/[,|]/).map(clean).filter(Boolean)};
