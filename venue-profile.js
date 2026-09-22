@@ -462,12 +462,48 @@
 
   async function loadProfile(){
     if(!validVenueId||!client)return showError();
-    const{data,error}=await client.rpc("smv_public_venues");
-    if(error){console.error("Venue profile error:",error);return showError();}
-    const venue=(Array.isArray(data)?data:[]).map(item=>item?.venue||item).find(item=>String(item?.id)===venueId);
-    if(!venue)return showError();
-    const media=await loadStorageMedia(venue);
-    renderProfile(venue,media);
+    try{
+      const{data,error}=await client.rpc("smv_public_venues");
+      if(error){console.error("Venue profile error:",error);return showError();}
+      const venue=(Array.isArray(data)?data:[]).map(item=>item?.venue||item).find(item=>String(item?.id)===venueId);
+      if(!venue)return showError();
+
+      // Render the profile immediately from the public venue row.
+      // Do not block the full page on Storage gallery/video listing.
+      const initialMedia={cover:safeHttpUrl(venue.cover_image_url),images:[],videos:[]};
+      try{
+        renderProfile(venue,initialMedia);
+      }catch(renderError){
+        console.error("Venue initial render error:",renderError);
+        return showError();
+      }
+
+      // Enrich gallery/video media in the background with a timeout.
+      try{
+        const media=await Promise.race([
+          loadStorageMedia(venue),
+          new Promise(resolve=>setTimeout(()=>resolve(initialMedia),4500))
+        ]);
+        currentMedia=media||initialMedia;
+        if(currentMedia.cover&&byId("venueProfileImage")){
+          const image=byId("venueProfileImage");
+          image.src=currentMedia.cover;
+          image.hidden=false;
+          byId("venueProfileFallback").hidden=true;
+        }
+        try{renderGallery(String(venue.venue_name||"Verified Venue"),currentMedia)}catch(_){}
+        try{
+          const count=window.SMVPublicDetails?.photos?.(currentMedia.cover,currentMedia.images)?.length||0;
+          const mediaCount=byId("venueProfileMediaCount");
+          if(mediaCount&&count){mediaCount.textContent=count+" Photos";mediaCount.hidden=false;}
+        }catch(_){}
+      }catch(mediaError){
+        console.info("Venue media enrichment skipped:",mediaError);
+      }
+    }catch(error){
+      console.error("Venue profile load failure:",error);
+      showError();
+    }
   }
 
   setupActions();
