@@ -8,3 +8,162 @@ html body .page-main input,html body .page-main select,html body .page-main text
 html body .page-main .button,html body .intent-link-card a,html body .page-footer a{font-size:15px!important;line-height:1.5!important}
 html body .search-content-section,html body .guide-section{padding-top:26px!important;padding-bottom:26px!important;min-height:0!important}
 html body .page-footer{font-size:14px!important;line-height:1.7!important;padding-top:24px!important;padding-bottom:24px!important}
+
+
+/* =========================================================
+   2026-09-22 UNIFIED PUBLIC HEADER
+   Match the homepage header colour, logo scale and spacing.
+   ========================================================= */
+html body .page-header,
+html body .page-header.venue-white-header{
+  position:sticky!important;
+  top:0!important;
+  z-index:1000!important;
+  min-height:74px!important;
+  height:74px!important;
+  display:flex!important;
+  align-items:center!important;
+  background:rgba(1,20,17,.88)!important;
+  border-bottom:1px solid rgba(48,211,190,.14)!important;
+  box-shadow:none!important;
+  backdrop-filter:blur(18px)!important;
+  -webkit-backdrop-filter:blur(18px)!important;
+}
+html body .page-header .page-nav{
+  width:min(100%,1420px)!important;
+  min-height:74px!important;
+  height:74px!important;
+  margin:0 auto!important;
+  padding:0 26px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:20px!important;
+}
+html body .page-header .page-nav>a:first-child{
+  width:420px!important;
+  height:74px!important;
+  flex:0 0 420px!important;
+  display:flex!important;
+  align-items:center!important;
+  text-decoration:none!important;
+}
+html body .page-header .page-logo,
+html body .venue-white-header .page-logo{
+  display:block!important;
+  width:410px!important;
+  height:auto!important;
+  max-width:none!important;
+  max-height:76px!important;
+  object-fit:contain!important;
+  object-position:left center!important;
+  mix-blend-mode:screen!important;
+  filter:drop-shadow(0 5px 12px rgba(0,0,0,.18))!important;
+}
+html body .page-header .page-nav-links{
+  margin-left:auto!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:clamp(12px,1.25vw,24px)!important;
+}
+html body .page-header .page-nav-links a,
+html body .venue-white-header .page-nav-links a{
+  position:relative!important;
+  padding:7px 0!important;
+  color:#c6d9d6!important;
+  background:transparent!important;
+  border:0!important;
+  font-size:12px!important;
+  font-weight:750!important;
+  line-height:1.25!important;
+  white-space:nowrap!important;
+  text-decoration:none!important;
+}
+html body .page-header .page-nav-links a:hover,
+html body .venue-white-header .page-nav-links a:hover{
+  color:#fff!important;
+}
+html body .page-header .page-nav-links .page-nav-cta,
+html body .venue-white-header .page-nav-cta{
+  min-height:38px!important;
+  padding:0 13px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border:1px solid #64c8b6!important;
+  border-radius:10px!important;
+  background:#0b443c!important;
+  color:#f3fffc!important;
+  font-size:11px!important;
+  font-weight:850!important;
+}
+html body .page-header .page-nav-links .page-nav-cta:hover{
+  background:#116052!important;
+  color:#fff!important;
+}
+
+@media (min-width:1121px) and (max-width:1499px){
+  html body .page-header .page-nav{padding-left:18px!important;padding-right:18px!important}
+  html body .page-header .page-nav>a:first-child{
+    width:clamp(270px,22vw,330px)!important;
+    flex-basis:clamp(270px,22vw,330px)!important;
+  }
+  html body .page-header .page-logo,
+  html body .venue-white-header .page-logo{
+    width:100%!important;
+    max-height:68px!important;
+  }
+  html body .page-header .page-nav-links{gap:clamp(9px,1vw,16px)!important}
+  html body .page-header .page-nav-links a,
+  html body .venue-white-header .page-nav-links a{font-size:clamp(10px,.86vw,12px)!important}
+}
+@media(max-width:1120px){
+  html body .page-header,
+  html body .page-header.venue-white-header,
+  html body .page-header .page-nav{
+    height:68px!important;
+    min-height:68px!important;
+  }
+  html body .page-header .page-nav{padding:0 16px!important}
+  html body .page-header .page-nav>a:first-child{
+    width:280px!important;
+    flex-basis:280px!important;
+    height:68px!important;
+  }
+  html body .page-header .page-logo,
+  html body .venue-white-header .page-logo{
+    width:270px!important;
+    max-height:64px!important;
+  }
+  html body .page-header .page-nav-links{gap:9px!important;overflow-x:auto!important;scrollbar-width:none}
+  html body .page-header .page-nav-links::-webkit-scrollbar{display:none}
+  html body .page-header .page-nav-links a,
+  html body .venue-white-header .page-nav-links a{font-size:10.5px!important}
+}
+@media(max-width:760px){
+  html body .page-header .page-nav>a:first-child{
+    width:240px!important;
+    flex-basis:240px!important;
+  }
+  html body .page-header .page-logo,
+  html body .venue-white-header .page-logo{
+    width:230px!important;
+    max-height:60px!important;
+  }
+  html body .page-header .page-nav-links a:not(.page-nav-cta){display:none!important}
+  html body .page-header .page-nav-links .page-nav-cta{font-size:10px!important;padding:0 10px!important}
+}
+@media(max-width:480px){
+  html body .page-header .page-nav{padding:0 10px!important;gap:8px!important}
+  html body .page-header .page-nav>a:first-child{
+    width:min(62vw,220px)!important;
+    flex-basis:min(62vw,220px)!important;
+  }
+  html body .page-header .page-logo,
+  html body .venue-white-header .page-logo{
+    width:100%!important;
+    max-width:220px!important;
+  }
+  html body .page-header .page-nav-links .page-nav-cta{min-height:35px!important;padding:0 8px!important;font-size:9px!important}
+}

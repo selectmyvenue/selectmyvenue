@@ -801,3 +801,149 @@ html body main>#contact{order:13!important}
   html body .venue-profile-gallery{grid-template-columns:1fr!important;grid-auto-rows:210px!important}
   html body .venue-profile-gallery>*:first-child{grid-column:auto!important}
 }
+
+
+/* =========================================================
+   2026-09-22 READABILITY + CARD SCALE CORRECTIONS
+   ========================================================= */
+
+/* Homepage venue cards: 3-up desktop is the intended balance. */
+html body main #featuredVenues .home-venue-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:20px!important;
+}
+html body main #featuredVenues .home-venue-media,
+html body main #featuredVenues .home-venue-media img,
+html body main #featuredVenues .home-venue-image-fallback{
+  height:220px!important;
+  min-height:220px!important;
+}
+html body main #featuredVenues .home-venue-content{padding:17px!important}
+html body main #featuredVenues .home-venue-content h3{
+  font-size:20px!important;
+  line-height:1.3!important;
+}
+html body main #featuredVenues .home-venue-location{font-size:12px!important;line-height:1.5!important}
+html body main #featuredVenues .home-venue-facts span{font-size:12px!important;line-height:1.5!important}
+html body main #featuredVenues .home-venue-features span{font-size:10px!important;padding:5px 8px!important}
+html body main #featuredVenues .home-venue-actions{
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+}
+html body main #featuredVenues .home-venue-actions :is(.primary-btn,.secondary-btn){
+  min-height:42px!important;
+  height:42px!important;
+  font-size:11px!important;
+}
+
+/* Light feature cards retained old dark-theme text colours. Correct contrast + size. */
+html body .feature-row .feature-card{padding:30px!important}
+html body .feature-row .feature-card h2{font-size:clamp(30px,2.7vw,38px)!important;line-height:1.18!important}
+html body .feature-row .feature-card>p{
+  max-width:520px!important;
+  color:#4b625c!important;
+  font-size:15.5px!important;
+  line-height:1.7!important;
+}
+html body .feature-row .feature-card .section-kicker{color:#078f80!important}
+html body .feature-row .steps-mini b{color:#079b89!important;font-size:18px!important}
+html body .feature-row .steps-mini strong{color:#31554e!important;font-size:12px!important}
+html body .feature-row .steps-mini small{color:#607a74!important;font-size:11px!important;line-height:1.4!important}
+html body .feature-row .steps-mini em{color:#4f6f68!important}
+html body .feature-row .check-list{gap:11px!important}
+html body .feature-row .check-list li{
+  color:#3e5e57!important;
+  font-size:14px!important;
+  line-height:1.55!important;
+}
+html body .feature-row .match-mini{
+  padding:15px!important;
+  border-color:#cfe5df!important;
+  background:#eef7f4!important;
+}
+html body .feature-row .match-mini small{color:#53736c!important;font-size:10px!important}
+html body .feature-row .match-mini b{color:#31564f!important;font-size:12px!important}
+html body .feature-row .match-mini p{color:#496a63!important;font-size:11.5px!important}
+html body .feature-row .match-mini strong{color:#087f71!important;font-size:12px!important}
+html body .feature-row .secondary-btn{color:#087f71!important;border-color:#8bcfc3!important;background:#fff!important}
+
+/* AI planner results: readable on large desktop screens. */
+html body .ai-result-card{padding:22px!important}
+html body .result-card-header{font-size:13px!important;color:#e5f3f0!important}
+html body :is(.score-badge,.intent-badge){font-size:11px!important}
+html body .score-display strong{font-size:17px!important}
+html body .score-display p{font-size:13px!important;line-height:1.6!important;color:#b9cfca!important}
+html body .budget-result strong{font-size:29px!important}
+html body .budget-result span{font-size:12px!important;color:#9eb8b2!important}
+html body :is(.budget-breakdown small,.intent-grid small){
+  color:#92aea8!important;
+  font-size:10.5px!important;
+}
+html body :is(.budget-breakdown strong,.intent-grid strong){
+  color:#e0efec!important;
+  font-size:13px!important;
+}
+html body .recommendation-content p{
+  color:#bdd1cd!important;
+  font-size:14px!important;
+  line-height:1.65!important;
+}
+html body .recommendation-placeholder{font-size:13px!important;color:#a9c0bb!important}
+html body .recommendation-item{
+  padding:9px 12px!important;
+  color:#c9ddd9!important;
+  font-size:12px!important;
+  line-height:1.35!important;
+}
+html body .recommendation-item strong{font-size:12.5px!important}
+html body .timeline-list{gap:16px!important}
+html body .timeline-dot{
+  width:31px!important;
+  height:31px!important;
+  flex-basis:31px!important;
+  font-size:11px!important;
+}
+html body .timeline-item strong{font-size:12.5px!important;color:#e1efec!important}
+html body .timeline-item p{font-size:11.5px!important;line-height:1.5!important;color:#afc6c1!important}
+html body .timeline-placeholder{font-size:13px!important;color:#a5beb8!important}
+html body .event-checklist{gap:8px 24px!important}
+html body .event-checklist label{
+  padding:7px!important;
+  color:#bcd0cc!important;
+  font-size:12.5px!important;
+  line-height:1.45!important;
+}
+html body .ai-final-card p{font-size:13px!important;line-height:1.6!important}
+html body .planner-header strong{font-size:13px!important}
+html body .planner-status{font-size:11.5px!important}
+
+/* New marketplace sections: avoid undersized supporting copy. */
+html body .smv-market-heading p{font-size:15px!important;line-height:1.7!important}
+html body .smv-celebration-card span{font-size:12px!important;line-height:1.45!important}
+html body .smv-location-card span{font-size:12px!important;line-height:1.45!important}
+html body .smv-discovery-group h3{font-size:23px!important}
+html body .smv-discovery-pill,
+html body .smv-location-more a{font-size:12px!important}
+html body .smv-inspiration-card small{font-size:10px!important}
+html body .smv-inspiration-card p{font-size:13px!important;line-height:1.65!important}
+
+/* Dedicated browse cards can remain denser, but not tiny. */
+html body .venue-directory-main .venue-card-media,
+html body .venue-directory-main .venue-card-media img{height:205px!important;min-height:205px!important}
+html body .venue-directory-main .venue-card-body{padding:17px!important}
+html body .venue-directory-main .venue-card-body h2{font-size:20px!important}
+html body .venue-directory-main :is(.venue-location,.venue-fact,.venue-feature-list,.smv-fit-note,.venue-description){
+  font-size:12px!important;
+  line-height:1.55!important;
+}
+
+@media(max-width:1050px){
+  html body main #featuredVenues .home-venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:620px){
+  html body main #featuredVenues .home-venue-grid{grid-template-columns:1fr!important}
+  html body main #featuredVenues .home-venue-media,
+  html body main #featuredVenues .home-venue-media img,
+  html body main #featuredVenues .home-venue-image-fallback{height:210px!important;min-height:210px!important}
+  html body main #featuredVenues .home-venue-actions{grid-template-columns:1fr!important}
+}
