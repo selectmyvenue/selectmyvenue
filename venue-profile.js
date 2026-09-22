@@ -182,8 +182,22 @@
       const coverFile=(rootResult.data||[]).find(item=>/^cover-/i.test(item?.name||""));
       if(coverFile) cover=publicMediaUrl(`${venueId}/${coverFile.name}`);
     }
-    const images=galleryResult.error?[]:mediaRows(galleryResult.data,"gallery").slice(0,30);
+    const galleryItems=galleryResult.error?[]:(galleryResult.data||[])
+      .filter(item=>item?.name&&item.name!==".emptyFolderPlaceholder")
+      .sort((a,b)=>Number(b?.metadata?.size||0)-Number(a?.metadata?.size||0));
+    const images=galleryItems.map(item=>publicMediaUrl(`${venueId}/gallery/${item.name}`)).filter(Boolean).slice(0,30);
     const videos=videoResult.error?[]:mediaRows(videoResult.data,"videos").slice(0,2);
+
+    // Prefer a substantially larger gallery image for the hero when the uploaded
+    // cover is heavily compressed. This improves sharpness without fake upscaling.
+    const coverFile=!rootResult.error?(rootResult.data||[]).find(item=>/^cover-/i.test(item?.name||"")):null;
+    const coverBytes=Number(coverFile?.metadata?.size||0);
+    const bestGallery=galleryItems[0];
+    const bestGalleryBytes=Number(bestGallery?.metadata?.size||0);
+    if(bestGallery&&bestGalleryBytes>0&&(!cover||coverBytes<120000||bestGalleryBytes>coverBytes*1.8)){
+      const sharper=publicMediaUrl(`${venueId}/gallery/${bestGallery.name}`);
+      if(sharper)cover=sharper;
+    }
     if(!cover&&images.length)cover=images[0];
     return {cover,images,videos};
   }
