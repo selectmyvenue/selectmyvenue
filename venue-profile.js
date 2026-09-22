@@ -242,6 +242,8 @@
     section.className = "venue-profile-details-strip venue-white-card";
     section.innerHTML = details.map(([icon, label, value]) => `<div class="venue-profile-detail-item"><b>${icon}</b><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
     hero.insertAdjacentElement("afterend", section);
+    const legacyFacts=document.querySelector(".venue-profile-facts");
+    if(legacyFacts)legacyFacts.hidden=true;
   }
 
   function renderHighlights(venue) {
