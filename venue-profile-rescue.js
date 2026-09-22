@@ -12,7 +12,7 @@ function cap(v){const a=Number(v.capacity_min||0),b=Number(v.capacity_max||0);re
 function price(v){const a=money(v.price_min_per_person),b=money(v.price_max_per_person);return a&&b?a+"–"+b+" per person":a?"From "+a+" per person":b?"Up to "+b+" per person":"Quote on request"}
 function forceShow(){const l=byId("venueProfileLoading"),e=byId("venueProfileError"),p=byId("venueProfile");if(l){l.hidden=true;l.style.setProperty("display","none","important")}if(e){e.hidden=true;e.style.setProperty("display","none","important")}if(p){p.hidden=false;p.style.setProperty("display","block","important")}}
 function showError(){const l=byId("venueProfileLoading"),e=byId("venueProfileError"),p=byId("venueProfile");if(l){l.hidden=true;l.style.setProperty("display","none","important")}if(p){p.hidden=true;p.style.setProperty("display","none","important")}if(e){e.hidden=false;e.style.setProperty("display","block","important")}}
-function render(v){
+function render(v){window.__SMV_PUBLIC_VENUE=v;
  const name=clean(v.venue_name)||"Verified Venue",locationText=loc(v),type=clean(v.venue_type)||"Venue",desc=clean(v.description)||"Ask our team for availability, packages and detailed venue information.",cover=clean(v.cover_image_url);
  if(byId("venueBreadcrumb"))byId("venueBreadcrumb").textContent=name;
  if(byId("venueProfileName"))byId("venueProfileName").textContent=name;
