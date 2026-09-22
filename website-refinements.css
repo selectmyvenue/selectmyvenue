@@ -22,3 +22,7 @@ html body .lead-intent-card[hidden]{display:none!important}
 @media(max-width:1000px){html body main #featuredVenues .home-venue-grid,.smv-showcase-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:620px){html body main #featuredVenues .home-venue-grid,.smv-showcase-grid,.smv-booking-details dl{grid-template-columns:1fr!important}.smv-wedding-showcase{padding:16px}.smv-booking-details{padding:16px}html body #customerEnquiryForm .form-grid.four,html body #customerEnquiryForm .form-grid.five{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){.smv-trust-marquee-track{animation:none!important}}
+html body main #featuredVenues{order:2!important}
+html body main #enquiry{order:3!important}
+html body main #featuredVenues .home-venue-card::after{display:none!important}
+html body main #featuredVenues .home-venues-heading-actions a{white-space:nowrap;flex-shrink:0;min-width:155px;display:inline-flex;align-items:center;justify-content:center}
