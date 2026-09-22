@@ -260,7 +260,6 @@
   }
 
   function init(){
-    moveQuickEnquiryIntoHero();
     loadPhotos();
     loadVenueData();
     resolveSimilarVenueImages();
