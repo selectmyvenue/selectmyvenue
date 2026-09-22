@@ -22,7 +22,7 @@ function enhanceHero(){
     '<button type="submit">SHOW VENUES →</button>';
 
   var popular=make("div","smv-hero-popular",
-    '<span>Popular:</span><a href="venues.html?q=Chattarpur">Chattarpur</a><a href="venues.html?q=GT%20Karnal%20Road">GT Karnal Road</a><a href="venues-in-gurgaon.html">Gurgaon</a><a href="venues-in-noida.html">Noida</a><a href="venues.html?q=Kapashera">Kapashera</a>');
+    '<span>Popular:</span><a href="venues.html?q=Chattarpur">Chattarpur</a><a href="venues.html?q=GT%20Karnal%20Road">GT Karnal Road</a><a href="venues.html?city=Gurgaon">Gurgaon</a><a href="venues.html?city=Noida">Noida</a><a href="venues.html?q=Kapashera">Kapashera</a>');
   if(heroText){heroText.insertAdjacentElement("afterend",finder);finder.insertAdjacentElement("afterend",popular);}else{copy.append(finder,popular);}
 
   finder.addEventListener("submit",function(e){
@@ -49,24 +49,24 @@ function addSections(){
   var celebrations=make("section","smv-market-section smv-celebrations-section",
     '<div class="smv-market-inner"><div class="smv-market-heading"><div><span class="section-kicker">BROWSE BY CELEBRATION</span><h2>Start with the moment you’re planning.</h2></div><p>Explore venue ideas for weddings, engagements, receptions and every celebration around them.</p></div>'+
     '<div class="smv-celebration-grid">'+
-    '<a class="smv-celebration-card" href="wedding-venues-delhi-ncr.html"><img loading="lazy" src="assets/hero/hero-bright-wedding-v2.webp" alt="Wedding venues"><div><strong>Wedding</strong><span>Banquets, lawns &amp; farmhouses</span></div></a>'+
-    '<a class="smv-celebration-card" href="engagement-venues-delhi-ncr.html"><img loading="lazy" src="assets/hero/hero-bright-engagement-v2.webp" alt="Engagement venues"><div><strong>Engagement &amp; Roka</strong><span>Intimate to grand celebrations</span></div></a>'+
-    '<a class="smv-celebration-card" href="reception-venues-delhi-ncr.html"><img loading="lazy" src="assets/hero/hero-bright-celebration-v2.webp" alt="Reception venues"><div><strong>Reception</strong><span>Elegant evening venues</span></div></a>'+
-    '<a class="smv-celebration-card" href="birthday-party-venues-delhi-ncr.html"><img loading="lazy" src="assets/hero/hero-bright-garden-v2.webp" alt="Birthday party venues"><div><strong>Birthday</strong><span>Party spaces for every age</span></div></a>'+
-    '<a class="smv-celebration-card" href="corporate-event-venues-delhi-ncr.html"><img loading="lazy" src="assets/hero/hero-bright-garden-v2.webp" alt="Corporate event venues"><div><strong>Corporate Event</strong><span>Meetings, launches &amp; socials</span></div></a>'+
-    '<a class="smv-celebration-card" href="party-halls-delhi-ncr.html"><img loading="lazy" src="assets/hero/sangeet-engagement.webp" alt="Party halls"><div><strong>Party &amp; Celebration</strong><span>Fun spaces for special moments</span></div></a>'+
+    '<a class="smv-celebration-card" href="venues.html?occasion=Wedding"><img loading="lazy" src="assets/hero/hero-bright-wedding-v2.webp" alt="Wedding venues"><div><strong>Wedding</strong><span>Banquets, lawns &amp; farmhouses</span></div></a>'+
+    '<a class="smv-celebration-card" href="venues.html?occasion=Engagement"><img loading="lazy" src="assets/hero/hero-bright-engagement-v2.webp" alt="Engagement venues"><div><strong>Engagement &amp; Roka</strong><span>Intimate to grand celebrations</span></div></a>'+
+    '<a class="smv-celebration-card" href="venues.html?occasion=Reception"><img loading="lazy" src="assets/hero/hero-bright-celebration-v2.webp" alt="Reception venues"><div><strong>Reception</strong><span>Elegant evening venues</span></div></a>'+
+    '<a class="smv-celebration-card" href="venues.html?occasion=Birthday"><img loading="lazy" src="assets/hero/hero-bright-garden-v2.webp" alt="Birthday party venues"><div><strong>Birthday</strong><span>Party spaces for every age</span></div></a>'+
+    '<a class="smv-celebration-card" href="venues.html?occasion=Corporate%20Event"><img loading="lazy" src="assets/hero/hero-bright-garden-v2.webp" alt="Corporate event venues"><div><strong>Corporate Event</strong><span>Meetings, launches &amp; socials</span></div></a>'+
+    '<a class="smv-celebration-card" href="venues.html?occasion=Party"><img loading="lazy" src="assets/hero/sangeet-engagement.webp" alt="Party halls"><div><strong>Party &amp; Celebration</strong><span>Fun spaces for special moments</span></div></a>'+
     '</div></div>');
 
   var locations=make("section","smv-market-section alt smv-locations-section",
     '<div class="smv-market-inner"><div class="smv-market-heading"><div><span class="section-kicker">EXPLORE BY LOCATION</span><h2>Find a celebration space near the places that matter.</h2></div><p>Search major Delhi NCR markets and popular wedding belts without filling a form first.</p></div>'+
     '<div class="smv-location-grid">'+
-    '<a class="smv-location-card" href="venues-in-delhi.html"><img loading="lazy" src="assets/hero/hero-bright-wedding-v2.webp" alt="Venues in Delhi"><div><strong>Delhi</strong><span>Banquets, hotels, lawns &amp; farmhouses</span></div></a>'+
-    '<a class="smv-location-card" href="venues-in-gurgaon.html"><img loading="lazy" src="assets/hero/hero-bright-garden-v2.webp" alt="Venues in Gurgaon"><div><strong>Gurgaon</strong><span>Modern hotels &amp; premium celebrations</span></div></a>'+
-    '<a class="smv-location-card" href="venues-in-noida.html"><img loading="lazy" src="assets/hero/hero-bright-engagement-v2.webp" alt="Venues in Noida"><div><strong>Noida</strong><span>Banquets &amp; event spaces</span></div></a>'+
+    '<a class="smv-location-card" href="venues.html?city=Delhi"><img loading="lazy" src="assets/hero/hero-bright-wedding-v2.webp" alt="Venues in Delhi"><div><strong>Delhi</strong><span>Banquets, hotels, lawns &amp; farmhouses</span></div></a>'+
+    '<a class="smv-location-card" href="venues.html?city=Gurgaon"><img loading="lazy" src="assets/hero/hero-bright-garden-v2.webp" alt="Venues in Gurgaon"><div><strong>Gurgaon</strong><span>Modern hotels &amp; premium celebrations</span></div></a>'+
+    '<a class="smv-location-card" href="venues.html?city=Noida"><img loading="lazy" src="assets/hero/hero-bright-engagement-v2.webp" alt="Venues in Noida"><div><strong>Noida</strong><span>Banquets &amp; event spaces</span></div></a>'+
     '<a class="smv-location-card" href="venues.html?q=Chattarpur"><img loading="lazy" src="assets/hero/hero-bright-celebration-v2.webp" alt="Venues in Chattarpur"><div><strong>Chattarpur</strong><span>Farmhouses &amp; wedding venues</span></div></a>'+
     '<a class="smv-location-card" href="venues.html?q=GT%20Karnal%20Road"><img loading="lazy" src="assets/hero/hero-bright-garden-v2.webp" alt="Venues on GT Karnal Road"><div><strong>GT Karnal Road</strong><span>Large lawns, resorts &amp; banquets</span></div></a>'+
-    '<a class="smv-location-card" href="venues-in-faridabad.html"><img loading="lazy" src="assets/hero/sangeet-engagement.webp" alt="Venues in Faridabad"><div><strong>Faridabad</strong><span>Celebration venues across the city</span></div></a>'+
-    '</div><div class="smv-location-more"><a href="venues.html?q=Kapashera">Kapashera</a><a href="venues.html?q=Dwarka">Dwarka</a><a href="venues.html?q=Alipur">Alipur</a><a href="venues.html?q=Peeragarhi">Peeragarhi</a><a href="delhi-ncr-venues.html">Explore all Delhi NCR →</a></div></div>');
+    '<a class="smv-location-card" href="venues.html?city=Faridabad"><img loading="lazy" src="assets/hero/sangeet-engagement.webp" alt="Venues in Faridabad"><div><strong>Faridabad</strong><span>Celebration venues across the city</span></div></a>'+
+    '</div><div class="smv-location-more"><a href="venues.html?q=Kapashera">Kapashera</a><a href="venues.html?q=Dwarka">Dwarka</a><a href="venues.html?q=Alipur">Alipur</a><a href="venues.html?q=Peeragarhi">Peeragarhi</a><a href="venues.html">Explore all Delhi NCR →</a></div></div>');
 
   var discovery=make("section","smv-market-section smv-discovery-section",
     '<div class="smv-market-inner"><div class="smv-market-heading"><div><span class="section-kicker">FIND A VENUE YOUR WAY</span><h2>Shortlist faster with the details that actually matter.</h2></div><p>Browse by venue style, budget and practical requirements before asking for availability.</p></div>'+
