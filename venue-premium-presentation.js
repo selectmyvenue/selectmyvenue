@@ -36,12 +36,15 @@ function tidyProfileNav(){
       a.remove();
       return;
     }
-    a.addEventListener("click",e=>{
-      const t=document.querySelector(a.getAttribute("href"));
-      if(!t)return;
-      e.preventDefault();
-      t.scrollIntoView({behavior:"smooth",block:"start"});
-    });
+    if(a.dataset.smvSmooth!=="1"){
+      a.dataset.smvSmooth="1";
+      a.addEventListener("click",e=>{
+        const t=document.querySelector(a.getAttribute("href"));
+        if(!t)return;
+        e.preventDefault();
+        t.scrollIntoView({behavior:"smooth",block:"start"});
+      });
+    }
   });
 }
 
