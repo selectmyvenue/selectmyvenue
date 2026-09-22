@@ -120,6 +120,6 @@ function enhanceProfile(){
   var aside=document.querySelector(".venue-profile-enquiry p");if(aside)aside.textContent="Share your event details once to check pricing, availability and site-visit options for this venue without repeating the venue information already shown here.";
 }
 
-function run(){enhanceHero();addSections();polishHome();enhanceProfile();}
+function run(){if(document.querySelector(".venue-profile-main")){enhanceProfile();return;}enhanceHero();addSections();polishHome();}
 ready(run);
 })();
