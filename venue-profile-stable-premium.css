@@ -546,3 +546,52 @@ body.venue-profile-page .venue-profile-cover img{
   body.venue-profile-page #venueProfileDetailsStrip{grid-template-columns:1fr 1fr!important}
   body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item{border-right:0!important;border-bottom:1px solid #e8dece!important}
 }
+
+
+/* 2026-09-22 — readability fix for "What this venue offers" only */
+body.venue-profile-page .venue-profile-content>.venue-profile-panel:nth-child(2){
+  background:#fffdf8!important;
+  border-color:#e2d5bc!important;
+  color:#1f433a!important;
+}
+body.venue-profile-page .venue-profile-content>.venue-profile-panel:nth-child(2)>.eyebrow{
+  color:#8b6d20!important;
+}
+body.venue-profile-page .venue-profile-content>.venue-profile-panel:nth-child(2)>h2{
+  color:#1f433a!important;
+}
+body.venue-profile-page .venue-profile-content>.venue-profile-panel:nth-child(2)>p{
+  color:#5f716b!important;
+}
+body.venue-profile-page .venue-profile-feature{
+  border-color:#d8e6e1!important;
+  background:#f7fbf9!important;
+}
+body.venue-profile-page .venue-profile-feature>span{
+  border-color:#d6c37e!important;
+  background:#fff8e6!important;
+  color:#81651d!important;
+}
+body.venue-profile-page .venue-profile-feature strong{
+  color:#2f554b!important;
+}
+body.venue-profile-page #smvBookingDetails{
+  border:1px solid #e5d8be!important;
+  background:#fffaf2!important;
+}
+body.venue-profile-page #smvBookingDetails h2{
+  color:#80631a!important;
+}
+body.venue-profile-page #smvBookingDetails>p{
+  color:#64756f!important;
+}
+body.venue-profile-page #smvBookingDetails dt{
+  color:#80631a!important;
+}
+body.venue-profile-page #smvBookingDetails dd{
+  color:#2f4f47!important;
+  font-weight:600!important;
+}
+body.venue-profile-page #smvBookingDetails dl>div{
+  border-bottom:1px solid #eadfce!important;
+}
