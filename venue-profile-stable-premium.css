@@ -29,13 +29,13 @@ body.venue-profile-page .venue-profile-hero{
   box-shadow:0 20px 48px rgba(30,47,41,.10)!important;
 }
 body.venue-profile-page .venue-profile-cover{
-  min-height:500px!important;
-  height:500px!important;
+  min-height:430px!important;
+  height:430px!important;
   background:#173f37!important;
 }
 body.venue-profile-page .venue-profile-cover img{
   width:100%!important;
-  height:500px!important;
+  height:430px!important;
   object-fit:cover!important;
   object-position:center!important;
 }
@@ -493,7 +493,7 @@ body.venue-profile-page .venue-profile-hero.smv-hero-with-quick .venue-profile-m
   body.venue-profile-page .venue-profile-layout{grid-template-columns:1fr!important}
   body.venue-profile-page .venue-profile-enquiry{position:static!important}
   body.venue-profile-page .venue-profile-cover,
-  body.venue-profile-page .venue-profile-cover img{height:390px!important;min-height:390px!important}
+  body.venue-profile-page .venue-profile-cover img{height:360px!important;min-height:360px!important}
 }
 @media(max-width:700px){
   body.venue-profile-page .venue-profile-main{width:min(100% - 18px,1320px)!important}
@@ -504,4 +504,45 @@ body.venue-profile-page .venue-profile-hero.smv-hero-with-quick .venue-profile-m
   body.venue-profile-page #venueProfileName{font-size:36px!important}
   body.venue-profile-page #venueProfileFeatures{grid-template-columns:1fr!important}
   body.venue-profile-page .venue-highlight-grid{grid-template-columns:1fr!important}
+}
+
+/* Final de-duplication and image-quality presentation */
+body.venue-profile-page .venue-profile-facts[hidden]{display:none!important}
+body.venue-profile-page #venueProfileDetailsStrip{
+  margin:14px 0 18px!important;
+  grid-template-columns:repeat(auto-fit,minmax(175px,1fr))!important;
+  gap:8px!important;
+  padding:10px!important;
+  border:1px solid #ded3c0!important;
+  border-radius:16px!important;
+  background:#fffdf9!important;
+  box-shadow:0 9px 24px rgba(36,54,47,.055)!important;
+}
+body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item{
+  min-height:66px!important;
+  padding:11px 12px!important;
+  border:0!important;
+  border-right:1px solid #e8dece!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item:last-child{border-right:0!important}
+body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item b{
+  background:#f6eed8!important;
+  color:#937522!important;
+}
+body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item span{color:#9a8653!important}
+body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item strong{
+  color:#274b42!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-weight:600!important;
+}
+body.venue-profile-page .venue-profile-cover img{
+  image-rendering:auto!important;
+  transform:none!important;
+  filter:none!important;
+}
+@media(max-width:700px){
+  body.venue-profile-page #venueProfileDetailsStrip{grid-template-columns:1fr 1fr!important}
+  body.venue-profile-page #venueProfileDetailsStrip .venue-profile-detail-item{border-right:0!important;border-bottom:1px solid #e8dece!important}
 }
