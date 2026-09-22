@@ -1,6 +1,6 @@
 /* Wedding discovery refinements: preserve the brand and top search. */
 html body main #featuredVenues{scroll-margin-top:95px}
-html body main #featuredVenues .home-venue-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:22px!important}
+html body main #featuredVenues .home-venue-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:20px!important}
 html body main #featuredVenues .home-venue-card{min-width:0;min-height:0!important}
 html body main #featuredVenues .home-venue-media,html body main #featuredVenues .home-venue-media img{height:230px!important;min-height:230px!important;object-fit:cover}
 html body main #featuredVenues .home-venue-content h3{font-size:22px!important;line-height:1.25!important}
@@ -22,7 +22,42 @@ html body .lead-intent-card[hidden]{display:none!important}
 @media(max-width:1000px){html body main #featuredVenues .home-venue-grid,.smv-showcase-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(max-width:620px){html body main #featuredVenues .home-venue-grid,.smv-showcase-grid,.smv-booking-details dl{grid-template-columns:1fr!important}.smv-wedding-showcase{padding:16px}.smv-booking-details{padding:16px}html body #customerEnquiryForm .form-grid.four,html body #customerEnquiryForm .form-grid.five{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){.smv-trust-marquee-track{animation:none!important}}
-html body main #featuredVenues{order:2!important}
-html body main #enquiry{order:3!important}
+html body main #featuredVenues{order:3!important}
+html body main #enquiry{order:2!important}
 html body main #featuredVenues .home-venue-card::after{display:none!important}
 html body main #featuredVenues .home-venues-heading-actions a{white-space:nowrap;flex-shrink:0;min-width:155px;display:inline-flex;align-items:center;justify-content:center}
+
+/* Restore full browsing and improve lower-page readability. */
+html body main #featuredVenues .smv-filter-choice,html body main #featuredVenues .smv-filter-choice>span{font-size:15px!important;line-height:1.5!important}
+html body main #featuredVenues .smv-filter-title{font-size:14px!important}
+html body main #featuredVenues .smv-filter-choice b{font-size:13px!important}
+html body main #featuredVenues .smv-home-filter-panel{position:static!important}
+html body :is(.popular-section,.feature-row,.ai-planner-section,.about-section,.contact-section){padding-top:30px!important;padding-bottom:30px!important;min-height:0!important}
+html body :is(.popular-section,.feature-row,.ai-planner-section,.about-section,.contact-section,.site-footer) p,
+html body :is(.feature-row,.about-section,.site-footer) li,
+html body .footer-link-group a{font-size:16px!important;line-height:1.7!important}
+html body :is(.popular-section,.feature-row,.ai-planner-section,.about-section,.contact-section) h2{font-size:clamp(26px,3vw,36px)!important;line-height:1.22!important}
+html body :is(.feature-card,.ai-result-card,.contact-card){min-height:0!important}
+html body .contact-card strong,html body .footer-link-group h4{font-size:18px!important}
+html body .contact-card span,html body .about-points span,html body .footer-bottom{font-size:14px!important;line-height:1.6!important}
+html body .site-footer{padding-top:28px!important;padding-bottom:20px!important;min-height:0!important}
+html body .footer-top{padding-bottom:20px!important}.footer-final-logo{margin-top:18px!important}
+html body #aiPlannerResults:not(.generated){display:none!important}
+html body .about-section{gap:24px!important}.about-image{min-height:240px!important}
+@media(max-width:620px){html body main #featuredVenues .home-venue-grid{grid-template-columns:1fr!important}}
+/* Celebration-led editorial styling in the existing teal and gold palette. */
+html body .hero h1{font-family:Georgia,"Times New Roman",serif!important;font-weight:600!important;letter-spacing:-.025em!important;line-height:1.08!important;font-size:clamp(38px,4.4vw,62px)!important}
+html body .hero h1 span{color:#f3d487!important}
+html body .hero-text{font-size:16px!important;line-height:1.65!important;max-width:620px}
+html body .hero-orbit{opacity:.4;pointer-events:none}
+.smv-celebration-links{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0}
+.smv-celebration-links a{display:inline-flex;align-items:center;min-height:38px;padding:7px 13px;border:1px solid rgba(243,212,135,.4);border-radius:999px;background:rgba(3,32,28,.65);color:#fff1c8;font-size:13px;font-weight:700;text-decoration:none}
+.smv-celebration-links a:hover,.smv-celebration-links a:focus-visible{background:#f3d487;color:#07332d}
+html body :is(.popular-heading,.about-copy,.contact-section,.home-venues-heading) h2{font-family:Georgia,"Times New Roman",serif!important;font-weight:600!important}
+html body .about-image{background-image:url("assets/hero/hero-bright-wedding-v2.webp")!important}
+html body .popular-section .event-card{min-height:190px!important;border-color:rgba(243,212,135,.3)!important}
+html body .popular-section .event-card h3{font-size:23px!important;font-family:Georgia,"Times New Roman",serif}
+html body main #featuredVenues .home-venue-content h3{font-size:22px!important}
+html body main #featuredVenues .home-venue-facts,html body main #featuredVenues .home-venue-features span{font-size:13px!important}
+html body main #featuredVenues .home-venue-actions a{font-size:13px!important}
+@media(max-width:620px){html body .hero-text{font-size:15px!important}.smv-celebration-links{gap:6px}.smv-celebration-links a{font-size:12px}}

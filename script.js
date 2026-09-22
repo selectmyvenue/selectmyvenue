@@ -759,6 +759,7 @@ function generateAIEventPlan(data) {
    ========================================================= */
 
 function renderAIPlan(plan) {
+  if(plan) byId("aiPlannerResults")?.classList.add("generated");
   if (!plan) return;
 
   currentAIPlan = plan;
