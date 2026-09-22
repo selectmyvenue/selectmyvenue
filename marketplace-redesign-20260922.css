@@ -1,0 +1,803 @@
+/* Select My Venue — Marketplace Experience Redesign
+   2026-09-22. Loaded last so it intentionally consolidates earlier homepage overrides. */
+
+:root{
+  --smv-ink:#19342f;
+  --smv-teal:#063c35;
+  --smv-teal-2:#0b5147;
+  --smv-mint:#23cdb3;
+  --smv-gold:#d9b954;
+  --smv-gold-light:#f2da91;
+  --smv-cream:#fbf7f0;
+  --smv-cream-2:#f4ede2;
+  --smv-line:#e5dccd;
+  --smv-copy:#65736f;
+  --smv-white:#fff;
+}
+
+html{scroll-behavior:smooth}
+
+/* ---------- HERO: compact, useful, wedding-first ---------- */
+html body .hero{
+  min-height:0!important;
+  padding:34px 28px 30px!important;
+  background:#062d28!important;
+}
+html body .hero::before{
+  background:
+    linear-gradient(90deg,rgba(2,31,27,.97) 0%,rgba(2,31,27,.90) 44%,rgba(2,31,27,.34) 70%,rgba(2,31,27,.50) 100%),
+    url("assets/hero/hero-bright-wedding-v2.webp") center/cover no-repeat!important;
+  filter:none!important;
+  transform:none!important;
+}
+html body .hero::after{
+  background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.26))!important;
+}
+html body .hero-inner{
+  width:min(100%,1280px)!important;
+  min-height:410px!important;
+  grid-template-columns:minmax(0,1.04fr) minmax(360px,.96fr)!important;
+  gap:42px!important;
+  padding-bottom:0!important;
+}
+html body .hero-copy{max-width:690px!important}
+html body .hero .ai-badge{
+  margin-bottom:12px!important;
+  padding:6px 11px!important;
+  font-size:8px!important;
+  background:rgba(4,42,36,.78)!important;
+}
+html body .hero .eyebrow{
+  margin-bottom:8px!important;
+  color:#c5ddd7!important;
+  font-size:9px!important;
+}
+html body .hero h1{
+  max-width:650px!important;
+  margin:0 0 13px!important;
+  font-size:clamp(42px,4.15vw,56px)!important;
+  line-height:1.03!important;
+  letter-spacing:-.035em!important;
+  color:#fff!important;
+}
+html body .hero h1 span{color:var(--smv-gold-light)!important}
+html body .hero-text{
+  max-width:640px!important;
+  margin:0 0 17px!important;
+  color:#d6e7e2!important;
+  font-size:15px!important;
+  line-height:1.62!important;
+}
+html body .hero-orbit,
+html body .smv-celebration-links{display:none!important}
+html body .hero-actions{
+  margin-top:14px!important;
+  gap:9px!important;
+}
+html body .hero-actions .primary-btn{display:none!important}
+html body .hero-actions .secondary-btn{
+  min-height:40px!important;
+  padding:0 15px!important;
+  border-color:rgba(255,255,255,.28)!important;
+  background:rgba(255,255,255,.07)!important;
+  color:#fff!important;
+  font-size:11px!important;
+}
+
+.smv-hero-visual{
+  position:relative;
+  min-height:352px;
+  align-self:center;
+}
+.smv-hero-visual-main,
+.smv-hero-visual-small{
+  position:absolute;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.20);
+  background:#0c4b42;
+  box-shadow:0 22px 54px rgba(0,0,0,.28);
+}
+.smv-hero-visual-main{
+  inset:0 0 18px 54px;
+  border-radius:24px;
+}
+.smv-hero-visual-small{
+  width:42%;
+  height:42%;
+  left:0;
+  bottom:0;
+  z-index:2;
+  border-radius:18px;
+  border:4px solid #06362f;
+}
+.smv-hero-visual img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.smv-hero-visual-label{
+  position:absolute;
+  right:16px;
+  bottom:34px;
+  z-index:3;
+  padding:9px 12px;
+  border:1px solid rgba(242,218,145,.48);
+  border-radius:12px;
+  background:rgba(3,34,29,.84);
+  color:#fff;
+  backdrop-filter:blur(10px);
+}
+.smv-hero-visual-label strong{display:block;color:#f4dc94;font-size:12px}
+.smv-hero-visual-label span{display:block;margin-top:3px;color:#d6e7e2;font-size:9px}
+
+.smv-hero-finder{
+  max-width:980px;
+  margin-top:15px;
+  padding:10px;
+  display:grid;
+  grid-template-columns:1.35fr 1fr .85fr 1fr auto;
+  gap:7px;
+  border:1px solid rgba(242,218,145,.32);
+  border-radius:15px;
+  background:rgba(3,34,29,.78);
+  box-shadow:0 14px 34px rgba(0,0,0,.19);
+  backdrop-filter:blur(12px);
+}
+.smv-hero-finder label{display:block;min-width:0}
+.smv-hero-finder label>span{
+  display:block;
+  margin:0 0 5px 3px;
+  color:#b9d2cc;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.smv-hero-finder :is(select,input){
+  width:100%;
+  min-height:42px;
+  padding:0 10px;
+  border:1px solid rgba(160,205,195,.28);
+  border-radius:9px;
+  background:#0a443b;
+  color:#f8fffd;
+  font:inherit;
+  font-size:11px;
+  outline:none;
+}
+.smv-hero-finder :is(select,input):focus{
+  border-color:#42d7c0;
+  box-shadow:0 0 0 3px rgba(66,215,192,.10);
+}
+.smv-hero-finder button{
+  align-self:end;
+  min-height:42px;
+  padding:0 16px;
+  border:1px solid #f2d98e;
+  border-radius:9px;
+  background:linear-gradient(180deg,#f2d98e,#d9b954);
+  color:#16362f;
+  font:inherit;
+  font-size:10.5px;
+  font-weight:950;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.smv-hero-popular{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:9px;
+}
+.smv-hero-popular span{color:#aac8c1;font-size:9px;font-weight:800}
+.smv-hero-popular a{
+  color:#f2dfa6;
+  font-size:9px;
+  font-weight:800;
+  text-decoration:none;
+}
+.smv-hero-popular a:hover{text-decoration:underline}
+html body .micro-note{
+  margin-top:12px!important;
+  color:#d4e5e0!important;
+  font-size:9.5px!important;
+}
+
+/* ---------- New editorial marketplace sections ---------- */
+.smv-market-section{
+  padding:54px 28px;
+  background:var(--smv-cream);
+  color:var(--smv-ink);
+}
+.smv-market-section.alt{background:#fff}
+.smv-market-inner{width:min(100%,1280px);margin:0 auto}
+.smv-market-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:26px;
+  margin-bottom:22px;
+}
+.smv-market-heading .section-kicker{color:#987b24!important}
+.smv-market-heading h2{
+  margin:5px 0 0;
+  max-width:720px;
+  color:var(--smv-ink);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(28px,3vw,40px);
+  font-weight:600;
+  line-height:1.13;
+}
+.smv-market-heading p{
+  max-width:470px;
+  margin:0;
+  color:var(--smv-copy);
+  font-size:13px;
+  line-height:1.65;
+}
+.smv-market-heading a{color:#0b6558;font-weight:900;text-decoration:none}
+
+.smv-celebration-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:13px;
+}
+.smv-celebration-card{
+  position:relative;
+  min-height:210px;
+  overflow:hidden;
+  border-radius:16px;
+  background:#173e37;
+  box-shadow:0 12px 28px rgba(41,55,49,.12);
+  text-decoration:none;
+}
+.smv-celebration-card img{
+  width:100%;
+  height:100%;
+  position:absolute;
+  inset:0;
+  object-fit:cover;
+  transition:transform .35s ease;
+}
+.smv-celebration-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.02) 22%,rgba(0,0,0,.80) 100%);
+}
+.smv-celebration-card div{
+  position:absolute;
+  left:14px;
+  right:12px;
+  bottom:13px;
+  z-index:2;
+  color:#fff;
+}
+.smv-celebration-card strong{
+  display:block;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:18px;
+}
+.smv-celebration-card span{display:block;margin-top:4px;color:#e8eee9;font-size:10px}
+.smv-celebration-card:hover img{transform:scale(1.05)}
+
+.smv-location-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:15px;
+}
+.smv-location-card{
+  min-height:185px;
+  position:relative;
+  overflow:hidden;
+  border-radius:17px;
+  text-decoration:none;
+  background:#113d35;
+  box-shadow:0 12px 30px rgba(40,55,49,.10);
+}
+.smv-location-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.smv-location-card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,rgba(4,39,34,.84),rgba(4,39,34,.20));
+}
+.smv-location-card div{position:absolute;z-index:2;left:18px;bottom:17px;color:#fff}
+.smv-location-card strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:21px}
+.smv-location-card span{display:block;margin-top:5px;color:#dce9e5;font-size:10px}
+.smv-location-more{
+  margin-top:13px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.smv-location-more a,
+.smv-discovery-pill{
+  min-height:38px;
+  display:inline-flex;
+  align-items:center;
+  padding:0 13px;
+  border:1px solid #dbd1bf;
+  border-radius:999px;
+  background:#fff;
+  color:#294a43;
+  font-size:10.5px;
+  font-weight:850;
+  text-decoration:none;
+}
+.smv-location-more a:hover,
+.smv-discovery-pill:hover{border-color:#b6973e;color:#765d14}
+
+.smv-discovery-groups{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.smv-discovery-group{
+  padding:20px;
+  border:1px solid var(--smv-line);
+  border-radius:16px;
+  background:#fff;
+}
+.smv-discovery-group h3{
+  margin:0 0 13px;
+  color:var(--smv-ink);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:21px;
+}
+.smv-discovery-list{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ---------- Full-width, denser home venue marketplace ---------- */
+html body #featuredVenues{
+  order:3!important;
+  padding:52px 28px 58px!important;
+  background:#fff!important;
+  color:var(--smv-ink)!important;
+}
+html body #featuredVenues .home-venues-heading{
+  width:min(100%,1280px)!important;
+  margin:0 auto 20px!important;
+}
+html body #featuredVenues .home-venues-heading h2{
+  color:var(--smv-ink)!important;
+  font-size:clamp(29px,3vw,40px)!important;
+}
+html body #featuredVenues .home-venues-heading p{color:var(--smv-copy)!important}
+html body #featuredVenues .home-venues-heading-actions .secondary-btn{
+  border-color:#b7a163!important;
+  color:#5f4c18!important;
+  background:#fffaf0!important;
+}
+html body #featuredVenues .smv-home-filter-layout{
+  width:min(100%,1280px)!important;
+  margin:0 auto!important;
+  display:block!important;
+}
+html body #featuredVenues .smv-home-filter-panel{display:none!important}
+html body #featuredVenues .smv-home-results{min-width:0!important;width:100%!important}
+html body #featuredVenues .smv-home-result-bar{
+  margin-bottom:14px!important;
+  border:1px solid #e4dac8!important;
+  background:#faf6ef!important;
+  color:#61706c!important;
+}
+html body #featuredVenues .smv-home-result-bar strong{color:#8b711f!important}
+html body #featuredVenues .smv-home-clear-all{display:none!important}
+html body main #featuredVenues .home-venue-grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:15px!important;
+  justify-content:stretch!important;
+}
+html body main #featuredVenues .home-venue-card{
+  min-width:0!important;
+  overflow:hidden!important;
+  border:1px solid #e6ddcf!important;
+  border-radius:15px!important;
+  background:#fff!important;
+  box-shadow:0 10px 26px rgba(48,60,54,.08)!important;
+}
+html body main #featuredVenues .home-venue-card:hover{
+  transform:translateY(-3px)!important;
+  border-color:#d4bd75!important;
+  box-shadow:0 16px 34px rgba(48,60,54,.13)!important;
+}
+html body main #featuredVenues .home-venue-card::after{display:none!important}
+html body main #featuredVenues .home-venue-media,
+html body main #featuredVenues .home-venue-media img,
+html body main #featuredVenues .home-venue-image-fallback{
+  height:176px!important;
+  min-height:176px!important;
+}
+html body main #featuredVenues .home-venue-content{
+  padding:14px!important;
+  color:var(--smv-ink)!important;
+}
+html body main #featuredVenues .home-venue-content h3{
+  margin:0 0 4px!important;
+  font-size:17px!important;
+  line-height:1.28!important;
+}
+html body main #featuredVenues .home-venue-content h3 a{color:#1d3b35!important}
+html body main #featuredVenues .home-venue-location{
+  color:#6b7975!important;
+  font-size:10.5px!important;
+}
+html body main #featuredVenues .home-venue-facts{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:4px!important;
+  margin:10px 0!important;
+}
+html body main #featuredVenues .home-venue-facts span{
+  min-height:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  color:#445a54!important;
+  font-size:10.5px!important;
+}
+html body main #featuredVenues .home-venue-features{
+  gap:5px!important;
+  margin-bottom:11px!important;
+}
+html body main #featuredVenues .home-venue-features span{
+  padding:4px 7px!important;
+  border:1px solid #e5dccd!important;
+  border-radius:999px!important;
+  background:#faf7f2!important;
+  color:#53655f!important;
+  font-size:8.5px!important;
+}
+html body main #featuredVenues .home-venue-actions{
+  grid-template-columns:1fr!important;
+  gap:6px!important;
+}
+html body main #featuredVenues .home-venue-actions :is(.primary-btn,.secondary-btn){
+  height:37px!important;
+  min-height:37px!important;
+  font-size:9.5px!important;
+  border-radius:9px!important;
+}
+html body main #featuredVenues .home-venue-actions .primary-btn{
+  background:#0a5b50!important;
+  border-color:#0a5b50!important;
+  color:#fff!important;
+}
+html body main #featuredVenues .home-venue-actions .secondary-btn{
+  background:#fff!important;
+  border-color:#d7c487!important;
+  color:#725d1c!important;
+}
+
+/* ---------- Enquiry: customer-first and concise ---------- */
+html body #enquiry{
+  order:6!important;
+  padding:52px 28px 56px!important;
+  background:
+    radial-gradient(circle at 80% 10%,rgba(42,202,177,.11),transparent 25%),
+    linear-gradient(145deg,#073a33,#03241f)!important;
+}
+html body #enquiry>.section-heading{
+  width:min(100%,1180px)!important;
+  margin:0 auto 20px!important;
+}
+html body #enquiry>.section-heading h2{color:#fff!important}
+html body #enquiry>.section-heading p{color:#bed3cd!important;font-size:13px!important}
+html body #enquiry .smv-enquiry-offer-grid{
+  width:min(100%,1180px)!important;
+  grid-template-columns:1fr!important;
+}
+html body #enquiry .smv-enquiry-offer{display:none!important}
+html body #enquiry #customerEnquiryForm{
+  max-width:none!important;
+  padding:22px!important;
+  border-color:rgba(242,218,145,.30)!important;
+}
+html body #customerEnquiryForm .field:has(#customerEmail),
+html body #customerEnquiryForm .field:has(#customerEventDate),
+html body #customerEnquiryForm .field:has(#customerFood),
+html body #customerEnquiryForm .planner-summary-box,
+html body #customerEnquiryForm .requirements-row{display:none!important}
+html body #customerEnquiryForm .form-grid.four,
+html body #customerEnquiryForm .form-grid.five{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+html body #customerEnquiryForm .form-section-title{
+  color:#efd98f!important;
+  font-size:9px!important;
+}
+html body #customerEnquiryForm .field label{font-size:9px!important}
+html body #customerEnquiryForm .field :is(input,select){min-height:44px!important}
+html body #customerEnquiryForm .form-submit{
+  width:100%!important;
+  min-height:48px!important;
+  font-size:12px!important;
+}
+
+/* ---------- Trust / existing information hierarchy ---------- */
+html body .trust-strip{
+  order:7!important;
+  padding:20px 28px!important;
+  border-color:#e6ddcf!important;
+  background:#f8f2e8!important;
+}
+html body .trust-strip>div{color:#26463f!important}
+html body .trust-strip small{color:#6c7b77!important}
+html body .popular-section{display:none!important}
+html body .feature-row{order:8!important;background:#fff!important;color:var(--smv-ink)!important}
+html body .feature-row .feature-card{
+  border-color:#e5dccd!important;
+  background:#fbf8f2!important;
+  color:var(--smv-ink)!important;
+}
+html body .feature-row .feature-card :is(h2,h3,strong){color:#203d36!important}
+html body .feature-row .feature-card p{color:#687671!important}
+html body .ai-planner-section{order:9!important}
+html body .about-section{order:12!important;background:#fbf7f0!important;color:var(--smv-ink)!important}
+html body .about-section :is(h2,h3,strong){color:#203d36!important}
+html body .about-section p,
+html body .about-section span{color:#667570!important}
+html body .contact-section{order:13!important}
+
+/* ---------- Inspiration ---------- */
+.smv-inspiration-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+}
+.smv-inspiration-card{
+  overflow:hidden;
+  border:1px solid var(--smv-line);
+  border-radius:16px;
+  background:#fff;
+  text-decoration:none;
+  box-shadow:0 10px 26px rgba(48,60,54,.07);
+}
+.smv-inspiration-card img{
+  width:100%;
+  height:190px;
+  display:block;
+  object-fit:cover;
+}
+.smv-inspiration-card div{padding:16px}
+.smv-inspiration-card small{color:#9a7b20;font-size:8.5px;font-weight:950;letter-spacing:.08em}
+.smv-inspiration-card h3{
+  margin:6px 0 7px;
+  color:var(--smv-ink);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:20px;
+  line-height:1.2;
+}
+.smv-inspiration-card p{margin:0;color:var(--smv-copy);font-size:11px;line-height:1.6}
+
+/* ---------- Venue owner CTA separated from customer form ---------- */
+.smv-owner-cta{
+  order:11!important;
+  padding:48px 28px;
+  background:#062e29;
+}
+.smv-owner-inner{
+  width:min(100%,1180px);
+  min-height:300px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr .85fr;
+  overflow:hidden;
+  border:1px solid rgba(242,218,145,.28);
+  border-radius:22px;
+  background:linear-gradient(135deg,#0a4a41,#052b26);
+  box-shadow:0 18px 46px rgba(0,0,0,.18);
+}
+.smv-owner-copy{padding:36px}
+.smv-owner-copy .section-kicker{color:#f1d57f!important}
+.smv-owner-copy h2{
+  margin:7px 0 10px;
+  color:#fff;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(30px,3vw,42px);
+  font-weight:600;
+}
+.smv-owner-copy p{max-width:620px;color:#c3d8d3;font-size:13px;line-height:1.7}
+.smv-owner-points{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 16px;
+  margin:18px 0 22px;
+}
+.smv-owner-points span{color:#e8f3f0;font-size:10.5px}
+.smv-owner-copy .primary-btn{
+  display:inline-flex;
+  min-height:46px;
+  align-items:center;
+  padding:0 18px;
+  background:linear-gradient(180deg,#f4dc92,#dab94e)!important;
+  color:#17362f!important;
+  border-color:#f4dc92!important;
+}
+.smv-owner-visual{position:relative;min-height:300px}
+.smv-owner-visual img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.smv-owner-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#084239 0%,rgba(8,66,57,.12) 45%)}
+
+/* ---------- Browse Venues directory: denser cards ---------- */
+html body .venue-directory-main .venue-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:15px!important;
+}
+html body .venue-directory-main .venue-card{
+  border-radius:15px!important;
+  box-shadow:0 9px 24px rgba(31,54,47,.08)!important;
+}
+html body .venue-directory-main .venue-card-media,
+html body .venue-directory-main .venue-card-media img{
+  min-height:178px!important;
+  height:178px!important;
+}
+html body .venue-directory-main .venue-card-body{padding:14px!important}
+html body .venue-directory-main .venue-card-body h2{font-size:18px!important}
+html body .venue-directory-main .venue-description{font-size:10.5px!important;line-height:1.55!important}
+
+/* ---------- Venue profile: richer wedding marketplace presentation ---------- */
+html body.venue-profile-page,
+html body .venue-profile-main{background:#f7f2e9!important;color:var(--smv-ink)!important}
+html body .venue-profile-main{padding-bottom:72px!important}
+html body .venue-breadcrumbs{color:#667772!important}
+html body .venue-profile-hero,
+html body .venue-profile-facts,
+html body .venue-profile-panel,
+html body .venue-profile-enquiry{
+  border:1px solid #e4dacb!important;
+  background:#fff!important;
+  box-shadow:0 10px 30px rgba(45,57,52,.07)!important;
+}
+html body .venue-profile-hero{border-radius:20px!important;overflow:hidden!important}
+html body .venue-profile-cover{min-height:430px!important}
+html body .venue-profile-titlebar{
+  gap:22px!important;
+  padding:22px 24px!important;
+}
+html body .venue-profile-titlebar h1{
+  color:#193a33!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-size:clamp(31px,3.6vw,48px)!important;
+  font-weight:600!important;
+}
+html body .venue-profile-location{color:#65736f!important}
+html body .venue-profile-hero-actions .button{min-height:42px!important}
+html body .venue-profile-hero-actions .button-primary{
+  background:#0b5b50!important;
+  border-color:#0b5b50!important;
+}
+html body .venue-profile-facts{
+  border-radius:16px!important;
+  gap:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+html body .venue-profile-facts>div{
+  min-height:92px!important;
+  padding:18px!important;
+  border-right:1px solid #e9e0d3!important;
+  background:#fff!important;
+}
+html body .venue-profile-facts>div:last-child{border-right:0!important}
+html body .venue-profile-facts span{color:#8a9692!important;font-size:9px!important}
+html body .venue-profile-facts strong{color:#25433c!important;font-size:15px!important}
+html body .venue-section-head h2,
+html body .venue-profile-panel h2,
+html body .venue-profile-enquiry h2,
+html body .venue-similar-head h2{
+  color:#203e37!important;
+  font-family:Georgia,"Times New Roman",serif!important;
+  font-weight:600!important;
+}
+html body .venue-profile-panel p,
+html body .venue-profile-enquiry p,
+html body .venue-profile-enquiry small{color:#64736f!important}
+html body .venue-profile-gallery{
+  display:grid!important;
+  grid-template-columns:2fr 1fr 1fr!important;
+  grid-auto-rows:180px!important;
+  gap:9px!important;
+}
+html body .venue-profile-gallery>*{min-height:0!important;height:auto!important}
+html body .venue-profile-gallery>*:first-child{
+  grid-row:span 2!important;
+}
+html body .venue-profile-gallery img{width:100%!important;height:100%!important;object-fit:cover!important}
+html body .venue-profile-layout{
+  grid-template-columns:minmax(0,1.55fr) minmax(300px,.65fr)!important;
+  gap:18px!important;
+}
+html body .venue-profile-enquiry{
+  position:sticky!important;
+  top:94px!important;
+  align-self:start!important;
+  border-color:#d7c37d!important;
+}
+html body .venue-profile-features{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+html body .venue-highlight-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+html body .venue-similar-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:15px!important}
+
+/* ---------- Main flex order ---------- */
+html body main>.hero{order:1!important}
+html body main>.smv-celebrations-section{order:2!important}
+html body main>#featuredVenues{order:3!important}
+html body main>.smv-locations-section{order:4!important}
+html body main>.smv-discovery-section{order:5!important}
+html body main>#enquiry{order:6!important}
+html body main>.trust-strip{order:7!important}
+html body main>.feature-row{order:8!important}
+html body main>#aiPlanner{order:9!important}
+html body main>.smv-inspiration-section{order:10!important}
+html body main>.smv-owner-cta{order:11!important}
+html body main>#about{order:12!important}
+html body main>#contact{order:13!important}
+
+/* ---------- Responsive ---------- */
+@media(max-width:1180px){
+  html body .hero-inner{grid-template-columns:minmax(0,1.15fr) minmax(310px,.85fr)!important}
+  .smv-celebration-grid{grid-template-columns:repeat(3,1fr)}
+  html body main #featuredVenues .home-venue-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  html body .venue-directory-main .venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+  html body .hero{padding:30px 20px 26px!important}
+  html body .hero-inner{grid-template-columns:1fr!important;min-height:0!important}
+  .smv-hero-visual{min-height:250px;max-width:720px;width:100%}
+  .smv-hero-visual-main{left:80px}
+  .smv-hero-finder{grid-template-columns:1fr 1fr}
+  .smv-hero-finder button{grid-column:1/-1}
+  .smv-location-grid{grid-template-columns:repeat(2,1fr)}
+  .smv-discovery-groups{grid-template-columns:1fr}
+  html body main #featuredVenues .home-venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  html body #customerEnquiryForm .form-grid.four,
+  html body #customerEnquiryForm .form-grid.five{grid-template-columns:1fr 1fr!important}
+  .smv-market-heading{display:block}
+  .smv-market-heading p{margin-top:10px}
+  .smv-owner-inner{grid-template-columns:1fr}
+  .smv-owner-visual{min-height:230px}
+  html body .venue-profile-layout{grid-template-columns:1fr!important}
+  html body .venue-profile-enquiry{position:static!important}
+  html body .venue-profile-gallery{grid-template-columns:1fr 1fr!important;grid-auto-rows:170px!important}
+  html body .venue-profile-gallery>*:first-child{grid-row:span 1!important;grid-column:span 2!important}
+}
+@media(max-width:620px){
+  html body .hero{padding:26px 14px 22px!important}
+  html body .hero h1{font-size:clamp(36px,11vw,46px)!important}
+  html body .hero-text{font-size:13px!important}
+  .smv-hero-visual{min-height:210px}
+  .smv-hero-visual-main{left:45px;border-radius:17px}
+  .smv-hero-visual-small{border-radius:13px}
+  .smv-hero-visual-label{bottom:22px;right:10px}
+  .smv-hero-finder{grid-template-columns:1fr;padding:9px}
+  .smv-hero-finder button{grid-column:auto}
+  .smv-market-section{padding:38px 14px}
+  .smv-celebration-grid{grid-template-columns:repeat(2,1fr);gap:9px}
+  .smv-celebration-card{min-height:160px}
+  .smv-celebration-card strong{font-size:15px}
+  .smv-location-grid{grid-template-columns:1fr}
+  .smv-location-card{min-height:160px}
+  html body #featuredVenues{padding:38px 14px 42px!important}
+  html body main #featuredVenues .home-venue-grid{grid-template-columns:1fr!important}
+  html body main #featuredVenues .home-venue-media,
+  html body main #featuredVenues .home-venue-media img,
+  html body main #featuredVenues .home-venue-image-fallback{height:210px!important;min-height:210px!important}
+  html body #enquiry{padding:38px 14px 42px!important}
+  html body #customerEnquiryForm .form-grid.four,
+  html body #customerEnquiryForm .form-grid.five{grid-template-columns:1fr!important}
+  .smv-inspiration-grid{grid-template-columns:1fr}
+  .smv-owner-cta{padding:36px 14px}
+  .smv-owner-copy{padding:24px 18px}
+  .smv-owner-points{grid-template-columns:1fr}
+  html body .venue-directory-main .venue-grid{grid-template-columns:1fr!important}
+  html body .venue-profile-cover{min-height:300px!important}
+  html body .venue-profile-titlebar{padding:18px!important}
+  html body .venue-profile-facts{grid-template-columns:1fr 1fr!important}
+  html body .venue-profile-facts>div{border-bottom:1px solid #e9e0d3!important}
+  html body .venue-profile-features,
+  html body .venue-highlight-grid{grid-template-columns:1fr!important}
+  html body .venue-profile-gallery{grid-template-columns:1fr!important;grid-auto-rows:210px!important}
+  html body .venue-profile-gallery>*:first-child{grid-column:auto!important}
+}
