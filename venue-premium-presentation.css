@@ -1,0 +1,445 @@
+/* Select My Venue — premium hospitality profile presentation
+   Hotel / banquet / restaurant inspired decision hierarchy. */
+
+body.venue-profile-page{
+  --vp-ink:#173a32;
+  --vp-teal:#073e36;
+  --vp-teal-2:#0c5a4d;
+  --vp-gold:#caa84c;
+  --vp-gold-soft:#ecd997;
+  --vp-ivory:#fbf7ef;
+  --vp-line:#dfd5c3;
+  --vp-muted:#6d7c77;
+  background:#f7f1e7!important;
+}
+
+/* Hero title + key actions */
+body.venue-profile-page .venue-profile-titlebar{
+  padding:24px 26px!important;
+  border-top:1px solid #e7dcc9!important;
+  background:linear-gradient(180deg,#fff,#fbf8f2)!important;
+}
+body.venue-profile-page .venue-title-copy .eyebrow{
+  color:#9a7a23!important;
+  font-size:9px!important;
+  letter-spacing:.13em!important;
+}
+body.venue-profile-page #venueProfileName{
+  color:#183b33!important;
+  font-size:clamp(34px,3.4vw,50px)!important;
+  line-height:1.05!important;
+}
+body.venue-profile-page #venueProfileLocation{
+  color:#667873!important;
+  font-size:13px!important;
+}
+body.venue-profile-page .venue-profile-hero-actions{
+  gap:8px!important;
+}
+body.venue-profile-page .venue-profile-hero-actions .button{
+  min-height:42px!important;
+  border-radius:10px!important;
+  font-size:10.5px!important;
+  font-weight:900!important;
+}
+body.venue-profile-page .venue-profile-hero-actions .button-primary{
+  border-color:#0b5d50!important;
+  background:linear-gradient(180deg,#0d6959,#084d43)!important;
+  box-shadow:0 8px 18px rgba(8,77,67,.16)!important;
+}
+body.venue-profile-page .venue-profile-hero-actions .button-secondary{
+  border-color:#d5c28a!important;
+  background:#fffdf8!important;
+  color:#67541c!important;
+}
+body.venue-profile-page .venue-profile-hero-actions .button-ghost{
+  border-color:#d9d0c1!important;
+  background:#fff!important;
+  color:#466058!important;
+}
+
+/* Main facts feel like hotel key-stat cards */
+body.venue-profile-page .venue-profile-facts{
+  margin-top:13px!important;
+  border:1px solid #dfd4c1!important;
+  border-radius:17px!important;
+  background:#fff!important;
+  box-shadow:0 12px 30px rgba(41,55,49,.07)!important;
+}
+body.venue-profile-page .venue-profile-facts>div{
+  min-height:100px!important;
+  padding:19px 20px!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.98),rgba(250,247,240,.96))!important;
+}
+body.venue-profile-page .venue-profile-facts>div:not(:last-child){
+  border-right:1px solid #e7dece!important;
+}
+body.venue-profile-page .venue-profile-facts span{
+  color:#9b8651!important;
+  font-size:9.5px!important;
+  font-weight:950!important;
+  letter-spacing:.1em!important;
+}
+body.venue-profile-page .venue-profile-facts strong{
+  color:#21463d!important;
+  font-size:16px!important;
+}
+
+/* Decision panel: premium dark concierge strip rather than pale boxes everywhere */
+body.venue-profile-page .smv-decision-panel{
+  position:relative;
+  overflow:hidden;
+  padding:26px!important;
+  border:1px solid rgba(202,168,76,.46)!important;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(48,190,165,.14),transparent 27%),
+    linear-gradient(145deg,#073e36 0%,#052f29 58%,#03231f 100%)!important;
+  box-shadow:0 22px 48px rgba(18,42,36,.18)!important;
+  color:#fff!important;
+}
+body.venue-profile-page .smv-decision-panel::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:5px;
+  background:linear-gradient(#f0d786,#bd9635);
+}
+body.venue-profile-page .smv-decision-head .eyebrow{
+  color:#efd785!important;
+}
+body.venue-profile-page .smv-decision-head h2{
+  color:#fff!important;
+}
+body.venue-profile-page .smv-decision-head p{
+  color:#bfd5cf!important;
+}
+body.venue-profile-page .smv-decision-card{
+  min-height:118px!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  background:rgba(255,255,255,.055)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+body.venue-profile-page .smv-decision-card .icon{
+  background:rgba(239,215,133,.12)!important;
+  color:#f0d783!important;
+  border:1px solid rgba(240,215,131,.16)!important;
+}
+body.venue-profile-page .smv-decision-card span{
+  color:#9ebdb6!important;
+}
+body.venue-profile-page .smv-decision-card strong{
+  color:#f6fbf9!important;
+  font-size:13.5px!important;
+}
+body.venue-profile-page .smv-event-fit{
+  border-color:rgba(240,215,131,.18)!important;
+  background:rgba(255,255,255,.045)!important;
+}
+body.venue-profile-page .smv-event-fit-title strong{color:#f4e4ad!important}
+body.venue-profile-page .smv-event-fit-title small{color:#9ebbb5!important}
+body.venue-profile-page .smv-event-chip{
+  min-height:32px!important;
+  border-color:rgba(240,215,131,.20)!important;
+  background:rgba(240,215,131,.08)!important;
+  color:#f1e4bd!important;
+}
+body.venue-profile-page .smv-feature-summary div{
+  min-height:56px!important;
+  border-color:rgba(255,255,255,.10)!important;
+  background:rgba(255,255,255,.05)!important;
+  color:#d5e7e3!important;
+}
+body.venue-profile-page .smv-feature-summary b{color:#f1d77f!important}
+body.venue-profile-page .smv-decision-actions{
+  border-color:rgba(240,215,131,.34)!important;
+  background:linear-gradient(145deg,#0d5b4e,#083f37)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;
+}
+body.venue-profile-page .smv-decision-actions strong{color:#fff!important}
+body.venue-profile-page .smv-decision-actions p{color:#c4dad4!important}
+body.venue-profile-page .smv-decision-note{color:#a9c3bd!important}
+
+/* Profile navigation becomes a polished section menu */
+body.venue-profile-page .smv-profile-nav{
+  margin:12px 0 18px!important;
+  padding:7px!important;
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:6px!important;
+  border:1px solid #ded4c3!important;
+  border-radius:13px!important;
+  background:#fff!important;
+  box-shadow:0 7px 20px rgba(41,55,49,.05)!important;
+}
+body.venue-profile-page .smv-profile-nav a{
+  min-height:34px!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  padding:0 11px!important;
+  border-radius:8px!important;
+  color:#4f665f!important;
+  font-size:9.5px!important;
+  font-weight:900!important;
+  text-decoration:none!important;
+}
+body.venue-profile-page .smv-profile-nav a:hover{
+  background:#edf6f3!important;
+  color:#087d6d!important;
+}
+
+/* Main content cards */
+body.venue-profile-page .venue-profile-layout{
+  gap:20px!important;
+  align-items:start!important;
+}
+body.venue-profile-page .venue-profile-content{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr)!important;
+  gap:16px!important;
+}
+body.venue-profile-page .venue-profile-content>.venue-profile-panel:first-child{
+  grid-column:1!important;
+}
+body.venue-profile-page .venue-profile-content>.venue-profile-panel:nth-child(2){
+  grid-column:2!important;
+}
+body.venue-profile-page .venue-profile-content>.venue-profile-panel:nth-child(3),
+body.venue-profile-page .venue-profile-content>#smvProfileSnapshot{
+  grid-column:1/-1!important;
+}
+body.venue-profile-page .venue-profile-panel{
+  border:1px solid #e0d6c5!important;
+  border-radius:17px!important;
+  background:#fff!important;
+  box-shadow:0 10px 28px rgba(43,57,51,.06)!important;
+}
+body.venue-profile-page .venue-profile-panel>.eyebrow{
+  color:#9b7c28!important;
+  font-size:9px!important;
+  letter-spacing:.12em!important;
+}
+body.venue-profile-page .venue-profile-panel h2{
+  color:#1d4037!important;
+  font-size:clamp(24px,2.2vw,32px)!important;
+  line-height:1.14!important;
+}
+body.venue-profile-page #venueProfileDescription{
+  color:#5f716c!important;
+  font-size:13px!important;
+  line-height:1.75!important;
+}
+
+/* Feature/service cards: richer hotel amenity treatment */
+body.venue-profile-page #venueProfileFeatures{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:9px!important;
+}
+body.venue-profile-page .venue-profile-feature{
+  position:relative!important;
+  min-height:74px!important;
+  padding:13px 12px 13px 48px!important;
+  display:flex!important;
+  align-items:center!important;
+  border:1px solid #d8e5e0!important;
+  border-radius:12px!important;
+  background:
+    linear-gradient(135deg,#f7fbfa,#edf6f3)!important;
+  box-shadow:0 6px 15px rgba(30,83,70,.05)!important;
+}
+body.venue-profile-page .venue-profile-feature::after{
+  content:"Included";
+  position:absolute;
+  right:9px;
+  top:8px;
+  color:#a58a3e;
+  font-size:7.5px;
+  font-weight:950;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+body.venue-profile-page .venue-profile-feature>span{
+  position:absolute!important;
+  left:11px!important;
+  top:50%!important;
+  transform:translateY(-50%)!important;
+  width:28px!important;
+  height:28px!important;
+  display:grid!important;
+  place-items:center!important;
+  border:1px solid #d6c482!important;
+  border-radius:8px!important;
+  background:#fff9e9!important;
+  color:#8d7124!important;
+  font-size:13px!important;
+}
+body.venue-profile-page .venue-profile-feature strong{
+  max-width:150px!important;
+  color:#31584f!important;
+  font-size:10.5px!important;
+  line-height:1.35!important;
+}
+
+/* Confirmation panel becomes calm, concise planning guidance */
+body.venue-profile-page #smvBookingDetails{
+  margin-top:14px!important;
+  padding:17px!important;
+  border:1px solid rgba(205,174,91,.35)!important;
+  border-radius:14px!important;
+  background:linear-gradient(145deg,#123f37,#083129)!important;
+  box-shadow:0 11px 26px rgba(10,47,40,.13)!important;
+}
+body.venue-profile-page #smvBookingDetails h2{
+  margin:0!important;
+  color:#f0dfaa!important;
+  font-size:18px!important;
+}
+body.venue-profile-page #smvBookingDetails>p{
+  color:#b8cfca!important;
+  font-size:10.5px!important;
+  line-height:1.55!important;
+}
+body.venue-profile-page #smvBookingDetails dl{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+}
+body.venue-profile-page #smvBookingDetails dl>div{
+  padding:9px!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:9px!important;
+  background:rgba(255,255,255,.035)!important;
+}
+body.venue-profile-page #smvBookingDetails dt{
+  color:#e6cc78!important;
+  font-size:8px!important;
+  font-weight:950!important;
+  text-transform:uppercase!important;
+  letter-spacing:.07em!important;
+}
+body.venue-profile-page #smvBookingDetails dd{
+  margin:4px 0 0!important;
+  color:#d4e5e1!important;
+  font-size:9.5px!important;
+  line-height:1.45!important;
+}
+
+/* Concierge-style enquiry panel */
+body.venue-profile-page .venue-profile-enquiry{
+  position:sticky!important;
+  top:92px!important;
+  padding:19px!important;
+  border:1px solid rgba(205,174,91,.45)!important;
+  border-radius:18px!important;
+  background:
+    radial-gradient(circle at 90% 0%,rgba(42,188,162,.15),transparent 30%),
+    linear-gradient(145deg,#083f37,#042a25)!important;
+  color:#fff!important;
+  box-shadow:0 18px 40px rgba(10,43,37,.20)!important;
+}
+body.venue-profile-page .venue-profile-enquiry .venue-profile-assist-badge{
+  color:#f0d881!important;
+  border-color:rgba(240,216,129,.24)!important;
+  background:rgba(240,216,129,.08)!important;
+}
+body.venue-profile-page .venue-profile-enquiry h2,
+body.venue-profile-page .venue-quick-title{
+  color:#fff!important;
+}
+body.venue-profile-page .venue-profile-enquiry>p,
+body.venue-profile-page .venue-profile-enquiry>small,
+body.venue-profile-page .venue-quick-subtitle{
+  color:#bcd3cd!important;
+}
+body.venue-profile-page .venue-profile-enquiry .venue-assist-points span{
+  color:#d8e9e5!important;
+}
+body.venue-profile-page .venue-quick-enquiry-form label>span{
+  color:#a8c7c0!important;
+}
+body.venue-profile-page .venue-quick-enquiry-form :is(input,select){
+  min-height:41px!important;
+  border:1px solid rgba(255,255,255,.15)!important;
+  background:#fff!important;
+  color:#27483f!important;
+}
+body.venue-profile-page #venueQuickSubmit{
+  min-height:44px!important;
+  border:1px solid #efd886!important;
+  background:linear-gradient(180deg,#f2db92,#d2ad49)!important;
+  color:#17382f!important;
+  box-shadow:0 9px 20px rgba(0,0,0,.14)!important;
+}
+
+/* Planning + FAQ cards */
+body.venue-profile-page .smv-marketplace-upgrade{
+  margin-top:18px!important;
+}
+body.venue-profile-page .smv-premium-panel{
+  border:1px solid #dfd5c3!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  box-shadow:0 10px 28px rgba(43,57,51,.06)!important;
+}
+body.venue-profile-page .smv-check-card{
+  border-color:#dce7e3!important;
+  background:#f8fbfa!important;
+}
+body.venue-profile-page .smv-site-visit{
+  border:1px solid rgba(208,174,81,.30)!important;
+  border-radius:12px!important;
+  background:#073e36!important;
+}
+body.venue-profile-page .smv-site-visit strong{color:#fff!important}
+body.venue-profile-page .smv-site-visit span{color:#bdd3cd!important}
+body.venue-profile-page #smvSiteVisitBtn{
+  border-color:#e8ce7b!important;
+  background:#f0d682!important;
+  color:#17382f!important;
+}
+body.venue-profile-page .smv-faq-item{
+  border-color:#dfd6c7!important;
+  border-radius:10px!important;
+  background:#fff!important;
+}
+body.venue-profile-page .smv-faq-item button{
+  color:#31564d!important;
+  font-size:10.5px!important;
+}
+
+/* Similar venues have a premium card finish */
+body.venue-profile-page .venue-similar-section{
+  margin-top:22px!important;
+  padding:20px!important;
+  border:1px solid #e0d5c3!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  box-shadow:0 12px 30px rgba(43,57,51,.06)!important;
+}
+body.venue-profile-page .venue-similar-card{
+  overflow:hidden!important;
+  border:1px solid #dfd5c3!important;
+  border-radius:14px!important;
+  background:#fff!important;
+  box-shadow:0 8px 20px rgba(43,57,51,.07)!important;
+}
+body.venue-profile-page .venue-similar-media{height:175px!important}
+body.venue-profile-page .venue-similar-body{padding:13px!important}
+body.venue-profile-page .venue-similar-verified{color:#087d6d!important}
+
+/* Hide redundant generic homepage sections if cached marketplace JS still inserts them. */
+body.venue-profile-page :is(.smv-celebrations-section,.smv-locations-section,.smv-discovery-section,.smv-inspiration-section,.smv-owner-cta){
+  display:none!important;
+}
+
+@media(max-width:980px){
+  body.venue-profile-page .venue-profile-content{grid-template-columns:1fr!important}
+  body.venue-profile-page .venue-profile-content>.venue-profile-panel{grid-column:1!important}
+  body.venue-profile-page .venue-profile-enquiry{position:static!important}
+}
+@media(max-width:620px){
+  body.venue-profile-page .venue-profile-titlebar{padding:18px!important}
+  body.venue-profile-page #venueProfileFeatures{grid-template-columns:1fr!important}
+  body.venue-profile-page #smvBookingDetails dl{grid-template-columns:1fr!important}
+  body.venue-profile-page .smv-decision-panel{padding:18px!important}
+}
