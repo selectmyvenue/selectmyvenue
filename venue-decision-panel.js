@@ -36,25 +36,22 @@ function render(v){
   const map=/^https?:\/\//i.test(clean(v.google_maps_url))?clean(v.google_maps_url):"";
   const features=[
     feature(v.parking_available,"Parking","Available"),
-    feature(v.rooms_available,"Stay",rooms),
     feature(v.catering_available,"Catering","Available"),
-    feature(v.decoration_available,"Decoration","Available"),
-    feature(v.food_veg,"Vegetarian food","Available"),
-    feature(v.food_non_veg,"Non-vegetarian food","Available")
+    feature(v.decoration_available,"Decoration","Available")
   ].filter(Boolean).join("");
 
   const panel=document.createElement("section");
   panel.id="smvDecisionPanel";
   panel.className="smv-decision-panel";
   panel.innerHTML=
-    '<div class="smv-decision-head"><div><p class="eyebrow">VENUE AT A GLANCE</p><h2>Everything important before you shortlist.</h2></div><p>Compare the practical details first. Then open the photos, read about the venue and request availability only if it fits your event.</p></div>'+
+    '<div class="smv-decision-head"><div><p class="eyebrow">VENUE EXPERIENCE</p><h2>What this venue can offer your celebration.</h2></div><p>Use this section for services and event fit. Price, capacity and location are already shown above so they are not repeated here.</p></div>'+
     '<div class="smv-decision-grid">'+
-      card("⌂","Venue type",clean(v.venue_type)||"Venue")+
-      card("👥","Guest capacity",capacity(v))+
-      card("₹","Starting price",price?"From "+price+" / person":"Quote on request")+
       card("🛏","Rooms / stay",rooms)+
       card("🍽","Food",food(v))+
-      card("⌖","Location",locationText(v))+
+      card("P","Parking",v.parking_available?"Available":"Confirm with venue")+
+      card("♨","Catering",v.catering_available?"Available":"Confirm policy")+
+      card("✦","Decoration",v.decoration_available?"Available":"Confirm policy")+
+      card("♡","Celebration fit",evt.length?(evt.slice(0,2).join(" · ")+(evt.length>2?" + more":"")):"Ask venue")+
     '</div>'+
     (evt.length?'<div class="smv-event-fit"><div class="smv-event-fit-title"><strong>Suitable celebrations</strong><small>Based on venue-listed event support</small></div><div class="smv-event-chips">'+evt.map(x=>'<span class="smv-event-chip">✓ '+esc(x)+'</span>').join("")+'</div></div>':"")+
     '<div class="smv-decision-bottom"><div class="smv-feature-summary">'+(features||'<div><b>✓</b><span>Verified venue details available</span></div>')+'</div>'+
