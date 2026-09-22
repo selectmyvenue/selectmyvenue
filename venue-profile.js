@@ -212,8 +212,8 @@
     if (byId("venueProfileDetailsStrip")) return;
     const hero = document.querySelector(".venue-profile-hero");
     if (!hero) return;
-    const photoCount = (media.cover ? 1 : 0) + (media.images || []).filter(Boolean).length;
-    const location = [venue.area, venue.city].filter(Boolean).join(", ") || "Location on request";
+    const photoCount = window.SMVPublicDetails.photos(media.cover,media.images).length;
+    const location = window.SMVPublicDetails.location(venue);
     const vegPrice = venue.price_min_per_person ? `${money(venue.price_min_per_person)} / pax` : pricing(venue);
     const details = [
       ["✓", "Verified", "Select My Venue partner"],
@@ -273,11 +273,28 @@
     }
   }
 
+  function renderBookingDetails(venue){
+    const anchor=byId("venueProfileFeatures");if(!anchor||byId("smvBookingDetails"))return;
+    const events=window.SMVPublicDetails.events(venue);
+    const facts=[
+      ["Supported events",events.length?events.join(" · "):"Confirm event suitability with the venue"],
+      ["Rooms",venue.rooms_available ? (Number(venue.room_count)>0?venue.room_count+" rooms listed":"Available; confirm room count and charges") : "Confirm room availability with the venue"],
+      ["Parking capacity","Confirm vehicle capacity and valet charges"],
+      ["Indoor / outdoor spaces","Confirm the hall or lawn included in your package"],
+      ["Menu & pricing","Request separate veg / non-veg quotes, taxes and minimum guest commitment"],
+      ["Catering & décor policies","Confirm in-house / outside vendor rules and charges"],
+      ["Booking & cancellation","Request written advance, refund, cancellation and timing terms"]
+    ];
+    const panel=document.createElement("section");panel.id="smvBookingDetails";panel.className="smv-booking-details";
+    panel.innerHTML='<h2>Details to confirm for your celebration</h2><p>Listed information is a starting point. Your date, package and policies need venue confirmation.</p><dl>'+facts.map(([k,v])=>'<div><dt>'+escapeHtml(k)+'</dt><dd>'+escapeHtml(v)+'</dd></div>').join('')+'</dl>';
+    anchor.insertAdjacentElement("afterend",panel);
+  }
+
   function renderProfile(venue,media){
     currentVenue=venue;currentMedia=media;
     const name=String(venue.venue_name||"Verified Venue");
     const type=String(venue.venue_type||"Venue");
-    const location=[venue.area,venue.city].filter(Boolean).join(", ")||"Location on request";
+    const location=window.SMVPublicDetails.location(venue);
     const description=String(venue.description||"Ask our team for availability, packages and detailed venue information.");
     const whatsappUrl=`https://wa.me/918368322256?text=${encodeURIComponent(`Hi Select My Venue, I am interested in ${name}. Please share details and availability.`)}`;
     const mapUrl=safeHttpUrl(venue.google_maps_url);
@@ -299,7 +316,7 @@
     if(mapUrl){byId("venueProfileMap").href=mapUrl;byId("venueProfileMap").hidden=false;}
     const featureList=venueFeatures(venue);
     byId("venueProfileFeatures").innerHTML=featureList.length?featureList.map(([icon,label])=>`<div class="venue-profile-feature"><span>${icon}</span><strong>${escapeHtml(label)}</strong></div>`).join(""):`<div class="venue-profile-feature"><span>✦</span><strong>Venue details available on request</strong></div>`;
-    renderHighlights(venue);renderGallery(name,media);renderProfileDetails(venue,media);
+    renderHighlights(venue);renderGallery(name,media);renderProfileDetails(venue,media);renderBookingDetails(venue);
     const metaDescription=`${name} in ${location}. View photos, capacity, pricing and facilities, then request a personalised quote from Select My Venue.`;
     const structuredImages=[media.cover,...media.images].filter(Boolean);
     setMeta(name,metaDescription,media.cover);setStructuredData(venue,structuredImages,description);
@@ -456,3 +473,4 @@
   setupActions();
   loadProfile();
 })();
+

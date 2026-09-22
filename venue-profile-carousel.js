@@ -62,7 +62,7 @@
       const result=await client.storage.from(BUCKET).list(`${venueId}/gallery`,{limit:40,sortBy:{column:"name",order:"asc"}});
       gallery=result.error?[]:(result.data||[]).filter(item=>item?.name&&item.name!==".emptyFolderPlaceholder").map(item=>publicUrl(`${venueId}/gallery/${item.name}`)).filter(Boolean);
     }catch(_){gallery=[];}
-    photos=[...new Set([cover,...gallery].filter(Boolean))].slice(0,MAX_PHOTOS);
+    photos=window.SMVPublicDetails.photos(cover,gallery);
     if(image){image.decoding="async";image.fetchPriority="high";applyImageFit(image);}
     if(photos.length)installHeroGallery(image);
   }
@@ -272,3 +272,4 @@
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});
   else init();
 })();
+

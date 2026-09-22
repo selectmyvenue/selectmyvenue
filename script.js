@@ -2418,7 +2418,7 @@ function setupCustomerEnquiry() {
         getValue("customerFood");
 
       const customerRequirements =
-        getValue("customerRequirements");
+        [getValue("customerRequirements"), byId("customerDateFlexible")?.checked ? "Event date: not decided" : ""].filter(Boolean).join("\n");
 
       const leadSource =
         getValue("leadSource") ||
@@ -5665,3 +5665,4 @@ function trackGoogleAdsLeadConversion() {
     return false;
   }
 }
+
