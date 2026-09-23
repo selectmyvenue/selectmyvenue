@@ -356,67 +356,17 @@ function setupHeroSearch() {
 
     setButtonLoading(button, "Plan Ready ✓");
 
-    try {
-      if (!supabaseClient) {
-        throw new Error("Supabase client is not initialized.");
-      }
+    showInlineMessage(
+      message,
+      "✓ Your smart event plan is ready. Add your contact details below to send a qualified enquiry to our team.",
+      "success"
+    );
 
-      const requirements = buildFullAIRequirements({
-        aiPlan: plan,
-        other: ""
-      });
+    scrollToElement("enquiry");
 
-      const { error } = await supabaseClient
-        .from("customer_enquiries")
-        .insert({
-          customer_name: null,
-          mobile: null,
-          email: null,
-          location,
-          occasion: eventType,
-          event_date: eventDate || null,
-          guests: convertGuestRangeToNumber(guests),
-          budget_per_person: null,
-          food_preference: null,
-          requirements,
-          source: "Website - AI Search",
-          status: "new",
-          assigned_to: null,
-          follow_up_at: null,
-          last_contacted_at: null
-        });
-
-      if (error) throw error;
-
-      showInlineMessage(
-        message,
-        "✓ Your smart event plan is ready. Add your contact details below to send a qualified enquiry to our team.",
-        "success"
-      );
-
-      scrollToElement("enquiry");
-    } catch (error) {
-      console.error("Hero enquiry error:", error);
-
-      /*
-       * The AI plan still works locally even if the optional
-       * quick-search lead insert is blocked by Supabase RLS.
-       */
-      showInlineMessage(
-        message,
-        "✓ Your AI event plan is ready. Add your contact details below to submit the enquiry.",
-        "success"
-      );
-
-      console.warn(
-        "Hero quick-search was not saved to Supabase:",
-        error
-      );
-    } finally {
-      setTimeout(function () {
-        restoreButton(button, "Find My Venue →");
-      }, 500);
-    }
+    setTimeout(function () {
+      restoreButton(button, "Find My Venue →");
+    }, 500);
   });
 }
 
