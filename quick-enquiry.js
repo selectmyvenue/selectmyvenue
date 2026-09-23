@@ -407,7 +407,6 @@
         follow_up_at: null,
         last_contacted_at: null
       };
-      if (comment) payload.contact_remark = comment;
 
       const result = await client.from("customer_enquiries").insert(payload);
       if (result.error) throw result.error;
