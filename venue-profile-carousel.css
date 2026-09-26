@@ -9,28 +9,32 @@
 .smv-view-all{font-size:11px!important;min-height:40px!important;padding:0 15px!important;border-radius:999px!important;background:linear-gradient(135deg,rgba(5,75,65,.95),rgba(2,43,38,.94))!important;color:#fff!important;border:1px solid rgba(255,255,255,.88)!important;box-shadow:0 12px 28px rgba(0,0,0,.20)!important}
 .smv-cover-arrow{width:44px!important;height:44px!important;margin-top:-22px!important;font-size:24px!important;background:rgba(255,255,255,.96)!important;color:#124c42!important;border:1px solid rgba(255,255,255,.92)!important;box-shadow:0 12px 30px rgba(0,0,0,.16)!important}
 
-/* Full-HD visual treatment: fill the complete cover area. */
-html body.venue-profile-page .venue-profile-cover{background:linear-gradient(135deg,#dce7e4,#edf4f2)!important}
+/* Compact, sharp hero: do not enlarge low-resolution venue images to fill the entire box. */
+html body.venue-profile-page .venue-profile-cover{
+  background:radial-gradient(circle at center,#ffffff 0%,#eef5f2 62%,#dfeae6 100%)!important;
+}
 html body.venue-profile-page .venue-profile-cover #venueProfileImage,
 html body.venue-profile-page .venue-profile-cover #venueProfileImage.smv-image-contain,
 html body.venue-profile-page .venue-profile-cover #venueProfileImage.smv-image-cover{
-  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
-  object-fit:cover!important;object-position:center center!important;
+  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;object-position:center center!important;
   image-rendering:auto!important;filter:none!important;transform:none!important;
 }
 
-/* Desktop: premium large cover + useful enquiry panel on the right. */
+/* Desktop: compact premium hero with Quick Enquiry on the right. */
 @media(min-width:701px){
   html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick{
-    grid-template-columns:minmax(0,1fr) 420px!important;
-    grid-template-rows:520px auto!important;
+    grid-template-columns:minmax(0,1fr) 400px!important;
+    grid-template-rows:440px auto!important;
     background:#fff!important;
   }
   html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>.venue-profile-media{
-    height:520px!important;min-height:520px!important;
+    height:440px!important;min-height:440px!important;
+    padding:14px!important;
+    background:radial-gradient(circle at center,#ffffff 0%,#eef5f2 64%,#dfeae6 100%)!important;
   }
   html body.venue-profile-page .venue-profile-hero.smv-hero-with-quick>#venueQuickEnquiryForm{
-    height:520px!important;max-height:520px!important;padding:24px 24px!important;gap:8px!important;
+    height:440px!important;max-height:440px!important;padding:22px 22px!important;gap:8px!important;
     overflow:hidden!important;align-content:start!important;
     border-left:1px solid rgba(18,103,89,.12)!important;
     background:radial-gradient(circle at 95% 0%,rgba(232,189,104,.14),transparent 32%),linear-gradient(160deg,#fffefb 0%,#f8fcfb 68%,#f1faf7 100%)!important;
