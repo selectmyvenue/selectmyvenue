@@ -147,7 +147,7 @@ html body .site-header .header-phone{
   border-radius:11px!important;
   background:linear-gradient(135deg,#173f37 0%,#0b5a4e 62%,#087f71 100%)!important;
   color:#fffdf3!important;
-  font-size:0!important;
+  font-size:11px!important;
   font-weight:900!important;
   line-height:1!important;
   text-decoration:none!important;
@@ -184,6 +184,13 @@ html body .site-header .header-phone{
   flex:0 0 auto!important;
 }
 
+html body .site-header #mainNav .nav-cta{
+  font-size:11px!important;
+}
+html body .site-header .header-contact,
+html body .site-header .header-phone{
+  font-size:0!important;
+}
 html body .site-header .header-contact{
   margin-left:0!important;
   flex:0 0 auto!important;
