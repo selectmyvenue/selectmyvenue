@@ -336,6 +336,8 @@ html body #featuredVenues .smv-live-popular-links button.active span{color:#123b
 
 
 /* Stronger matching journey contrast — same existing stylesheet */
-html body .smv-match-promise>div{background:linear-gradient(145deg,#073a33 0%,#052a25 100%)!important;border:1px solid rgba(243,216,137,.42)!important;box-shadow:0 10px 26px rgba(0,0,0,.16)!important}
-html body .smv-match-promise strong{background:#f3d889!important;color:#17352d!important;font-weight:950!important}
-html body .smv-match-promise span{color:#f7fffc!important;font-weight:850!important}
+html body .smv-match-promise>div{background:linear-gradient(145deg,#073a33 0%,#052a25 100%)!important;border:1px solid rgba(243,216,137,.42)!important;box-shadow:0 10px 26px rgba(0,0,0,.16)!important;min-height:86px!important;padding:18px 20px!important;gap:14px!important}
+html body .smv-match-promise strong{width:40px!important;height:40px!important;flex:0 0 40px!important;background:#f3d889!important;color:#17352d!important;font-size:16px!important;font-weight:950!important}
+html body .smv-match-promise span{color:#f7fffc!important;font-size:17px!important;line-height:1.35!important;font-weight:850!important}
+@media(max-width:760px){html body .smv-match-promise>div{min-height:76px!important;padding:14px 15px!important}html body .smv-match-promise span{font-size:15px!important}}
+@media(max-width:480px){html body .smv-match-promise>div{padding:13px 14px!important}html body .smv-match-promise span{font-size:15px!important}}
