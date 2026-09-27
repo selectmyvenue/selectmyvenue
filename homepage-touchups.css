@@ -333,3 +333,9 @@ html body #featuredVenues .smv-live-popular-links button.active span{color:#123b
 .smv-match-promise span{font-size:11px;line-height:1.35;font-weight:800;color:#315c52}
 @media(max-width:760px){.smv-match-promise{grid-template-columns:1fr 1fr;width:calc(100% - 20px)}}
 @media(max-width:480px){.smv-match-promise{grid-template-columns:1fr}.smv-match-promise>div{padding:10px 12px}}
+
+
+/* Stronger matching journey contrast — same existing stylesheet */
+html body .smv-match-promise>div{background:linear-gradient(145deg,#073a33 0%,#052a25 100%)!important;border:1px solid rgba(243,216,137,.42)!important;box-shadow:0 10px 26px rgba(0,0,0,.16)!important}
+html body .smv-match-promise strong{background:#f3d889!important;color:#17352d!important;font-weight:950!important}
+html body .smv-match-promise span{color:#f7fffc!important;font-weight:850!important}
