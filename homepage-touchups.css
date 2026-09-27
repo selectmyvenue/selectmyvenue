@@ -321,3 +321,15 @@ html body #featuredVenues .smv-live-popular-links button:hover,
 html body #featuredVenues .smv-live-popular-links button.active{border-color:#e6c65f;background:#e8c95f;color:#123b33}
 html body #featuredVenues .smv-live-popular-links button.active span{color:#123b33}
 @media(max-width:720px){html body #featuredVenues .smv-live-popular-bar{align-items:flex-start;flex-direction:column;gap:7px;padding:10px}html body #featuredVenues .smv-live-popular-copy{min-width:0}html body #featuredVenues .smv-live-popular-links{width:100%}}
+
+
+/* =========================================================
+   MATCHING + DISTANCE PROMISE — 2026-09-28
+   Existing file only; no new stylesheet.
+   ========================================================= */
+.smv-match-promise{width:min(1120px,calc(100% - 32px));margin:18px auto 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.smv-match-promise>div{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid rgba(8,110,90,.14);border-radius:14px;background:rgba(255,255,255,.78);box-shadow:0 8px 24px rgba(3,53,44,.05)}
+.smv-match-promise strong{display:grid;place-items:center;width:28px;height:28px;flex:0 0 28px;border-radius:50%;background:#e2f7ef;color:#08745d;font-size:12px}
+.smv-match-promise span{font-size:11px;line-height:1.35;font-weight:800;color:#315c52}
+@media(max-width:760px){.smv-match-promise{grid-template-columns:1fr 1fr;width:calc(100% - 20px)}}
+@media(max-width:480px){.smv-match-promise{grid-template-columns:1fr}.smv-match-promise>div{padding:10px 12px}}
