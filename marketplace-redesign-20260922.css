@@ -1449,3 +1449,27 @@ html body .smv-home-enquiry-tab span{
   html body .smv-home-enquiry-tab::before,
   html body .smv-home-enquiry-tab::after{animation:none!important}
 }
+
+
+/* ---------- FINAL: GET MATCHED home position + move to drawer header when open ---------- */
+html body .smv-home-enquiry-edge{
+  top:var(--smv-edge-top,44%)!important;
+  transform:translateY(-50%)!important;
+}
+html body .smv-home-enquiry-edge.smv-get-matched-open{
+  top:72px!important;
+  transform:translateY(-50%)!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+@media(max-width:520px){
+  html body .smv-home-enquiry-edge{
+    top:var(--smv-edge-top,40%)!important;
+    transform:translateY(-50%)!important;
+  }
+  html body .smv-home-enquiry-edge.smv-get-matched-open{
+    top:60px!important;
+    transform:translateY(-50%)!important;
+  }
+}
