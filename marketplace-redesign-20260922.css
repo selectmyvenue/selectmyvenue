@@ -1005,3 +1005,149 @@ html body main #featuredVenues .home-venue-content h3 a:hover{
     font-size:12px!important;
   }
 }
+
+
+/* =========================================================
+   2026-09-28 HOMEPAGE QUICK ENQUIRY + AI POSITIONING
+   Reuses the Browse Venues slide-in interaction; no matching logic changed.
+   ========================================================= */
+
+/* AI assistant: move from the WhatsApp stack to the right-side vertical centre. */
+html body .smv-final-ai-button{
+  top:50%!important;
+  bottom:auto!important;
+  right:18px!important;
+  transform:translateY(-50%)!important;
+}
+html body .smv-final-ai-button:hover{
+  transform:translateY(-50%) scale(1.02)!important;
+}
+html body .smv-final-ai-panel{
+  top:50%!important;
+  bottom:auto!important;
+  right:18px!important;
+  transform:translateY(-50%)!important;
+}
+
+/* Homepage edge CTA */
+html body .smv-home-enquiry-tab{
+  position:fixed!important;
+  top:50%!important;
+  right:0!important;
+  transform:translateY(-50%)!important;
+  z-index:9997!important;
+  width:52px!important;
+  min-height:214px!important;
+  padding:12px 8px!important;
+  border:1px solid rgba(242,218,145,.72)!important;
+  border-right:0!important;
+  border-radius:16px 0 0 16px!important;
+  background:linear-gradient(180deg,#f2da91 0%,#e5c45d 45%,#c99f36 100%)!important;
+  color:#173d35!important;
+  box-shadow:-8px 12px 30px rgba(3,27,24,.24),0 0 0 1px rgba(255,255,255,.16) inset!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  cursor:pointer!important;
+  transition:width .2s ease,box-shadow .2s ease!important;
+}
+html body .smv-home-enquiry-tab:hover,
+html body .smv-home-enquiry-tab:focus-visible{
+  width:60px!important;
+  box-shadow:-10px 14px 36px rgba(3,27,24,.30),0 0 0 1px rgba(255,255,255,.22) inset!important;
+  outline:none!important;
+}
+html body .smv-home-enquiry-tab-spark{
+  display:grid!important;
+  place-items:center!important;
+  width:29px!important;
+  height:29px!important;
+  border-radius:50%!important;
+  background:#173d35!important;
+  color:#f7dfa0!important;
+  font-size:14px!important;
+  box-shadow:0 5px 14px rgba(0,0,0,.16)!important;
+}
+html body .smv-home-enquiry-tab>span:not(.smv-home-enquiry-tab-spark){
+  writing-mode:vertical-rl!important;
+  transform:rotate(180deg)!important;
+  color:#173d35!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  line-height:1.05!important;
+  text-align:center!important;
+  letter-spacing:.01em!important;
+}
+html body .smv-home-enquiry-tab>b{
+  writing-mode:vertical-rl!important;
+  transform:rotate(180deg)!important;
+  color:#173d35!important;
+  font-size:8.5px!important;
+  font-weight:1000!important;
+  line-height:1!important;
+  letter-spacing:.02em!important;
+}
+
+html body.smv-home-drawer-open{overflow:hidden!important}
+html body .smv-home-enquiry-backdrop{
+  position:fixed!important;
+  inset:0!important;
+  z-index:9998!important;
+  background:rgba(0,0,0,.48)!important;
+  backdrop-filter:blur(2px)!important;
+  -webkit-backdrop-filter:blur(2px)!important;
+}
+html body .smv-home-enquiry-drawer{
+  position:fixed!important;
+  top:0!important;
+  right:0!important;
+  width:min(470px,94vw)!important;
+  height:100vh!important;
+  z-index:9999!important;
+  overflow-y:auto!important;
+  transform:translateX(105%)!important;
+  transition:transform .28s ease!important;
+  background:#fbf7f0!important;
+  color:#19342f!important;
+  box-shadow:-18px 0 60px rgba(0,0,0,.28)!important;
+}
+html body .smv-home-enquiry-drawer.is-open{transform:translateX(0)!important}
+html body .smv-home-enquiry-head{
+  display:flex!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+  padding:25px 24px 18px!important;
+  background:linear-gradient(145deg,#062d28,#0b5147)!important;
+  color:#fff!important;
+}
+html body .smv-home-enquiry-head p{margin:0 0 5px!important;color:#b9d8d1!important;font-size:9px!important;font-weight:900!important;letter-spacing:.1em!important}
+html body .smv-home-enquiry-head h2{margin:0 0 6px!important;color:#fff!important;font-family:Georgia,"Times New Roman",serif!important;font-size:26px!important;line-height:1.1!important;font-weight:600!important}
+html body .smv-home-enquiry-head span{display:block!important;color:#c5ddd8!important;font-size:11px!important;line-height:1.5!important}
+html body .smv-home-enquiry-head button{width:36px!important;height:36px!important;flex:0 0 36px!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:50%!important;background:rgba(255,255,255,.08)!important;color:#fff!important;font-size:25px!important;line-height:1!important;cursor:pointer!important}
+html body .smv-home-enquiry-body{padding:20px 22px 28px!important}
+html body .smv-home-enquiry-body .quick-enquiry-form{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important}
+html body .smv-home-enquiry-body .form-field.full{grid-column:1/-1!important}
+html body .smv-home-enquiry-body .form-field label{display:block!important;margin-bottom:5px!important;font-size:9px!important;font-weight:850!important;color:#526761!important;letter-spacing:.04em!important}
+html body .smv-home-enquiry-body .form-field input,
+html body .smv-home-enquiry-body .form-field select{width:100%!important;min-height:43px!important;padding:0 11px!important;border:1px solid #d9d0c2!important;border-radius:9px!important;background:#fff!important;color:#19342f!important;font-size:12px!important;box-sizing:border-box!important}
+html body .smv-home-enquiry-body .button-primary{width:100%!important;min-height:47px!important;border:0!important;border-radius:10px!important;cursor:pointer!important}
+html body .smv-home-enquiry-benefits{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:7px!important;margin-top:15px!important}
+html body .smv-home-enquiry-benefits span{padding:9px 7px!important;border:1px solid #e1d8ca!important;border-radius:9px!important;background:#fff!important;color:#65736f!important;font-size:8.5px!important;line-height:1.35!important;text-align:center!important;font-weight:800!important}
+
+@media(max-width:760px){
+  html body .smv-final-ai-button{right:12px!important}
+  html body .smv-final-ai-panel{right:12px!important;width:min(390px,calc(100vw - 24px))!important}
+  html body .smv-home-enquiry-tab{width:47px!important;min-height:190px!important;right:0!important}
+  html body .smv-home-enquiry-tab:hover,html body .smv-home-enquiry-tab:focus-visible{width:53px!important}
+}
+@media(max-width:520px){
+  html body .smv-home-enquiry-drawer{width:100%!important}
+  html body .smv-home-enquiry-body{padding:18px 16px 25px!important}
+  html body .smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr!important}
+  html body .smv-home-enquiry-body .form-field.full{grid-column:auto!important}
+  html body .smv-home-enquiry-benefits{grid-template-columns:1fr 1fr 1fr!important}
+  html body .smv-final-ai-button{right:10px!important}
+  html body .smv-final-ai-panel{right:10px!important;width:calc(100vw - 20px)!important;height:min(570px,calc(100vh - 120px))!important}
+}
