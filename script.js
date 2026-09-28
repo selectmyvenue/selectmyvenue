@@ -3347,6 +3347,12 @@ function setupAutoEnquiryPopup() {
     }, 100);
   }
 
+  /* Public trigger for the compact homepage enquiry CTA. */
+  window.smvOpenEnquiryPopup = function (fromSideBanner) {
+    if (fromSideBanner) document.body.classList.add("smv-side-enquiry-open");
+    openPopup();
+  };
+
   function closePopup(markHandled) {
     overlay.classList.remove("show");
     overlay.setAttribute("aria-hidden", "true");
