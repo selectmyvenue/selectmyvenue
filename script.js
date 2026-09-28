@@ -3349,7 +3349,10 @@ function setupAutoEnquiryPopup() {
 
   /* Public trigger for the compact homepage enquiry CTA. */
   window.smvOpenEnquiryPopup = function (fromSideBanner) {
-    if (fromSideBanner) document.body.classList.add("smv-side-enquiry-open");
+    if (fromSideBanner) {
+      try { sessionStorage.removeItem("smv_popup_handled_v2"); } catch (error) {}
+      document.body.classList.add("smv-side-enquiry-open");
+    }
     openPopup();
   };
 
