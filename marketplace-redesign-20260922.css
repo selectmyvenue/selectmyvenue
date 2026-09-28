@@ -1103,3 +1103,34 @@ html body.smv-side-enquiry-open #enquiryPopup .smv-popup-grid{
   }
   html body.smv-side-enquiry-open #enquiryPopup .smv-popup-grid{grid-template-columns:1fr!important}
 }
+
+
+/* ---------- Quick Enquiry: restore the earlier compact left drawer ---------- */
+html body .smv-home-enquiry-edge{left:0!important;right:auto!important;top:44%!important;transform:translateY(-50%)!important}
+html body .smv-home-enquiry-tab{
+  left:0!important;right:auto!important;
+  width:116px!important;min-height:42px!important;height:42px!important;
+  padding:0 12px!important;border-left:0!important;border-right:1px solid rgba(255,231,155,.82)!important;
+  border-radius:0 11px 11px 0!important;
+  background:linear-gradient(135deg,#f6d982 0%,#e7c35d 52%,#c79b32 100%)!important;
+  box-shadow:5px 7px 0 rgba(3,27,24,.18),6px 12px 22px rgba(3,27,24,.18),inset 0 1px 0 rgba(255,255,255,.55)!important;
+}
+html body .smv-home-enquiry-drawer{
+  left:0!important;right:auto!important;
+  top:72px!important;width:min(430px,92vw)!important;height:calc(100vh - 72px)!important;
+  transform:translateX(-105%)!important;border-radius:0 16px 16px 0!important;
+  box-shadow:14px 0 42px rgba(0,0,0,.24)!important;
+}
+html body .smv-home-enquiry-drawer.is-open{transform:translateX(0)!important}
+html body .smv-home-enquiry-head{padding:24px 22px 17px!important}
+html body .smv-home-enquiry-head h2{font-size:25px!important}
+html body .smv-home-enquiry-body{padding:18px 20px 25px!important}
+html body .smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr 1fr!important;gap:11px!important}
+html body .smv-home-enquiry-body .form-field input,
+html body .smv-home-enquiry-body .form-field select{min-height:42px!important}
+@media(max-width:520px){
+  html body .smv-home-enquiry-edge{top:40%!important}
+  html body .smv-home-enquiry-tab{width:104px!important;height:40px!important;min-height:40px!important;font-size:9.5px!important}
+  html body .smv-home-enquiry-drawer{left:0!important;right:auto!important;width:100%!important;top:60px!important;height:calc(100vh - 60px)!important}
+  html body .smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr!important}
+}
