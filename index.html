@@ -3073,22 +3073,58 @@
       var tab=document.getElementById("smvHomeEnquiryTab"),
           drawer=document.getElementById("smvHomeEnquiryDrawer"),
           backdrop=document.getElementById("smvHomeEnquiryBackdrop"),
-          close=document.getElementById("smvHomeEnquiryClose");
-      if(!tab||!drawer||!backdrop||!close) return;
+          close=document.getElementById("smvHomeEnquiryClose"),
+          edge=document.querySelector(".smv-home-enquiry-edge");
+      if(!tab||!drawer||!backdrop||!close||!edge) return;
+
       function openDrawer(){
         drawer.classList.add("is-open");
         drawer.setAttribute("aria-hidden","false");
         backdrop.hidden=false;
         document.body.classList.add("smv-home-drawer-open");
+        document.documentElement.classList.add("smv-home-drawer-open");
+        edge.classList.add("smv-get-matched-hidden");
         setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);
       }
       function closeDrawer(){
         drawer.classList.remove("is-open");
         drawer.setAttribute("aria-hidden","true");
         document.body.classList.remove("smv-home-drawer-open");
+        document.documentElement.classList.remove("smv-home-drawer-open");
+        edge.classList.remove("smv-get-matched-hidden");
         setTimeout(function(){backdrop.hidden=true;},300);
       }
-      tab.addEventListener("click",openDrawer);
+
+      /* Drag the banner vertically along the left edge. A simple click still opens the form. */
+      var dragStartY=0, dragStartTop=0, dragging=false, moved=false;
+      edge.addEventListener("pointerdown",function(e){
+        if(e.button!==undefined && e.button!==0) return;
+        dragStartY=e.clientY;
+        dragStartTop=edge.getBoundingClientRect().top;
+        dragging=true; moved=false;
+        if(edge.setPointerCapture) edge.setPointerCapture(e.pointerId);
+        edge.classList.add("smv-get-matched-dragging");
+      });
+      edge.addEventListener("pointermove",function(e){
+        if(!dragging) return;
+        var dy=e.clientY-dragStartY, h=edge.offsetHeight||42;
+        if(Math.abs(dy)>5) moved=true;
+        var maxTop=Math.max(8,window.innerHeight-h-8);
+        edge.style.top=Math.max(8,Math.min(maxTop,dragStartTop+dy))+"px";
+        edge.style.transform="none";
+      });
+      edge.addEventListener("pointerup",function(e){
+        if(!dragging) return;
+        dragging=false;
+        edge.classList.remove("smv-get-matched-dragging");
+        if(!moved) openDrawer();
+        if(edge.releasePointerCapture) edge.releasePointerCapture(e.pointerId);
+      });
+      edge.addEventListener("pointercancel",function(){
+        dragging=false;
+        edge.classList.remove("smv-get-matched-dragging");
+      });
+
       close.addEventListener("click",closeDrawer);
       backdrop.addEventListener("click",closeDrawer);
       document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!backdrop.hidden)closeDrawer();});
@@ -3097,3 +3133,54 @@
 </body>
 </html>
 
+
+
+/* ---------- GET MATCHED: draggable + extra highlight ---------- */
+html body .smv-home-enquiry-edge{
+  touch-action:none!important;
+  user-select:none!important;
+  cursor:grab!important;
+  transition:opacity .2s ease,visibility .2s ease,filter .2s ease!important;
+}
+html body .smv-home-enquiry-edge.smv-get-matched-dragging{
+  cursor:grabbing!important;
+}
+html body .smv-home-enquiry-edge.smv-get-matched-hidden{
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+html body .smv-home-enquiry-tab{
+  position:relative!important;
+  font-weight:950!important;
+  letter-spacing:.06em!important;
+  text-shadow:0 1px 1px rgba(255,255,255,.35)!important;
+  animation:smvGetMatchedGlow 1.65s ease-in-out infinite!important;
+}
+html body .smv-home-enquiry-tab::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  border-radius:inherit!important;
+  background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,.0) 34%,rgba(255,255,255,.95) 50%,rgba(255,255,255,.0) 66%,transparent 100%)!important;
+  transform:translateX(-130%)!important;
+  animation:smvGetMatchedShine 1.65s linear infinite!important;
+  pointer-events:none!important;
+  z-index:1!important;
+}
+html body .smv-home-enquiry-tab::after{
+  animation:smvGetMatchedFlash 1.65s ease-in-out infinite!important;
+}
+@keyframes smvGetMatchedGlow{
+  0%,100%{box-shadow:5px 7px 0 rgba(3,27,24,.18),6px 12px 22px rgba(3,27,24,.18),inset 0 1px 0 rgba(255,255,255,.55),0 0 0 rgba(255,214,80,0)}
+  50%{box-shadow:5px 7px 0 rgba(3,27,24,.18),6px 12px 28px rgba(3,27,24,.24),inset 0 1px 0 rgba(255,255,255,.7),0 0 18px rgba(255,210,70,.72)}
+}
+@keyframes smvGetMatchedShine{
+  0%{transform:translateX(-130%);opacity:0}
+  18%{opacity:1}
+  55%,100%{transform:translateX(130%);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  html body .smv-home-enquiry-tab,html body .smv-home-enquiry-tab::before,html body .smv-home-enquiry-tab::after{animation:none!important}
+}
+\n
