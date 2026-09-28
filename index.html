@@ -2668,7 +2668,12 @@
 
 </a>
 
-
+<!-- Compact left-side Quick Enquiry CTA -->
+<div class="smv-home-enquiry-edge" aria-label="Quick venue enquiry">
+  <button type="button" class="smv-home-enquiry-tab" id="smvHomeEnquiryTab" aria-label="Get matched for venue options">
+    <span>GET MATCHED →</span>
+  </button>
+</div>
 
 <!-- =====================================================
      AUTO ENQUIRY POPUP
@@ -3035,6 +3040,17 @@
 
 
   <script src="marketplace-redesign-20260922.js?v=20260922-direct-filter-1"></script>
+  <script>
+    (function(){
+      var tab=document.getElementById("smvHomeEnquiryTab");
+      if(!tab) return;
+      tab.addEventListener("click",function(){
+        if(typeof window.smvOpenEnquiryPopup === "function"){
+          window.smvOpenEnquiryPopup(true);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
 
