@@ -1340,3 +1340,13 @@ html body .smv-home-enquiry-head button#smvHomeEnquiryClose{
   z-index:5!important;
   pointer-events:auto!important;
 }
+
+
+/* ---------- FINAL GET MATCHED DRAG OVERRIDE ---------- */
+html body .smv-home-enquiry-edge{
+  top:var(--smv-edge-top,44%)!important;
+  transform:translateY(-50%)!important;
+}
+html body .smv-home-enquiry-edge.smv-get-matched-dragging{
+  transform:none!important;
+}
