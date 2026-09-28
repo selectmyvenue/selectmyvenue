@@ -229,7 +229,7 @@
   <link rel="stylesheet" href="homepage-touchups.css?v=20260919-premium-reframe-2">
 <link rel="stylesheet" href="website-refinements.css?v=20260922-restore-3">
 <script src="venue-public-details.js?v=20260922-1"></script>
-  <link rel="stylesheet" href="marketplace-redesign-20260922.css?v=20260929-get-matched-fix-3">
+  <link rel="stylesheet" href="marketplace-redesign-20260922.css?v=20260929-get-matched-fix-4">
   <link rel="stylesheet" href="shared-home-header.css?v=20260927-premium-header-3">
 </head>
 
@@ -3083,7 +3083,7 @@
         backdrop.hidden=false;
         document.body.classList.add("smv-home-drawer-open");
         document.documentElement.classList.add("smv-home-drawer-open");
-        edge.classList.add("smv-get-matched-hidden");
+        edge.classList.add("smv-get-matched-open");
         setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);
       }
       function closeDrawer(){
@@ -3091,7 +3091,7 @@
         drawer.setAttribute("aria-hidden","true");
         document.body.classList.remove("smv-home-drawer-open");
         document.documentElement.classList.remove("smv-home-drawer-open");
-        edge.classList.remove("smv-get-matched-hidden");
+        edge.classList.remove("smv-get-matched-open");
         setTimeout(function(){backdrop.hidden=true;},300);
       }
 
