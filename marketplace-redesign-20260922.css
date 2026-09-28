@@ -1287,3 +1287,56 @@ html body .smv-home-enquiry-tab span{position:relative!important;z-index:3!impor
   html body .smv-home-enquiry-body .form-field.full{grid-column:auto!important}
   html body .smv-home-enquiry-body .button-primary{min-height:47px!important;height:47px!important}
 }
+
+
+/* ---------- FINAL OPAQUE DRAWER FIX ---------- */
+html body .smv-home-enquiry-backdrop{
+  display:block!important;
+  position:fixed!important;
+  inset:0!important;
+  background:rgba(3,27,24,.62)!important;
+  backdrop-filter:blur(2px)!important;
+  -webkit-backdrop-filter:blur(2px)!important;
+}
+html body .smv-home-enquiry-backdrop[hidden]{display:none!important}
+
+html body .smv-home-enquiry-drawer{
+  position:fixed!important;
+  isolation:isolate!important;
+  opacity:1!important;
+  background:#fbf7f0!important;
+  background-color:#fbf7f0!important;
+  color:#19342f!important;
+  border-radius:0 16px 16px 0!important;
+  box-shadow:14px 0 42px rgba(0,0,0,.30)!important;
+  overflow:hidden!important;
+}
+html body .smv-home-enquiry-drawer::before{
+  content:""!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:-1!important;
+  background:#fbf7f0!important;
+  opacity:1!important;
+  pointer-events:none!important;
+}
+html body .smv-home-enquiry-head,
+html body .smv-home-enquiry-body{
+  position:relative!important;
+  z-index:1!important;
+}
+html body .smv-home-enquiry-body{
+  background:#fbf7f0!important;
+  background-color:#fbf7f0!important;
+}
+html body .smv-home-enquiry-body .quick-enquiry-form,
+html body .smv-home-enquiry-body .form-field,
+html body .smv-home-enquiry-benefits{
+  position:relative!important;
+  z-index:2!important;
+}
+html body .smv-home-enquiry-head button#smvHomeEnquiryClose{
+  position:relative!important;
+  z-index:5!important;
+  pointer-events:auto!important;
+}
