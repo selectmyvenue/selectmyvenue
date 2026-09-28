@@ -3110,8 +3110,9 @@
         var dy=e.clientY-dragStartY, h=edge.offsetHeight||42;
         if(Math.abs(dy)>5) moved=true;
         var maxTop=Math.max(8,window.innerHeight-h-8);
-        edge.style.top=Math.max(8,Math.min(maxTop,dragStartTop+dy))+"px";
-        edge.style.transform="none";
+        var nextTop=Math.max(8,Math.min(maxTop,dragStartTop+dy));
+        edge.style.setProperty("--smv-edge-top",nextTop+"px");
+        edge.style.setProperty("transform","none","important");
       });
       edge.addEventListener("pointerup",function(e){
         if(!dragging) return;
