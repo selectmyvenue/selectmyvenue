@@ -258,6 +258,34 @@
     const style = document.createElement("style");
     style.id = "smvQuickEnquiryFixStyles";
     style.textContent = `
+      .smv-home-enquiry-edge{position:fixed!important;left:0!important;top:44%!important;transform:translateY(-50%)!important;z-index:10040!important;display:block!important;pointer-events:auto!important;touch-action:none!important}
+      .smv-home-enquiry-edge.smv-get-matched-open{top:72px!important;transform:translateY(-50%)!important}
+      .smv-home-enquiry-tab{position:relative!important;overflow:hidden!important;isolation:isolate!important;width:116px!important;height:42px!important;border:1px solid #f2da91!important;border-left:0!important;border-radius:0 11px 11px 0!important;background:linear-gradient(135deg,#f7df8e 0%,#d9b954 58%,#b99536 100%)!important;color:#173d35!important;font:900 11px/1 Arial,sans-serif!important;letter-spacing:.04em!important;box-shadow:8px 10px 24px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.8)!important;cursor:pointer!important}
+      .smv-home-enquiry-tab span{position:relative!important;z-index:5!important}
+      .smv-home-enquiry-tab:before{content:""!important;position:absolute!important;top:-35%!important;left:-75%!important;width:48%!important;height:170%!important;z-index:4!important;pointer-events:none!important;border-radius:inherit!important;background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,.12) 22%,rgba(255,255,255,1) 50%,rgba(255,255,255,.14) 78%,transparent 100%)!important;transform:skewX(-20deg)!important;box-shadow:0 0 18px rgba(255,255,255,.95),0 0 30px rgba(255,214,72,.85)!important;animation:smvGetMatchedStrongSweep 1.85s linear infinite!important}
+      .smv-home-enquiry-tab:after{content:""!important;position:absolute!important;inset:-3px!important;z-index:1!important;pointer-events:none!important;border-radius:inherit!important;border:2px solid rgba(255,245,177,.8)!important;animation:smvGetMatchedStrongPulse 1.85s ease-in-out infinite!important}
+      @keyframes smvGetMatchedStrongSweep{0%,34%{left:-75%;opacity:0}40%{opacity:1}62%{left:125%;opacity:1}70%,100%{left:125%;opacity:0}}
+      @keyframes smvGetMatchedStrongPulse{0%,34%{box-shadow:0 0 0 rgba(255,214,72,0),0 0 0 rgba(255,255,255,0)}48%{box-shadow:0 0 10px rgba(255,214,72,.75),0 0 24px rgba(255,255,255,.4)}61%{box-shadow:0 0 24px rgba(255,214,72,1),0 0 46px rgba(255,255,255,.72)}72%,100%{box-shadow:0 0 0 rgba(255,214,72,0),0 0 0 rgba(255,255,255,0)}}
+      .smv-home-enquiry-backdrop{position:fixed!important;inset:0!important;z-index:10038!important;background:rgba(3,27,24,.62)!important;backdrop-filter:blur(2px)!important}
+      .smv-home-enquiry-backdrop[hidden]{display:none!important}
+      .smv-home-enquiry-drawer{position:fixed!important;left:0!important;top:72px!important;width:min(430px,92vw)!important;height:calc(100vh - 72px)!important;z-index:10039!important;background:#fbf7f0!important;color:#19342f!important;border-radius:0 16px 16px 0!important;box-shadow:14px 0 42px rgba(0,0,0,.30)!important;overflow:hidden!important;transform:translateX(-105%)!important;transition:transform .3s ease!important}
+      .smv-home-enquiry-drawer.is-open{transform:translateX(0)!important}
+      .smv-home-enquiry-head{display:flex!important;justify-content:space-between!important;gap:16px!important;padding:22px 20px 18px!important;background:linear-gradient(145deg,#062d28,#0b5147)!important;color:#fff!important}
+      .smv-home-enquiry-head p{margin:0 0 5px!important;color:#b9d8d1!important;font-size:9px!important;font-weight:900!important;letter-spacing:.08em!important}
+      .smv-home-enquiry-head h2{margin:0 0 6px!important;color:#fff!important;font-size:24px!important;line-height:1.15!important}
+      .smv-home-enquiry-head span{display:block!important;color:#c5ddd8!important;font-size:11px!important;line-height:1.45!important}
+      .smv-home-enquiry-head button{width:36px!important;height:36px!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:50%!important;background:rgba(255,255,255,.08)!important;color:#fff!important;font-size:25px!important;line-height:1!important;cursor:pointer!important;flex:0 0 auto!important}
+      .smv-home-enquiry-body{height:calc(100% - 128px)!important;overflow-y:auto!important;padding:20px!important;background:#fbf7f0!important}
+      .smv-home-enquiry-body .quick-enquiry-form{display:grid!important;grid-template-columns:1fr 1fr!important;gap:11px!important}
+      .smv-home-enquiry-body .form-field.full{grid-column:1/-1!important}
+      .smv-home-enquiry-body .form-field label{display:block!important;margin-bottom:5px!important;color:#526761!important;font-size:9px!important;font-weight:850!important;letter-spacing:.04em!important}
+      .smv-home-enquiry-body .form-field input,.smv-home-enquiry-body .form-field select{width:100%!important;min-height:42px!important;padding:0 10px!important;border:1px solid #d9d0c2!important;border-radius:9px!important;background:#fff!important;color:#19342f!important;font-size:12px!important;box-sizing:border-box!important}
+      .smv-home-enquiry-body .button-primary{width:100%!important;min-height:46px!important;border-radius:10px!important;background:#031b18!important;color:#fff!important;cursor:pointer!important}
+      .smv-home-enquiry-benefits{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:7px!important;margin-top:14px!important}
+      .smv-home-enquiry-benefits span{padding:8px!important;border:1px solid #e1d8ca!important;border-radius:9px!important;background:#fff!important;color:#65736f!important;font-size:8px!important;line-height:1.35!important;text-align:center!important}
+      body.smv-home-drawer-open{overflow:hidden!important}
+      @media(max-width:520px){.smv-home-enquiry-edge{top:44%!important}.smv-home-enquiry-edge.smv-get-matched-open{top:60px!important}.smv-home-enquiry-tab{width:104px!important;height:40px!important;font-size:10px!important}.smv-home-enquiry-drawer{top:60px!important;width:100%!important;height:calc(100vh - 60px)!important;border-radius:0!important}.smv-home-enquiry-body{height:calc(100% - 142px)!important}.smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr!important}.smv-home-enquiry-body .form-field.full{grid-column:auto!important}.smv-home-enquiry-benefits{grid-template-columns:1fr 1fr 1fr!important}}
+
       .quick-enquiry-message.success{
         display:block!important;
         width:100%!important;
@@ -443,6 +471,8 @@
   document.addEventListener("DOMContentLoaded", function () {
     captureAttribution();
     installStyles();
+    ensureGlobalQuickEnquiry();
+    if(!window.supabase){var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";s.async=true;document.head.appendChild(s);}
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
       const dateField = form.elements.event_date;
       if (dateField) dateField.min = todayIso();
