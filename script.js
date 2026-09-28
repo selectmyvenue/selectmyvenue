@@ -3357,6 +3357,7 @@ function setupAutoEnquiryPopup() {
     overlay.classList.remove("show");
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("popup-open");
+    document.body.classList.remove("smv-side-enquiry-open");
 
     if (markHandled) {
       markPopupHandled();
