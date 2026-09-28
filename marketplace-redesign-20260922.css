@@ -1382,3 +1382,70 @@ html body .smv-home-enquiry-body .quick-enquiry-message[data-quick-message]{
   line-height:1.5!important;
   font-weight:650!important;
 }
+
+
+/* ---------- GET MATCHED: upper form-edge position + high-visibility moving light ---------- */
+html body .smv-home-enquiry-edge{
+  top:var(--smv-edge-top,104px)!important;
+  transform:translateY(-50%)!important;
+}
+html body .smv-home-enquiry-edge.smv-get-matched-dragging{
+  transform:none!important;
+}
+html body .smv-home-enquiry-tab{
+  overflow:hidden!important;
+  isolation:isolate!important;
+  position:relative!important;
+}
+html body .smv-home-enquiry-tab::before{
+  content:""!important;
+  position:absolute!important;
+  top:-35%!important;
+  left:-75%!important;
+  width:48%!important;
+  height:170%!important;
+  z-index:4!important;
+  pointer-events:none!important;
+  border-radius:inherit!important;
+  background:linear-gradient(100deg,transparent 0%,rgba(255,255,255,.15) 25%,rgba(255,255,255,1) 50%,rgba(255,255,255,.18) 75%,transparent 100%)!important;
+  transform:skewX(-20deg)!important;
+  box-shadow:0 0 18px rgba(255,255,255,.9),0 0 28px rgba(255,214,72,.72)!important;
+  animation:smvGetMatchedStrongSweep 2.15s linear infinite!important;
+}
+html body .smv-home-enquiry-tab::after{
+  content:""!important;
+  position:absolute!important;
+  inset:-3px!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  border-radius:inherit!important;
+  border:2px solid rgba(255,235,145,.72)!important;
+  box-shadow:0 0 0 rgba(255,214,72,0),0 0 0 rgba(255,255,255,0)!important;
+  animation:smvGetMatchedStrongPulse 2.15s ease-in-out infinite!important;
+}
+html body .smv-home-enquiry-tab span{
+  position:relative!important;
+  z-index:5!important;
+}
+@keyframes smvGetMatchedStrongSweep{
+  0%,42%{left:-75%;opacity:0}
+  48%{opacity:1}
+  67%{left:125%;opacity:1}
+  76%,100%{left:125%;opacity:0}
+}
+@keyframes smvGetMatchedStrongPulse{
+  0%,42%{box-shadow:0 0 0 rgba(255,214,72,0),0 0 0 rgba(255,255,255,0)}
+  52%{box-shadow:0 0 10px rgba(255,214,72,.72),0 0 24px rgba(255,255,255,.38)}
+  64%{box-shadow:0 0 22px rgba(255,214,72,1),0 0 42px rgba(255,255,255,.65)}
+  76%,100%{box-shadow:0 0 0 rgba(255,214,72,0),0 0 0 rgba(255,255,255,0)}
+}
+@media(max-width:520px){
+  html body .smv-home-enquiry-edge{
+    top:var(--smv-edge-top,76px)!important;
+    transform:translateY(-50%)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html body .smv-home-enquiry-tab::before,
+  html body .smv-home-enquiry-tab::after{animation:none!important}
+}
