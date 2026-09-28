@@ -330,6 +330,39 @@
     document.head.appendChild(style);
   }
 
+  function ensureGlobalQuickEnquiry(){
+    if(document.querySelector(".smv-home-enquiry-edge")) return;
+    if(!document.body) return;
+    document.body.insertAdjacentHTML("beforeend", `
+      <div class="smv-home-enquiry-edge" aria-label="Quick venue enquiry"><button type="button" class="smv-home-enquiry-tab" id="smvHomeEnquiryTab" aria-label="Get matched for venue options"><span>GET MATCHED →</span></button></div>
+      <div class="smv-home-enquiry-backdrop" id="smvHomeEnquiryBackdrop" hidden></div>
+      <aside class="smv-home-enquiry-drawer" id="smvHomeEnquiryDrawer" aria-label="Quick venue enquiry" aria-hidden="true">
+        <div class="smv-home-enquiry-head"><div><p>QUICK VENUE ENQUIRY</p><h2>Tell us what you're looking for.</h2><span>Share a few details and we’ll help you find suitable venue options for your event.</span></div><button id="smvHomeEnquiryClose" type="button" aria-label="Close enquiry form">×</button></div>
+        <div class="smv-home-enquiry-body"><form class="quick-enquiry-form" data-smv-quick-enquiry data-source="Website - Quick Enquiry">
+          <div class="form-field"><label>YOUR NAME *</label><input name="customer_name" autocomplete="name" placeholder="Your name" required></div>
+          <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
+          <div class="form-field"><label>EVENT TYPE *</label><select name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Birthday</option><option>Party</option><option>Corporate Event</option><option>Reception</option><option>Other</option></select></div>
+          <div class="form-field"><label>LOCATION *</label><select name="location" required><option value="">Select location</option><option>Delhi</option><option>Gurgaon</option><option>Noida</option><option>Faridabad</option><option>Delhi NCR</option></select></div>
+          <div class="form-field"><label>EVENT DATE *</label><input name="event_date" type="date" required></div>
+          <div class="form-field"><label>GUESTS</label><input name="guests" type="number" min="1" placeholder="e.g. 300"></div>
+          <div class="form-field full"><label>BUDGET / PERSON</label><input name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></div>
+          <div class="form-field full"><button class="button button-primary" type="submit">Get My Venue Options →</button></div>
+          <p class="quick-enquiry-message" data-quick-message aria-live="polite"></p>
+        </form><div class="smv-home-enquiry-benefits"><span>✓ Suitable matches</span><span>✓ Compare options</span><span>✓ Personal assistance</span></div></div>
+      </aside>`);
+    var edge=document.querySelector(".smv-home-enquiry-edge"),drawer=document.getElementById("smvHomeEnquiryDrawer"),backdrop=document.getElementById("smvHomeEnquiryBackdrop"),close=document.getElementById("smvHomeEnquiryClose");
+    if(!edge||!drawer||!backdrop||!close)return;
+    function openDrawer(){drawer.classList.add("is-open");drawer.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.classList.add("smv-home-drawer-open");document.documentElement.classList.add("smv-home-drawer-open");edge.classList.add("smv-get-matched-open");setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);}
+    function closeDrawer(){drawer.classList.remove("is-open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("smv-home-drawer-open");document.documentElement.classList.remove("smv-home-drawer-open");edge.classList.remove("smv-get-matched-open");setTimeout(function(){backdrop.hidden=true;},300);}
+    var dragStartY=0,dragStartTop=0,dragging=false,moved=false;
+    edge.addEventListener("pointerdown",function(e){if(e.button!==undefined&&e.button!==0)return;dragStartY=e.clientY;dragStartTop=edge.getBoundingClientRect().top;dragging=true;moved=false;if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);edge.classList.add("smv-get-matched-dragging");});
+    edge.addEventListener("pointermove",function(e){if(!dragging)return;var dy=e.clientY-dragStartY,h=edge.offsetHeight||42;if(Math.abs(dy)>5)moved=true;var maxTop=Math.max(8,window.innerHeight-h-8),nextTop=Math.max(8,Math.min(maxTop,dragStartTop+dy));edge.style.setProperty("--smv-edge-top",nextTop+"px");edge.style.setProperty("transform","none","important");});
+    edge.addEventListener("pointerup",function(e){if(!dragging)return;dragging=false;edge.classList.remove("smv-get-matched-dragging");if(!moved)openDrawer();if(edge.releasePointerCapture)edge.releasePointerCapture(e.pointerId);});
+    edge.addEventListener("pointercancel",function(){dragging=false;edge.classList.remove("smv-get-matched-dragging");});
+    close.addEventListener("click",closeDrawer);backdrop.addEventListener("click",closeDrawer);
+    document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!backdrop.hidden)closeDrawer();});
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
