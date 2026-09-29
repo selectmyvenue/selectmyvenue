@@ -355,8 +355,24 @@
     function openDrawer(){drawer.classList.add("is-open");drawer.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.classList.add("smv-home-drawer-open");document.documentElement.classList.add("smv-home-drawer-open");edge.classList.add("smv-get-matched-open");setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);}
     function closeDrawer(){drawer.classList.remove("is-open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("smv-home-drawer-open");document.documentElement.classList.remove("smv-home-drawer-open");edge.classList.remove("smv-get-matched-open");setTimeout(function(){backdrop.hidden=true;},300);}
     var dragStartY=0,dragStartCenter=0,dragging=false,moved=false,dragPointerId=null;
+    var suppressTapUntil=0;
+
+    function setEdgeCenter(center){
+      var h=edge.offsetHeight||42;
+      var minCenter=h/2+8;
+      var maxCenter=window.innerHeight-h/2-8;
+      var nextCenter=Math.max(minCenter,Math.min(maxCenter,center));
+      edge.style.setProperty("top",nextCenter+"px","important");
+      edge.style.setProperty("--smv-edge-top",nextCenter+"px");
+      edge.style.setProperty("transform","translateY(-50%)","important");
+    }
+
     edge.addEventListener("pointerdown",function(e){
-      if(e.button!==undefined&&e.button!==0&&e.pointerType!=="touch")return;
+      if(e.pointerType==="touch"){
+        // Touch is handled by the dedicated touch handlers below.
+        return;
+      }
+      if(e.button!==undefined&&e.button!==0)return;
       var rect=edge.getBoundingClientRect();
       dragStartY=e.clientY;
       dragStartCenter=rect.top+(rect.height/2);
@@ -364,25 +380,18 @@
       moved=false;
       dragPointerId=e.pointerId;
       edge.classList.add("smv-get-matched-dragging");
-      edge.style.setProperty("top",dragStartCenter+"px","important");
-      edge.style.setProperty("transform","translateY(-50%)","important");
+      setEdgeCenter(dragStartCenter);
       if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);
-      // Keep pointerdown default behavior so mobile browsers generate a reliable tap/click.
-      // Scrolling is suppressed only after the finger actually starts dragging.
     });
+
     edge.addEventListener("pointermove",function(e){
       if(!dragging||e.pointerId!==dragPointerId)return;
       var dy=e.clientY-dragStartY;
       if(Math.abs(dy)>6)moved=true;
-      var h=edge.offsetHeight||42;
-      var minCenter=h/2+8;
-      var maxCenter=window.innerHeight-h/2-8;
-      var nextCenter=Math.max(minCenter,Math.min(maxCenter,dragStartCenter+dy));
-      edge.style.setProperty("top",nextCenter+"px","important");
-      edge.style.setProperty("--smv-edge-top",nextCenter+"px");
-      edge.style.setProperty("transform","translateY(-50%)","important");
+      setEdgeCenter(dragStartCenter+dy);
       if(e.cancelable)e.preventDefault();
     });
+
     function finishDrag(e){
       if(!dragging)return;
       var shouldOpen=!moved;
@@ -394,22 +403,55 @@
     }
     edge.addEventListener("pointerup",finishDrag);
     edge.addEventListener("pointercancel",function(e){
-      dragging=false;
-      dragPointerId=null;
-      moved=false;
+      dragging=false; dragPointerId=null; moved=false;
       edge.classList.remove("smv-get-matched-dragging");
       if(e&&edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){}}
     });
-    edge.addEventListener("lostpointercapture",function(){
-      if(!dragging)return;
+
+    // Dedicated mobile touch path: keeps tap reliable while retaining smooth drag.
+    edge.addEventListener("touchstart",function(e){
+      if(!e.touches||!e.touches[0])return;
+      var t=e.touches[0],rect=edge.getBoundingClientRect();
+      dragStartY=t.clientY;
+      dragStartCenter=rect.top+(rect.height/2);
+      dragging=true;
+      moved=false;
+      dragPointerId="touch";
+      edge.classList.add("smv-get-matched-dragging");
+      setEdgeCenter(dragStartCenter);
+    },{passive:true});
+
+    edge.addEventListener("touchmove",function(e){
+      if(!dragging||dragPointerId!=="touch"||!e.touches||!e.touches[0])return;
+      var dy=e.touches[0].clientY-dragStartY;
+      if(Math.abs(dy)>6)moved=true;
+      setEdgeCenter(dragStartCenter+dy);
+      if(moved&&e.cancelable)e.preventDefault();
+    },{passive:false});
+
+    edge.addEventListener("touchend",function(e){
+      if(!dragging||dragPointerId!=="touch")return;
+      var shouldOpen=!moved;
       dragging=false;
       dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
-    });
+      if(shouldOpen){
+        suppressTapUntil=Date.now()+700;
+        openDrawer();
+      }
+      moved=false;
+    },{passive:true});
+
+    edge.addEventListener("touchcancel",function(){
+      dragging=false; dragPointerId=null; moved=false;
+      edge.classList.remove("smv-get-matched-dragging");
+    },{passive:true});
+
     var tab=document.getElementById("smvHomeEnquiryTab");
     if(tab) tab.addEventListener("click",function(e){
       e.preventDefault();
       e.stopPropagation();
+      if(Date.now()<suppressTapUntil)return;
       if(!dragging&&!moved)openDrawer();
       moved=false;
     });
