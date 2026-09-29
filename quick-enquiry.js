@@ -274,7 +274,7 @@
       .smv-home-enquiry-head p{margin:0 0 5px!important;color:#b9d8d1!important;font-size:9px!important;font-weight:900!important;letter-spacing:.08em!important}
       .smv-home-enquiry-head h2{margin:0 0 6px!important;color:#fff!important;font-size:24px!important;line-height:1.15!important}
       .smv-home-enquiry-head span{display:block!important;color:#c5ddd8!important;font-size:11px!important;line-height:1.45!important}
-      .smv-home-enquiry-head button{width:36px!important;height:36px!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:50%!important;background:rgba(255,255,255,.08)!important;color:#fff!important;font-size:25px!important;line-height:1!important;cursor:pointer!important;flex:0 0 auto!important}
+      .smv-home-enquiry-head button{width:36px!important;height:36px!important;border:1px solid rgba(255,255,255,.25)!important;border-radius:50%!important;background:rgba(255,255,255,.08)!important;color:#fff!important;font-size:25px!important;line-height:1!important;cursor:pointer!important;flex:0 0 auto!important}.smv-home-enquiry-close-label{display:none!important}
       .smv-home-enquiry-body{height:calc(100% - 128px)!important;overflow-y:auto!important;padding:20px!important;background:#fbf7f0!important}
       .smv-home-enquiry-body .quick-enquiry-form{display:grid!important;grid-template-columns:1fr 1fr!important;gap:11px!important}
       .smv-home-enquiry-body .form-field.full{grid-column:1/-1!important}
@@ -338,7 +338,7 @@
       <div class="smv-home-enquiry-edge" aria-label="Quick venue enquiry"><button type="button" class="smv-home-enquiry-tab" id="smvHomeEnquiryTab" aria-label="Get matched for venue options"><span>GET MATCHED →</span></button></div>
       <div class="smv-home-enquiry-backdrop" id="smvHomeEnquiryBackdrop" hidden></div>
       <aside class="smv-home-enquiry-drawer" id="smvHomeEnquiryDrawer" aria-label="Quick venue enquiry" aria-hidden="true">
-        <div class="smv-home-enquiry-head"><div><p>QUICK VENUE ENQUIRY</p><h2>Tell us what you're looking for.</h2><span>Share a few details and we’ll help you find suitable venue options for your event.</span></div><button id="smvHomeEnquiryClose" type="button" aria-label="Close enquiry form">×</button></div>
+        <div class="smv-home-enquiry-head"><div><p>QUICK VENUE ENQUIRY</p><h2>Tell us what you're looking for.</h2><span>Share a few details and we’ll help you find suitable venue options for your event.</span></div><button id="smvHomeEnquiryClose" type="button" aria-label="Close enquiry form"><span aria-hidden="true">×</span><b class="smv-home-enquiry-close-label">Close</b></button></div>
         <div class="smv-home-enquiry-body"><form class="quick-enquiry-form" data-smv-quick-enquiry data-source="Website - Quick Enquiry">
           <div class="form-field"><label>YOUR NAME *</label><input name="customer_name" autocomplete="name" placeholder="Your name" required></div>
           <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
