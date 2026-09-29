@@ -462,13 +462,27 @@
     },{passive:true});
 
     var tab=document.getElementById("smvHomeEnquiryTab");
-    if(tab) tab.addEventListener("click",function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      if(Date.now()<suppressTapUntil)return;
-      if(!dragging&&!moved)openDrawer();
-      moved=false;
-    });
+    if(tab){
+      // Handle a mobile tap directly on the actual button. This fires at touchend
+      // without waiting for the browser's delayed synthetic click.
+      tab.addEventListener("touchend",function(e){
+        if(Date.now()<suppressTapUntil)return;
+        if(!moved){
+          e.preventDefault();
+          e.stopPropagation();
+          openDrawer();
+        }
+        moved=false;
+      },{passive:false});
+
+      tab.addEventListener("click",function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(Date.now()<suppressTapUntil)return;
+        if(!dragging&&!moved)openDrawer();
+        moved=false;
+      });
+    }
     close.addEventListener("click",closeDrawer);backdrop.addEventListener("click",closeDrawer);
     document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!backdrop.hidden)closeDrawer();});
   }
