@@ -365,21 +365,26 @@
       moved=false;
       dragPointerId=e.pointerId;
       edge.classList.add("smv-get-matched-dragging");
+      edge.style.setProperty("top",dragStartCenter+"px","important");
+      edge.style.setProperty("transform","translateY(-50%)","important");
       if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);
       if(e.cancelable)e.preventDefault();
     });
     edge.addEventListener("pointermove",function(e){
       if(!dragging||e.pointerId!==dragPointerId)return;
-      var dy=e.clientY-dragStartY,h=edge.offsetHeight||42;
-      if(Math.abs(dy)>4)moved=true;
-      var minCenter=Math.max(h/2+8,8+h/2),maxCenter=Math.max(minCenter,window.innerHeight-h/2-8);
+      var dy=e.clientY-dragStartY;
+      if(Math.abs(dy)>3)moved=true;
+      var h=edge.offsetHeight||42;
+      var minCenter=h/2+8;
+      var maxCenter=window.innerHeight-h/2-8;
       var nextCenter=Math.max(minCenter,Math.min(maxCenter,dragStartCenter+dy));
+      edge.style.setProperty("top",nextCenter+"px","important");
       edge.style.setProperty("--smv-edge-top",nextCenter+"px");
-      edge.style.transform="translateY(-50%)";
-      if(moved&&e.cancelable)e.preventDefault();
+      edge.style.setProperty("transform","translateY(-50%)","important");
+      if(e.cancelable)e.preventDefault();
     });
     function finishDrag(e){
-      if(!dragging|| (e && dragPointerId!==null && e.pointerId!==dragPointerId))return;
+      if(!dragging)return;
       var shouldOpen=!moved;
       dragging=false;
       dragPointerId=null;
@@ -388,7 +393,18 @@
       if(shouldOpen)openDrawer();
     }
     edge.addEventListener("pointerup",finishDrag);
-    edge.addEventListener("pointercancel",function(e){dragging=false;dragPointerId=null;edge.classList.remove("smv-get-matched-dragging");if(e&&edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){}}});
+    edge.addEventListener("pointercancel",function(e){
+      dragging=false;
+      dragPointerId=null;
+      edge.classList.remove("smv-get-matched-dragging");
+      if(e&&edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){}}
+    });
+    edge.addEventListener("lostpointercapture",function(){
+      if(!dragging)return;
+      dragging=false;
+      dragPointerId=null;
+      edge.classList.remove("smv-get-matched-dragging");
+    });
     var tab=document.getElementById("smvHomeEnquiryTab");
     if(tab) tab.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();if(!dragging&&!moved)openDrawer();moved=false;});
     close.addEventListener("click",closeDrawer);backdrop.addEventListener("click",closeDrawer);
