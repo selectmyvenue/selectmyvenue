@@ -356,8 +356,7 @@
     function closeDrawer(){drawer.classList.remove("is-open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("smv-home-drawer-open");document.documentElement.classList.remove("smv-home-drawer-open");edge.classList.remove("smv-get-matched-open");setTimeout(function(){backdrop.hidden=true;},300);}
     var dragStartY=0,dragStartCenter=0,dragging=false,moved=false,dragPointerId=null;
     edge.addEventListener("pointerdown",function(e){
-      if(window.matchMedia&&window.matchMedia("(max-width:520px)").matches)return;
-      if(e.button!==undefined&&e.button!==0)return;
+      if(e.button!==undefined&&e.button!==0&&e.pointerType!=="touch")return;
       var rect=edge.getBoundingClientRect();
       dragStartY=e.clientY;
       dragStartCenter=rect.top+(rect.height/2);
@@ -373,7 +372,7 @@
     edge.addEventListener("pointermove",function(e){
       if(!dragging||e.pointerId!==dragPointerId)return;
       var dy=e.clientY-dragStartY;
-      if(Math.abs(dy)>3)moved=true;
+      if(Math.abs(dy)>6)moved=true;
       var h=edge.offsetHeight||42;
       var minCenter=h/2+8;
       var maxCenter=window.innerHeight-h/2-8;
@@ -396,6 +395,7 @@
     edge.addEventListener("pointercancel",function(e){
       dragging=false;
       dragPointerId=null;
+      moved=false;
       edge.classList.remove("smv-get-matched-dragging");
       if(e&&edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){}}
     });
@@ -406,7 +406,12 @@
       edge.classList.remove("smv-get-matched-dragging");
     });
     var tab=document.getElementById("smvHomeEnquiryTab");
-    if(tab) tab.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();if(!dragging&&!moved)openDrawer();moved=false;});
+    if(tab) tab.addEventListener("click",function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(!dragging&&!moved)openDrawer();
+      moved=false;
+    });
     close.addEventListener("click",closeDrawer);backdrop.addEventListener("click",closeDrawer);
     document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!backdrop.hidden)closeDrawer();});
   }
