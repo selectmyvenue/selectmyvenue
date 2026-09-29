@@ -355,7 +355,7 @@
     function openDrawer(){drawer.classList.add("is-open");drawer.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.classList.add("smv-home-drawer-open");document.documentElement.classList.add("smv-home-drawer-open");edge.classList.add("smv-get-matched-open");setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);}
     function closeDrawer(){drawer.classList.remove("is-open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("smv-home-drawer-open");document.documentElement.classList.remove("smv-home-drawer-open");edge.classList.remove("smv-get-matched-open");setTimeout(function(){backdrop.hidden=true;},300);}
     var dragStartY=0,dragStartCenter=0,dragging=false,moved=false,dragPointerId=null;
-    var suppressTapUntil=0;
+    var suppressTapUntil=0,touchTapTimer=null;
 
     function setEdgeCenter(center){
       var h=edge.offsetHeight||42;
@@ -387,7 +387,10 @@
     edge.addEventListener("pointermove",function(e){
       if(!dragging||e.pointerId!==dragPointerId)return;
       var dy=e.clientY-dragStartY;
-      if(Math.abs(dy)>6)moved=true;
+      if(Math.abs(dy)>6){
+        moved=true;
+        if(touchTapTimer){clearTimeout(touchTapTimer);touchTapTimer=null;}
+      }
       setEdgeCenter(dragStartCenter+dy);
       if(e.cancelable)e.preventDefault();
     });
@@ -395,6 +398,7 @@
     function finishDrag(e){
       if(!dragging)return;
       var shouldOpen=!moved;
+      if(touchTapTimer){clearTimeout(touchTapTimer);touchTapTimer=null;}
       dragging=false;
       dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
@@ -419,6 +423,16 @@
       dragPointerId="touch";
       edge.classList.add("smv-get-matched-dragging");
       setEdgeCenter(dragStartCenter);
+      // A short tap should open immediately; a real drag cancels this timer.
+      touchTapTimer=setTimeout(function(){
+        if(dragging&&!moved&&dragPointerId==="touch"){
+          dragging=false;
+          dragPointerId=null;
+          edge.classList.remove("smv-get-matched-dragging");
+          suppressTapUntil=Date.now()+700;
+          openDrawer();
+        }
+      },120);
     },{passive:true});
 
     edge.addEventListener("touchmove",function(e){
