@@ -33,3 +33,47 @@ html:has(link[rel="canonical"][href*="venues-in-delhi"]) .breadcrumbs span:last-
 
 /* Venue card usability polish — 2026-09-16 */
 .venue-card .venue-location{font-size:12.5px!important;line-height:1.35!important;font-weight:800!important;color:#b9d8d2!important;margin:0 0 2px!important}.venue-card .venue-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;width:100%!important;margin-top:auto!important;align-items:stretch!important}.venue-card .venue-actions .button{width:100%!important;min-width:0!important;min-height:48px!important;padding:0 14px!important;display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;line-height:1.15!important;font-size:12px!important;font-weight:900!important}.venue-card .venue-actions .button-primary{color:#032b25!important}@media(max-width:420px){.venue-card .venue-actions{grid-template-columns:1fr!important}}
+
+
+/* 20260930 — canonical public header/logo fit, shared across venue/public pages */
+html body .site-header{
+  position:sticky!important;top:0!important;z-index:10000!important;
+  width:100%!important;margin:0!important;padding:0!important;
+  height:78px!important;min-height:78px!important;
+  background:#011411!important;border-bottom:1px solid rgba(48,211,190,.14)!important;
+  box-shadow:0 8px 24px rgba(0,0,0,.14)!important;
+}
+html body .site-header .header-inner{
+  width:100%!important;max-width:none!important;height:78px!important;min-height:78px!important;
+  margin:0!important;padding:0 18px!important;display:flex!important;align-items:center!important;
+  box-sizing:border-box!important;
+}
+html body .site-header .brand{
+  height:100%!important;align-self:stretch!important;display:flex!important;align-items:center!important;
+  width:350px!important;min-width:350px!important;max-width:350px!important;
+}
+html body .site-header .brand .main-logo,
+html body .site-header .main-logo{
+  display:block!important;width:350px!important;max-width:350px!important;height:100%!important;max-height:none!important;
+  object-fit:fill!important;object-position:center!important;transform:scaleY(1.08)!important;transform-origin:center!important;
+  margin:0!important;padding:0!important;
+}
+@media(max-width:1380px){
+ html body .site-header .brand{width:292px!important;min-width:292px!important;max-width:292px!important}
+ html body .site-header .brand .main-logo,html body .site-header .main-logo{width:292px!important;max-width:292px!important}
+}
+@media(max-width:1120px){
+ html body .site-header{height:70px!important;min-height:70px!important}
+ html body .site-header .header-inner{height:70px!important;min-height:70px!important;padding:0 12px!important}
+ html body .site-header .brand{width:262px!important;min-width:262px!important;max-width:262px!important}
+ html body .site-header .brand .main-logo,html body .site-header .main-logo{width:262px!important;max-width:262px!important}
+}
+@media(max-width:760px){
+ html body .site-header .brand{width:214px!important;min-width:214px!important;max-width:214px!important}
+ html body .site-header .brand .main-logo,html body .site-header .main-logo{width:214px!important;max-width:214px!important}
+}
+@media(max-width:480px){
+ html body .site-header .header-inner{padding:0 8px!important}
+ html body .site-header .brand{width:min(68vw,214px)!important;min-width:min(68vw,214px)!important;max-width:min(68vw,214px)!important}
+ html body .site-header .brand .main-logo,html body .site-header .main-logo{width:100%!important;max-width:214px!important}
+}
