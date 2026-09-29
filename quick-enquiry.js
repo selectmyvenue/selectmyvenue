@@ -367,7 +367,8 @@
       edge.style.setProperty("top",dragStartCenter+"px","important");
       edge.style.setProperty("transform","translateY(-50%)","important");
       if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);
-      if(e.cancelable)e.preventDefault();
+      // Keep pointerdown default behavior so mobile browsers generate a reliable tap/click.
+      // Scrolling is suppressed only after the finger actually starts dragging.
     });
     edge.addEventListener("pointermove",function(e){
       if(!dragging||e.pointerId!==dragPointerId)return;
