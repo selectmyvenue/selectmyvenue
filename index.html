@@ -3068,69 +3068,8 @@
 
 
   <script src="marketplace-redesign-20260922.js?v=20260922-direct-filter-1"></script>
-  <script>
-    (function(){
-      var tab=document.getElementById("smvHomeEnquiryTab"),
-          drawer=document.getElementById("smvHomeEnquiryDrawer"),
-          backdrop=document.getElementById("smvHomeEnquiryBackdrop"),
-          close=document.getElementById("smvHomeEnquiryClose"),
-          edge=document.querySelector(".smv-home-enquiry-edge");
-      if(!tab||!drawer||!backdrop||!close||!edge) return;
+  <script src="quick-enquiry.js?v=20260929-final"></script>
 
-      function openDrawer(){
-        drawer.classList.add("is-open");
-        drawer.setAttribute("aria-hidden","false");
-        backdrop.hidden=false;
-        document.body.classList.add("smv-home-drawer-open");
-        document.documentElement.classList.add("smv-home-drawer-open");
-        edge.classList.add("smv-get-matched-open");
-        setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);
-      }
-      function closeDrawer(){
-        drawer.classList.remove("is-open");
-        drawer.setAttribute("aria-hidden","true");
-        document.body.classList.remove("smv-home-drawer-open");
-        document.documentElement.classList.remove("smv-home-drawer-open");
-        edge.classList.remove("smv-get-matched-open");
-        setTimeout(function(){backdrop.hidden=true;},300);
-      }
-
-      /* Drag the banner vertically along the left edge. A simple click still opens the form. */
-      var dragStartY=0, dragStartTop=0, dragging=false, moved=false;
-      edge.addEventListener("pointerdown",function(e){
-        if(e.button!==undefined && e.button!==0) return;
-        dragStartY=e.clientY;
-        dragStartTop=edge.getBoundingClientRect().top;
-        dragging=true; moved=false;
-        if(edge.setPointerCapture) edge.setPointerCapture(e.pointerId);
-        edge.classList.add("smv-get-matched-dragging");
-      });
-      edge.addEventListener("pointermove",function(e){
-        if(!dragging) return;
-        var dy=e.clientY-dragStartY, h=edge.offsetHeight||42;
-        if(Math.abs(dy)>5) moved=true;
-        var maxTop=Math.max(8,window.innerHeight-h-8);
-        var nextTop=Math.max(8,Math.min(maxTop,dragStartTop+dy));
-        edge.style.setProperty("--smv-edge-top",nextTop+"px");
-        edge.style.setProperty("transform","none","important");
-      });
-      edge.addEventListener("pointerup",function(e){
-        if(!dragging) return;
-        dragging=false;
-        edge.classList.remove("smv-get-matched-dragging");
-        if(!moved) openDrawer();
-        if(edge.releasePointerCapture) edge.releasePointerCapture(e.pointerId);
-      });
-      edge.addEventListener("pointercancel",function(){
-        dragging=false;
-        edge.classList.remove("smv-get-matched-dragging");
-      });
-
-      close.addEventListener("click",closeDrawer);
-      backdrop.addEventListener("click",closeDrawer);
-      document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!backdrop.hidden)closeDrawer();});
-    })();
-  </script>
 </body>
 </html>
 
