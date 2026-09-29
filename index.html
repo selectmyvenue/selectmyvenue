@@ -229,7 +229,7 @@
   <link rel="stylesheet" href="homepage-touchups.css?v=20260919-premium-reframe-2">
 <link rel="stylesheet" href="website-refinements.css?v=20260922-restore-3">
 <script src="venue-public-details.js?v=20260922-1"></script>
-  <link rel="stylesheet" href="marketplace-redesign-20260922.css?v=20260929-get-matched-fix-4">
+  <link rel="stylesheet" href="marketplace-redesign-20260922.css?v=20260930-mobile-app-v1">
   <link rel="stylesheet" href="shared-home-header.css?v=20260927-premium-header-3">
 </head>
 
@@ -3070,6 +3070,27 @@
   <script src="marketplace-redesign-20260922.js?v=20260922-direct-filter-1"></script>
   <script src="quick-enquiry.js?v=20260929-tapfix-3"></script>
 
+
+<!-- SMV MOBILE APP NAV -->
+<nav class="smv-mobile-app-nav" aria-label="Mobile app navigation">
+  <a href="#home" class="smv-mobile-nav-item"><span class="smv-nav-icon">⌂</span><small>Home</small></a>
+  <a href="venues.html" class="smv-mobile-nav-item"><span class="smv-nav-icon">◇</span><small>Venues</small></a>
+  <a href="#enquiry" class="smv-mobile-nav-item smv-nav-main"><span class="smv-nav-orb">✦</span><small>Find</small></a>
+  <a href="#aiPlanner" class="smv-mobile-nav-item"><span class="smv-nav-icon">AI</span><small>Planner</small></a>
+  <a href="list-your-venue.html" class="smv-mobile-nav-item"><span class="smv-nav-icon">♢</span><small>List Venue</small></a>
+</nav>
+
+<style>
+@media(max-width:767px){
+.smv-mobile-app-nav{position:fixed;z-index:1200;left:10px;right:10px;bottom:10px;height:68px;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;padding:7px 7px 6px;border-radius:24px;background:rgba(3,27,24,.96);border:1px solid rgba(255,201,40,.22);box-shadow:0 18px 45px rgba(3,27,24,.34),inset 0 1px 0 rgba(255,255,255,.14);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.smv-mobile-nav-item{min-height:55px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-end!important;gap:3px!important;color:#d7ebe6!important;text-decoration:none!important;font-size:9px!important;font-weight:800!important}
+.smv-nav-icon{width:31px;height:31px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#16483f,#06251f);border:1px solid rgba(255,255,255,.10);box-shadow:0 4px 0 #031b18,inset 0 1px 0 rgba(255,255,255,.16);font-size:14px}
+.smv-nav-main{position:relative;margin-top:-25px!important}
+.smv-nav-orb{width:54px;height:54px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#23e5c2,#0b9f88);color:#03231f;font-size:22px;border:2px solid rgba(255,255,255,.45);box-shadow:0 6px 0 #087b6c,0 15px 28px rgba(22,210,178,.30),inset 0 1px 0 rgba(255,255,255,.65)}
+.smv-mobile-nav-item small{font-size:9px;white-space:nowrap}
+.smv-nav-main small{color:#ffc928;font-weight:900}
+}
+</style>
 </body>
 </html>
 
