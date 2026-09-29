@@ -375,6 +375,8 @@
       edge.classList.remove("smv-get-matched-dragging");
     }
 
+    var suppressClickUntil=0;
+
     edge.addEventListener("pointerdown",function(e){
       if(e.pointerType==="mouse" && e.button!==0)return;
       var rect=edge.getBoundingClientRect();
@@ -384,14 +386,18 @@
       dragStartY=e.clientY;
       dragStartCenter=rect.top+rect.height/2;
       edge.classList.add("smv-get-matched-dragging");
-      if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);
-      if(e.cancelable)e.preventDefault();
-    },{passive:false});
+      // IMPORTANT: do not preventDefault on pointerdown. Mobile browsers
+      // need the native tap/click activation to remain available.
+    },{passive:true});
 
     edge.addEventListener("pointermove",function(e){
       if(!dragging||e.pointerId!==dragPointerId)return;
       var dy=e.clientY-dragStartY;
-      if(Math.abs(dy)>6)moved=true;
+      if(Math.abs(dy)>6 && !moved){
+        moved=true;
+        suppressClickUntil=Date.now()+500;
+        if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);
+      }
       if(moved){
         setEdgeCenter(dragStartCenter+dy);
         if(e.cancelable)e.preventDefault();
@@ -405,7 +411,10 @@
       dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
       if(edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){} }
-      if(open)openDrawer();
+      if(open){
+        suppressClickUntil=Date.now()+500;
+        openDrawer();
+      }
       moved=false;
     }
     edge.addEventListener("pointerup",endPointer);
@@ -415,6 +424,18 @@
       edge.classList.remove("smv-get-matched-dragging");
       if(edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){} }
     });
+
+    // Native click fallback: a normal tap opens without requiring a hold.
+    var tab=edge.querySelector("#smvHomeEnquiryTab");
+    if(tab){
+      tab.addEventListener("click",function(e){
+        if(Date.now()<suppressClickUntil)return;
+        if(dragging||moved)return;
+        e.preventDefault();
+        e.stopPropagation();
+        openDrawer();
+      });
+    }
 
     close.addEventListener("click",closeDrawer);backdrop.addEventListener("click",closeDrawer);
 
