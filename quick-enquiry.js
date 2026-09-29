@@ -284,7 +284,7 @@
       .smv-home-enquiry-benefits{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:7px!important;margin-top:14px!important}
       .smv-home-enquiry-benefits span{padding:8px!important;border:1px solid #e1d8ca!important;border-radius:9px!important;background:#fff!important;color:#65736f!important;font-size:8px!important;line-height:1.35!important;text-align:center!important}
       body.smv-home-drawer-open{overflow:hidden!important}
-      @media(max-width:520px){.smv-home-enquiry-edge{top:44%!important;touch-action:pan-y!important;cursor:grab!important;user-select:none!important;-webkit-user-select:none!important}.smv-home-enquiry-edge.smv-get-matched-open{top:60px!important}.smv-home-enquiry-tab{width:104px!important;height:40px!important;font-size:10px!important}.smv-home-enquiry-drawer{top:60px!important;width:100%!important;height:calc(100vh - 60px)!important;border-radius:0!important}.smv-home-enquiry-body{height:calc(100% - 142px)!important}.smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr!important}.smv-home-enquiry-body .form-field.full{grid-column:auto!important}.smv-home-enquiry-benefits{grid-template-columns:1fr 1fr 1fr!important}}
+      @media(max-width:520px){.smv-home-enquiry-edge{top:44%!important;touch-action:none!important;cursor:grab!important;user-select:none!important;-webkit-user-select:none!important}.smv-home-enquiry-edge.smv-get-matched-open{top:60px!important}.smv-home-enquiry-tab{width:104px!important;height:40px!important;font-size:10px!important}.smv-home-enquiry-drawer{top:60px!important;width:100%!important;height:calc(100vh - 60px)!important;border-radius:0!important}.smv-home-enquiry-body{height:calc(100% - 142px)!important}.smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr!important}.smv-home-enquiry-body .form-field.full{grid-column:auto!important}.smv-home-enquiry-benefits{grid-template-columns:1fr 1fr 1fr!important}}
 
       .quick-enquiry-message.success{
         display:block!important;
@@ -331,9 +331,10 @@
   }
 
   function ensureGlobalQuickEnquiry(){
-    if(document.querySelector(".smv-home-enquiry-edge")) return;
     if(!document.body) return;
-    document.body.insertAdjacentHTML("beforeend", `
+    // Reuse the existing homepage markup when it is already present; do not
+    // return early, because the interaction handlers must still be attached.
+    if(!document.querySelector(".smv-home-enquiry-edge")) document.body.insertAdjacentHTML("beforeend", `
       <div class="smv-home-enquiry-edge" aria-label="Quick venue enquiry"><button type="button" class="smv-home-enquiry-tab" id="smvHomeEnquiryTab" aria-label="Get matched for venue options"><span>GET MATCHED →</span></button></div>
       <div class="smv-home-enquiry-backdrop" id="smvHomeEnquiryBackdrop" hidden></div>
       <aside class="smv-home-enquiry-drawer" id="smvHomeEnquiryDrawer" aria-label="Quick venue enquiry" aria-hidden="true">
@@ -354,18 +355,17 @@
     if(!edge||!drawer||!backdrop||!close)return;
     function openDrawer(){drawer.classList.add("is-open");drawer.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.classList.add("smv-home-drawer-open");document.documentElement.classList.add("smv-home-drawer-open");edge.classList.add("smv-get-matched-open");setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);}
     function closeDrawer(){drawer.classList.remove("is-open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("smv-home-drawer-open");document.documentElement.classList.remove("smv-home-drawer-open");edge.classList.remove("smv-get-matched-open");resetEdgePosition();setTimeout(function(){backdrop.hidden=true;},300);}
-    // GET MATCHED interaction: one clean handler per input type.
-    // Mobile uses touch events only so a normal tap opens immediately, while a
-    // vertical swipe moves the banner without triggering the drawer.
-    var dragStartY=0,dragStartCenter=0,dragging=false,moved=false,dragPointerId=null;
-    var suppressTapUntil=0;
+    // GET MATCHED interaction — one pointer path for mouse, pen and touch.
+    // A tap (no meaningful movement) opens immediately. A vertical drag moves
+    // the banner and never opens the drawer.
+    var dragging=false,moved=false,dragPointerId=null,dragStartY=0,dragStartCenter=0;
 
     function setEdgeCenter(center){
       var h=edge.offsetHeight||42;
       var minCenter=h/2+8;
       var maxCenter=window.innerHeight-h/2-8;
-      var nextCenter=Math.max(minCenter,Math.min(maxCenter,center));
-      edge.style.setProperty("top",nextCenter+"px","important");
+      var next=Math.max(minCenter,Math.min(maxCenter,center));
+      edge.style.setProperty("top",next+"px","important");
       edge.style.setProperty("transform","translateY(-50%)","important");
     }
 
@@ -375,96 +375,47 @@
       edge.classList.remove("smv-get-matched-dragging");
     }
 
-    function finishPointerDrag(e){
-      if(!dragging||dragPointerId!==e.pointerId)return;
-      var shouldOpen=!moved;
+    edge.addEventListener("pointerdown",function(e){
+      if(e.pointerType==="mouse" && e.button!==0)return;
+      var rect=edge.getBoundingClientRect();
+      dragging=true;
+      moved=false;
+      dragPointerId=e.pointerId;
+      dragStartY=e.clientY;
+      dragStartCenter=rect.top+rect.height/2;
+      edge.classList.add("smv-get-matched-dragging");
+      if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);
+      if(e.cancelable)e.preventDefault();
+    },{passive:false});
+
+    edge.addEventListener("pointermove",function(e){
+      if(!dragging||e.pointerId!==dragPointerId)return;
+      var dy=e.clientY-dragStartY;
+      if(Math.abs(dy)>6)moved=true;
+      if(moved){
+        setEdgeCenter(dragStartCenter+dy);
+        if(e.cancelable)e.preventDefault();
+      }
+    },{passive:false});
+
+    function endPointer(e){
+      if(!dragging||e.pointerId!==dragPointerId)return;
+      var open=!moved;
       dragging=false;
       dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
       if(edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){} }
-      if(shouldOpen)openDrawer();
+      if(open)openDrawer();
       moved=false;
     }
-
-    // Desktop / mouse / pen drag.
-    edge.addEventListener("pointerdown",function(e){
-      if(e.pointerType==="touch")return;
-      if(e.button!==undefined&&e.button!==0)return;
-      var rect=edge.getBoundingClientRect();
-      dragStartY=e.clientY;
-      dragStartCenter=rect.top+(rect.height/2);
-      dragging=true;
-      moved=false;
-      dragPointerId=e.pointerId;
-      edge.classList.add("smv-get-matched-dragging");
-      if(edge.setPointerCapture)edge.setPointerCapture(e.pointerId);
-      if(e.cancelable)e.preventDefault();
-    });
-    edge.addEventListener("pointermove",function(e){
-      if(!dragging||dragPointerId!==e.pointerId)return;
-      var dy=e.clientY-dragStartY;
-      if(Math.abs(dy)>5)moved=true;
-      setEdgeCenter(dragStartCenter+dy);
-      if(e.cancelable)e.preventDefault();
-    });
-    edge.addEventListener("pointerup",finishPointerDrag);
+    edge.addEventListener("pointerup",endPointer);
     edge.addEventListener("pointercancel",function(e){
-      if(!dragging||dragPointerId!==e.pointerId)return;
+      if(!dragging||e.pointerId!==dragPointerId)return;
       dragging=false;dragPointerId=null;moved=false;
       edge.classList.remove("smv-get-matched-dragging");
       if(edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){} }
     });
 
-    // Mobile: touch the actual button once = open. Move = drag. No hold timer.
-    var tab=document.getElementById("smvHomeEnquiryTab");
-    if(tab){
-      var touchActive=false,touchMoved=false,touchStartY=0,touchStartCenter=0;
-      tab.addEventListener("touchstart",function(e){
-        if(!e.touches||!e.touches[0])return;
-        var t=e.touches[0],rect=edge.getBoundingClientRect();
-        touchActive=true;
-        touchMoved=false;
-        touchStartY=t.clientY;
-        touchStartCenter=rect.top+(rect.height/2);
-        edge.classList.add("smv-get-matched-dragging");
-      },{passive:true});
-
-      tab.addEventListener("touchmove",function(e){
-        if(!touchActive||!e.touches||!e.touches[0])return;
-        var dy=e.touches[0].clientY-touchStartY;
-        if(Math.abs(dy)>5)touchMoved=true;
-        if(touchMoved){
-          setEdgeCenter(touchStartCenter+dy);
-          if(e.cancelable)e.preventDefault();
-        }
-      },{passive:false});
-
-      tab.addEventListener("touchend",function(e){
-        if(!touchActive)return;
-        touchActive=false;
-        edge.classList.remove("smv-get-matched-dragging");
-        if(!touchMoved){
-          suppressTapUntil=Date.now()+800;
-          if(e.cancelable)e.preventDefault();
-          e.stopPropagation();
-          openDrawer();
-        }
-        touchMoved=false;
-      },{passive:false});
-
-      tab.addEventListener("touchcancel",function(){
-        touchActive=false;touchMoved=false;
-        edge.classList.remove("smv-get-matched-dragging");
-      },{passive:true});
-
-      // Mouse/keyboard click fallback. Ignore the synthetic click after touch.
-      tab.addEventListener("click",function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        if(Date.now()<suppressTapUntil)return;
-        if(!dragging)openDrawer();
-      });
-    }
     close.addEventListener("click",closeDrawer);backdrop.addEventListener("click",closeDrawer);
 
     document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!backdrop.hidden)closeDrawer();});
