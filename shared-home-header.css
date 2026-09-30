@@ -329,33 +329,3 @@ html body .page-header .page-logo{opacity:1!important;visibility:visible!importa
   html body .site-header .menu-toggle{width:38px!important;height:38px!important}
 }
 
-
-/* 20260930 — canonical logo fit: remove vertical breathing room */
-html body .site-header .brand{height:100%!important;align-self:stretch!important}
-html body .site-header .brand .main-logo,
-html body .site-header .main-logo{
-  height:100%!important;
-  max-height:none!important;
-  width:350px!important;
-  max-width:350px!important;
-  object-fit:fill!important;
-  object-position:center!important;
-  transform:scaleY(1.08)!important;
-  transform-origin:center!important;
-}
-@media(max-width:1380px){
-  html body .site-header .brand .main-logo,
-  html body .site-header .main-logo{width:292px!important;max-width:292px!important}
-}
-@media(max-width:1120px){
-  html body .site-header .brand .main-logo,
-  html body .site-header .main-logo{width:262px!important;max-width:262px!important}
-}
-@media(max-width:760px){
-  html body .site-header .brand .main-logo,
-  html body .site-header .main-logo{width:214px!important;max-width:214px!important}
-}
-@media(max-width:480px){
-  html body .site-header .brand .main-logo,
-  html body .site-header .main-logo{width:100%!important;max-width:214px!important}
-}
