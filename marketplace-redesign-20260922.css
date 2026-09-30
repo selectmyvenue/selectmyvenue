@@ -1614,11 +1614,11 @@ html body .smv-home-enquiry-edge.smv-get-matched-open{
 }
 
 @media(max-width:767px){
-  /* Keep floating helpers above the app bottom bar */
+  /* Floating helpers: keep them clearly above the bottom app navigation and separated vertically. */
   .smv-home-enquiry-edge{z-index:10040!important}
-  .smv-ai-assistant,.smv-ai-float,.ai-assistant,.whatsapp-float,.smv-whatsapp-float,.whatsapp-button,.floating-whatsapp{bottom:94px!important}
-  .smv-ai-assistant,.smv-ai-float,.ai-assistant{right:14px!important}
-  .whatsapp-float,.smv-whatsapp-float,.whatsapp-button,.floating-whatsapp{right:14px!important}
-  /* App drawer close button: unmistakable close target */
-  .smv-home-enquiry-head button{width:44px!important;height:44px!important;min-width:44px!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06))!important;box-shadow:0 4px 0 rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25)!important;font-size:29px!important}
+  .smv-ai-assistant,.smv-ai-float,.ai-assistant{bottom:154px!important;right:14px!important;z-index:1205!important}
+  .whatsapp-float,.smv-whatsapp-float,.whatsapp-button,.floating-whatsapp{bottom:96px!important;right:14px!important;z-index:1205!important}
+  /* App drawer close button: visible text + large touch target. */
+  .smv-home-enquiry-head button{width:78px!important;height:44px!important;min-width:78px!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06))!important;box-shadow:0 4px 0 rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25)!important;font-size:24px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important}
+  .smv-home-enquiry-close-label{display:inline!important;color:#fff!important;font-size:10px!important;font-weight:900!important;letter-spacing:.08em!important}
 }
