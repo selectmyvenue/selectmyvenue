@@ -1622,3 +1622,84 @@ html body .smv-home-enquiry-edge.smv-get-matched-open{
   .smv-home-enquiry-head button{width:78px!important;height:44px!important;min-width:78px!important;border-radius:14px!important;background:linear-gradient(145deg,rgba(255,255,255,.18),rgba(255,255,255,.06))!important;box-shadow:0 4px 0 rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.25)!important;font-size:24px!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important}
   .smv-home-enquiry-close-label{display:inline!important;color:#fff!important;font-size:10px!important;font-weight:900!important;letter-spacing:.08em!important}
 }
+
+
+/* =========================================================
+   SMV MOBILE APP POLISH — 2026-10-01
+   Floating actions stay clear of the bottom app navigation.
+   Trust cards are compact so all four remain easy to scan.
+   No desktop styles are changed.
+========================================================= */
+@media (max-width:767px){
+  html,body{overflow-x:hidden!important}
+  body{
+    padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  /* Keep WhatsApp + AI assistant above the bottom app/navigation area.
+     Use safe-area inset so iPhone/Android gesture bars do not cover them. */
+  .smv-ai-assistant,.smv-ai-float,.ai-assistant{
+    bottom:calc(188px + env(safe-area-inset-bottom,0px))!important;
+    right:14px!important;
+    z-index:2147483005!important;
+  }
+  .whatsapp-float,.smv-whatsapp-float,.whatsapp-button,.floating-whatsapp{
+    bottom:calc(126px + env(safe-area-inset-bottom,0px))!important;
+    right:14px!important;
+    z-index:2147483005!important;
+  }
+
+  /* The four trust/app cards: compact, but still comfortably tappable/readable. */
+  .trust-strip{
+    gap:8px!important;
+    padding:14px 12px!important;
+    scroll-padding-left:12px!important;
+  }
+  .trust-strip>div{
+    flex:0 0 47%!important;
+    min-width:0!important;
+    max-width:47%!important;
+    min-height:72px!important;
+    padding:10px 9px!important;
+    gap:8px!important;
+    border-radius:16px!important;
+  }
+  .trust-strip .trust-icon{
+    width:32px!important;
+    height:32px!important;
+    min-width:32px!important;
+    font-size:14px!important;
+  }
+  .trust-strip strong{
+    display:block!important;
+    font-size:11px!important;
+    line-height:1.2!important;
+  }
+  .trust-strip small{
+    display:block!important;
+    margin-top:3px!important;
+    font-size:8.5px!important;
+    line-height:1.25!important;
+  }
+
+  /* Prevent any fixed/floating action from being clipped by its parent. */
+  .floating-whatsapp,.smv-ai-assistant,.smv-ai-float,.ai-assistant,
+  .whatsapp-float,.smv-whatsapp-float,.whatsapp-button{
+    position:fixed!important;
+    max-width:calc(100vw - 28px)!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Keep the app navigation itself above page content, while floating
+     actions remain above it with their own higher stacking layer. */
+  [class*="bottom-nav"],[class*="mobile-nav"],[class*="mobile-bottom"],
+  .smv-mobile-nav,.smv-bottom-nav{
+    z-index:2147483000!important;
+  }
+
+  /* Avoid accidental horizontal clipping from mobile cards/sections. */
+  main,main>section,.feature-row,.ai-planner-section,.home-venues-section{
+    max-width:100%!important;
+    min-width:0!important;
+  }
+}
