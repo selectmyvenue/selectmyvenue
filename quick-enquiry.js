@@ -609,6 +609,17 @@
     captureAttribution();
     installStyles();
     ensureGlobalQuickEnquiry();
+    // Mobile app bottom-nav Find opens the quick-enquiry drawer.
+    const mobileFind=document.querySelector(".smv-mobile-app-nav .smv-nav-main");
+    if(mobileFind){
+      mobileFind.addEventListener("click",function(e){
+        if(window.matchMedia && !window.matchMedia("(max-width: 767px)").matches) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const tab=document.getElementById("smvHomeEnquiryTab");
+        if(tab) tab.click();
+      });
+    }
     if(!window.supabase){var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";s.async=true;document.head.appendChild(s);}
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
       const dateField = form.elements.event_date;
