@@ -369,6 +369,17 @@
       edge.style.setProperty("transform","translateY(-50%)","important");
     }
 
+    function positionHomeGetMatched(){
+      if(!window.matchMedia || !window.matchMedia("(max-width:767px)").matches)return;
+      const promise=document.querySelector(".smv-match-promise");
+      if(!promise)return;
+      const rect=promise.getBoundingClientRect();
+      if(!Number.isFinite(rect.bottom))return;
+      const maxCenter=window.innerHeight-54;
+      const target=Math.max(86,Math.min(maxCenter,rect.bottom+4));
+      document.documentElement.style.setProperty("--smv-edge-top",target+"px");
+    }
+
     function resetEdgePosition(){
       if(touchTimer){clearTimeout(touchTimer);touchTimer=null;}
       edge.style.removeProperty("top");
@@ -609,6 +620,10 @@
     captureAttribution();
     installStyles();
     ensureGlobalQuickEnquiry();
+    window.requestAnimationFrame(()=>positionHomeGetMatched());
+    window.setTimeout(positionHomeGetMatched,220);
+    window.setTimeout(positionHomeGetMatched,850);
+    window.addEventListener("resize",positionHomeGetMatched,{passive:true});
     // Mobile app bottom-nav Find opens the quick-enquiry drawer.
     const mobileFind=document.querySelector(".smv-mobile-app-nav .smv-nav-main");
     if(mobileFind){
