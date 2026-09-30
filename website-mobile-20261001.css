@@ -435,3 +435,111 @@ html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
     bottom:calc(108px + env(safe-area-inset-bottom,0px))!important;
   }
 }
+
+
+/* =========================================================
+   MOBILE CARD SCALE V5 — USE THE PHONE'S SIDE SPACE
+   ========================================================= */
+@media(max-width:767px){
+  /* Homepage featured venue cards */
+  html body main #featuredVenues .home-venue-grid{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding-left:0!important;
+    padding-right:0!important;
+    gap:11px!important;
+  }
+  html body main #featuredVenues .home-venue-grid>*,
+  html body main #featuredVenues .home-venue-card{
+    width:100%!important;
+    min-width:100%!important;
+    max-width:100%!important;
+    border-radius:17px!important;
+  }
+  html body main #featuredVenues .home-venue-media,
+  html body main #featuredVenues .home-venue-media img,
+  html body main #featuredVenues .home-venue-image-fallback{
+    height:195px!important;
+    min-height:195px!important;
+    max-height:195px!important;
+  }
+  html body main #featuredVenues .home-venue-content{
+    padding:13px 14px 14px!important;
+  }
+  html body main #featuredVenues .home-venue-content h3{
+    font-size:18px!important;
+    line-height:1.18!important;
+  }
+
+  /* Browse Venue cards */
+  html body .venue-directory-main .venue-results-column{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  html body .venue-directory-main #venueGrid{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    gap:11px!important;
+  }
+  html body .venue-directory-main #venueGrid .venue-card{
+    width:100%!important;
+    min-width:100%!important;
+    max-width:100%!important;
+    border-radius:16px!important;
+  }
+  html body .venue-directory-main #venueGrid .venue-card-media,
+  html body .venue-directory-main #venueGrid .venue-card-media img,
+  html body .venue-directory-main #venueGrid .venue-card-image-fallback{
+    height:180px!important;
+    min-height:180px!important;
+    max-height:180px!important;
+  }
+
+  /* Similar venue cards shown on venue profiles */
+  html body.venue-profile-page #similarVenuesSection{
+    width:100%!important;
+    max-width:none!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-grid{
+    width:100%!important;
+    max-width:none!important;
+    grid-template-columns:1fr!important;
+    gap:11px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-card{
+    width:100%!important;
+    min-width:100%!important;
+    max-width:100%!important;
+    border-radius:16px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-media,
+  html body.venue-profile-page #similarVenuesSection .venue-similar-media img{
+    height:195px!important;
+    min-height:195px!important;
+    max-height:195px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-body{
+    padding:13px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-card h3{
+    font-size:19px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-card p{
+    font-size:11px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-facts span{
+    font-size:10px!important;
+    padding:5px 7px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-actions{
+    gap:7px!important;
+  }
+  html body.venue-profile-page #similarVenuesSection .venue-similar-actions a{
+    min-height:42px!important;
+    font-size:10.5px!important;
+  }
+}
