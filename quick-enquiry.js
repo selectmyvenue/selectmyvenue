@@ -284,7 +284,7 @@
       .smv-home-enquiry-benefits{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:7px!important;margin-top:14px!important}
       .smv-home-enquiry-benefits span{padding:8px!important;border:1px solid #e1d8ca!important;border-radius:9px!important;background:#fff!important;color:#65736f!important;font-size:8px!important;line-height:1.35!important;text-align:center!important}
       body.smv-home-drawer-open{overflow:hidden!important}
-      @media(max-width:520px){.smv-home-enquiry-edge{top:44%!important;touch-action:none!important;cursor:grab!important;user-select:none!important;-webkit-user-select:none!important}.smv-home-enquiry-edge.smv-get-matched-open{top:68px!important}body:has(.smv-home-launch-strip) .smv-home-enquiry-edge{top:136px!important}.smv-home-enquiry-tab{width:106px!important;height:40px!important;font-size:10px!important}.smv-home-enquiry-drawer{top:62px!important;width:100%!important;height:calc(100vh - 62px)!important;border-radius:0!important}.smv-home-enquiry-body{height:calc(100% - 142px)!important}.smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr!important}.smv-home-enquiry-body .form-field.full{grid-column:auto!important}.smv-home-enquiry-benefits{grid-template-columns:1fr 1fr 1fr!important}}
+      @media(max-width:520px){.smv-home-enquiry-edge{top:44%!important;touch-action:none!important;cursor:grab!important;user-select:none!important;-webkit-user-select:none!important}.smv-home-enquiry-edge.smv-get-matched-open{top:60px!important}.smv-home-enquiry-tab{width:104px!important;height:40px!important;font-size:10px!important}.smv-home-enquiry-drawer{top:60px!important;width:100%!important;height:calc(100vh - 60px)!important;border-radius:0!important}.smv-home-enquiry-body{height:calc(100% - 142px)!important}.smv-home-enquiry-body .quick-enquiry-form{grid-template-columns:1fr!important}.smv-home-enquiry-body .form-field.full{grid-column:auto!important}.smv-home-enquiry-benefits{grid-template-columns:1fr 1fr 1fr!important}}
 
       .quick-enquiry-message.success{
         display:block!important;
@@ -367,17 +367,6 @@
       var next=Math.max(minCenter,Math.min(maxCenter,center));
       edge.style.setProperty("top",next+"px","important");
       edge.style.setProperty("transform","translateY(-50%)","important");
-    }
-
-    function positionHomeGetMatched(){
-      if(!window.matchMedia || !window.matchMedia("(max-width:767px)").matches)return;
-      const promise=document.querySelector(".smv-match-promise");
-      if(!promise)return;
-      const rect=promise.getBoundingClientRect();
-      if(!Number.isFinite(rect.bottom))return;
-      const maxCenter=window.innerHeight-54;
-      const target=Math.max(86,Math.min(maxCenter,rect.bottom+4));
-      document.documentElement.style.setProperty("--smv-edge-top",target+"px");
     }
 
     function resetEdgePosition(){
@@ -620,10 +609,6 @@
     captureAttribution();
     installStyles();
     ensureGlobalQuickEnquiry();
-    window.requestAnimationFrame(()=>positionHomeGetMatched());
-    window.setTimeout(positionHomeGetMatched,220);
-    window.setTimeout(positionHomeGetMatched,850);
-    window.addEventListener("resize",positionHomeGetMatched,{passive:true});
     // Mobile app bottom-nav Find opens the quick-enquiry drawer.
     const mobileFind=document.querySelector(".smv-mobile-app-nav .smv-nav-main");
     if(mobileFind){
