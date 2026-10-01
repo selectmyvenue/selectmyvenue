@@ -9,7 +9,7 @@ function ensureStyle(){
   link.id="smvCanonicalHeaderCss";
   link.rel="stylesheet";
   link.href="shared-home-header.css?v=20260922-2";
-  document.head.appendChild(link);var mobile=document.createElement("link");mobile.id="smvCustomerMobileCss";mobile.rel="stylesheet";mobile.href="customer-mobile-20261001.css?v=20261001-v3";document.head.appendChild(mobile);var finalMobile=document.createElement("link");finalMobile.id="smvFinalMobileUiCss";finalMobile.rel="stylesheet";finalMobile.href="mobile-ui-final-20261001.css?v=20261001-final-2";document.head.appendChild(finalMobile);
+  document.head.appendChild(link);var mobile=document.createElement("link");mobile.id="smvCustomerMobileCss";mobile.rel="stylesheet";mobile.href="customer-mobile-20261001.css?v=20261001-v3";document.head.appendChild(mobile);var finalMobile=document.createElement("link");finalMobile.id="smvFinalMobileUiCss";finalMobile.rel="stylesheet";finalMobile.href="mobile-ui-final-20261001.css?v=20261001-final-3";document.head.appendChild(finalMobile);
 }
 
 function rebuildHeader(){
