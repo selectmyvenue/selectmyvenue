@@ -950,3 +950,178 @@
     font-size:8px!important;
   }
 }
+
+
+/* =========================================================
+   V5 MOBILE POLISH — LOGO / FULL-WIDTH VENUES / PROFILE HERO
+   ========================================================= */
+
+@media (max-width:767px){
+
+  /* Slightly larger SMV brand on every public mobile header. */
+  html body .site-header .main-logo,
+  html body .site-header .brand .main-logo{
+    max-width:220px!important;
+    width:auto!important;
+    height:50px!important;
+    max-height:50px!important;
+  }
+
+  html body .site-header .header-inner{
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+
+  @media(max-width:390px){
+    html body .site-header .main-logo,
+    html body .site-header .brand .main-logo{
+      max-width:205px!important;
+      height:47px!important;
+      max-height:47px!important;
+    }
+  }
+
+  /* Homepage venue cards use the complete phone viewport — no dead right column. */
+  html body main #featuredVenues,
+  html body main #featuredVenues .home-venue-grid{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  html body main #featuredVenues{
+    padding-left:0!important;
+    padding-right:0!important;
+  }
+
+  html body main #featuredVenues .home-venue-grid{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:12px!important;
+    padding:0 10px!important;
+    margin:0!important;
+    justify-content:stretch!important;
+  }
+
+  html body main #featuredVenues .home-venue-card{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  html body main #featuredVenues .home-venue-media,
+  html body main #featuredVenues .home-venue-media img,
+  html body main #featuredVenues .home-venue-image-fallback{
+    width:100%!important;
+    height:210px!important;
+    min-height:210px!important;
+    object-fit:cover!important;
+  }
+
+  /* Venue profile: image is sacred. No badge/text may sit on top of it. */
+  html body.venue-profile-page .venue-profile-media{
+    overflow:hidden!important;
+    position:relative!important;
+    background:#eaf2ef!important;
+  }
+
+  html body.venue-profile-page .venue-profile-media > img#venueProfileImage{
+    position:relative!important;
+    z-index:1!important;
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    object-fit:cover!important;
+  }
+
+  html body.venue-profile-page .venue-profile-media .venue-profile-overlay{
+    display:none!important;
+  }
+
+  html body.venue-profile-page .venue-profile-media .venue-profile-badges{
+    display:none!important;
+  }
+
+  /* Badges are now compact metadata above the image, inside the title area. */
+  html body.venue-profile-page .venue-title-copy .smv-mobile-profile-badges{
+    position:static!important;
+    z-index:auto!important;
+    display:flex!important;
+    width:100%!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:6px!important;
+    margin:0 0 9px!important;
+    padding:0!important;
+  }
+
+  html body.venue-profile-page .venue-title-copy .smv-mobile-profile-badges .home-venue-badge{
+    position:static!important;
+    width:auto!important;
+    max-width:48%!important;
+    padding:5px 8px!important;
+    border-radius:999px!important;
+    border:1px solid rgba(25,112,99,.18)!important;
+    background:#edf8f5!important;
+    color:#31665e!important;
+    font-size:8px!important;
+    line-height:1!important;
+    letter-spacing:.045em!important;
+    font-weight:900!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+    box-shadow:none!important;
+    backdrop-filter:none!important;
+  }
+
+  html body.venue-profile-page .venue-title-copy .smv-mobile-profile-badges .home-venue-badge.verified{
+    border-color:rgba(205,169,65,.28)!important;
+    background:#fff8df!important;
+    color:#846c28!important;
+  }
+
+  html body.venue-profile-page .venue-profile-titlebar{
+    padding-top:14px!important;
+  }
+
+  html body.venue-profile-page .venue-profile-titlebar h1{
+    margin-top:0!important;
+  }
+}
+
+/* =========================================================
+   Get Matched must win over quick-enquiry's injected styles.
+   ========================================================= */
+@media (max-width:767px){
+  html body.smv-home-mobile .smv-home-enquiry-edge{
+    position:fixed!important;
+    left:50%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:82px!important;
+    width:auto!important;
+    height:auto!important;
+    transform:translateX(-50%)!important;
+    z-index:10850!important;
+    display:block!important;
+  }
+
+  html body.smv-home-mobile .smv-home-enquiry-tab{
+    width:166px!important;
+    height:40px!important;
+    border:1px solid #f2da91!important;
+    border-radius:999px!important;
+    background:linear-gradient(135deg,#f8e49a,#d9b954,#b99536)!important;
+    color:#173d35!important;
+    font-size:10px!important;
+    font-weight:950!important;
+  }
+
+  html body.smv-home-mobile .smv-home-enquiry-edge.smv-get-matched-open{
+    display:none!important;
+  }
+}
