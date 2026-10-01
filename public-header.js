@@ -9,7 +9,7 @@ function ensureStyle(){
   link.id="smvCanonicalHeaderCss";
   link.rel="stylesheet";
   link.href="shared-home-header.css?v=20260922-2";
-  document.head.appendChild(link);
+  document.head.appendChild(link);var mobile=document.createElement("link");mobile.id="smvCustomerMobileCss";mobile.rel="stylesheet";mobile.href="customer-mobile-20261001.css?v=20261001-v3";document.head.appendChild(mobile);
 }
 
 function rebuildHeader(){
