@@ -26,6 +26,25 @@
     document.addEventListener("keydown",function(e){if(e.key==="Escape")close()});
   }
 
+  function arrangeVenueBadges(){
+    var badges=document.querySelector(".venue-profile-badges");
+    var media=document.querySelector(".venue-profile-media");
+    var titleCopy=document.querySelector(".venue-title-copy");
+    if(!badges||!media||!titleCopy)return;
+
+    if(phone()){
+      if(!titleCopy.contains(badges)){
+        badges.classList.add("smv-mobile-profile-badges");
+        titleCopy.insertBefore(badges,titleCopy.firstChild);
+      }
+    }else{
+      if(!media.contains(badges)){
+        badges.classList.remove("smv-mobile-profile-badges");
+        media.appendChild(badges);
+      }
+    }
+  }
+
   function createBottomNav(){
     if(!phone() || document.querySelector(".smv-mobile-bottom-nav")) return;
 
@@ -86,7 +105,7 @@
     ensureMenu();
     document.body.classList.toggle("smv-customer-mobile",phone());
     document.body.classList.toggle("smv-home-mobile",phone() && isHome());
-    if(phone()) createBottomNav();
+    arrangeVenueBadges();\n    if(phone()) createBottomNav();
   }
 
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});
