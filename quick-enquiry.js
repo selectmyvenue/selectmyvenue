@@ -326,6 +326,19 @@
       .quick-enquiry-message.error{display:block!important;margin:12px 0!important;padding:12px!important;border-radius:12px!important;background:#fff1f1!important;color:#a4161a!important;font-weight:850!important}
       .smv-quick-whatsapp-opt,[data-smv-whatsapp-option],input[name="send_whatsapp"]{display:none!important}
       form[data-smv-quick-enquiry].is-submitted{outline:2px solid rgba(19,155,141,.16)!important;outline-offset:4px!important}
+      @media(max-width:767px){
+        body.smv-home-mobile .smv-home-enquiry-edge{
+          position:fixed!important;left:50%!important;right:auto!important;top:auto!important;bottom:82px!important;
+          width:auto!important;height:auto!important;transform:translateX(-50%)!important;z-index:10850!important;
+          display:block!important;touch-action:manipulation!important;cursor:pointer!important;
+        }
+        body.smv-home-mobile .smv-home-enquiry-tab{
+          width:166px!important;height:40px!important;border:1px solid #f2da91!important;border-left:1px solid #f2da91!important;
+          border-radius:999px!important;background:linear-gradient(135deg,#f8e49a,#d9b954,#b99536)!important;
+          color:#173d35!important;font-size:10px!important;font-weight:950!important;
+        }
+        body.smv-home-mobile .smv-home-enquiry-edge.smv-get-matched-open{display:none!important}
+      }
     `;
     document.head.appendChild(style);
   }
