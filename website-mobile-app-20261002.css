@@ -1,0 +1,767 @@
+/* =========================================================
+   SELECT MY VENUE — CUSTOMER MOBILE APP UI
+   Shared mobile application layer · 2026-10-02
+   Scope: customer-facing public website only.
+   Desktop/tablet layout is intentionally untouched.
+   ========================================================= */
+
+@media(max-width:767px){
+
+  :root{
+    --smv-app-teal:#16d2b2;
+    --smv-app-green:#063b34;
+    --smv-app-deep:#031b18;
+    --smv-app-gold:#ffc928;
+    --smv-app-bg:#f4f8f7;
+    --smv-app-nav-h:70px;
+  }
+
+  html,body{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:hidden!important;
+    -webkit-text-size-adjust:100%!important;
+  }
+
+  body{
+    margin:0!important;
+    padding-bottom:calc(var(--smv-app-nav-h) + 18px + env(safe-area-inset-bottom,0px))!important;
+    background:#f4f8f7;
+  }
+
+  /* ---------- App header ---------- */
+  html body .site-header,
+  html body header.page-header,
+  html body.venue-profile-page header.page-header.venue-white-header{
+    position:sticky!important;
+    top:0!important;
+    z-index:10000!important;
+    width:100%!important;
+    height:60px!important;
+    min-height:60px!important;
+    max-height:60px!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    background:rgba(3,27,24,.98)!important;
+    border-bottom:1px solid rgba(22,210,178,.18)!important;
+    box-shadow:0 5px 18px rgba(0,0,0,.16)!important;
+    backdrop-filter:blur(16px)!important;
+    -webkit-backdrop-filter:blur(16px)!important;
+  }
+
+  html body .site-header .header-inner,
+  html body header.page-header .page-nav,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav{
+    width:100%!important;
+    max-width:none!important;
+    height:60px!important;
+    min-height:60px!important;
+    padding:0 9px!important;
+    margin:0!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:7px!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .site-header .brand,
+  html body header.page-header .page-nav>a:first-child,
+  html body header.page-header a.brand,
+  html body.venue-profile-page header.page-header.venue-white-header .page-nav>a:first-child{
+    flex:0 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:calc(100% - 94px)!important;
+    height:54px!important;
+    min-height:54px!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    overflow:hidden!important;
+  }
+
+  html body .site-header .main-logo,
+  html body .site-header .brand .main-logo,
+  html body header.page-header .page-logo,
+  html body header.page-header .main-logo,
+  html body header.page-header a.brand>img,
+  html body.venue-profile-page header.page-header.venue-white-header .page-logo,
+  html body.venue-profile-page header.page-header a.brand>img{
+    display:block!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:188px!important;
+    height:auto!important;
+    max-height:49px!important;
+    object-fit:contain!important;
+    object-position:left center!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+    opacity:1!important;
+    visibility:visible!important;
+    mix-blend-mode:screen!important;
+  }
+
+  /* Hide desktop nav/contact; the app nav below replaces them. */
+  html body .site-header #mainNav,
+  html body header.page-header .page-nav-links{
+    display:none!important;
+  }
+
+  html body .site-header .menu-toggle,
+  html body header.page-header .menu-toggle{
+    display:flex!important;
+    flex:0 0 38px!important;
+    width:38px!important;
+    min-width:38px!important;
+    height:38px!important;
+    min-height:38px!important;
+    margin-left:auto!important;
+    padding:0!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border:1px solid rgba(22,210,178,.25)!important;
+    border-radius:10px!important;
+    background:#0a4038!important;
+    color:#fff!important;
+    font-size:18px!important;
+    line-height:1!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .site-header .header-contact{
+    display:none!important;
+  }
+
+  /* Legacy dropdown cannot sit above the app shell. */
+  html body .site-header #mainNav.open{
+    display:flex!important;
+    position:absolute!important;
+    left:8px!important;
+    right:8px!important;
+    top:61px!important;
+    z-index:10050!important;
+    max-height:calc(100vh - 75px)!important;
+    overflow:auto!important;
+  }
+
+  /* ---------- Generic page containment ---------- */
+  main,
+  main>section,
+  .page-main,
+  .venue-profile-main,
+  .venue-directory-main,
+  .founding-offer-wrap{
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .page-main,
+  .venue-profile-main{
+    width:100%!important;
+    margin:0!important;
+    padding:14px 10px 24px!important;
+  }
+
+  /* ---------- Homepage ---------- */
+  html body .hero{
+    min-height:0!important;
+    width:100%!important;
+    margin:0!important;
+    padding:28px 15px 22px!important;
+    border-radius:0!important;
+    overflow:hidden!important;
+  }
+
+  html body .hero-inner{
+    width:100%!important;
+    min-width:0!important;
+    display:block!important;
+  }
+
+  html body .hero-copy{
+    width:100%!important;
+    max-width:none!important;
+  }
+
+  html body .hero h1{
+    font-size:35px!important;
+    line-height:1.04!important;
+    margin:8px 0 10px!important;
+  }
+
+  html body .hero-text{
+    max-width:none!important;
+    font-size:14px!important;
+    line-height:1.52!important;
+  }
+
+  html body .hero-orbit{
+    display:none!important;
+  }
+
+  html body .hero-actions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+    width:100%!important;
+    margin-top:14px!important;
+  }
+
+  html body .hero-actions a{
+    width:100%!important;
+    min-height:48px!important;
+    box-sizing:border-box!important;
+    justify-content:center!important;
+  }
+
+  html body .smv-celebration-links{
+    gap:6px!important;
+    margin:12px 0!important;
+  }
+
+  html body .smv-celebration-links a{
+    min-height:34px!important;
+    padding:6px 10px!important;
+    font-size:10px!important;
+  }
+
+  html body .home-venues-section,
+  html body .enquiry-section,
+  html body .popular-section,
+  html body .feature-row,
+  html body .ai-planner-section,
+  html body .about-section,
+  html body .contact-section{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+
+  html body main #featuredVenues .home-venue-grid{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+    gap:10px!important;
+  }
+
+  html body main #featuredVenues .home-venue-card{
+    width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+
+  html body #customerEnquiryForm{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+
+  html body #customerEnquiryForm .form-grid.four,
+  html body #customerEnquiryForm .form-grid.five{
+    grid-template-columns:1fr!important;
+  }
+
+  /* ---------- Venue directory: true edge-to-edge cards ---------- */
+  html body .venue-directory-main{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:10px 0 24px!important;
+  }
+
+  html body .venue-directory-hero{
+    width:calc(100% - 20px)!important;
+    margin:0 10px 8px!important;
+    box-sizing:border-box!important;
+    padding:17px 15px!important;
+    border-radius:16px!important;
+  }
+
+  html body .venue-directory-hero h1{
+    font-size:25px!important;
+    line-height:1.08!important;
+  }
+
+  html body .venue-directory-hero>p:not(.eyebrow){
+    font-size:10.5px!important;
+    line-height:1.42!important;
+  }
+
+  html body .venue-directory-trust{
+    display:none!important;
+  }
+
+  html body .venue-enquiry-trigger{
+    width:calc(100% - 20px)!important;
+    margin:0 10px 8px!important;
+    min-height:48px!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .venue-directory-results{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    gap:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  html body .venue-results-column{
+    width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  html body .venue-results-intro{
+    width:100%!important;
+    margin:0!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-radius:0!important;
+    padding:10px 12px!important;
+    box-sizing:border-box!important;
+  }
+
+  html body #venueGrid{
+    width:100%!important;
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  html body #venueGrid .venue-card{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-radius:0!important;
+    box-shadow:0 2px 10px rgba(0,0,0,.10)!important;
+  }
+
+  html body #venueGrid .venue-card-media,
+  html body #venueGrid .venue-card-media img,
+  html body #venueGrid .venue-card-image-fallback{
+    width:100%!important;
+    height:220px!important;
+    min-height:220px!important;
+  }
+
+  html body #venueGrid .venue-card-body{
+    padding:14px!important;
+  }
+
+  html body #venueGrid .venue-card h2{
+    font-size:20px!important;
+    line-height:1.18!important;
+  }
+
+  html body #venueGrid .venue-card .venue-actions{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  html body #venueGrid .venue-card .venue-actions .button{
+    min-height:45px!important;
+    font-size:10.5px!important;
+  }
+
+  /* ---------- Browse search + filters ---------- */
+  html body .smv-browse-top{
+    position:sticky!important;
+    top:60px!important;
+    z-index:850!important;
+    width:100%!important;
+    margin:0!important;
+    border-radius:0!important;
+  }
+
+  html body .smv-browse-top-inner{
+    width:100%!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+    padding:7px!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .smv-browse-top input{
+    grid-column:1/-1!important;
+    min-height:40px!important;
+    font-size:11px!important;
+  }
+
+  html body .smv-browse-top select{
+    min-height:38px!important;
+    font-size:9.5px!important;
+  }
+
+  html body .smv-browse-top button{
+    grid-column:1/-1!important;
+    min-height:40px!important;
+    font-size:10px!important;
+  }
+
+  html body .smv-mobile-directory-toolbar{
+    position:sticky!important;
+    top:60px!important;
+    z-index:840!important;
+    width:100%!important;
+    margin:0!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-radius:0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Filter drawer remains a bottom sheet, never a clipped sidebar. */
+  html body .venue-filter-shell{
+    left:0!important;
+    right:0!important;
+    top:60px!important;
+    bottom:0!important;
+    width:100%!important;
+    max-height:none!important;
+    border-radius:18px 18px 0 0!important;
+    box-sizing:border-box!important;
+  }
+
+  /* ---------- Venue profile ---------- */
+  html body .venue-profile-main{
+    width:100%!important;
+    padding:8px 8px calc(96px + env(safe-area-inset-bottom,0px))!important;
+  }
+
+  html body .venue-profile-hero,
+  html body .venue-profile-panel,
+  html body .venue-profile-facts,
+  html body .venue-profile-enquiry{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .venue-profile-media,
+  html body .venue-profile-cover{
+    height:260px!important;
+    min-height:260px!important;
+  }
+
+  html body .venue-profile-titlebar{
+    padding:14px!important;
+  }
+
+  html body .venue-profile-titlebar h1{
+    font-size:27px!important;
+    line-height:1.08!important;
+  }
+
+  html body .venue-profile-hero-actions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  html body .venue-profile-hero-actions .button{
+    width:100%!important;
+    min-width:0!important;
+    min-height:44px!important;
+    box-sizing:border-box!important;
+    font-size:10px!important;
+  }
+
+  html body .venue-profile-facts{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:6px!important;
+    margin:8px 0!important;
+  }
+
+  html body .venue-profile-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:9px!important;
+  }
+
+  html body .venue-profile-enquiry{
+    order:-1!important;
+  }
+
+  html body .venue-profile-gallery,
+  html body .venue-profile-videos{
+    width:100%!important;
+    overflow-x:auto!important;
+  }
+
+  /* Existing sticky profile CTA sits above our app nav. */
+  html body .venue-mobile-actions{
+    bottom:calc(76px + env(safe-area-inset-bottom,0px))!important;
+    z-index:1900!important;
+  }
+
+  /* ---------- List your venue ---------- */
+  html body .founding-offer-wrap{
+    width:100%!important;
+    padding:8px 10px 0!important;
+    margin:0!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .founding-offer{
+    display:block!important;
+    padding:14px!important;
+    border-radius:16px!important;
+  }
+
+  html body .offer-side{
+    margin-top:9px!important;
+  }
+
+  html body .page-main .onboarding-layout{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+
+  html body .page-main .info-card,
+  html body .page-main .form-card{
+    width:100%!important;
+    box-sizing:border-box!important;
+  }
+
+  /* ---------- Generic SEO/location pages ---------- */
+  html body .search-landing-copy,
+  html body .search-landing-copy>div,
+  html body .seo-local-panel,
+  html body .seo-city-banner,
+  html body .seo-event-grid,
+  html body .seo-area-grid{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .seo-local-panel{
+    padding:16px!important;
+    border-radius:15px!important;
+  }
+
+  html body .seo-area-grid,
+  html body .seo-event-grid{
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+
+  html body .seo-event-card{
+    min-height:165px!important;
+  }
+
+  /* ---------- Floating helpers never sit behind the app nav ---------- */
+  html body .whatsapp-float,
+  html body .smv-whatsapp-float,
+  html body .whatsapp-button,
+  html body .floating-whatsapp{
+    bottom:calc(126px + env(safe-area-inset-bottom,0px))!important;
+    right:12px!important;
+    z-index:1980!important;
+  }
+
+  html body .smv-ai-assistant,
+  html body .smv-ai-float,
+  html body .ai-assistant{
+    bottom:calc(184px + env(safe-area-inset-bottom,0px))!important;
+    right:12px!important;
+    z-index:1981!important;
+  }
+
+  /* ---------- Shared app navigation ---------- */
+  .smv-customer-app-nav{
+    position:fixed!important;
+    left:8px!important;
+    right:8px!important;
+    bottom:8px!important;
+    z-index:2000!important;
+    height:68px!important;
+    min-height:68px!important;
+    padding:6px 5px calc(5px + env(safe-area-inset-bottom,0px))!important;
+    box-sizing:content-box!important;
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    align-items:end!important;
+    gap:2px!important;
+    border:1px solid rgba(22,210,178,.22)!important;
+    border-radius:22px!important;
+    background:rgba(3,27,24,.97)!important;
+    box-shadow:0 18px 46px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.10)!important;
+    backdrop-filter:blur(18px)!important;
+    -webkit-backdrop-filter:blur(18px)!important;
+  }
+
+  .smv-customer-app-nav a,
+  .smv-customer-app-nav button{
+    min-width:0!important;
+    min-height:54px!important;
+    padding:4px 2px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:3px!important;
+    border:0!important;
+    background:transparent!important;
+    color:#cde5df!important;
+    font:inherit!important;
+    text-decoration:none!important;
+    cursor:pointer!important;
+    box-sizing:border-box!important;
+  }
+
+  .smv-customer-app-nav .smv-app-icon{
+    width:30px!important;
+    height:30px!important;
+    display:grid!important;
+    place-items:center!important;
+    border-radius:9px!important;
+    background:linear-gradient(145deg,#164b42,#062a24)!important;
+    border:1px solid rgba(255,255,255,.09)!important;
+    color:#d9eee9!important;
+    font-size:13px!important;
+    font-weight:950!important;
+  }
+
+  .smv-customer-app-nav small{
+    max-width:100%!important;
+    overflow:hidden!important;
+    white-space:nowrap!important;
+    text-overflow:ellipsis!important;
+    font-size:8.5px!important;
+    line-height:1!important;
+    font-weight:850!important;
+  }
+
+  .smv-customer-app-nav .smv-app-primary{
+    margin-top:-25px!important;
+  }
+
+  .smv-customer-app-nav .smv-app-primary .smv-app-icon{
+    width:51px!important;
+    height:51px!important;
+    border-radius:17px!important;
+    background:linear-gradient(145deg,#23e4c1,#0b9e87)!important;
+    color:#03231f!important;
+    border:2px solid rgba(255,255,255,.46)!important;
+    box-shadow:0 6px 0 #087b6c,0 13px 24px rgba(22,210,178,.28)!important;
+    font-size:19px!important;
+  }
+
+  .smv-customer-app-nav .is-active .smv-app-icon{
+    background:rgba(22,210,178,.16)!important;
+    border-color:rgba(22,210,178,.34)!important;
+    color:#72efdc!important;
+  }
+
+  .smv-customer-app-nav .smv-app-primary small{
+    color:#ffc928!important;
+  }
+
+  /* ---------- More sheet ---------- */
+  .smv-customer-app-backdrop{
+    position:fixed!important;
+    inset:0!important;
+    z-index:2100!important;
+    background:rgba(0,10,9,.64)!important;
+    backdrop-filter:blur(4px)!important;
+  }
+
+  .smv-customer-app-backdrop[hidden],
+  .smv-customer-app-sheet[hidden]{
+    display:none!important;
+  }
+
+  .smv-customer-app-sheet{
+    position:fixed!important;
+    left:8px!important;
+    right:8px!important;
+    bottom:8px!important;
+    z-index:2101!important;
+    max-height:78vh!important;
+    overflow:auto!important;
+    padding:14px!important;
+    border:1px solid rgba(22,210,178,.20)!important;
+    border-radius:20px!important;
+    background:#f7fbfa!important;
+    box-shadow:0 28px 80px rgba(0,0,0,.40)!important;
+  }
+
+  .smv-customer-app-sheet-head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    margin-bottom:9px!important;
+  }
+
+  .smv-customer-app-sheet-head strong{
+    color:#083c34!important;
+    font-size:17px!important;
+  }
+
+  .smv-customer-app-sheet-close{
+    width:34px!important;
+    height:34px!important;
+    border:0!important;
+    border-radius:10px!important;
+    background:#e8f2ef!important;
+    color:#174d43!important;
+    font-size:20px!important;
+  }
+
+  .smv-customer-app-sheet-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  .smv-customer-app-sheet-grid a{
+    min-height:46px!important;
+    padding:8px 10px!important;
+    display:flex!important;
+    align-items:center!important;
+    border:1px solid #dce9e5!important;
+    border-radius:11px!important;
+    background:#fff!important;
+    color:#164c43!important;
+    font-size:11px!important;
+    font-weight:850!important;
+    text-decoration:none!important;
+  }
+
+  .smv-customer-app-sheet-grid a.primary{
+    border-color:#16bda5!important;
+    background:#e6faf5!important;
+    color:#075849!important;
+  }
+
+  body.smv-app-sheet-open{
+    overflow:hidden!important;
+  }
+
+  @media(max-width:380px){
+    .smv-customer-app-nav{left:5px!important;right:5px!important}
+    .smv-customer-app-nav small{font-size:8px!important}
+    .smv-customer-app-nav .smv-app-primary .smv-app-icon{width:48px!important;height:48px!important}
+  }
+}
