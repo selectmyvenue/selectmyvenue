@@ -1125,3 +1125,51 @@
     display:none!important;
   }
 }
+
+
+/* =========================================================
+   MOBILE NAV + GET MATCHED — DEFINITIVE VISIBILITY FIX
+   ========================================================= */
+@media (max-width:767px){
+  html body.smv-customer-mobile .smv-mobile-bottom-nav{
+    display:grid!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+  }
+
+  /* Get Matched is a site-wide mobile CTA, not home-only. */
+  html body.smv-customer-mobile .smv-home-enquiry-edge{
+    position:fixed!important;
+    left:50%!important;
+    right:auto!important;
+    top:auto!important;
+    bottom:82px!important;
+    width:auto!important;
+    height:auto!important;
+    transform:translateX(-50%)!important;
+    z-index:10860!important;
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    touch-action:manipulation!important;
+  }
+
+  html body.smv-customer-mobile .smv-home-enquiry-tab{
+    width:166px!important;
+    height:40px!important;
+    border:1px solid #f2da91!important;
+    border-left:1px solid #f2da91!important;
+    border-radius:999px!important;
+    background:linear-gradient(135deg,#f8e49a,#d9b954,#b99536)!important;
+    color:#173d35!important;
+    font:950 10px/1 Arial,sans-serif!important;
+    letter-spacing:.05em!important;
+    box-shadow:0 9px 22px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.85)!important;
+  }
+
+  html body.smv-customer-mobile .smv-home-enquiry-edge.smv-get-matched-open{
+    display:none!important;
+  }
+}
