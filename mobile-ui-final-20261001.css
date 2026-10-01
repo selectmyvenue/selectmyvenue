@@ -1,0 +1,754 @@
+/* =========================================================
+   SELECT MY VENUE — FINAL MOBILE UI SYSTEM
+   2026-10-01 · customer-facing public website
+   Purpose: one clean navigation model, no duplicate bottom nav,
+   premium mobile spacing, unobstructed content and touch-first UX.
+   Desktop is intentionally untouched.
+   ========================================================= */
+
+@media (max-width: 767px){
+
+  :root{
+    --smv-mobile-header:60px;
+    --smv-mobile-gutter:14px;
+    --smv-mobile-deep:#031b18;
+    --smv-mobile-green:#073c35;
+    --smv-mobile-teal:#12b79f;
+    --smv-mobile-mint:#55e7c6;
+    --smv-mobile-gold:#e7c766;
+    --smv-mobile-paper:#f7faf8;
+  }
+
+  html,body{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    overflow-x:hidden!important;
+    -webkit-text-size-adjust:100%!important;
+  }
+
+  body{
+    padding-bottom:0!important;
+  }
+
+  /* =======================================================
+     1. SINGLE MOBILE HEADER / NAVIGATION
+     ======================================================= */
+
+  html body .site-header{
+    position:sticky!important;
+    top:0!important;
+    z-index:11000!important;
+    width:100%!important;
+    height:var(--smv-mobile-header)!important;
+    min-height:var(--smv-mobile-header)!important;
+    max-height:var(--smv-mobile-header)!important;
+    margin:0!important;
+    padding:0!important;
+    background:rgba(3,27,24,.97)!important;
+    border-bottom:1px solid rgba(80,220,196,.18)!important;
+    box-shadow:0 6px 20px rgba(0,0,0,.18)!important;
+    backdrop-filter:blur(18px)!important;
+    -webkit-backdrop-filter:blur(18px)!important;
+  }
+
+  html body .site-header .header-inner{
+    width:100%!important;
+    height:var(--smv-mobile-header)!important;
+    min-height:var(--smv-mobile-header)!important;
+    margin:0!important;
+    padding:0 12px!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:9px!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .site-header .brand{
+    flex:1 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    padding:0!important;
+  }
+
+  html body .site-header .main-logo,
+  html body .site-header .brand .main-logo{
+    width:auto!important;
+    max-width:190px!important;
+    height:45px!important;
+    max-height:45px!important;
+    object-fit:contain!important;
+    object-position:left center!important;
+    mix-blend-mode:screen!important;
+  }
+
+  html body .site-header .header-contact,
+  html body .site-header .header-phone{
+    display:none!important;
+  }
+
+  html body .site-header .menu-toggle{
+    display:inline-flex!important;
+    flex:0 0 42px!important;
+    width:42px!important;
+    height:42px!important;
+    min-height:42px!important;
+    margin:0!important;
+    padding:0!important;
+    align-items:center!important;
+    justify-content:center!important;
+    border:1px solid rgba(75,221,199,.32)!important;
+    border-radius:13px!important;
+    background:linear-gradient(145deg,#104c43,#062c27)!important;
+    color:#f5fffd!important;
+    font-size:0!important;
+    line-height:1!important;
+    box-shadow:0 6px 16px rgba(0,0,0,.18)!important;
+  }
+
+  html body .site-header .menu-toggle::before{
+    content:"☰";
+    font-size:20px!important;
+    line-height:1!important;
+  }
+
+  html body .site-header .menu-toggle[aria-expanded="true"]::before{
+    content:"×"!important;
+    font-size:27px!important;
+    font-weight:300!important;
+  }
+
+  /* Compact two-column drawer. The header is the only global navigation. */
+  html body .site-header #mainNav{
+    position:fixed!important;
+    left:10px!important;
+    right:10px!important;
+    top:68px!important;
+    width:auto!important;
+    max-height:calc(100vh - 82px)!important;
+    overflow:auto!important;
+    display:none!important;
+    grid-template-columns:1fr 1fr!important;
+    align-content:start!important;
+    gap:6px!important;
+    margin:0!important;
+    padding:10px!important;
+    border:1px solid rgba(67,207,187,.22)!important;
+    border-radius:18px!important;
+    background:rgba(3,27,24,.985)!important;
+    box-shadow:0 25px 70px rgba(0,0,0,.42)!important;
+    backdrop-filter:blur(20px)!important;
+    -webkit-backdrop-filter:blur(20px)!important;
+  }
+
+  html body .site-header #mainNav.open{
+    display:grid!important;
+  }
+
+  html body .site-header #mainNav a{
+    width:100%!important;
+    min-height:46px!important;
+    padding:0 11px!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    box-sizing:border-box!important;
+    border:1px solid rgba(255,255,255,.06)!important;
+    border-radius:11px!important;
+    color:#e7f6f2!important;
+    background:rgba(255,255,255,.025)!important;
+    font-size:11px!important;
+    line-height:1.2!important;
+    font-weight:850!important;
+    text-decoration:none!important;
+  }
+
+  html body .site-header #mainNav a.active{
+    color:#6cebd8!important;
+    border-color:rgba(30,214,190,.22)!important;
+    background:rgba(24,213,187,.09)!important;
+  }
+
+  html body .site-header #mainNav a.nav-cta,
+  html body .site-header #mainNav a:last-child{
+    grid-column:1/-1!important;
+    justify-content:center!important;
+  }
+
+  html body .site-header #mainNav a.nav-cta{
+    min-height:48px!important;
+    margin-top:2px!important;
+    border-color:rgba(235,201,108,.55)!important;
+    background:linear-gradient(135deg,#e8ca70,#caa541)!important;
+    color:#163b34!important;
+    font-size:12px!important;
+  }
+
+  html body .site-header #mainNav a:last-child{
+    color:#d9f3ed!important;
+    border-color:rgba(84,215,194,.20)!important;
+    background:rgba(16,91,80,.25)!important;
+  }
+
+  html body .site-header #mainNav a::after{
+    display:none!important;
+  }
+
+  @media(max-width:390px){
+    html body .site-header .main-logo,
+    html body .site-header .brand .main-logo{
+      max-width:174px!important;
+      height:42px!important;
+    }
+    html body .site-header #mainNav{
+      grid-template-columns:1fr!important;
+    }
+  }
+
+  /* =======================================================
+     2. REMOVE THE DUPLICATE APP/BOTTOM NAV COMPLETELY
+     ======================================================= */
+
+  html body .smv-customer-app-nav,
+  html body .smv-mobile-app-nav,
+  html body .smv-mobile-bottom-nav,
+  html body [data-mobile-app-nav]{
+    display:none!important;
+    visibility:hidden!important;
+    pointer-events:none!important;
+  }
+
+  html body.smv-customer-mobile{
+    padding-bottom:0!important;
+  }
+
+  /* The venue profile CTA is a useful action bar, not navigation. */
+  html body .venue-mobile-actions{
+    left:10px!important;
+    right:10px!important;
+    bottom:10px!important;
+    z-index:10800!important;
+    grid-template-columns:1.45fr 1fr!important;
+    padding:6px!important;
+    border-radius:15px!important;
+    background:rgba(255,255,255,.96)!important;
+    border:1px solid #d3e4df!important;
+    box-shadow:0 14px 38px rgba(0,0,0,.22)!important;
+    backdrop-filter:blur(14px)!important;
+    -webkit-backdrop-filter:blur(14px)!important;
+  }
+
+  html body .venue-mobile-actions button,
+  html body .venue-mobile-actions a{
+    min-height:43px!important;
+    border-radius:10px!important;
+    font-size:11px!important;
+    font-weight:900!important;
+  }
+
+  /* =======================================================
+     3. REMOVE MID-SCREEN FLOATING GET-MATCHED TAB
+     ======================================================= */
+
+  html body .smv-home-enquiry-edge{
+    display:none!important;
+    pointer-events:none!important;
+  }
+
+  /* If the enquiry drawer is explicitly opened, make it a
+     proper bottom sheet rather than a left-side desktop drawer. */
+  html body .smv-home-enquiry-drawer{
+    left:8px!important;
+    right:8px!important;
+    bottom:8px!important;
+    top:auto!important;
+    width:auto!important;
+    height:auto!important;
+    max-height:calc(100vh - 78px)!important;
+    border-radius:22px!important;
+    transform:translateY(110%)!important;
+    box-shadow:0 25px 80px rgba(0,0,0,.45)!important;
+  }
+
+  html body .smv-home-enquiry-drawer.is-open{
+    transform:translateY(0)!important;
+  }
+
+  html body .smv-home-enquiry-head{
+    padding:17px 16px 14px!important;
+  }
+
+  html body .smv-home-enquiry-head h2{
+    font-size:21px!important;
+  }
+
+  html body .smv-home-enquiry-body{
+    max-height:calc(100vh - 220px)!important;
+    height:auto!important;
+    padding:15px!important;
+  }
+
+  html body .smv-home-enquiry-body .quick-enquiry-form{
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+
+  html body .smv-home-enquiry-benefits{
+    grid-template-columns:1fr 1fr 1fr!important;
+  }
+
+  /* =======================================================
+     4. FLOATING CONTACT HELP — SMALL, NON-BLOCKING
+     ======================================================= */
+
+  html body .floating-whatsapp,
+  html body .smv-floating-whatsapp,
+  html body .whatsapp-float,
+  html body .smv-whatsapp-float,
+  html body .whatsapp-button{
+    right:14px!important;
+    bottom:14px!important;
+    z-index:10600!important;
+  }
+
+  html body .floating-whatsapp{
+    width:48px!important;
+    height:48px!important;
+    min-width:48px!important;
+    border-radius:50%!important;
+    padding:0!important;
+    display:grid!important;
+    place-items:center!important;
+    overflow:hidden!important;
+  }
+
+  html body .floating-whatsapp > *{
+    margin:0!important;
+  }
+
+  html body .floating-whatsapp .floating-whatsapp-copy,
+  html body .floating-whatsapp .wa-copy,
+  html body .smv-wa-copy{
+    display:none!important;
+  }
+
+  /* AI is a secondary helper: compact pill above WhatsApp. */
+  html body .smv-final-ai-button{
+    right:14px!important;
+    bottom:72px!important;
+    min-height:44px!important;
+    padding:4px 11px 4px 6px!important;
+    gap:7px!important;
+    font-size:10px!important;
+    border-radius:999px!important;
+  }
+
+  html body .smv-final-ai-icon{
+    width:34px!important;
+    height:34px!important;
+    font-size:15px!important;
+  }
+
+  html body .smv-final-ai-panel{
+    left:10px!important;
+    right:10px!important;
+    bottom:124px!important;
+    width:auto!important;
+    height:min(570px,calc(100vh - 145px))!important;
+    border-radius:18px!important;
+  }
+
+  /* =======================================================
+     5. HOMEPAGE — PHONE-FIRST CONTENT RHYTHM
+     ======================================================= */
+
+  html body main .hero{
+    width:100%!important;
+    min-height:auto!important;
+    padding:24px 14px 22px!important;
+    border-radius:0!important;
+  }
+
+  html body .hero h1{
+    font-size:34px!important;
+    line-height:1.06!important;
+    margin:8px 0 10px!important;
+  }
+
+  html body .hero-text{
+    font-size:14px!important;
+    line-height:1.52!important;
+  }
+
+  html body .hero-actions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+
+  html body .hero-actions a{
+    width:100%!important;
+    min-height:46px!important;
+  }
+
+  html body .hero-orbit{
+    display:none!important;
+  }
+
+  html body .smv-celebration-links{
+    display:flex!important;
+    gap:6px!important;
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    scrollbar-width:none!important;
+  }
+
+  html body .smv-celebration-links::-webkit-scrollbar{
+    display:none!important;
+  }
+
+  html body .smv-celebration-links a{
+    flex:0 0 auto!important;
+    min-height:34px!important;
+    padding:0 10px!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    font-size:10px!important;
+  }
+
+  html body .home-venues-section,
+  html body .enquiry-section,
+  html body .popular-section,
+  html body .feature-row,
+  html body .ai-planner-section,
+  html body .about-section,
+  html body .contact-section{
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+
+  html body .section-heading{
+    display:block!important;
+  }
+
+  html body .section-heading h2{
+    font-size:26px!important;
+    line-height:1.15!important;
+  }
+
+  html body main #featuredVenues .home-venue-grid{
+    grid-template-columns:1fr!important;
+    gap:12px!important;
+  }
+
+  html body main #featuredVenues .home-venue-media,
+  html body main #featuredVenues .home-venue-media img,
+  html body main #featuredVenues .home-venue-image-fallback{
+    height:205px!important;
+    min-height:205px!important;
+  }
+
+  html body main #featuredVenues .home-venue-content{
+    padding:14px!important;
+  }
+
+  html body main #featuredVenues .home-venue-content h3{
+    font-size:21px!important;
+    line-height:1.18!important;
+  }
+
+  html body #customerEnquiryForm{
+    padding:15px!important;
+  }
+
+  html body #customerEnquiryForm .form-grid.four,
+  html body #customerEnquiryForm .form-grid.five{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  html body #customerEnquiryForm .field :is(input,select,textarea){
+    min-height:45px!important;
+    font-size:16px!important;
+  }
+
+  /* =======================================================
+     6. VENUE DIRECTORY — SEARCH FIRST, FILTER AS SHEET
+     ======================================================= */
+
+  html body .venue-directory-main{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:8px 0 26px!important;
+  }
+
+  html body .venue-directory-hero{
+    margin:0 10px 8px!important;
+    padding:18px 14px!important;
+    border-radius:16px!important;
+  }
+
+  html body .venue-directory-hero h1{
+    font-size:26px!important;
+    line-height:1.08!important;
+  }
+
+  html body .venue-directory-hero>p:not(.eyebrow){
+    font-size:11px!important;
+    line-height:1.45!important;
+  }
+
+  html body .venue-directory-trust{
+    display:none!important;
+  }
+
+  html body .smv-browse-top{
+    position:sticky!important;
+    top:60px!important;
+    z-index:9000!important;
+    padding:7px 10px!important;
+    background:rgba(247,250,248,.97)!important;
+    border-bottom:1px solid #d8e6e2!important;
+    box-shadow:0 5px 15px rgba(10,60,52,.09)!important;
+    backdrop-filter:blur(12px)!important;
+  }
+
+  html body .smv-browse-top-inner{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 92px!important;
+    gap:6px!important;
+  }
+
+  html body .smv-browse-top input{
+    grid-column:1/-1!important;
+    min-height:41px!important;
+    font-size:12px!important;
+    border-radius:10px!important;
+  }
+
+  html body .smv-browse-top select,
+  html body .smv-browse-top button{
+    min-height:38px!important;
+    font-size:10px!important;
+    border-radius:9px!important;
+  }
+
+  html body .venue-directory-results{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:0!important;
+  }
+
+  html body .smv-mobile-directory-toolbar{
+    margin:7px 10px!important;
+    min-height:42px!important;
+    border-radius:11px!important;
+  }
+
+  html body #venueGrid{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:12px!important;
+    padding:0 7px!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .venue-card{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    border-radius:16px!important;
+    overflow:hidden!important;
+    box-shadow:0 8px 24px rgba(11,63,53,.10)!important;
+  }
+
+  html body .venue-card-media,
+  html body .venue-card-media img,
+  html body .venue-card-image-fallback{
+    width:100%!important;
+    height:190px!important;
+    min-height:190px!important;
+    object-fit:cover!important;
+  }
+
+  html body .venue-card-body{
+    padding:13px!important;
+  }
+
+  html body .venue-card h2{
+    font-size:20px!important;
+    line-height:1.16!important;
+  }
+
+  html body .venue-card .venue-location{
+    font-size:11px!important;
+  }
+
+  html body .venue-card .venue-actions{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  html body .venue-card .venue-actions .button{
+    min-height:42px!important;
+    font-size:10px!important;
+    border-radius:10px!important;
+  }
+
+  /* Filter sheet: readable, scrollable and never underneath navigation. */
+  html body .venue-filter-shell{
+    position:fixed!important;
+    left:8px!important;
+    right:8px!important;
+    top:68px!important;
+    bottom:8px!important;
+    z-index:12000!important;
+    width:auto!important;
+    max-height:none!important;
+    overflow:auto!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    box-shadow:0 25px 80px rgba(0,0,0,.40)!important;
+    transform:translateY(115%)!important;
+    transition:transform .22s ease!important;
+  }
+
+  html body.smv-mobile-filter-open .venue-filter-shell{
+    display:block!important;
+    transform:translateY(0)!important;
+  }
+
+  html body .smv-mobile-filter-backdrop{
+    z-index:11990!important;
+  }
+
+  /* =======================================================
+     7. VENUE PROFILE — CONTENT + ACTIONS, NO NAV OBSTRUCTION
+     ======================================================= */
+
+  html body.venue-profile-page main{
+    padding-bottom:78px!important;
+  }
+
+  html body .venue-profile-hero{
+    margin:0!important;
+    border-radius:0 0 16px 16px!important;
+    overflow:hidden!important;
+  }
+
+  html body .venue-profile-hero h1{
+    font-size:29px!important;
+    line-height:1.06!important;
+  }
+
+  html body .venue-profile-layout,
+  html body .venue-profile-content{
+    display:block!important;
+  }
+
+  html body .venue-profile-gallery,
+  html body .venue-profile-videos{
+    width:100%!important;
+    overflow:hidden!important;
+  }
+
+  /* Profile title/action card should breathe after removing bottom nav. */
+  html body .venue-profile-main{
+    width:100%!important;
+    margin:0!important;
+    padding:8px 10px 88px!important;
+  }
+
+  html body .venue-profile-main .breadcrumbs{
+    padding:7px 4px!important;
+    font-size:10px!important;
+    white-space:nowrap!important;
+    overflow:auto!important;
+  }
+
+  /* =======================================================
+     8. GENERIC LANDING / SEO / LIST-YOUR-VENUE PAGES
+     ======================================================= */
+
+  html body .page-main{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:12px 10px 30px!important;
+    box-sizing:border-box!important;
+  }
+
+  html body .search-landing-hero{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:10px!important;
+  }
+
+  html body .search-landing-copy{
+    min-height:0!important;
+    padding:20px 15px!important;
+    border-radius:16px!important;
+  }
+
+  html body .search-landing-copy h1{
+    font-size:28px!important;
+    line-height:1.08!important;
+  }
+
+  html body .quick-enquiry-card,
+  html body .quick-search-card,
+  html body .info-card,
+  html body .form-card{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+    border-radius:16px!important;
+  }
+
+  html body .quick-enquiry-form{
+    grid-template-columns:1fr!important;
+  }
+
+  html body .seo-area-grid,
+  html body .seo-event-grid,
+  html body .intent-link-grid{
+    grid-template-columns:1fr!important;
+  }
+
+  html body .page-footer{
+    margin-top:18px!important;
+    padding:24px 14px!important;
+  }
+
+  /* =======================================================
+     9. TOUCH + ACCESSIBILITY
+     ======================================================= */
+
+  html body button,
+  html body a,
+  html body input,
+  html body select,
+  html body textarea{
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  html body :is(button,a,input,select,textarea){
+    touch-action:manipulation;
+  }
+
+  html body .site-header #mainNav a,
+  html body .venue-card .button,
+  html body .venue-mobile-actions a,
+  html body .venue-mobile-actions button{
+    -webkit-user-select:none!important;
+    user-select:none!important;
+  }
+}
