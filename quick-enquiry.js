@@ -418,44 +418,28 @@
     // Mobile: a normal tap opens on touchend. Any real vertical movement
     // cancels the tap and turns the same gesture into a drag.
     edge.addEventListener("touchstart",function(e){
-      if(!e.touches||!e.touches[0])return;
-      var t=e.touches[0],rect=edge.getBoundingClientRect();
-      dragging=true;moved=false;dragPointerId="touch";
-      dragStartY=t.clientY;dragStartCenter=rect.top+rect.height/2;
-      edge.classList.add("smv-get-matched-dragging");
+      if(!window.matchMedia || !window.matchMedia("(max-width:767px)").matches)return;
+      dragging=false;moved=false;dragPointerId=null;
     },{passive:true});
 
     edge.addEventListener("touchmove",function(e){
-      if(!dragging||dragPointerId!=="touch"||!e.touches||!e.touches[0])return;
-      var dy=e.touches[0].clientY-dragStartY;
-      if(Math.abs(dy)<=5)return;
-      moved=true;
-      setEdgeCenter(dragStartCenter+dy);
-      if(e.cancelable)e.preventDefault();
-    },{passive:false});
+      if(!window.matchMedia || !window.matchMedia("(max-width:767px)").matches)return;
+    },{passive:true});
 
     edge.addEventListener("touchend",function(e){
-      if(dragPointerId!=="touch")return;
-      var open=!moved;
-      dragging=false;dragPointerId=null;
-      edge.classList.remove("smv-get-matched-dragging");
-      if(open){
-        if(e&&e.cancelable)e.preventDefault();
-        openDrawer();
-      }
-      moved=false;
+      if(!window.matchMedia || !window.matchMedia("(max-width:767px)").matches)return;
+      if(e&&e.cancelable)e.preventDefault();
+      openDrawer();
     },{passive:false});
 
     edge.addEventListener("touchcancel",function(){
       dragging=false;dragPointerId=null;moved=false;
-      edge.classList.remove("smv-get-matched-dragging");
     },{passive:true});
 
     // Direct button click fallback for browsers that synthesize a click.
     var tab=edge.querySelector("#smvHomeEnquiryTab");
     if(tab){
       tab.addEventListener("click",function(e){
-        if(dragging||moved)return;
         e.preventDefault();
         e.stopPropagation();
         openDrawer();
