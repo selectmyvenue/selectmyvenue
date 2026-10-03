@@ -43,7 +43,20 @@
   <link rel="stylesheet" href="venue-profile-stable-premium.css?v=20260922-contrast-1">
   <link rel="stylesheet" href="website-mobile-app-20261002.css?v=20261002-app-v1">
 </head>
-<body class="venue-profile-page">
+<body class="venue-profile-page"><script>
+(function(){
+  function syncProfileWidth(){
+    var aside=document.querySelector('.venue-profile-enquiry');
+    var hidden=!aside || getComputedStyle(aside).display==='none' || getComputedStyle(aside).visibility==='hidden' || aside.offsetParent===null;
+    document.body.classList.toggle('smv-no-enquiry-sidebar',hidden);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',syncProfileWidth);
+  else syncProfileWidth();
+  window.addEventListener('load',syncProfileWidth);
+  setTimeout(syncProfileWidth,500);
+  setTimeout(syncProfileWidth,1500);
+})();
+</script>
   <header class="site-header">
   <div class="header-inner">
     <a href="index.html#home" class="brand" aria-label="Select My Venue Home"><img src="logo.png" alt="Select My Venue" class="main-logo"></a>
