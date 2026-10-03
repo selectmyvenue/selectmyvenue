@@ -59,6 +59,11 @@
     if(!f){f=document.createElement("section");f.id="smvVenueFaq";f.className="smv-profile-faq";f.innerHTML='<p class="eyebrow">VENUE FAQ</p><h2>Questions worth answering before you book.</h2><div class="smv-faq-list"></div>';if(similar)similar.insertAdjacentElement("afterend",f);else article.appendChild(f)}
     f.querySelector(".smv-faq-list").innerHTML=items.map(x=>'<div class="smv-faq-item"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>').join("");
   }
-  function start(){let tries=0;const tick=()=>{if(window.__SMV_PUBLIC_VENUE){render(window.__SMV_PUBLIC_VENUE);return}if(tries++<120)setTimeout(tick,100)};tick()}
+  function start(){
+    if(window.SMVCurrentVenue){render(window.SMVCurrentVenue);return}
+    window.addEventListener("smv:venue-ready",event=>{
+      if(event.detail?.venue)render(event.detail.venue);
+    },{once:true});
+  }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
 })();
