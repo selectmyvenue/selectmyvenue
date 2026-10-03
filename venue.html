@@ -161,6 +161,88 @@
   <script src="venue-decision-panel.js?v=20260922-stable-3"></script>
   <script src="quick-enquiry.js?v=20260929-sitewide-1"></script>
   <script src="website-mobile-app-20261002.js?v=20261001-mobile-fix"></script>
+  <script>
+    /* SMV FAQ CONSOLIDATOR — keep every existing question, but render one FAQ only. */
+    (function(){
+      "use strict";
+      function norm(s){
+        return String(s||"").toLowerCase()
+          .replace(/[^a-z0-9\u00C0-\uFFFF\s]/gi," ")
+          .replace(/\s+/g," ").trim();
+      }
+      function key(s){
+        return norm(s).replace(/^(what|which|where|when|who|why|how|can|could|do|does|is|are|will|should)\s+/,"").trim();
+      }
+      function visible(el){
+        if(!el)return false;
+        const r=el.getBoundingClientRect?.();
+        return !el.hidden && (!r || r.width>0 || r.height>0);
+      }
+      function faqContainers(){
+        const all=[...document.querySelectorAll("section,article,div,aside")];
+        return all.filter(el=>{
+          if(el.id==="venueProfile"||el.id==="similarVenuesSection")return false;
+          const t=String(el.textContent||"");
+          return /\b(?:VENUE FAQS?|VENUE FAQ|FREQUENTLY ASKED QUESTIONS|USEFUL ANSWERS|QUESTIONS WORTH ANSWERING)\b/i.test(t)
+            && (el.querySelector(".smv-faq-list, .faq-list, .faq-items, .accordion, .faq-accordion, [class*='faq']") || /FAQ/i.test(t));
+        }).filter(visible);
+      }
+      function smallest(containers){
+        return containers.filter(el=>!containers.some(other=>other!==el && el.contains(other))).sort((a,b)=>a.textContent.length-b.textContent.length);
+      }
+      function extract(container){
+        const out=[], seen=new Set();
+        const nodes=[...container.querySelectorAll("button,summary,h3,h4,[class*='question'],[class*='faq-question']")];
+        for(const q of nodes){
+          const question=String(q.textContent||"").replace(/\s+/g," ").trim();
+          if(!question || question.length<8 || question.length>240)continue;
+          const k=key(question);
+          if(!k||seen.has(k))continue;
+          let answer="";
+          const parent=q.closest(".smv-faq-item,[class*='faq-item'],li,article,div");
+          if(parent){
+            const candidates=[...parent.querySelectorAll(".smv-faq-answer,[class*='answer'],p,[role='region']")];
+            const a=candidates.find(x=>String(x.textContent||"").trim() && x!==q);
+            if(a)answer=String(a.textContent||"").replace(/\s+/g," ").trim();
+          }
+          out.push({question,answer,source:q});
+          seen.add(k);
+        }
+        return out;
+      }
+      function run(){
+        const raw=smallest(faqContainers());
+        if(raw.length<2)return;
+        // Collect from every FAQ before removing anything, so no question is lost.
+        const combined=[], seen=new Set();
+        for(const box of raw){
+          for(const item of extract(box)){
+            const k=key(item.question);
+            if(!seen.has(k)){seen.add(k);combined.push(item);}
+          }
+        }
+        if(!combined.length)return;
+        // Prefer the existing dedicated FAQ panel; otherwise the first detected FAQ.
+        const canonical=document.getElementById("smvVenueFaq")||raw.find(x=>/VENUE FAQ/i.test(x.textContent||""))||raw[0];
+        const list=canonical.querySelector(".smv-faq-list, .faq-list, .faq-items, .accordion, .faq-accordion");
+        if(!list)return;
+        // Rebuild the canonical list from ALL questions, preserving existing answer text.
+        list.innerHTML=combined.map((item,i)=>{
+          const q=item.question.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+          const a=item.answer.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+          return '<div class="smv-faq-item smv-consolidated-faq-item"><button type="button" aria-expanded="false" aria-controls="smvConsolidatedFaqA'+i+'">'+q+'</button><div id="smvConsolidatedFaqA'+i+'" class="smv-faq-answer">'+a+'</div></div>';
+        }).join("");
+        // Remove every other FAQ container, including a stale FAQ injected by an older cached script.
+        raw.forEach(box=>{if(box!==canonical)box.remove();});
+        canonical.classList.add("smv-single-faq");
+      }
+      function start(){
+        run();
+        [500,1200,2200].forEach(ms=>setTimeout(run,ms));
+      }
+      if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start,{once:true});else start();
+    })();
+  </script>
 </body>
 </html>
 
