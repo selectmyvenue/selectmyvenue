@@ -32,7 +32,7 @@
   }
   function address(v){return [v.address,v.area,v.city,v.state,v.pincode].map(x=>String(x||"").trim()).filter(Boolean).join(", ")}
   function mapUrl(v){const lat=Number(v.latitude),lon=Number(v.longitude),q=Number.isFinite(lat)&&Number.isFinite(lon)?lat+","+lon:address(v)||v.venue_name||"Delhi NCR";return "https://www.google.com/maps?q="+encodeURIComponent(q)+"&output=embed&z=15"}
-  function mapLink(v){const direct=String(v.google_maps_url||"").trim();if(/^https?:\/\//i.test(direct))return direct;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(address(v)||v.venue_name||"")}
+  function mapLink(v){const direct=String(v.google_maps_url||"").trim();if(/^https?:\/\//i.test(direct))return direct;return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent((v.venue_name?String(v.venue_name)+", ":"")+address(v))}
   function faq(v){
     const a=[],events=Array.isArray(v.event_types)?v.event_types.filter(Boolean):[],min=Number(v.capacity_min||0),max=Number(v.capacity_max||0),pmin=Number(v.price_min_per_person||0),pmax=Number(v.price_max_per_person||0),rooms=Number(v.room_count||0);
     const food=v.food_veg&&v.food_non_veg?"vegetarian and non-vegetarian food":v.food_veg?"vegetarian food":v.food_non_veg?"non-vegetarian food":"";
@@ -56,7 +56,7 @@
     map.querySelector("iframe").src=mapUrl(v);map.querySelector(".smv-map-address").textContent=address(v)||"Location available on request";map.querySelector(".smv-map-link").href=mapLink(v);
     const items=faq(v);if(!items.length)return;
     let f=document.getElementById("smvVenueFaq");
-    if(!f){f=document.createElement("section");f.id="smvVenueFaq";f.className="smv-profile-faq";f.innerHTML='<p class="eyebrow">VENUE FAQ</p><h2>Questions worth answering before you book.</h2><div class="smv-faq-list"></div>';if(similar)similar.insertAdjacentElement("beforebegin",f);else article.appendChild(f)}
+    if(!f){f=document.createElement("section");f.id="smvVenueFaq";f.className="smv-profile-faq";f.innerHTML='<p class="eyebrow">VENUE FAQ</p><h2>Questions worth answering before you book.</h2><div class="smv-faq-list"></div>';if(similar)similar.insertAdjacentElement("afterend",f);else article.appendChild(f)}
     f.querySelector(".smv-faq-list").innerHTML=items.map(x=>'<div class="smv-faq-item"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>').join("");
   }
   function start(){let tries=0;const tick=()=>{if(window.__SMV_PUBLIC_VENUE){render(window.__SMV_PUBLIC_VENUE);return}if(tries++<120)setTimeout(tick,100)};tick()}
