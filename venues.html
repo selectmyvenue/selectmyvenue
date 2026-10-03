@@ -51,7 +51,170 @@
     @media(max-width:620px){.venue-directory-hero{padding:18px 17px!important}.venue-directory-hero h1{font-size:28px!important}.venue-directory-hero>p:not(.eyebrow){font-size:11px!important}.venue-enquiry-trigger{align-items:flex-start;flex-direction:column;gap:3px}.venue-enquiry-drawer{width:100%}.venue-drawer-body .quick-enquiry-form{grid-template-columns:1fr}.venue-drawer-body .form-field.full{grid-column:auto}.venue-drawer-body .quick-enquiry-trust{grid-template-columns:1fr 1fr 1fr}}
   </style>
   <link rel="stylesheet" href="website-mobile-app-20261002.css?v=20261002-app-v1">
-</head>
+<style id="smv-browse-layout-fix-v2">
+/* SMV Browse Directory — clean responsive separation
+   Desktop: filters left / venue results right.
+   Mobile: compact results + filters in a proper drawer, never mixed into the result column. */
+.smv-mobile-directory-toolbar{display:none!important}
+
+@media(min-width:1001px){
+  html body .venue-directory-results{
+    display:grid!important;
+    grid-template-columns:300px minmax(0,1fr)!important;
+    gap:20px!important;
+    align-items:start!important;
+  }
+  html body .venue-filter-shell{
+    width:100%!important;
+    min-width:0!important;
+  }
+  html body .venue-results-column{
+    width:100%!important;
+    min-width:0!important;
+  }
+  html body #venueGrid{
+    width:100%!important;
+    min-width:0!important;
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:18px!important;
+  }
+  html body .smv-filter-mobile-head{display:none!important}
+}
+
+@media(min-width:768px) and (max-width:1000px){
+  html body .venue-directory-results{
+    display:grid!important;
+    grid-template-columns:280px minmax(0,1fr)!important;
+    gap:16px!important;
+    align-items:start!important;
+  }
+  html body .venue-filter-shell{width:100%!important}
+  html body #venueGrid{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:14px!important;
+  }
+  html body .smv-filter-mobile-head{display:none!important}
+}
+
+@media(max-width:767px){
+  html body .venue-directory-results{
+    display:block!important;
+    width:100%!important;
+  }
+
+  html body .smv-mobile-directory-toolbar{
+    display:flex!important;
+    position:sticky!important;
+    top:60px!important;
+    z-index:840!important;
+    width:100%!important;
+    min-height:50px!important;
+    box-sizing:border-box!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    gap:10px!important;
+    padding:7px 10px!important;
+    border-top:1px solid rgba(109,231,211,.12)!important;
+    border-bottom:1px solid rgba(109,231,211,.18)!important;
+    background:#06332e!important;
+    color:#eaf8f5!important;
+  }
+  html body .smv-mobile-directory-toolbar button{
+    min-height:36px!important;
+    padding:0 13px!important;
+    border:1px solid rgba(109,231,211,.24)!important;
+    border-radius:9px!important;
+    background:#0b4a42!important;
+    color:#fff!important;
+    font-size:11px!important;
+    font-weight:900!important;
+  }
+  html body .smv-mobile-directory-toolbar b{
+    margin-left:7px!important;
+    color:#f3d27b!important;
+    font-size:9px!important;
+  }
+  html body .smv-mobile-directory-toolbar>span{
+    color:#b9d5cf!important;
+    font-size:10px!important;
+    font-weight:850!important;
+  }
+
+  html body .venue-filter-shell{
+    display:none!important;
+    position:fixed!important;
+    left:0!important;
+    right:0!important;
+    top:60px!important;
+    bottom:0!important;
+    z-index:10020!important;
+    width:100%!important;
+    max-height:none!important;
+    margin:0!important;
+    overflow-y:auto!important;
+    border:0!important;
+    border-radius:18px 18px 0 0!important;
+    box-sizing:border-box!important;
+  }
+  html body.smv-mobile-filter-open .venue-filter-shell{
+    display:block!important;
+  }
+  html body .smv-mobile-filter-backdrop{
+    position:fixed!important;
+    inset:0!important;
+    z-index:10010!important;
+    background:rgba(0,12,11,.64)!important;
+    backdrop-filter:blur(3px)!important;
+  }
+  html body .smv-mobile-filter-backdrop[hidden]{display:none!important}
+  html body .smv-filter-mobile-head{
+    position:sticky!important;
+    top:0!important;
+    z-index:2!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    padding:14px 16px!important;
+    border-bottom:1px solid rgba(255,255,255,.08)!important;
+    background:#082f2a!important;
+    color:#fff!important;
+  }
+  html body .smv-filter-mobile-head button{
+    min-height:34px!important;
+    padding:0 12px!important;
+    border:1px solid rgba(243,210,123,.35)!important;
+    border-radius:8px!important;
+    background:rgba(243,210,123,.10)!important;
+    color:#f3d27b!important;
+    font-weight:900!important;
+  }
+
+  html body .venue-results-column{
+    width:100%!important;
+    min-width:0!important;
+  }
+  html body .venue-results-intro{
+    width:100%!important;
+    box-sizing:border-box!important;
+  }
+  html body #venueGrid{
+    width:100%!important;
+    min-width:0!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    box-sizing:border-box!important;
+  }
+  html body #venueGrid .venue-card{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+}
+</style></head>
 <body>
   <header class="site-header">
   <div class="header-inner">
