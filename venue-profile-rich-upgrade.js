@@ -55,9 +55,63 @@
     if(!map){map=document.createElement("section");map.id="smvModernMap";map.className="smv-modern-map";map.innerHTML='<div class="smv-modern-map-head"><div><p class="eyebrow">VENUE LOCATION</p><h2>Find the venue on the map</h2></div><p>Interactive location view based on the address and stored venue coordinates.</p></div><div class="smv-map-frame"><span class="smv-map-badge">LIVE MAP VIEW</span><iframe title="Venue location map" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><div class="smv-map-footer"><span class="smv-map-address"></span><a class="smv-map-link" target="_blank" rel="noopener">Open full map ↗</a></div>';if(similar)similar.insertAdjacentElement("beforebegin",map);else article.appendChild(map)}
     map.querySelector("iframe").src=mapUrl(v);map.querySelector(".smv-map-address").textContent=address(v)||"Location available on request";map.querySelector(".smv-map-link").href=mapLink(v);
     const items=faq(v);if(!items.length)return;
+
+    // Prefer the FAQ that is already part of the venue profile. Older profiles may
+    // have a FAQ near SMART PLANNING ESSENTIALS; the upgrade must not create a
+    // second FAQ just because the new generated questions are available.
+    const normalizeFaqText=s=>String(s||"").toLowerCase().replace(/[?!.:,;|]/g," ").replace(/\\s+/g," ").trim();
+    const questionKey=s=>normalizeFaqText(s).replace(/^(is|are|can|do|does|what|how|where|which|who|when)\\s+/,"").replace(/\\s+/g," ");
+    const isFaqHost=node=>{
+      if(!node||node.id==="smvVenueFaq")return false;
+      const text=String(node.textContent||"").trim();
+      return /\\b(?:faq|frequently asked questions|useful answers|questions worth answering)\\b/i.test(text) ||
+             /smart planning essentials/i.test(text);
+    };
+    let existing=null;
+    const candidates=[...article.querySelectorAll("section, .venue-white-card, .venue-profile-panel, div")];
+    for(const node of candidates){
+      if(node.closest("#smvVenueFaq"))continue;
+      if(isFaqHost(node)){
+        // Prefer the smallest meaningful FAQ/planning container.
+        const childFaq=[...node.querySelectorAll("section, .venue-white-card, .venue-profile-panel")].find(isFaqHost);
+        existing=childFaq||node;
+        break;
+      }
+    }
+
+    const generatedHtml=items.map(x=>'<div class="smv-faq-item smv-generated-faq-item"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>').join("");
+
+    // If an existing FAQ is present, add only genuinely new questions to it.
+    if(existing){
+      document.getElementById("smvVenueFaq")?.remove();
+      let list=existing.querySelector(".smv-faq-list, .faq-list, .faq-items, .accordion, .faq-accordion");
+      if(!list){
+        list=document.createElement("div");
+        list.className="smv-faq-list";
+        existing.appendChild(list);
+      }
+      const existingKeys=new Set(
+        [...existing.querySelectorAll("h3,h4,summary,[class*='question'],[class*='faq-question']")]
+          .map(n=>questionKey(n.textContent)).filter(Boolean)
+      );
+      const fresh=items.filter(x=>!existingKeys.has(questionKey(x[0])));
+      if(fresh.length){
+        list.insertAdjacentHTML("beforeend",fresh.map(x=>'<div class="smv-faq-item smv-generated-faq-item"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>').join(""));
+      }
+      existing.classList.add("smv-faq-consolidated");
+      return;
+    }
+
+    // Fallback only for profiles that truly have no FAQ at all.
     let f=document.getElementById("smvVenueFaq");
-    if(!f){f=document.createElement("section");f.id="smvVenueFaq";f.className="smv-profile-faq";f.innerHTML='<p class="eyebrow">VENUE FAQ</p><h2>Questions worth answering before you book.</h2><div class="smv-faq-list"></div>';if(similar)similar.insertAdjacentElement("afterend",f);else article.appendChild(f)}
-    f.querySelector(".smv-faq-list").innerHTML=items.map(x=>'<div class="smv-faq-item"><h3>'+esc(x[0])+'</h3><p>'+esc(x[1])+'</p></div>').join("");
+    if(!f){
+      f=document.createElement("section");
+      f.id="smvVenueFaq";
+      f.className="smv-profile-faq";
+      f.innerHTML='<p class="eyebrow">VENUE FAQ</p><h2>Questions worth answering before you book.</h2><div class="smv-faq-list"></div>';
+      if(similar)similar.insertAdjacentElement("afterend",f);else article.appendChild(f);
+    }
+    f.querySelector(".smv-faq-list").innerHTML=generatedHtml;
   }
   function start(){
     if(window.SMVCurrentVenue){render(window.SMVCurrentVenue);return}
