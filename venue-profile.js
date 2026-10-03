@@ -484,6 +484,9 @@
     if(!venue)return showError();
     const media=await loadStorageMedia(venue);
     renderProfile(venue,media);
+    window.SMVCurrentVenue = venue;
+    window.SMVCurrentVenueMedia = media;
+    window.dispatchEvent(new CustomEvent("smv:venue-ready",{detail:{venue,media}}));
   }
 
   setupActions();
