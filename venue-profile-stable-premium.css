@@ -595,3 +595,15 @@ body.venue-profile-page #smvBookingDetails dd{
 body.venue-profile-page #smvBookingDetails dl>div{
   border-bottom:1px solid #eadfce!important;
 }
+
+
+/* 2026-10-04 — remove reserved empty sidebar space when enquiry panel is not rendered */
+@media(min-width:901px){
+  html body.venue-profile-page.smv-no-enquiry-sidebar .venue-profile-layout{
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  html body.venue-profile-page.smv-no-enquiry-sidebar .venue-profile-content{
+    width:100%!important;
+    max-width:none!important;
+  }
+}
