@@ -607,3 +607,35 @@ body.venue-profile-page #smvBookingDetails dl>div{
     max-width:none!important;
   }
 }
+
+
+/* Desktop venue description readability — larger + slightly stronger without changing layout */
+@media(min-width:1001px){
+  body.venue-profile-page #venueProfileDescription{
+    font-size:15.5px!important;
+    line-height:1.78!important;
+    font-weight:500!important;
+    color:#4f6862!important;
+  }
+  body.venue-profile-page #venueProfileDescription p{
+    font-size:15.5px!important;
+    line-height:1.78!important;
+    font-weight:500!important;
+  }
+  body.venue-profile-page #venueProfileDescription li{
+    font-size:15px!important;
+    line-height:1.7!important;
+    font-weight:500!important;
+  }
+  body.venue-profile-page #venueProfileDescription h3{
+    font-size:18px!important;
+    line-height:1.35!important;
+    font-weight:700!important;
+    color:#123f3a!important;
+  }
+  body.venue-profile-page #venueProfileDescription strong,
+  body.venue-profile-page #venueProfileDescription b{
+    font-weight:700!important;
+    color:#284d46!important;
+  }
+}
