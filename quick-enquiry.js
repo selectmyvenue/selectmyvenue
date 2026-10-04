@@ -382,6 +382,24 @@
       edge.style.setProperty("transform","translateY(-50%)","important");
     }
 
+    function positionEdgeBelowOffer(){
+      if(!edge) return;
+      var mobile = window.matchMedia && window.matchMedia("(max-width:767px)").matches;
+      if(!mobile) return;
+      var strip = document.querySelector(".smv-home-launch-strip");
+      var top = 118;
+      if(strip){
+        var rect = strip.getBoundingClientRect();
+        top = Math.max(88, Math.round(rect.bottom + 2));
+      } else {
+        var header = document.querySelector(".site-header");
+        if(header){
+          top = Math.max(88, Math.round(header.getBoundingClientRect().bottom + 58));
+        }
+      }
+      edge.style.setProperty("--smv-get-matched-top", top + "px");
+    }
+
     function resetEdgePosition(){
       if(touchTimer){clearTimeout(touchTimer);touchTimer=null;}
       edge.style.removeProperty("top");
@@ -606,6 +624,9 @@
     captureAttribution();
     installStyles();
     ensureGlobalQuickEnquiry();
+    positionEdgeBelowOffer();
+    window.addEventListener("resize", positionEdgeBelowOffer, { passive: true });
+    window.addEventListener("orientationchange", positionEdgeBelowOffer, { passive: true });
     if(!window.supabase){var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";s.async=true;document.head.appendChild(s);}
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
       const dateField = form.elements.event_date;
