@@ -1,7 +1,8 @@
 (function(){
   "use strict";
   const SUPABASE_URL="https://uajqwyoqbbswkfiwosyw.supabase.co";
-  const SUPABASE_ANON_KEY="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";\n  const isEligiblePublicVenue=v=>{if(!v)return false;const status=String(v.venue_status||"approved").toLowerCase();const verification=String(v.verification_status||"verified").toLowerCase();const listing=v.public_listing_enabled!==false;const plan=String(v.plan_status||"active").toLowerCase();const expiry=v.plan_expires_at?new Date(v.plan_expires_at):null;const expiryOk=!expiry||Number.isNaN(expiry.getTime())||expiry.getTime()>=Date.now();return status==="approved"&&verification==="verified"&&listing&&(plan==="active"||plan==="trialing")&&expiryOk};
+  const SUPABASE_ANON_KEY="sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7";
+  const isEligiblePublicVenue=v=>{if(!v)return false;const status=String(v.venue_status||"approved").toLowerCase();const verification=String(v.verification_status||"verified").toLowerCase();const listing=v.public_listing_enabled!==false;const plan=String(v.plan_status||"active").toLowerCase();const expiry=v.plan_expires_at?new Date(v.plan_expires_at):null;const expiryOk=!expiry||Number.isNaN(expiry.getTime())||expiry.getTime()>=Date.now();return status==="approved"&&verification==="verified"&&listing&&(plan==="active"||plan==="trialing")&&expiryOk};
   const SUCCESS_TEXT="Requirement received! Thank you for choosing Select My Venue. Our venue team will review your event details and contact you as soon as possible during support hours.";
   const clean=v=>String(v==null?"":v).trim();
   const normal=v=>clean(v).toLowerCase();
