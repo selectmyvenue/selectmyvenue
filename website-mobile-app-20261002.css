@@ -765,3 +765,38 @@
     .smv-customer-app-nav .smv-app-primary .smv-app-icon{width:48px!important;height:48px!important}
   }
 }
+
+
+/* =========================================================
+   MOBILE VENUE-NAME CONTRAST FIX — 2026-10-11
+   Keep venue names dark, crisp and readable on light cards.
+   Scoped to venue titles only; no layout or data changes.
+   ========================================================= */
+@media (max-width: 767px) {
+  html body main #featuredVenues .home-venue-content h3,
+  html body main #featuredVenues .home-venue-content h3 a,
+  html body #venueGrid .venue-card-body h2,
+  html body #venueGrid .venue-card-body h2 a,
+  html body .venue-directory-main .venue-card-body h2,
+  html body .venue-directory-main .venue-card-body h2 a,
+  html body #venueGrid .venue-card h2,
+  html body #venueGrid .venue-card h2 a {
+    color: #173d35 !important;
+    -webkit-text-fill-color: #173d35 !important;
+    opacity: 1 !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+  }
+
+  html body main #featuredVenues .home-venue-content h3 {
+    font-size: 21px !important;
+    line-height: 1.25 !important;
+  }
+
+  html body #venueGrid .venue-card-body h2,
+  html body .venue-directory-main .venue-card-body h2,
+  html body #venueGrid .venue-card h2 {
+    font-size: 19px !important;
+    line-height: 1.28 !important;
+  }
+}
