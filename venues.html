@@ -214,7 +214,29 @@
     max-width:none!important;
   }
 }
-</style></head>
+
+<style id="smv-mobile-venue-title-contrast-final">
+/* Exact fix for the dark Browse Venues cards on phone browsers */
+html body main.venue-directory-main #venueGrid .venue-card .venue-card-body h2,
+html body main.venue-directory-main #venueGrid .venue-card .venue-card-body h2 a {
+  color: #fff7df !important;
+  -webkit-text-fill-color: #fff7df !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-weight: 850 !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.12) !important;
+}
+@media (max-width: 767px) {
+  html body main.venue-directory-main #venueGrid .venue-card .venue-card-body h2,
+  html body main.venue-directory-main #venueGrid .venue-card .venue-card-body h2 a {
+    color: #fff7df !important;
+    -webkit-text-fill-color: #fff7df !important;
+    font-size: 23px !important;
+    line-height: 1.28 !important;
+    font-weight: 850 !important;
+  }
+}
+</style></style></head>
 <body>
   <header class="site-header">
   <div class="header-inner">
