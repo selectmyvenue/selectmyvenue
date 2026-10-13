@@ -465,7 +465,7 @@
     addHoneypot(quoteForm);
     quoteForm?.addEventListener("submit",submitQuote);
     byId("venueShareBtn")?.addEventListener("click",async()=>{
-      const shareUrl=new URL("https://selectmyvenue.com/venue.html");
+      const shareUrl=new URL("https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/venue-share-preview");
       if(currentVenue?.id)shareUrl.searchParams.set("id",String(currentVenue.id));
       const cleanUrl=shareUrl.toString();
       const shareData={title:currentVenue?.venue_name||"Select My Venue",text:`View ${currentVenue?.venue_name||"this verified venue"} on Select My Venue.`,url:cleanUrl};
