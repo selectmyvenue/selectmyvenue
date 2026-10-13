@@ -465,10 +465,13 @@
     addHoneypot(quoteForm);
     quoteForm?.addEventListener("submit",submitQuote);
     byId("venueShareBtn")?.addEventListener("click",async()=>{
-      const shareData={title:currentVenue?.venue_name||"Select My Venue",url:window.location.href};
+      const shareUrl=new URL("https://selectmyvenue.com/venue.html");
+      if(currentVenue?.id)shareUrl.searchParams.set("id",String(currentVenue.id));
+      const cleanUrl=shareUrl.toString();
+      const shareData={title:currentVenue?.venue_name||"Select My Venue",text:`View ${currentVenue?.venue_name||"this verified venue"} on Select My Venue.`,url:cleanUrl};
       try{
         if(navigator.share)await navigator.share(shareData);
-        else{await navigator.clipboard.writeText(window.location.href);byId("venueShareBtn").textContent="Link Copied";setTimeout(()=>byId("venueShareBtn").textContent="Share",1600);}
+        else{await navigator.clipboard.writeText(cleanUrl);byId("venueShareBtn").textContent="Link Copied";setTimeout(()=>byId("venueShareBtn").textContent="Share",1600);}
       }catch(_){}
     });
     document.addEventListener("keydown",event=>{if(event.key==="Escape")closeQuoteModal();});
