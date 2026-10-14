@@ -1,0 +1,65 @@
+name: Prepare SEO venue pages (manual, no deployment)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-seo-artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      SEO_SITE_ROOT: ${{ github.workspace }}
+    steps:
+      - name: Check out SEO implementation branch
+        uses: actions/checkout@v4
+        with:
+          ref: seo/technical-foundation-audit
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run SEO generator safety tests
+        run: python -m unittest discover -s seo/tests -v
+
+      - name: Generate approved public venue pages
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: python seo/generate_venue_seo.py
+
+      - name: Audit generated pages and sitemap
+        run: python seo/audit_static_seo.py --generated-only
+
+      - name: Prepare artifact summary
+        shell: bash
+        run: |
+          set -euo pipefail
+          page_count="$(find venue-pages -name index.html -type f | wc -l | tr -d ' ')"
+          sitemap_count="$(grep -o '<loc>' sitemap.xml | wc -l | tr -d ' ')"
+          if [ "$page_count" -lt 1 ]; then
+            echo "No generated venue pages were found; refusing to upload an empty artifact."
+            exit 1
+          fi
+          {
+            echo "## SEO venue page artifact prepared"
+            echo "- Generated venue pages: $page_count"
+            echo "- Sitemap URL entries: $sitemap_count"
+            echo "- Source branch: seo/technical-foundation-audit"
+            echo "- Deployment: **not performed**"
+            echo "- Live website and CRM: **not changed**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload generated pages and updated sitemap
+        uses: actions/upload-artifact@v4
+        with:
+          name: smv-seo-venue-pages-${{ github.run_number }}
+          path: |
+            venue-pages/**
+            sitemap.xml
+          if-no-files-found: error
+          retention-days: 14
