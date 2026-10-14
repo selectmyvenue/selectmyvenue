@@ -1,0 +1,25 @@
+name: SEO audit unit tests
+
+on:
+  push:
+    branches:
+      - seo/technical-foundation-audit
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  seo-audit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Run SEO audit unit tests
+        run: python -m unittest discover -s seo/tests -v
