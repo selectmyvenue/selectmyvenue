@@ -28,9 +28,12 @@ class AllEventVenuePageTests(unittest.TestCase):
         self.assertIn('data-smv-quick-enquiry', self.page)
         for field in ("customer_name", "mobile", "occasion", "location", "event_date", "guests", "budget_per_person", "requirements"):
             self.assertRegex(self.page, rf'name="{field}"')
-        for field in ("customer_name", "mobile", "location", "event_date", "occasion", "guests", "budget_per_person", "requirements"):
-            self.assertIn(f'form.elements.{field}', self.handler, msg=f"Existing handler should support {field}")
+        for field in ("customer_name", "mobile", "location", "event_date", "occasion", "guests", "budget_per_person"):
+            self.assertIn(f"form.elements.{field}", self.handler, msg=f"Existing handler should support {field}")
+        comment_parser = self.handler.split("function extractComment(form)", 1)[1].split("function setMessage", 1)[0]
+        self.assertIn('"requirements"', comment_parser, "Preferences field must be read by the existing comment/requirements parser")
         self.assertIn('client.from("customer_enquiries").insert(payload)', self.handler)
+        self.assertIn('"Customer comment: " + comment', self.handler)
 
     def test_event_options_map_to_occasion_field(self):
         match = re.search(r'<select name="occasion" required>(.*?)</select>', self.page, re.S)
