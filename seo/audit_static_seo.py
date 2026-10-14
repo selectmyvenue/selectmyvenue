@@ -10,7 +10,7 @@ it is not a substitute for browser, live HTTP, accessibility, or Search Console 
 """
 from html.parser import HTMLParser
 from pathlib import Path
-import re
+from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -131,8 +131,11 @@ def main():
         errors += 1
 
     for url in sitemap_urls:
-        filename = url.rstrip("/").split("/")[-1] or "index.html"
-        if filename == "selectmyvenue.com":
+        # Ignore query strings when mapping public URLs to local static files.
+        # Venue profile URLs currently use /venue.html?id=<UUID>.
+        parsed_url = urlparse(url)
+        filename = parsed_url.path.rstrip("/").split("/")[-1] or "index.html"
+        if parsed_url.path.rstrip("/") == "" or filename == "selectmyvenue.com":
             filename = "index.html"
         if filename not in pages and filename != "index.html":
             print(f"WARN  sitemap URL has no matching root HTML file: {url}")
