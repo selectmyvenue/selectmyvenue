@@ -24,12 +24,19 @@ class PublicVenueEligibilityTests(unittest.TestCase):
             ("verification_status", "unverified"),
             ("public_listing_enabled", False),
             ("venue_name", ""),
-            ("area", ""),
-            ("city", ""),
         ):
             changed = dict(venue)
             changed[field] = value
             self.assertFalse(generator.is_public(changed), field)
+
+    def test_excludes_approved_venues_without_location_from_local_seo(self):
+        venue = {
+            "venue_name": "Sample Banquet",
+            "venue_status": "approved",
+            "verification_status": "verified",
+            "public_listing_enabled": True,
+        }
+        self.assertFalse(generator.is_public(venue))
 
     def test_generated_page_opens_quote_and_captures_landing_attribution(self):
         venue = {
