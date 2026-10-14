@@ -45,7 +45,8 @@ def is_public_venue(venue):
     status = str(venue.get("venue_status") or "").strip().lower()
     verification = str(venue.get("verification_status") or "").strip().lower()
     listing_enabled = venue.get("public_listing_enabled") is True
-    return status == "approved" and verification == "verified" and listing_enabled
+    has_name = bool(str(venue.get("venue_name") or "").strip())
+    return status == "approved" and verification == "verified" and listing_enabled and has_name
 
 
 def venue_url(venue):
