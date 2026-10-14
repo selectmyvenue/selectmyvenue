@@ -15,6 +15,8 @@ class PublicVenueEligibilityTests(unittest.TestCase):
             "venue_status": "approved",
             "verification_status": "verified",
             "public_listing_enabled": True,
+            "area": "Sector 29",
+            "city": "Gurugram",
         }
         self.assertTrue(generator.is_public(venue))
         for field, value in (
@@ -22,6 +24,8 @@ class PublicVenueEligibilityTests(unittest.TestCase):
             ("verification_status", "unverified"),
             ("public_listing_enabled", False),
             ("venue_name", ""),
+            ("area", ""),
+            ("city", ""),
         ):
             changed = dict(venue)
             changed[field] = value
@@ -58,6 +62,8 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         page = generator.venue_page(venue, "https://selectmyvenue.com/venue-pages/sample-banquet-22222222/")
         self.assertIn('"addressCountry": "IN"', page)
         self.assertNotIn('"addressLocality"', page)
+        self.assertNotIn("in Delhi NCR", page)
+        self.assertIn("Location details on request", page)
 
 
 if __name__ == "__main__":
