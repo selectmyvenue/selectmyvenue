@@ -52,3 +52,12 @@ Status: review-only preparation; do not merge or deploy without owner approval.
 - Generated pages preserve landing URL, referrer, and campaign parameters in the existing session attribution key so the existing venue-profile submission can include attribution in its `requirements` text.
 - These changes exist only on `seo/technical-foundation-audit`. No generated pages have been published by this work, and no production deployment, merge, live CRM test, or live sitemap validation has been performed.
 - Next gate: identify and verify the actual GitHub Pages publishing path; then run a read-only audit against a controlled copy and verify generated pages, sitemap paths, structured data, mobile UX, and the enquiry route before requesting approval to publish.
+
+
+## Manual page-artifact workflow (2026-10-15)
+
+- Added `.github/workflows/prepare-seo-venue-pages.yml`, manually triggered only with `workflow_dispatch` on `seo/technical-foundation-audit`.
+- It runs the unit tests, invokes the existing public `smv_public_venues` RPC through `seo/generate_venue_seo.py`, runs the static audit, and uploads `venue-pages/**` plus the updated `sitemap.xml` as a short-lived GitHub Actions artifact.
+- It does **not** commit generated output, merge branches, deploy, or change the live website. It fails closed if required Supabase repository secrets are absent, the public RPC returns no eligible venues, or no generated pages are produced.
+- Repository inspection found a root-level `CNAME` containing `selectmyvenue.com` and static HTML files, but did not find a build/deployment workflow on the SEO branch or main. The GitHub Pages settings endpoint could not be verified through the available read interface, so the actual publishing source remains unconfirmed.
+- Before any live publication, manually review the generated artifact and verify live sitemap/URL serving, canonical/indexability, and the existing enquiry-to-CRM route in an approved test environment.
