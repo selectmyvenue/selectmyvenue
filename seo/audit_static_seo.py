@@ -8,6 +8,7 @@ Uses only the Python standard library. It does not modify files, access Supabase
 or make network requests. It checks static HTML and sitemap-to-file consistency;
 it is not a substitute for live HTTP, browser, accessibility, or Search Console tests.
 """
+import argparse
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
@@ -61,10 +62,13 @@ class MetadataParser(HTMLParser):
         return " ".join(part for part in self.title_parts if part).strip()
 
 
-def html_files_under(root: Path):
-    """Find root and generated nested HTML pages while skipping dependency folders."""
+def html_files_under(root: Path, generated_only: bool = False):
+    """Find HTML pages while skipping dependencies; optionally limit metadata checks to generated venue pages."""
+    search_root = root / "venue-pages" if generated_only else root
+    if not search_root.is_dir():
+        return []
     return sorted(
-        path for path in root.rglob("*.html")
+        path for path in search_root.rglob("*.html")
         if not any(part in SKIP_DIRS for part in path.relative_to(root).parts)
     )
 
@@ -92,8 +96,8 @@ def sitemap_url_to_file(url: str, root: Path) -> Path | None:
     return target
 
 
-def main():
-    html_files = html_files_under(ROOT)
+def main(generated_only: bool = False):
+    html_files = html_files_under(ROOT, generated_only=generated_only)
     if not html_files:
         print("ERROR: no HTML pages found.")
         return 2
@@ -203,7 +207,7 @@ def main():
             warnings += 1
 
     print("\nSEO audit summary")
-    print(f"HTML files checked (including generated nested pages): {len(html_files)}")
+    print(f"HTML files checked: {len(html_files)}")
     print(f"Sitemap URLs checked: {len(sitemap_urls)}")
     print(f"Sitemap URLs mapped to local HTML: {len(sitemap_targets)}")
     print(f"Errors: {errors}")
@@ -213,4 +217,7 @@ def main():
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    parser = argparse.ArgumentParser(description="Static SEO audit for Select My Venue")
+    parser.add_argument("--generated-only", action="store_true", help="check metadata only on generated venue pages; still validate the full sitemap")
+    args = parser.parse_args()
+    raise SystemExit(main(generated_only=args.generated_only))
