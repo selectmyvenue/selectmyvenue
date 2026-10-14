@@ -35,10 +35,12 @@ def slugify(value: object) -> str:
 
 
 def is_public(venue: dict) -> bool:
+    # Fail closed: eligibility must be explicit in the public RPC response.
     return (
-        str(venue.get("venue_status") or "approved").lower() == "approved"
-        and str(venue.get("verification_status") or "verified").lower() == "verified"
-        and venue.get("public_listing_enabled") is not False
+        str(venue.get("venue_status") or "").strip().lower() == "approved"
+        and str(venue.get("verification_status") or "").strip().lower() == "verified"
+        and venue.get("public_listing_enabled") is True
+        and bool(str(venue.get("venue_name") or "").strip())
     )
 
 
@@ -165,6 +167,14 @@ def main() -> int:
     rows = public_venue_rows()
     if not rows:
         raise RuntimeError("No eligible public venues returned; refusing to publish an empty venue index.")
+    if not sitemap_path.exists():
+        raise RuntimeError("sitemap.xml is missing; refusing to write generated pages.")
+    # Parse the sitemap before writing anything so a malformed/missing sitemap
+    # cannot leave a partial generated-page output behind.
+    tree = ET.parse(sitemap_path)
+    root_xml = tree.getroot()
+    if root_xml.tag != f"{{{SITEMAP_NS}}}urlset":
+        raise RuntimeError("sitemap.xml is not a standard sitemap urlset; refusing to publish.")
     output.mkdir(parents=True, exist_ok=True)
     new_urls = set()
     for venue in rows:
@@ -177,10 +187,6 @@ def main() -> int:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(venue_page(venue, url), encoding="utf-8")
         new_urls.add(url)
-    if not sitemap_path.exists():
-        raise RuntimeError("sitemap.xml is missing; generated pages exist but sitemap was not changed.")
-    tree = ET.parse(sitemap_path)
-    root_xml = tree.getroot()
     loc_tag = f"{{{SITEMAP_NS}}}loc"
     lastmod_tag = f"{{{SITEMAP_NS}}}lastmod"
     for item in list(root_xml):
