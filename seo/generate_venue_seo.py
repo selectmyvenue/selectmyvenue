@@ -76,7 +76,12 @@ def public_venue_rows() -> list[dict]:
     if not isinstance(payload, list):
         raise RuntimeError("Public venue RPC returned an unexpected format; refusing to publish.")
     rows = [venue_from_row(item) for item in payload]
-    return [v for v in rows if v and v.get("id") and is_public(v)]
+    eligible = [v for v in rows if v and v.get("id") and is_public(v)]
+    # An unsafe or incomplete response must not silently overwrite generated pages.
+    for venue in eligible:
+        if not str(venue.get("venue_name") or "").strip():
+            raise RuntimeError("Public venue RPC included an eligible row without a venue name; refusing to publish.")
+    return eligible
 
 
 def venue_page(venue: dict, url: str) -> str:
@@ -89,6 +94,10 @@ def venue_page(venue: dict, url: str) -> str:
     if len(description) < 40:
         description = f"Explore {name} in {location}. Check venue capacity, facilities, pricing and event suitability with Select My Venue."
     description = description[:280]
+    # Never invent a specific city when the approved listing omits it.
+    address_locality = city or area or None
+    address_region = str(venue.get("state") or "").strip() or None
+    address_postal_code = str(venue.get("pincode") or "").strip() or None
     cover = str(venue.get("cover_image_url") or "").strip()
     if not cover.startswith(("https://", "http://")):
         cover = ""
@@ -124,7 +133,7 @@ def venue_page(venue: dict, url: str) -> str:
         "description": description,
         "url": url,
         "image": cover or None,
-        "address": {"@type": "PostalAddress", "addressLocality": city or "Delhi NCR", "addressRegion": "Delhi NCR", "addressCountry": "IN"},
+        "address": {"@type": "PostalAddress", **({"addressLocality": address_locality} if address_locality else {}), **({"addressRegion": address_region} if address_region else {}), **({"postalCode": address_postal_code} if address_postal_code else {}), "addressCountry": "IN"},
         "additionalType": venue_type,
     }
     schema = {k: v for k, v in schema.items() if v is not None}
