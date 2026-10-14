@@ -212,6 +212,11 @@
     byId("venueOgDescription")?.setAttribute("content",description);
     byId("venueOgUrl")?.setAttribute("content",pageUrl);
     byId("venueOgImage")?.setAttribute("content",imageUrl||"https://selectmyvenue.com/logo.png");
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute("content",title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content",description);
+    document.querySelector('meta[name="twitter:image"]')?.setAttribute("content",imageUrl||"https://selectmyvenue.com/logo.png");
+    const robots=document.querySelector('meta[name="robots"]');
+    if(robots)robots.setAttribute("content","index,follow,max-image-preview:large");
   }
 
   function setStructuredData(venue, images, description) {
@@ -477,7 +482,14 @@
     document.addEventListener("keydown",event=>{if(event.key==="Escape")closeQuoteModal();});
   }
 
-  function showError(){byId("venueProfileLoading").hidden=true;byId("venueProfileError").hidden=false;}
+  function showError(){
+    byId("venueProfileLoading").hidden=true;
+    byId("venueProfileError").hidden=false;
+    // Do not let invalid, private, or unavailable venue IDs become indexable thin pages.
+    const robots=document.querySelector('meta[name="robots"]');
+    if(robots)robots.setAttribute("content","noindex,follow");
+    document.title="Venue Profile Unavailable | Select My Venue";
+  }
 
   async function loadProfile(){
     if(!validVenueId||!client)return showError();
