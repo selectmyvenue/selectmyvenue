@@ -41,6 +41,8 @@ def is_public(venue: dict) -> bool:
         and str(venue.get("verification_status") or "").strip().lower() == "verified"
         and venue.get("public_listing_enabled") is True
         and bool(str(venue.get("venue_name") or "").strip())
+        # Location-intent SEO pages require a real area or city.
+        and bool(str(venue.get("area") or venue.get("city") or "").strip())
     )
 
 
@@ -88,11 +90,15 @@ def venue_page(venue: dict, url: str) -> str:
     name = str(venue.get("venue_name") or "Verified Venue").strip()
     area = str(venue.get("area") or "").strip()
     city = str(venue.get("city") or "").strip()
-    location = ", ".join(dict.fromkeys(part for part in (area, city) if part)) or "Delhi NCR"
+    location = ", ".join(dict.fromkeys(part for part in (area, city) if part))
+    display_location = location or "Location details on request"
     venue_type = str(venue.get("venue_type") or "Wedding and event venue").strip()
     description = str(venue.get("description") or "").strip()
     if len(description) < 40:
-        description = f"Explore {name} in {location}. Check venue capacity, facilities, pricing and event suitability with Select My Venue."
+        if location:
+            description = f"Explore {name} in {location}. Check venue capacity, facilities, pricing and event suitability with Select My Venue."
+        else:
+            description = f"Explore {name} on Select My Venue. Confirm its location, capacity, facilities, pricing and event suitability with our team."
     description = description[:280]
     # Never invent a specific city when the approved listing omits it.
     address_locality = city or area or None
@@ -123,8 +129,8 @@ def venue_page(venue: dict, url: str) -> str:
     events = [str(x).strip() for x in events if str(x).strip()][:12]
     # Open the existing quote modal immediately so SEO traffic can enquire without extra navigation.
     profile = SITE + "/venue.html?id=" + quote(str(venue["id"]), safe="") + "&quote=1"
-    title = f"{name} in {location} | Select My Venue"
-    image_tag = f'<img src="{esc(cover)}" alt="{esc(name)} venue in {esc(location)}" loading="eager" width="1200" height="800">' if cover else ""
+    title = f"{name} in {location} | Select My Venue" if location else f"{name} | Select My Venue"
+    image_tag = f'<img src="{esc(cover)}" alt="{esc(name)} venue" loading="eager" width="1200" height="800">' if cover else ""
     features_html = "".join(f"<li>{esc(item)}</li>" for item in features) or "<li>Ask our team to confirm facilities</li>"
     events_html = ", ".join(events) if events else "Weddings and private events (confirm suitability)"
     schema = {
@@ -175,7 +181,7 @@ h1{{font-size:clamp(28px,5vw,46px);line-height:1.13;letter-spacing:-.03em;margin
 <header><a href="{SITE}/">Select My Venue</a><nav><a href="{SITE}/venues.html">Browse venues</a></nav></header>
 <main><div class="crumb"><a href="{SITE}/">Home</a> › <a href="{SITE}/venues.html">Verified venues</a> › {esc(name)}</div>
 <article class="card"><div class="hero">{image_tag}</div><div class="body">
-<p class="eyebrow">Verified venue listing</p><h1>{esc(name)}</h1><p class="location">⌖ {esc(location)} · {esc(venue_type)}</p>
+<p class="eyebrow">Verified venue listing</p><h1>{esc(name)}</h1><p class="location">⌖ {esc(display_location)} · {esc(venue_type)}</p>
 <p>{esc(description)}</p><div class="facts"><div class="fact"><span>CAPACITY</span><strong>{esc(capacity)}</strong></div><div class="fact"><span>PRICE GUIDE</span><strong>{esc(price)}</strong></div><div class="fact"><span>EVENTS</span><strong>{esc(events_html)}</strong></div></div>
 <h2>Facilities &amp; services</h2><ul class="features">{features_html}</ul>
 <p>Venue details and availability can change. Contact Select My Venue to confirm current packages, date availability and final pricing directly with the venue.</p>
