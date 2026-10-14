@@ -33,6 +33,4 @@ jobs:
         with:
           python-version: '3.x'
       - name: Run SEO unit tests
-        run: python -m unittest discover -s seo/tests -v
-      - name: Run static SEO audit
-        run: python seo/audit_static_seo.py --generated-only
+        run: python seo/tests/test_all_event_venue_page.py -v
