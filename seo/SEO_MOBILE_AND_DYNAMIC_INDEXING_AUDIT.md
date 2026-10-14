@@ -69,6 +69,14 @@ The current browser-rendered venue directory alone cannot guarantee this workflo
 - Add source attribution only after reviewing schema and CRM dependencies; no schema change is approved.
 - Review Search Console impressions/clicks, organic enquiries and qualified leads monthly.
 
+## Branch implementation updates (2026-10-15)
+
+- `venue-profile.js` now keeps Twitter title/description/image aligned with the venue-specific Open Graph metadata.
+- If a venue ID is invalid or the public venue RPC cannot find a public profile, the profile page switches to `noindex,follow` so empty/error states are not intentionally offered for indexing.
+- Added `seo/generate_venue_sitemap.py`, a standard-library-only generator that accepts a JSON export of the public venues RPC and outputs unique sitemap URL entries only for approved, verified, publicly enabled venues with valid UUIDs and names. It does not connect to Supabase, edit the main sitemap, or deploy.
+
+The generator is a safe building block, not yet an automatic approval trigger. The repository is a static site and currently has no verified venue-approval-to-deployment workflow. To complete automatic updates, a controlled workflow must be configured with an approved public-data source and deployment permissions; this should be reviewed before enabling it.
+
 ## Not yet verified
 
 Live HTTP status, Core Web Vitals, mobile screenshots, Search Console, analytics accuracy, deployment workflow, successful enquiry-to-CRM round trip and public venue slug completeness. These require separate runtime/account checks and controlled tests. No claim of automated Google indexing or production lead growth should be made until verified.
