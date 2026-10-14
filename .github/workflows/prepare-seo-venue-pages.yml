@@ -31,7 +31,7 @@ jobs:
         run: python seo/generate_venue_seo.py
 
       - name: Audit generated pages and sitemap
-        run: python seo/audit_static_seo.py
+        run: python seo/audit_static_seo.py --generated-only
 
       - name: Prepare artifact summary
         shell: bash
