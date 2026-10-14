@@ -40,3 +40,15 @@ Status: review-only preparation; do not merge or deploy without owner approval.
 - [ ] Each indexable landing page has a unique, accurate title and meta description and one correct canonical.
 - [ ] No fabricated venue claims, prices, capacity, amenities, or availability.
 - [ ] Branch diff is reviewed and owner explicitly approves merge/deployment.
+
+
+## Latest SEO branch progress (2026-10-15)
+
+- Expanded `seo/audit_static_seo.py` to scan nested generated venue pages as well as root HTML files, map directory-style venue URLs to `index.html`, and flag duplicate sitemap URLs, non-HTTPS/off-domain sitemap URLs, missing local targets, noindex entries, and canonical/sitemap mismatches.
+- Added unit tests in `seo/tests/` for metadata parsing, generated-page path mapping, path-traversal rejection, public-venue eligibility, quote CTA output, and avoiding invented locality in structured data.
+- Added `.github/workflows/seo-audit-tests.yml` to run these tests on changes to the SEO branch and pull requests targeting `main`.
+- Latest GitHub Actions run: [SEO audit unit tests](https://github.com/selectmyvenue/selectmyvenue/actions/runs/38644528015) completed successfully; 10 tests passed.
+- Generated venue-page CTA now opens the existing venue quote modal using the established `venue.html?id=…&quote=1` route. This uses the existing `customer_enquiries` insertion path in `venue-profile.js`; no CRM schema, RLS, form payload, or customer enquiry handler was changed.
+- Generated pages preserve landing URL, referrer, and campaign parameters in the existing session attribution key so the existing venue-profile submission can include attribution in its `requirements` text.
+- These changes exist only on `seo/technical-foundation-audit`. No generated pages have been published by this work, and no production deployment, merge, live CRM test, or live sitemap validation has been performed.
+- Next gate: identify and verify the actual GitHub Pages publishing path; then run a read-only audit against a controlled copy and verify generated pages, sitemap paths, structured data, mobile UX, and the enquiry route before requesting approval to publish.
