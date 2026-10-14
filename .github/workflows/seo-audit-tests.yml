@@ -1,6 +1,14 @@
 name: SEO audit unit tests
 
 on:
+  push:
+    branches:
+      - seo/all-intent-enquiry-coverage
+    paths:
+      - 'seo/**'
+      - '*.html'
+      - 'sitemap.xml'
+      - '.github/workflows/seo-audit-tests.yml'
   pull_request:
     branches:
       - main
