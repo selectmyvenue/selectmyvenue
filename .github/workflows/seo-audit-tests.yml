@@ -1,0 +1,30 @@
+name: SEO audit unit tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'seo/**'
+      - '*.html'
+      - 'sitemap.xml'
+      - '.github/workflows/seo-audit-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seo-audit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Run SEO unit tests
+        run: python -m unittest discover -s seo/tests -v
+      - name: Run static SEO audit
+        run: python seo/audit_static_seo.py --generated-only
