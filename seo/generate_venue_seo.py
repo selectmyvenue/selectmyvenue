@@ -149,18 +149,18 @@ def venue_page(venue: dict, url: str) -> str:
 <meta property="og:url" content="{esc(url)}">{f'<meta property="og:image" content="{esc(cover)}">' if cover else ''}
 <meta name="theme-color" content="#073b35">
 <script>
-(function(){try{
+(function(){{try{{
   var key="smv-traffic-attribution-v1";
-  var saved=JSON.parse(sessionStorage.getItem(key)||"{}")||{};
+  var saved=JSON.parse(sessionStorage.getItem(key)||"{{}}")||{{}};
   var params=new URLSearchParams(location.search);
-  ["gclid","gbraid","wbraid","utm_source","utm_medium","utm_campaign","utm_term","utm_content"].forEach(function(name){
+  ["gclid","gbraid","wbraid","utm_source","utm_medium","utm_campaign","utm_term","utm_content"].forEach(function(name){{
     var value=(params.get(name)||"").trim();if(value)saved[name]=value.slice(0,500);
-  });
+  }});
   if(!saved.landing_page)saved.landing_page=location.href.slice(0,1000);
   if(!saved.first_referrer&&document.referrer)saved.first_referrer=document.referrer.slice(0,1000);
   saved.last_page=location.href.slice(0,1000);
   sessionStorage.setItem(key,JSON.stringify(saved));
-}catch(_){} })();
+}}catch(_){{}} }})();
 </script>
 <script type="application/ld+json">{json.dumps(schema, ensure_ascii=False).replace("</", "<\\/")}</script>
 <style>
