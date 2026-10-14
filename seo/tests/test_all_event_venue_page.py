@@ -41,6 +41,18 @@ class AllEventVenuePageTests(unittest.TestCase):
         for event in ("Wedding", "Engagement", "Reception", "Birthday", "Anniversary", "Kitty Party", "Corporate Event", "Other Event"):
             self.assertIn(f">{event}</option>", match.group(1))
 
+    def test_search_hub_enquiry_uses_the_same_crm_handler(self):
+        form_start = self.hub.index('<form class="quick-search-form"')
+        form_end = self.hub.index("</form>", form_start)
+        form = self.hub[form_start:form_end]
+        self.assertIn("data-smv-quick-enquiry", form)
+        self.assertNotIn('action="index.html#enquiry"', form)
+        self.assertNotIn('method="get"', form)
+        for field in ("customer_name", "mobile", "occasion", "location", "event_date", "guests", "budget_per_person", "requirements"):
+            self.assertRegex(form, rf'name="{field}"')
+        self.assertIn('src="quick-enquiry.js?', self.hub)
+        self.assertIn('client.from("customer_enquiries").insert(payload)', self.handler)
+
     def test_page_is_linked_from_hub_and_sitemap(self):
         self.assertIn("venues-for-every-event-delhi-ncr.html", self.hub)
         ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
