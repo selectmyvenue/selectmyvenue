@@ -9,42 +9,30 @@ SPEC.loader.exec_module(generator)
 
 
 class PublicVenueEligibilityTests(unittest.TestCase):
-    def test_requires_explicit_approval_verification_and_public_listing(self):
+    def test_public_rpc_projection_uses_name_and_real_location(self):
+        # The live smv_public_venues RPC exposes only its public projection;
+        # internal approval/verification columns are not part of its response.
         venue = {
+            "id": "11111111-1111-4111-8111-111111111111",
             "venue_name": "Sample Banquet",
-            "venue_status": "approved",
-            "verification_status": "verified",
-            "public_listing_enabled": True,
             "area": "Sector 29",
             "city": "Gurugram",
         }
         self.assertTrue(generator.is_public(venue))
-        for field, value in (
-            ("venue_status", "pending"),
-            ("verification_status", "unverified"),
-            ("public_listing_enabled", False),
-            ("venue_name", ""),
-        ):
-            changed = dict(venue)
-            changed[field] = value
-            self.assertFalse(generator.is_public(changed), field)
 
-    def test_excludes_approved_venues_without_location_from_local_seo(self):
-        venue = {
-            "venue_name": "Sample Banquet",
-            "venue_status": "approved",
-            "verification_status": "verified",
-            "public_listing_enabled": True,
-        }
-        self.assertFalse(generator.is_public(venue))
+    def test_excludes_rows_without_name_or_location(self):
+        base = {"venue_name": "Sample Banquet", "area": "Sector 29"}
+        for field, value in (("venue_name", ""), ("area", ""), ("city", "")):
+            changed = dict(base)
+            changed[field] = value
+            if field == "area":
+                changed.pop("city", None)
+            self.assertFalse(generator.is_public(changed), field)
 
     def test_generated_page_opens_quote_and_captures_landing_attribution(self):
         venue = {
             "id": "11111111-1111-4111-8111-111111111111",
             "venue_name": "Sample Banquet",
-            "venue_status": "approved",
-            "verification_status": "verified",
-            "public_listing_enabled": True,
             "area": "Sector 29",
             "city": "Gurugram",
             "venue_type": "Banquet Hall",
@@ -62,9 +50,6 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         venue = {
             "id": "22222222-2222-4222-8222-222222222222",
             "venue_name": "Sample Banquet",
-            "venue_status": "approved",
-            "verification_status": "verified",
-            "public_listing_enabled": True,
         }
         page = generator.venue_page(venue, "https://selectmyvenue.com/venue-pages/sample-banquet-22222222/")
         self.assertIn('"addressCountry": "IN"', page)
