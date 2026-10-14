@@ -73,6 +73,16 @@ class SitemapMappingTests(unittest.TestCase):
             relative = {p.relative_to(root).as_posix() for p in audit.html_files_under(root)}
             self.assertEqual(relative, {"index.html", "venue-pages/test/index.html"})
 
+    def test_generated_only_limits_metadata_scan_to_venue_pages(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "index.html").write_text("<title>Home</title>", encoding="utf-8")
+            generated = root / "venue-pages" / "test"
+            generated.mkdir(parents=True)
+            (generated / "index.html").write_text("<title>Venue</title>", encoding="utf-8")
+            relative = {p.relative_to(root).as_posix() for p in audit.html_files_under(root, generated_only=True)}
+            self.assertEqual(relative, {"venue-pages/test/index.html"})
+
 
 if __name__ == "__main__":
     unittest.main()
