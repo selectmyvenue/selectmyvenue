@@ -11,8 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
-      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
       SEO_SITE_ROOT: ${{ github.workspace }}
     steps:
       - name: Check out SEO implementation branch
@@ -29,6 +27,9 @@ jobs:
         run: python -m unittest discover -s seo/tests -v
 
       - name: Generate approved public venue pages
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: python seo/generate_venue_seo.py
 
       - name: Audit generated pages and sitemap
