@@ -79,6 +79,18 @@ def public_venue_rows() -> list[dict]:
         raise RuntimeError("Public venue RPC returned an unexpected format; refusing to publish.")
     rows = [venue_from_row(item) for item in payload]
     eligible = [v for v in rows if v and v.get("id") and is_public(v)]
+    # Emit privacy-safe diagnostics when the RPC returns rows but none qualify.
+    # Do not log names, IDs, contact details, prices, or raw venue records.
+    if not eligible:
+        valid_rows = [v for v in rows if isinstance(v, dict)]
+        print(f"Public venue RPC returned {len(payload)} row(s); {len(valid_rows)} row(s) were objects.", file=sys.stderr)
+        if valid_rows:
+            print("Returned field names: " + ", ".join(sorted({key for row in valid_rows[:10] for key in row.keys()})), file=sys.stderr)
+            for field in ("venue_status", "verification_status", "public_listing_enabled"):
+                values = sorted({str(row.get(field)) for row in valid_rows if row.get(field) is not None})
+                print(f"Observed {field} values: " + (", ".join(values[:10]) if values else "(field missing or null)"), file=sys.stderr)
+            location_rows = sum(bool(str(row.get("area") or row.get("city") or "").strip()) for row in valid_rows)
+            print(f"Rows with area/city: {location_rows}/{len(valid_rows)}", file=sys.stderr)
     # An unsafe or incomplete response must not silently overwrite generated pages.
     for venue in eligible:
         if not str(venue.get("venue_name") or "").strip():
