@@ -21,13 +21,11 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertTrue(generator.is_public(venue))
 
     def test_excludes_rows_without_name_or_location(self):
-        base = {"venue_name": "Sample Banquet", "area": "Sector 29"}
-        for field, value in (("venue_name", ""), ("area", ""), ("city", "")):
-            changed = dict(base)
-            changed[field] = value
-            if field == "area":
-                changed.pop("city", None)
-            self.assertFalse(generator.is_public(changed), field)
+        self.assertFalse(generator.is_public({"venue_name": "", "area": "Sector 29"}))
+        self.assertFalse(generator.is_public({"venue_name": "Sample Banquet"}))
+        self.assertFalse(generator.is_public({"venue_name": "Sample Banquet", "area": "", "city": ""}))
+        self.assertTrue(generator.is_public({"venue_name": "Sample Banquet", "area": "Sector 29"}))
+        self.assertTrue(generator.is_public({"venue_name": "Sample Banquet", "city": "Gurugram"}))
 
     def test_generated_page_opens_quote_and_captures_landing_attribution(self):
         venue = {
