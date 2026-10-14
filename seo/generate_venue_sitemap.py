@@ -41,9 +41,10 @@ def unwrap_rows(payload):
 
 
 def is_public_venue(venue):
-    status = str(venue.get("venue_status") or "approved").strip().lower()
-    verification = str(venue.get("verification_status") or "verified").strip().lower()
-    listing_enabled = venue.get("public_listing_enabled") is not False
+    # Fail closed: missing eligibility fields must never silently publish a venue.
+    status = str(venue.get("venue_status") or "").strip().lower()
+    verification = str(venue.get("verification_status") or "").strip().lower()
+    listing_enabled = venue.get("public_listing_enabled") is True
     return status == "approved" and verification == "verified" and listing_enabled
 
 
@@ -82,7 +83,7 @@ def main():
         payload = json.loads(args.input.read_text(encoding="utf-8"))
         xml, count = build_xml(unwrap_rows(payload))
         ET.fromstring(xml)
-        args.output.write_bytes(xml + b"\\n")
+        args.output.write_bytes(xml + b"\n")
     except (OSError, json.JSONDecodeError, ValueError, ET.ParseError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 2
