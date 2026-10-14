@@ -35,16 +35,15 @@ def slugify(value: object) -> str:
 
 
 def is_public(venue: dict) -> bool:
-    # Fail closed: eligibility must be explicit in the public RPC response.
+    # smv_public_venues is the existing public-facing RPC used by the live
+    # venue directory/profile. It returns a public projection and intentionally
+    # omits internal approval/verification columns. Treat presence in that RPC
+    # as the public-visibility gate, then fail closed on identity and location.
+    # Do not infer or fabricate locality for location-intent SEO pages.
     return (
-        str(venue.get("venue_status") or "").strip().lower() == "approved"
-        and str(venue.get("verification_status") or "").strip().lower() == "verified"
-        and venue.get("public_listing_enabled") is True
-        and bool(str(venue.get("venue_name") or "").strip())
-        # Location-intent SEO pages require a real area or city.
+        bool(str(venue.get("venue_name") or "").strip())
         and bool(str(venue.get("area") or venue.get("city") or "").strip())
     )
-
 
 def venue_from_row(row: object) -> dict | None:
     if not isinstance(row, dict):
