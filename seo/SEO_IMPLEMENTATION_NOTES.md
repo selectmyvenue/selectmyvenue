@@ -61,3 +61,5 @@ Status: review-only preparation; do not merge or deploy without owner approval.
 - It does **not** commit generated output, merge branches, deploy, or change the live website. It fails closed if required Supabase repository secrets are absent, the public RPC returns no eligible venues, or no generated pages are produced.
 - Repository inspection found a root-level `CNAME` containing `selectmyvenue.com` and static HTML files, but did not find a build/deployment workflow on the SEO branch or main. The GitHub Pages settings endpoint could not be verified through the available read interface, so the actual publishing source remains unconfirmed.
 - Before any live publication, manually review the generated artifact and verify live sitemap/URL serving, canonical/indexability, and the existing enquiry-to-CRM route in an approved test environment.
+
+- The page generator now also excludes approved/verified records that lack a real `area` or `city` from the location-focused SEO page set. This avoids inventing “Delhi NCR” as a venue location; locationless records can remain in the existing directory/CRM but do not get these local SEO pages until the listing has a location.
