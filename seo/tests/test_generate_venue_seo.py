@@ -27,6 +27,18 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertTrue(generator.is_public({"venue_name": "Sample Banquet", "area": "Sector 29"}))
         self.assertTrue(generator.is_public({"venue_name": "Sample Banquet", "city": "Gurugram"}))
 
+    def test_focus_market_prioritizes_delhi_and_gurgaon_aliases(self):
+        self.assertEqual(generator.focus_market({"city": "Delhi", "area": "Chhatarpur"}), "Delhi")
+        self.assertEqual(generator.focus_market({"city": "New Delhi", "area": "South Delhi"}), "Delhi")
+        self.assertEqual(generator.focus_market({"city": "Gurgaon", "area": "Sector 29"}), "Gurgaon")
+        self.assertEqual(generator.focus_market({"city": "Gurugram", "area": "Sector 56"}), "Gurgaon")
+
+    def test_focus_market_does_not_misclassify_other_or_ambiguous_ncr_locations(self):
+        self.assertIsNone(generator.focus_market({"city": "Noida", "area": "Delhi NCR"}))
+        self.assertIsNone(generator.focus_market({"city": "Faridabad", "area": "Delhi NCR"}))
+        self.assertIsNone(generator.focus_market({"city": "Delhi NCR", "area": "Sector 29"}))
+        self.assertIsNone(generator.focus_market({"city": "", "area": "NCR"}))
+
     def test_generated_page_opens_quote_and_captures_landing_attribution(self):
         venue = {
             "id": "11111111-1111-4111-8111-111111111111",
