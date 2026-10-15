@@ -8,6 +8,7 @@ permissions:
 
 jobs:
   generate-seo-artifact:
+    if: github.ref == 'refs/heads/seo/delhi-gurgaon-venue-engine-review'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
@@ -16,7 +17,7 @@ jobs:
       - name: Check out SEO implementation branch
         uses: actions/checkout@v4
         with:
-          ref: seo/technical-foundation-audit
+          ref: ${{ github.ref_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -26,7 +27,7 @@ jobs:
       - name: Run SEO generator safety tests
         run: python -m unittest discover -s seo/tests -v
 
-      - name: Generate approved public venue pages
+      - name: Generate public Delhi/Gurgaon venue pages
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
