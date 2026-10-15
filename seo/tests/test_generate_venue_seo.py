@@ -95,6 +95,23 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         broad_schema = json.loads(broad_match.group(1))
         self.assertEqual(broad_schema["address"]["addressLocality"], "Gurgaon")
 
+    def test_description_html_is_cleaned_and_city_is_not_repeated(self):
+        venue = {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "venue_name": "Sample Banquet",
+            "area": "Sector 89A, Gurgaon",
+            "city": "Gurgaon",
+            "description": "<p>Beautiful wedding venue</p><div>with family dining</div> &amp; celebrations",
+        }
+        page = generator.venue_page(venue, "https://selectmyvenue.com/venue-pages/sample-banquet-33333333/")
+        self.assertIn("Sample Banquet in Sector 89A, Gurgaon | Select My Venue", page)
+        self.assertNotIn("Sector 89A, Gurgaon, Gurgaon", page)
+        self.assertIn('content="Beautiful wedding venue with family dining &amp; celebrations"', page)
+        self.assertNotIn("&lt;p&gt;", page)
+        meta = re.search(r'<meta name="description" content="([^"]*)"', page)
+        self.assertIsNotNone(meta)
+        self.assertLessEqual(len(meta.group(1)), 160)
+
     def test_prunes_only_stale_pages_marked_as_generator_owned(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "venue-pages"
