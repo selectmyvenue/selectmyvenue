@@ -39,6 +39,9 @@ class PublicVenueEligibilityTests(unittest.TestCase):
     def test_focus_market_does_not_misclassify_other_or_ambiguous_ncr_locations(self):
         self.assertIsNone(generator.focus_market({"city": "Noida", "area": "Delhi NCR"}))
         self.assertIsNone(generator.focus_market({"city": "Faridabad", "area": "Delhi NCR"}))
+        self.assertIsNone(generator.focus_market({"city": "Delhi", "area": "Kundli"}))
+        self.assertIsNone(generator.focus_market({"city": "Delhi", "area": "Sonipat"}))
+        self.assertIsNone(generator.focus_market({"city": "Gurgaon", "area": "Noida"}))
         self.assertIsNone(generator.focus_market({"city": "Delhi NCR", "area": "Sector 29"}))
         self.assertIsNone(generator.focus_market({"city": "", "area": "NCR"}))
 
