@@ -37,7 +37,7 @@ def plain_text(value: object) -> str:
     text = re.sub(r"(?is)<(script|style)\b[^>]*>.*?</\1\s*>", " ", text)
     text = re.sub(r"(?s)<[^>]*>", " ", text)
     text = html.unescape(text)
-    return re.sub(r"\\s+", " ", text).strip()
+    return re.sub(r"\s+", " ", text).strip()
 
 
 def slugify(value: object) -> str:
@@ -184,8 +184,11 @@ def venue_page(venue: dict, url: str) -> str:
             description = f"Explore {name} in {location}. Check venue capacity, facilities, pricing and event suitability with Select My Venue."
         else:
             description = f"Explore {name} on Select My Venue. Confirm its location, capacity, facilities, pricing and event suitability with our team."
-    description = description[:280].rsplit(" ", 1)[0]
-    meta_description = description[:160].rsplit(" ", 1)[0]
+    if len(description) > 280:
+        description = description[:280].rsplit(" ", 1)[0].rstrip(" ,;:-")
+    meta_description = description
+    if len(meta_description) > 160:
+        meta_description = meta_description[:160].rsplit(" ", 1)[0].rstrip(" ,;:-")
     # Never invent a specific city when the approved listing omits it.
     address_locality = display_city or area or None
     address_region = str(venue.get("state") or "").strip() or None
