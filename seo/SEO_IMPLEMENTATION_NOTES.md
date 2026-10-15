@@ -63,3 +63,12 @@ Status: review-only preparation; do not merge or deploy without owner approval.
 - Before any live publication, manually review the generated artifact and verify live sitemap/URL serving, canonical/indexability, and the existing enquiry-to-CRM route in an approved test environment.
 
 - The page generator now also excludes approved/verified records that lack a real `area` or `city` from the location-focused SEO page set. This avoids inventing “Delhi NCR” as a venue location; locationless records can remain in the existing directory/CRM but do not get these local SEO pages until the listing has a location.
+
+
+## Current market focus (2026-10-15)
+
+- SEO rollout priority is **Delhi and Gurgaon/Gurugram**, reflecting the current venue inventory concentration.
+- The static venue-page generator now filters public listing rows to a clearly identified Delhi or Gurgaon market before writing generated pages and sitemap entries. Specific non-target cities such as Noida and Faridabad are not reclassified as Delhi merely because a broad area label says "Delhi NCR". Ambiguous generic NCR-only locations are held back until a real target locality is available.
+- The generator fails closed when no eligible Delhi/Gurgaon venue exists, so it does not replace the sitemap with an empty generated-venue set.
+- This is an SEO rollout scope, not a change to the existing venue directory or CRM inventory. No Supabase schema, RLS, customer enquiry form, CRM, merge, or deployment changes are included.
+- Required validation: run the SEO unit-test workflow, inspect the generated artifact and resulting sitemap, verify mobile rendering and quote CTA, and confirm the publishing path before any production release.
