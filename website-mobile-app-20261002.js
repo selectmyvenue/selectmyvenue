@@ -54,7 +54,7 @@
     nav.setAttribute("aria-label","Mobile navigation");
 
     nav.innerHTML =
-      '<a class="smv-mobile-nav-item smv-nav-home" href="index.html#home" aria-label="Home">'+
+      '<a class="smv-mobile-nav-item smv-nav-home" href="/#home" aria-label="Home">'+
         '<span class="smv-mobile-nav-icon">⌂</span><span>Home</span>'+
       '</a>'+
       '<a class="smv-mobile-nav-item smv-nav-venues" href="venues.html" aria-label="Browse venues">'+
