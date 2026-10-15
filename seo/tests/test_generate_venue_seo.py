@@ -1,4 +1,6 @@
 import importlib.util
+import json
+import re
 import unittest
 from pathlib import Path
 
@@ -58,6 +60,22 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertIn("Venue profile", page)
         self.assertNotIn("Verified venue listing", page)
         self.assertNotIn("approved public listing", page)
+
+    def test_generated_json_ld_is_valid_and_uses_only_supported_location_facts(self):
+        venue = {
+            "id": "11111111-1111-4111-8111-111111111111",
+            "venue_name": "Sample Banquet",
+            "area": "Sector 29",
+            "city": "Gurugram",
+            "venue_type": "Banquet Hall",
+        }
+        page = generator.venue_page(venue, "https://selectmyvenue.com/venue-pages/sample-banquet-11111111/")
+        match = re.search(r'<script type="application/ld\\+json">(.*?)</script>', page, re.S)
+        self.assertIsNotNone(match)
+        schema = json.loads(match.group(1))
+        self.assertEqual(schema["@type"], "LocalBusiness")
+        self.assertEqual(schema["address"]["addressLocality"], "Gurugram")
+        self.assertNotIn("additionalType", schema)
 
     def test_schema_does_not_invent_locality_when_listing_has_no_location(self):
         venue = {
