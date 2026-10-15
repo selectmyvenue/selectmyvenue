@@ -1,6 +1,6 @@
 # Select My Venue SEO Audit Findings (Draft)
 
-**Review date:** 2026-10-15  
+**Review date:** 2026-10-16  
 **Scope:** Static source review and public competitor-page spot checks. This is not a claim that every Indian venue website has been audited.
 
 ## Confirmed static checks
@@ -46,11 +46,19 @@
 - **Lead quality:** measure source and landing page alongside qualified/contacted leads, site visits, venue matches, and bookings. Form count alone is not success; don't create test leads in production.
 - **AI-assisted SEO:** use AI for research, drafting, clustering, and monitoring with human review and venue-specific facts. Do not mass-publish repetitive city/keyword pages.
 
-## Search Console and live-test status
+## Search Console snapshot (connected Windsor.ai / Search Console data)
 
-- Earlier project history records that Search Console ownership was verified and the sitemap was submitted; that is historical status, not proof of current indexing or performance.
-- Current Search Console data is not available through the connected GitHub repository tools. Current page indexing, query impressions/clicks, Core Web Vitals, and organic enquiry share therefore remain unverified until the reports are reviewed.
-- The public Rich Results Test is available, but no completed SMV URL test result has been captured in this audit. Do not claim mobile or structured-data validation is complete yet.
+**Snapshot date:** 2026-10-16. The connector returns Google Search Console Search Analytics aggregates; use the Search Console UI / URL Inspection for final indexing decisions. Metrics can differ by dimension, and query-level rows do not include all clicks because Google anonymizes some queries.
+
+- **URL-prefix property `https://selectmyvenue.com/`, last 28 days:** the country dimension reports India at 25 clicks, 65 impressions, 38.46% CTR and average position 11.8. Other countries contribute 7 impressions and no clicks in that country breakdown.
+- **Same property, last 3 months:** the country dimension reports India at 43 clicks, 148 impressions, 29.05% CTR and average position 12.98. The all-country page dimension returns 46 clicks and 453 impressions; do not add metrics across different dimensions or treat those two reports as directly interchangeable.
+- **Pages with opportunity in the last 3 months (page dimension, all countries):** `/venues-in-delhi.html` had 5 clicks / 67 impressions (average position ~3.1); `/delhi-ncr-venues.html` had 3 / 56 (~10.2); `/venues-in-gurgaon.html` had 0 / 16 (~11.9); `/party-halls-delhi-ncr.html` had 0 / 16 (~19.6); and `/list-your-venue.html` had 0 / 23 (~14.8). These are small samples, so use them as prioritization signals, not stable performance forecasts.
+- **Homepage URL variants:** the page dimension separately reports `/` and `/index.html`. The static `index.html` source declares the root URL as canonical, but Search Console URL Inspection should confirm Google's selected canonical. Review internal links for avoidable `index.html` links before making broad rewrites.
+- **Query-level data:** the connector returns a small set of low-volume queries (e.g. “party halls delhi”, “venue gurgaon”, “venue in delhi”) and those rows show zero clicks. This is not a total-click report: anonymized queries and aggregation differences mean page/country totals are the better overall traffic indicators.
+- **Sitemap discrepancy to verify in Search Console UI:** the connected sitemap report for `https://selectmyvenue.com/sitemap.xml` shows 36 submitted URLs, 0 errors and 0 warnings; its last-submitted timestamp is 2026-08-27 and last-downloaded is 2026-10-14. The current repository `sitemap.xml` contains 61 `<url>` entries. The connector's `indexed` field is marked deprecated, so its value of 0 must **not** be interpreted as proof that no URLs are indexed. Re-check the sitemap report and processing date in Search Console before taking action.
+- **Legacy www sitemap:** the connector also returns `https://www.selectmyvenue.com/sitemap.xml` with 1,027 submitted URLs, 1 error and 27 warnings, last downloaded in 2018. Review the www property and redirects/canonicalization in Search Console; do not delete or remove this entry automatically.
+- **What this means:** SMV has some organic search activity, but the absolute number of impressions remains small for a venue-discovery site. The next SEO priority is increasing relevant Delhi/Gurgaon wedding/banquet/party query coverage and resolving sitemap/canonical reporting questions—not claiming that SEO already drives most leads.
+- The public Rich Results Test and Search Console URL Inspection have not yet been run to completion for a live set of representative pages. Mobile rendering, Google-selected canonicals, dynamic venue profile indexing, Core Web Vitals, and organic enquiry share remain unverified.
 
 ## Safe release rules
 
