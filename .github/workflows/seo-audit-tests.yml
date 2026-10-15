@@ -1,0 +1,36 @@
+name: SEO audit unit tests
+
+on:
+  push:
+    branches:
+      - seo/all-intent-enquiry-coverage
+    paths:
+      - 'seo/**'
+      - '*.html'
+      - 'sitemap.xml'
+      - '.github/workflows/seo-audit-tests.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'seo/**'
+      - '*.html'
+      - 'sitemap.xml'
+      - '.github/workflows/seo-audit-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  seo-audit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Run SEO unit tests
+        run: python seo/tests/test_all_event_venue_page.py -v
