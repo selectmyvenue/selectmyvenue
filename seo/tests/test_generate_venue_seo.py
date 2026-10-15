@@ -55,6 +55,9 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertIn('name="description"', page)
         self.assertIn('rel="canonical"', page)
         self.assertIn("Sample Banquet", page)
+        self.assertIn("Venue profile", page)
+        self.assertNotIn("Verified venue listing", page)
+        self.assertNotIn("approved public listing", page)
 
     def test_schema_does_not_invent_locality_when_listing_has_no_location(self):
         venue = {
