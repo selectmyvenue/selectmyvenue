@@ -168,6 +168,11 @@ def public_venue_rows() -> list[dict]:
     return eligible
 
 
+def venue_profile_url(venue_id: object) -> str:
+    """Return the canonical, real Select My Venue profile URL for a public venue."""
+    return SITE + "/venue.html?id=" + quote(str(venue_id), safe="")
+
+
 def venue_page(venue: dict, url: str) -> str:
     name = str(venue.get("venue_name") or "Verified Venue").strip()
     area = str(venue.get("area") or "").strip()
@@ -223,8 +228,8 @@ def venue_page(venue: dict, url: str) -> str:
     if not isinstance(events, list):
         events = [x.strip() for x in re.split(r"[,|]", str(events)) if x.strip()]
     events = [str(x).strip() for x in events if str(x).strip()][:12]
-    # Open the existing quote modal immediately so SEO traffic can enquire without extra navigation.
-    profile = SITE + "/venue.html?id=" + quote(str(venue["id"]), safe="") + "&quote=1"
+    # Send visitors to the existing live venue profile, not a separate SEO landing page.
+    profile = venue_profile_url(venue["id"])
     title = f"{name} in {location} | Select My Venue" if location else f"{name} | Select My Venue"
     image_tag = f'<img src="{esc(cover)}" alt="{esc(name)} venue" loading="eager" width="1200" height="800">' if cover else ""
     features_html = "".join(f"<li>{esc(item)}</li>" for item in features) or "<li>Ask our team to confirm facilities</li>"
@@ -244,12 +249,21 @@ def venue_page(venue: dict, url: str) -> str:
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{esc(title)}</title><meta name="description" content="{esc(meta_description)}">
-<meta name="robots" content="index,follow,max-image-preview:large">
-<link rel="canonical" href="{esc(url)}">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="{esc(profile)}">
+<meta http-equiv="refresh" content="0;url={esc(profile)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Select My Venue">
 <meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(meta_description)}">
 <meta property="og:url" content="{esc(url)}">{f'<meta property="og:image" content="{esc(cover)}">' if cover else ''}
 <meta name="theme-color" content="#073b35">
+<script>
+(function(){{try{{
+  var destination=new URL("{profile}",location.origin);
+  var incoming=new URLSearchParams(location.search);
+  ["gclid","gbraid","wbraid","utm_source","utm_medium","utm_campaign","utm_term","utm_content"].forEach(function(name){{var value=incoming.get(name);if(value)destination.searchParams.set(name,value.slice(0,500));}});
+  location.replace(destination.toString());
+}}catch(_){{location.replace("{profile}");}}}})();
+</script>
 <script>
 (function(){{try{{
   var key="smv-traffic-attribution-v1";
@@ -313,9 +327,10 @@ def main() -> int:
         target = output / slug / "index.html"
         active_slugs.add(slug)
         url = f"{SITE}/venue-pages/{slug}/"
+        profile_url = venue_profile_url(venue["id"])
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(venue_page(venue, url), encoding="utf-8")
-        new_urls.add(url)
+        new_urls.add(profile_url)
     loc_tag = f"{{{SITEMAP_NS}}}loc"
     lastmod_tag = f"{{{SITEMAP_NS}}}lastmod"
     for item in list(root_xml):
