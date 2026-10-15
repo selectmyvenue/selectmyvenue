@@ -35,7 +35,7 @@ try {
       });
       const page = await context.newPage();
       const pageErrors = [];
-      page.on('pageerror', error => pageErrors.push(error.message));
+      page.on('pageerror', error => pageErrors.push(`${error.message} | ${error.stack || ''}`));
       try {
         const response = await page.goto(base + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
@@ -47,6 +47,10 @@ try {
           bodyWidth: document.body.scrollWidth,
           h1Count: document.querySelectorAll('h1').length,
           formCount: document.querySelectorAll('form').length,
+          overflowElements: [...document.querySelectorAll('body *')]
+            .map(el => ({tag: el.tagName, id: el.id, className: typeof el.className === 'string' ? el.className.slice(0, 120) : '', width: Math.round(el.getBoundingClientRect().width), right: Math.round(el.getBoundingClientRect().right), text: (el.innerText || '').trim().slice(0, 70)}))
+            .filter(el => el.width > document.documentElement.clientWidth + 2 || el.right > document.documentElement.clientWidth + 2)
+            .slice(0, 12),
         }));
         assert(
           metrics.documentWidth <= metrics.viewport + 2 && metrics.bodyWidth <= metrics.viewport + 2,
