@@ -79,6 +79,22 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertEqual(schema["address"]["addressLocality"], "Gurugram")
         self.assertNotIn("additionalType", schema)
 
+        broad_city_page = generator.venue_page(
+            {
+                "id": "22222222-2222-4222-8222-222222222222",
+                "venue_name": "Gurgaon Sample Venue",
+                "area": "Gurgaon",
+                "city": "Delhi NCR",
+            },
+            "https://selectmyvenue.com/venue-pages/gurgaon-sample-22222222/",
+        )
+        self.assertIn("Gurgaon", broad_city_page)
+        self.assertNotIn("Gurgaon, Delhi NCR", broad_city_page)
+        broad_match = re.search(r'<script type="application/ld\\+json">(.*?)</script>', broad_city_page, re.S)
+        self.assertIsNotNone(broad_match)
+        broad_schema = json.loads(broad_match.group(1))
+        self.assertEqual(broad_schema["address"]["addressLocality"], "Gurgaon")
+
     def test_prunes_only_stale_pages_marked_as_generator_owned(self):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "venue-pages"
