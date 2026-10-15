@@ -8,6 +8,7 @@ on:
     paths:
       - 'seo/**'
       - '*.html'
+      - 'website-mobile-app-20261002.js'
       - 'sitemap.xml'
       - '.github/workflows/seo-audit-tests.yml'
       - '.github/workflows/prepare-seo-venue-pages.yml'
@@ -32,6 +33,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check customer mobile app JavaScript syntax
+        run: node --check website-mobile-app-20261002.js
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
