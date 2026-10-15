@@ -23,7 +23,6 @@ const failures = [];
 async function testQuickEnquiryMock() {
   const context = await browser.newContext();
   const page = await context.newPage();
-  const insertCalls = [];
   try {
     await page.route('**/googletagmanager.com/**', route => route.abort());
     await page.setContent(`<!doctype html><html><head><title>Mock enquiry test</title></head><body>
@@ -57,12 +56,12 @@ async function testQuickEnquiryMock() {
     });
     await page.addScriptTag({ path: 'quick-enquiry.js' });
     await page.evaluate(() => document.dispatchEvent(new Event('DOMContentLoaded')));
-    await page.locator('[name="event_date"]').evaluate(el => {
+    await page.locator('form[data-source="Website - Mock E2E"] [name="event_date"]').evaluate(el => {
       const d = new Date();
       d.setDate(d.getDate() + 1);
       el.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     });
-    await page.locator('button[type="submit"]').click();
+    await page.locator('form[data-source="Website - Mock E2E"] button[type="submit"]').click();
     await page.waitForFunction(() => document.querySelector('[data-quick-message]')?.classList.contains('success'));
     const calls = await page.evaluate(() => window.__smvMockInsertCalls);
     assert.equal(calls.length, 1, 'one mocked insert should be issued');
