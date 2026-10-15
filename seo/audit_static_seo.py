@@ -96,6 +96,20 @@ def sitemap_url_to_file(url: str, root: Path) -> Path | None:
     return target
 
 
+def canonical_mismatch(url: str, canonical: str) -> bool:
+    """Return whether sitemap and canonical disagree beyond known JS-rendered venue profiles."""
+    if not canonical or canonical.rstrip("/") == url.rstrip("/"):
+        return False
+    parsed_url = urlparse(url)
+    # venue.html starts with a generic canonical in source HTML; venue-profile.js
+    # sets the venue-specific canonical after loading the public listing.
+    return not (
+        parsed_url.path == "/venue.html"
+        and bool(parse_qs(parsed_url.query).get("id"))
+        and canonical.rstrip("/") == f"https://{SITE_HOST}/venue.html"
+    )
+
+
 def main(generated_only: bool = False):
     html_files = html_files_under(ROOT, generated_only=generated_only)
     if not html_files:
@@ -202,21 +216,9 @@ def main(generated_only: bool = False):
         if parser.robots and "noindex" in parser.robots:
             print(f"WARN  sitemap includes noindex page: {url}")
             warnings += 1
-        if parser.canonical and parser.canonical.rstrip("/") != url.rstrip("/"):
-            # venue.html is a JavaScript-rendered profile: its initial HTML has
-            # a generic canonical, then venue-profile.js replaces it with the
-            # specific venue.html?id=... URL after loading the public listing.
-            # Do not report this expected pre-render state as a sitemap defect;
-            # verify the runtime canonical implementation separately.
-            parsed_url = urlparse(url)
-            is_dynamic_venue_profile = (
-                parsed_url.path == "/venue.html"
-                and bool(parse_qs(parsed_url.query).get("id"))
-                and parser.canonical.rstrip("/") == f"https://{SITE_HOST}/venue.html"
-            )
-            if not is_dynamic_venue_profile:
-                print(f"WARN  canonical does not match sitemap URL: {url} (canonical: {parser.canonical})")
-                warnings += 1
+        if canonical_mismatch(url, parser.canonical):
+            print(f"WARN  canonical does not match sitemap URL: {url} (canonical: {parser.canonical})")
+            warnings += 1
 
     print("\nSEO audit summary")
     print(f"HTML files checked: {len(html_files)}")
