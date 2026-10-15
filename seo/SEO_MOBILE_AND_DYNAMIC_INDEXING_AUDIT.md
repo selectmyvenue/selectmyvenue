@@ -27,7 +27,7 @@ A new Supabase row alone does not create a dedicated Google-searchable page. A r
 6. Update sitemap through a controlled build/workflow when a public venue is approved, edited or removed. Confirm the hosting/deployment setup before enabling automation.
 7. Submit sitemap in Google Search Console. Submission supports discovery; it does not guarantee indexing or ranking.
 
-The current browser-rendered venue directory alone cannot guarantee this workflow. The hosting/rendering approach and whether each public venue has a stable slug must be verified before implementation. Do not expose private Supabase tables or credentials.
+The static generator now provides stable crawlable venue-page output from the existing public RPC. The actual production publishing path and generated URL serving still need verification before release. Do not expose private Supabase tables or credentials.
 
 ## Mobile UX acceptance checklist
 
@@ -73,7 +73,7 @@ The current browser-rendered venue directory alone cannot guarantee this workflo
 
 - `venue-profile.js` now keeps Twitter title/description/image aligned with the venue-specific Open Graph metadata.
 - If a venue ID is invalid or the public venue RPC cannot find a public profile, the profile page switches to `noindex,follow` so empty/error states are not intentionally offered for indexing.
-The generator is a safe building block, not yet an automatic approval trigger. The repository is a static site and currently has no verified venue-approval-to-deployment workflow. To complete automatic updates, a controlled workflow must be configured with an approved public-data source and deployment permissions; this should be reviewed before enabling it.
+The generator is a safe building block, not yet an automatic approval trigger. The manual workflow creates a review artifact only; it does not commit generated pages or deploy. The repository's actual production publishing path and venue-approval-to-deployment workflow remain unverified.
 
 ## Not yet verified
 
