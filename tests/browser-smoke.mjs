@@ -1,9 +1,5 @@
 import { chromium, devices } from 'playwright';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-
-const fixedMobileScript = readFileSync(new URL('./fixtures/website-mobile-app-20261002.js', import.meta.url), 'utf8');
-
 const base = (process.env.SMV_SITE_BASE_URL || 'https://selectmyvenue.com').replace(/\/$/, '');
 const paths = [
   '/',
@@ -37,9 +33,6 @@ try {
         hasTouch: Boolean(viewport.hasTouch),
       });
       const page = await context.newPage();
-      // Validate the rest of the live pages with the reviewed fix locally substituted;
-      // the production asset remains untouched until its separate PR is approved.
-      await page.route('**/website-mobile-app-20261002.js*', route => route.fulfill({ status: 200, contentType: 'application/javascript', body: fixedMobileScript }));
       const pageErrors = [];
       await page.addInitScript(() => {
         window.addEventListener('error', event => {
