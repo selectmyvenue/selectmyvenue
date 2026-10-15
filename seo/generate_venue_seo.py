@@ -219,12 +219,12 @@ h1{{font-size:clamp(28px,5vw,46px);line-height:1.13;letter-spacing:-.03em;margin
 <header><a href="{SITE}/">Select My Venue</a><nav><a href="{SITE}/venues.html">Browse venues</a></nav></header>
 <main><div class="crumb"><a href="{SITE}/">Home</a> › <a href="{SITE}/venues.html">Verified venues</a> › {esc(name)}</div>
 <article class="card"><div class="hero">{image_tag}</div><div class="body">
-<p class="eyebrow">Verified venue listing</p><h1>{esc(name)}</h1><p class="location">⌖ {esc(display_location)} · {esc(venue_type)}</p>
+<p class="eyebrow">Venue profile</p><h1>{esc(name)}</h1><p class="location">⌖ {esc(display_location)} · {esc(venue_type)}</p>
 <p>{esc(description)}</p><div class="facts"><div class="fact"><span>CAPACITY</span><strong>{esc(capacity)}</strong></div><div class="fact"><span>PRICE GUIDE</span><strong>{esc(price)}</strong></div><div class="fact"><span>EVENTS</span><strong>{esc(events_html)}</strong></div></div>
 <h2>Facilities &amp; services</h2><ul class="features">{features_html}</ul>
 <p>Venue details and availability can change. Contact Select My Venue to confirm current packages, date availability and final pricing directly with the venue.</p>
 <a class="cta" href="{esc(profile)}">Check price &amp; availability</a> <a class="secondary" href="{SITE}/venues.html">Compare other venues</a>
-<p class="note">Published by Select My Venue from the venue's approved public listing. Information is shown for discovery; availability and final terms require confirmation.</p>
+<p class="note">Published on Select My Venue from publicly available listing details. Information is shown for discovery; availability and final terms require confirmation.</p>
 </div></article></main><footer>© Select My Venue · <a href="{SITE}/privacy.html">Privacy</a> · <a href="{SITE}/terms.html">Terms</a></footer></body></html>"""
 
 
