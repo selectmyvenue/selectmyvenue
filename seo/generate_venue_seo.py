@@ -158,7 +158,7 @@ def venue_page(venue: dict, url: str) -> str:
     city = str(venue.get("city") or "").strip()
     # A broad NCR label is not a city/locality. If the area identifies Delhi
     # or Gurgaon, show that real area without repeating the ambiguous NCR label.
-    generic_ncr_city = bool(re.search(r"\\b(ncr|national capital region)\\b", city.lower()))
+    generic_ncr_city = bool(re.search(r"\b(ncr|national capital region)\b", city.lower()))
     display_city = "" if generic_ncr_city and area else city
     location = ", ".join(dict.fromkeys(part for part in (area, display_city) if part))
     display_location = location or "Location details on request"
