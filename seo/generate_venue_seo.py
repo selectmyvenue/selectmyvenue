@@ -45,6 +45,33 @@ def is_public(venue: dict) -> bool:
         and bool(str(venue.get("area") or venue.get("city") or "").strip())
     )
 
+def focus_market(venue: dict) -> str | None:
+    """Return the current SEO focus market only when the listing location supports it.
+
+    Prioritize Delhi and Gurgaon/Gurugram. A specific non-target city (for example,
+    Noida or Faridabad) must not be reclassified as Delhi just because its area says
+    'Delhi NCR'. Generic NCR-only records are excluded until their actual city/area
+    can identify a target market.
+    """
+    city = re.sub(r"[^a-z0-9]+", " ", str(venue.get("city") or "").lower()).strip()
+    area = re.sub(r"[^a-z0-9]+", " ", str(venue.get("area") or "").lower()).strip()
+
+    if re.search(r"\\b(gurgaon|gurugram)\\b", city):
+        return "Gurgaon"
+    if "delhi" in city and not re.search(r"\\b(ncr|national capital region)\\b", city):
+        return "Delhi"
+
+    # Do not override a specific non-target city using a broad area label.
+    non_target_city = re.search(r"\\b(noida|greater noida|faridabad|ghaziabad)\\b", city)
+    if non_target_city:
+        return None
+    if re.search(r"\\b(gurgaon|gurugram)\\b", area):
+        return "Gurgaon"
+    if re.search(r"\\b(delhi|new delhi|south delhi|north delhi|east delhi|west delhi)\\b", area):
+        return "Delhi"
+    return None
+
+
 def venue_from_row(row: object) -> dict | None:
     if not isinstance(row, dict):
         return None
@@ -205,9 +232,10 @@ def main() -> int:
     root = Path(os.environ.get("SEO_SITE_ROOT", ".")).resolve()
     output = root / "venue-pages"
     sitemap_path = root / "sitemap.xml"
-    rows = public_venue_rows()
+    public_rows = public_venue_rows()
+    rows = [venue for venue in public_rows if focus_market(venue)]
     if not rows:
-        raise RuntimeError("No eligible public venues returned; refusing to publish an empty venue index.")
+        raise RuntimeError("No eligible public Delhi/Gurgaon venues returned; refusing to update generated pages or sitemap.")
     if not sitemap_path.exists():
         raise RuntimeError("sitemap.xml is missing; refusing to write generated pages.")
     # Parse the sitemap before writing anything so a malformed/missing sitemap
