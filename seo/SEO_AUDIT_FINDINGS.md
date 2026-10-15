@@ -5,8 +5,9 @@
 
 ## Confirmed static checks
 
-- GitHub Actions ran `python seo/audit_static_seo.py` against the PR merge checkout.
-- Result: 38 HTML files checked, 37 sitemap URLs, 0 errors, 0 warnings.
+- GitHub Actions ran `python seo/audit_static_seo.py` against an earlier PR merge checkout.
+- Result on that earlier checkout: 38 HTML files checked, 37 sitemap URLs, 0 errors, 0 warnings.
+- **Important freshness caveat:** the audit result above predates website PR #47, which consolidated locality titles and sitemap dates. The current `main` branch sitemap contains 61 `<url>` entries, while this older audit branch's sitemap still contains 37. This documentation-only PR does not change the sitemap; rerun the static audit on current `main` before treating the 61-entry sitemap as passing the audit.
 - `robots.txt` allows crawling and declares `https://selectmyvenue.com/sitemap.xml`.
 - Sampled static landing pages have a title, meta description, canonical URL, one H1, and image alt attributes.
 - The static audit intentionally does not certify live HTTP status, mobile rendering, dynamic JavaScript rendering, Search Console indexing, or Google's structured-data eligibility.
@@ -52,6 +53,7 @@
 
 - **URL-prefix property `https://selectmyvenue.com/`, last 28 days:** the country dimension reports India at 25 clicks, 65 impressions, 38.46% CTR and average position 11.8. Other countries contribute 7 impressions and no clicks in that country breakdown.
 - **Same property, last 3 months:** the country dimension reports India at 43 clicks, 148 impressions, 29.05% CTR and average position 12.98. The all-country page dimension returns 46 clicks and 453 impressions; do not add metrics across different dimensions or treat those two reports as directly interchangeable.
+- **Connector consistency warning:** for the same URL-prefix property and time windows, the page and country dimension aggregates differ materially (last 28 days: 25 clicks / 176 page impressions versus 25 / 72 country impressions; last 3 months: 46 / 453 page totals versus 43 / 166 country totals). These should not be treated as a reconciled sitewide total. Verify the actual totals in the Search Console UI before using them for reporting or investment decisions.
 - **Pages with opportunity in the last 3 months (page dimension, all countries):** `/venues-in-delhi.html` had 5 clicks / 67 impressions (average position ~3.1); `/delhi-ncr-venues.html` had 3 / 56 (~10.2); `/venues-in-gurgaon.html` had 0 / 16 (~11.9); `/party-halls-delhi-ncr.html` had 0 / 16 (~19.6); and `/list-your-venue.html` had 0 / 23 (~14.8). These are small samples, so use them as prioritization signals, not stable performance forecasts.
 - **Homepage URL variants:** the page dimension separately reports `/` and `/index.html`. The static `index.html` source declares the root URL as canonical, but Search Console URL Inspection should confirm Google's selected canonical. Review internal links for avoidable `index.html` links before making broad rewrites.
 - **Query-level data:** the connector returns a small set of low-volume queries (e.g. “party halls delhi”, “venue gurgaon”, “venue in delhi”) and those rows show zero clicks. This is not a total-click report: anonymized queries and aggregation differences mean page/country totals are the better overall traffic indicators.
