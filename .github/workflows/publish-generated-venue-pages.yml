@@ -1,0 +1,123 @@
+name: Publish generated SEO venue pages (GitHub Pages)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'seo/generate_venue_seo.py'
+      - '.github/workflows/publish-generated-venue-pages.yml'
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: publish-generated-venue-pages
+  cancel-in-progress: false
+
+jobs:
+  generate-and-publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      SEO_SITE_ROOT: ${{ github.workspace }}
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run existing landing-page and enquiry regression tests
+        run: python seo/tests/test_all_event_venue_page.py -v
+
+      - name: Run SEO generator and audit unit tests
+        run: python -m unittest discover -s seo/tests -p 'test_*seo.py' -v
+
+      - name: Generate public Delhi/Gurgaon venue pages
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: python seo/generate_venue_seo.py
+
+      - name: Audit generated pages and sitemap
+        run: python seo/audit_static_seo.py --generated-only
+
+      - name: Commit generated pages for GitHub Pages
+        id: publish
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          page_count="$(find venue-pages -name index.html -type f | wc -l | tr -d ' ')"
+          sitemap_count="$(grep -o '<loc>' sitemap.xml | wc -l | tr -d ' ')"
+          if [ "$page_count" -lt 1 ]; then
+            echo "No eligible public Delhi/Gurgaon pages were generated; refusing to publish an empty set."
+            exit 1
+          fi
+
+          git add -A -- sitemap.xml venue-pages/
+          changed_files="$(git diff --cached --name-only)"
+          if [ -z "$changed_files" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## SEO venue pages already up to date"
+              echo "- Generated venue pages: $page_count"
+              echo "- Sitemap URL entries: $sitemap_count"
+              echo "- No repository commit needed."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          while IFS= read -r file; do
+            case "$file" in
+              sitemap.xml|venue-pages/*) ;;
+              *)
+                echo "Unexpected staged path: $file"
+                exit 1
+                ;;
+            esac
+          done <<< "$changed_files"
+
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "chore(seo): refresh public venue pages"
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## SEO venue pages committed for GitHub Pages"
+            echo "- Generated venue pages: $page_count"
+            echo "- Sitemap URL entries: $sitemap_count"
+            echo "- Changed paths are limited to `venue-pages/` and `sitemap.xml`."
+            echo "- A Pages build will be explicitly requested after this commit."
+            echo "- No Supabase data/schema or CRM/enquiry code is written by this workflow."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Request GitHub Pages build
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          response="$(curl --fail-with-body --silent --show-error \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/selectmyvenue/selectmyvenue/pages/builds)"
+          echo "$response"
+          {
+            echo "## GitHub Pages build requested"
+            echo "GitHub accepted the build request after generated venue pages were committed."
+          } >> "$GITHUB_STEP_SUMMARY"
