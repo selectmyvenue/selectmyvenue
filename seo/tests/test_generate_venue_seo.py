@@ -90,7 +90,7 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         )
         self.assertIn("Gurgaon", broad_city_page)
         self.assertNotIn("Gurgaon, Delhi NCR", broad_city_page)
-        broad_match = re.search(r'<script type="application/ld\\+json">(.*?)</script>', broad_city_page, re.S)
+        broad_match = re.search(r'<script type="application/ld\+json">(.*?)</script>', broad_city_page, re.S)
         self.assertIsNotNone(broad_match)
         broad_schema = json.loads(broad_match.group(1))
         self.assertEqual(broad_schema["address"]["addressLocality"], "Gurgaon")
