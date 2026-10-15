@@ -226,7 +226,7 @@
       ""
     ).slice(0, 80);
     const venueId = clean(form.dataset.venueId || params.get("venue") || params.get("id") || params.get("venue_id") || "").slice(0, 80);
-    const source = venueName ? `Website - Venue: ${venueName}` : pageSource();
+    const source = venueName ? `Website - Venue: ${venueName}` : (clean(form.dataset.source) || pageSource());
     return { source, venueName, venueId, page: pageLabel() };
   }
 
@@ -482,6 +482,53 @@
     document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!backdrop.hidden)closeDrawer();});
   }
 
+  let supabaseLoadPromise = null;
+
+  function ensureSupabaseLibrary() {
+    if (window.supabase && typeof window.supabase.createClient === "function") {
+      return Promise.resolve();
+    }
+    if (supabaseLoadPromise) return supabaseLoadPromise;
+
+    supabaseLoadPromise = new Promise(function (resolve, reject) {
+      let script = document.querySelector("script[data-smv-supabase-sdk]");
+      if (!script) {
+        script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+        script.async = true;
+        script.dataset.smvSupabaseSdk = "true";
+      }
+
+      let settled = false;
+      function cleanup() {
+        script.removeEventListener("load", onLoad);
+        script.removeEventListener("error", onError);
+      }
+      function onLoad() {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        if (window.supabase && typeof window.supabase.createClient === "function") resolve();
+        else reject(new Error("Supabase client library loaded without createClient"));
+      }
+      function onError() {
+        if (settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error("Unable to load Supabase client library"));
+      }
+
+      script.addEventListener("load", onLoad);
+      script.addEventListener("error", onError);
+      if (!script.isConnected) document.head.appendChild(script);
+    }).catch(function (error) {
+      supabaseLoadPromise = null;
+      throw error;
+    });
+
+    return supabaseLoadPromise;
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -550,14 +597,10 @@
       return;
     }
 
-    if (!window.supabase || typeof window.supabase.createClient !== "function") {
-      setMessage(form, "Unable to connect right now. Please call us on +91 83683 22256.", "error");
-      return;
-    }
-
     setBusy(button, true);
 
     try {
+      await ensureSupabaseLibrary();
       const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       const requirements = [
         "Quick enquiry source: " + context.source,
@@ -627,7 +670,7 @@
     positionEdgeBelowOffer();
     window.addEventListener("resize", positionEdgeBelowOffer, { passive: true });
     window.addEventListener("orientationchange", positionEdgeBelowOffer, { passive: true });
-    if(!window.supabase){var s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";s.async=true;document.head.appendChild(s);}
+
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
       const dateField = form.elements.event_date;
       if (dateField) dateField.min = todayIso();
