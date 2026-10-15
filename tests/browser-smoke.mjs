@@ -20,7 +20,78 @@ const paths = [
 
 const browser = await chromium.launch({ headless: true });
 const failures = [];
+async function testQuickEnquiryMock() {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  try {
+    await page.route('**/googletagmanager.com/**', route => route.abort());
+    await page.setContent(`<!doctype html><html><head><title>Mock enquiry test</title></head><body>
+      <form data-smv-quick-enquiry data-source="Website - Mock E2E">
+        <input name="customer_name" value="SMV QA Customer">
+        <input name="mobile" value="+91 98765 43210">
+        <select name="occasion"><option value="Wedding" selected>Wedding</option></select>
+        <select name="location"><option value="Delhi" selected>Delhi</option></select>
+        <input name="event_date" type="date">
+        <input name="guests" type="number" value="250">
+        <input name="budget_per_person" type="number" value="1500">
+        <textarea name="requirements">Mock-only QA. Do not create a real enquiry.</textarea>
+        <button type="submit">Submit mock enquiry</button>
+        <p data-quick-message aria-live="polite"></p>
+      </form>
+    </body></html>`, { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => {
+      window.__smvGoogleAdsTagInstalled = true;
+      window.gtag = () => {};
+      window.supabase = {
+        createClient: () => ({
+          from: table => ({
+            insert: async payload => {
+              window.__smvMockInsertCalls.push({ table, payload });
+              return { error: null };
+            },
+          }),
+        }),
+      };
+      window.__smvMockInsertCalls = [];
+    });
+    await page.addScriptTag({ path: 'quick-enquiry.js' });
+    await page.evaluate(() => document.dispatchEvent(new Event('DOMContentLoaded')));
+    await page.locator('form[data-source="Website - Mock E2E"] [name="event_date"]').evaluate(el => {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      el.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    });
+    await page.locator('form[data-source="Website - Mock E2E"] button[type="submit"]').click();
+    await page.waitForFunction(() => document.querySelector('[data-quick-message]')?.classList.contains('success'));
+    const calls = await page.evaluate(() => window.__smvMockInsertCalls);
+    assert.equal(calls.length, 1, 'one mocked insert should be issued');
+    assert.equal(calls[0].table, 'customer_enquiries');
+    const payload = calls[0].payload;
+    assert.equal(payload.customer_name, 'SMV QA Customer');
+    assert.equal(payload.mobile, '9876543210');
+    assert.equal(payload.location, 'Delhi');
+    assert.equal(payload.occasion, 'Wedding');
+    assert.equal(payload.guests, 250);
+    assert.equal(payload.budget_per_person, 1500);
+    assert.equal(payload.source, 'Website - Mock E2E');
+    assert.equal(payload.status, 'new');
+    assert.equal(payload.assigned_to, null);
+    assert.equal(payload.follow_up_at, null);
+    assert.equal(payload.last_contacted_at, null);
+    assert(payload.requirements.includes('Mock-only QA. Do not create a real enquiry.'));
+    assert(payload.requirements.includes('Submitted page:'));
+    assert.deepEqual(Object.keys(payload).sort(), [
+      'assigned_to','budget_per_person','email','event_date','food_preference','follow_up_at',
+      'guests','last_contacted_at','location','mobile','occasion','requirements','source',
+      'status','customer_name'
+    ].sort(), 'payload must use the existing customer_enquiries fields only');
+    console.log('PASS mocked quick-enquiry submission: payload mapping, source, requirements and existing CRM fields; no real insert');
+  } finally {
+    await context.close();
+  }
+}
 try {
+  await testQuickEnquiryMock();
   for (const path of paths) {
     for (const viewport of [
       { name: 'mobile-android', ...devices['Pixel 7'] },
