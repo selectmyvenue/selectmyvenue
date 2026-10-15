@@ -156,7 +156,11 @@ def venue_page(venue: dict, url: str) -> str:
     name = str(venue.get("venue_name") or "Verified Venue").strip()
     area = str(venue.get("area") or "").strip()
     city = str(venue.get("city") or "").strip()
-    location = ", ".join(dict.fromkeys(part for part in (area, city) if part))
+    # A broad NCR label is not a city/locality. If the area identifies Delhi
+    # or Gurgaon, show that real area without repeating the ambiguous NCR label.
+    generic_ncr_city = bool(re.search(r"\\b(ncr|national capital region)\\b", city.lower()))
+    display_city = "" if generic_ncr_city and area else city
+    location = ", ".join(dict.fromkeys(part for part in (area, display_city) if part))
     display_location = location or "Location details on request"
     venue_type = str(venue.get("venue_type") or "Wedding and event venue").strip()
     description = str(venue.get("description") or "").strip()
@@ -167,7 +171,7 @@ def venue_page(venue: dict, url: str) -> str:
             description = f"Explore {name} on Select My Venue. Confirm its location, capacity, facilities, pricing and event suitability with our team."
     description = description[:280]
     # Never invent a specific city when the approved listing omits it.
-    address_locality = city or area or None
+    address_locality = display_city or area or None
     address_region = str(venue.get("state") or "").strip() or None
     address_postal_code = str(venue.get("pincode") or "").strip() or None
     cover = str(venue.get("cover_image_url") or "").strip()
