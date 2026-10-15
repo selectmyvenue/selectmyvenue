@@ -33,6 +33,11 @@ class SitemapMappingTests(unittest.TestCase):
             root = Path(tmp)
             self.assertEqual(audit.sitemap_url_to_file("https://selectmyvenue.com/", root), root / "index.html")
 
+    def test_dynamic_venue_profile_sitemap_url_is_recognized_as_runtime_canonical(self):
+        url = "https://selectmyvenue.com/venue.html?id=11111111-1111-4111-8111-111111111111"
+        self.assertFalse(audit.canonical_mismatch(url, "https://selectmyvenue.com/venue.html"))
+        self.assertTrue(audit.canonical_mismatch(url, "https://selectmyvenue.com/other.html"))
+
     def test_query_string_is_ignored_for_html_file_mapping(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

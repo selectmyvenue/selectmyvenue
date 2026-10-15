@@ -11,7 +11,7 @@ it is not a substitute for live HTTP, browser, accessibility, or Search Console 
 import argparse
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -94,6 +94,20 @@ def sitemap_url_to_file(url: str, root: Path) -> Path | None:
     except ValueError:
         return None
     return target
+
+
+def canonical_mismatch(url: str, canonical: str) -> bool:
+    """Return whether sitemap and canonical disagree beyond known JS-rendered venue profiles."""
+    if not canonical or canonical.rstrip("/") == url.rstrip("/"):
+        return False
+    parsed_url = urlparse(url)
+    # venue.html starts with a generic canonical in source HTML; venue-profile.js
+    # sets the venue-specific canonical after loading the public listing.
+    return not (
+        parsed_url.path == "/venue.html"
+        and bool(parse_qs(parsed_url.query).get("id"))
+        and canonical.rstrip("/") == f"https://{SITE_HOST}/venue.html"
+    )
 
 
 def main(generated_only: bool = False):
@@ -202,7 +216,7 @@ def main(generated_only: bool = False):
         if parser.robots and "noindex" in parser.robots:
             print(f"WARN  sitemap includes noindex page: {url}")
             warnings += 1
-        if parser.canonical and parser.canonical.rstrip("/") != url.rstrip("/"):
+        if canonical_mismatch(url, parser.canonical):
             print(f"WARN  canonical does not match sitemap URL: {url} (canonical: {parser.canonical})")
             warnings += 1
 
