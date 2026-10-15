@@ -664,19 +664,27 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    captureAttribution();
-    installStyles();
-    ensureGlobalQuickEnquiry();
-    positionEdgeBelowOffer();
-    window.addEventListener("resize", positionEdgeBelowOffer, { passive: true });
-    window.addEventListener("orientationchange", positionEdgeBelowOffer, { passive: true });
-
+    // Bind enquiry submission before unrelated drawer/edge UI setup. If that UI
+    // throws during initialization, the SEO forms must still remain usable.
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
+      if (form.dataset.smvQuickSubmitBound === "true") return;
+      form.dataset.smvQuickSubmitBound = "true";
       const dateField = form.elements.event_date;
       if (dateField) dateField.min = todayIso();
       addHoneypot(form);
       form.querySelectorAll("[data-smv-whatsapp-option],.smv-quick-whatsapp-opt,input[name='send_whatsapp']").forEach(node => node.remove());
       form.addEventListener("submit", handleSubmit);
     });
+
+    try {
+      captureAttribution();
+      installStyles();
+      ensureGlobalQuickEnquiry();
+      positionEdgeBelowOffer();
+      window.addEventListener("resize", positionEdgeBelowOffer, { passive: true });
+      window.addEventListener("orientationchange", positionEdgeBelowOffer, { passive: true });
+    } catch (error) {
+      console.error("Quick enquiry UI enhancement warning:", error);
+    }
   });
 })();
