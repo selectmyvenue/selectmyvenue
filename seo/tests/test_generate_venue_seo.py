@@ -45,7 +45,7 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertIsNone(generator.focus_market({"city": "Delhi NCR", "area": "Sector 29"}))
         self.assertIsNone(generator.focus_market({"city": "", "area": "NCR"}))
 
-    def test_generated_page_opens_quote_and_captures_landing_attribution(self):
+    def test_generated_page_redirects_to_real_profile_and_captures_attribution(self):
         venue = {
             "id": "11111111-1111-4111-8111-111111111111",
             "venue_name": "Sample Banquet",
@@ -56,12 +56,17 @@ class PublicVenueEligibilityTests(unittest.TestCase):
             "price_min_per_person": 1500,
         }
         page = generator.venue_page(venue, "https://selectmyvenue.com/venue-pages/sample-banquet-11111111/")
-        self.assertIn("quote=1", page)
+        self.assertIn("venue.html?id=11111111-1111-4111-8111-111111111111", page)
+        self.assertIn('http-equiv="refresh" content="0;url=https://selectmyvenue.com/venue.html?id=11111111-1111-4111-8111-111111111111"', page)
+        self.assertIn("location.replace(destination.toString())", page)
+        self.assertIn('name="robots" content="noindex,follow"', page)
+        self.assertIn('rel="canonical" href="https://selectmyvenue.com/venue.html?id=11111111-1111-4111-8111-111111111111"', page)
         self.assertIn("smv-traffic-attribution-v1", page)
         self.assertIn('name="description"', page)
         self.assertIn('rel="canonical"', page)
         self.assertIn("Sample Banquet", page)
         self.assertIn("Venue profile", page)
+        self.assertEqual(generator.venue_profile_url(venue["id"]), "https://selectmyvenue.com/venue.html?id=11111111-1111-4111-8111-111111111111")
         self.assertIn(generator.GENERATED_MARKER, page)
         self.assertNotIn("Verified venue listing", page)
         self.assertNotIn("approved public listing", page)
