@@ -5,8 +5,9 @@
 
 ## Confirmed static checks
 
-- GitHub Actions ran `python seo/audit_static_seo.py` against the PR merge checkout.
-- Result: 38 HTML files checked, 37 sitemap URLs, 0 errors, 0 warnings.
+- GitHub Actions ran `python seo/audit_static_seo.py` against an earlier PR merge checkout.
+- Result on that earlier checkout: 38 HTML files checked, 37 sitemap URLs, 0 errors, 0 warnings.
+- **Important freshness caveat:** the audit result above predates website PR #47, which consolidated locality titles and sitemap dates. The current `main` branch sitemap contains 61 `<url>` entries, while this older audit branch's sitemap still contains 37. This documentation-only PR does not change the sitemap; rerun the static audit on current `main` before treating the 61-entry sitemap as passing the audit.
 - `robots.txt` allows crawling and declares `https://selectmyvenue.com/sitemap.xml`.
 - Sampled static landing pages have a title, meta description, canonical URL, one H1, and image alt attributes.
 - The static audit intentionally does not certify live HTTP status, mobile rendering, dynamic JavaScript rendering, Search Console indexing, or Google's structured-data eligibility.
