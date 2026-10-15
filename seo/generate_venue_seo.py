@@ -31,6 +31,15 @@ def esc(value: object) -> str:
     return html.escape(str(value or "").strip(), quote=True)
 
 
+def plain_text(value: object) -> str:
+    """Convert public venue descriptions containing HTML into readable text."""
+    text = str(value or "")
+    text = re.sub(r"(?is)<(script|style)\\b[^>]*>.*?</\\1\\s*>", " ", text)
+    text = re.sub(r"(?s)<[^>]*>", " ", text)
+    text = html.unescape(text)
+    return re.sub(r"\\s+", " ", text).strip()
+
+
 def slugify(value: object) -> str:
     value = str(value or "").lower().strip()
     value = re.sub(r"[^a-z0-9]+", "-", value).strip("-")
@@ -160,16 +169,23 @@ def venue_page(venue: dict, url: str) -> str:
     # or Gurgaon, show that real area without repeating the ambiguous NCR label.
     generic_ncr_city = bool(re.search(r"\b(ncr|national capital region)\b", city.lower()))
     display_city = "" if generic_ncr_city and area else city
-    location = ", ".join(dict.fromkeys(part for part in (area, display_city) if part))
+    # Avoid repetitive titles such as "Sector 89A, Gurgaon, Gurgaon" when
+    # the locality already contains the city name.
+    area_has_city = bool(display_city and re.search(rf"\\b{re.escape(display_city)}\\b", area, re.I))
+    location_parts = [area] if area else []
+    if display_city and not area_has_city:
+        location_parts.append(display_city)
+    location = ", ".join(dict.fromkeys(part for part in location_parts if part))
     display_location = location or "Location details on request"
     venue_type = str(venue.get("venue_type") or "Wedding and event venue").strip()
-    description = str(venue.get("description") or "").strip()
+    description = plain_text(venue.get("description"))
     if len(description) < 40:
         if location:
             description = f"Explore {name} in {location}. Check venue capacity, facilities, pricing and event suitability with Select My Venue."
         else:
             description = f"Explore {name} on Select My Venue. Confirm its location, capacity, facilities, pricing and event suitability with our team."
-    description = description[:280]
+    description = description[:280].rsplit(" ", 1)[0]
+    meta_description = description[:160].rsplit(" ", 1)[0]
     # Never invent a specific city when the approved listing omits it.
     address_locality = display_city or area or None
     address_region = str(venue.get("state") or "").strip() or None
@@ -207,7 +223,7 @@ def venue_page(venue: dict, url: str) -> str:
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": name,
-        "description": description,
+        "description": meta_description,
         "url": url,
         "image": cover or None,
         "address": {"@type": "PostalAddress", **({"addressLocality": address_locality} if address_locality else {}), **({"addressRegion": address_region} if address_region else {}), **({"postalCode": address_postal_code} if address_postal_code else {}), "addressCountry": "IN"},
@@ -217,11 +233,11 @@ def venue_page(venue: dict, url: str) -> str:
 {GENERATED_MARKER}
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{esc(title)}</title><meta name="description" content="{esc(description)}">
+<title>{esc(title)}</title><meta name="description" content="{esc(meta_description)}">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="{esc(url)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Select My Venue">
-<meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(description)}">
+<meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(meta_description)}">
 <meta property="og:url" content="{esc(url)}">{f'<meta property="og:image" content="{esc(cover)}">' if cover else ''}
 <meta name="theme-color" content="#073b35">
 <script>
