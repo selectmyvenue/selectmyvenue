@@ -50,7 +50,7 @@ jobs:
             echo "## SEO venue page artifact prepared"
             echo "- Generated venue pages: $page_count"
             echo "- Sitemap URL entries: $sitemap_count"
-            echo "- Source branch: seo/technical-foundation-audit"
+            echo "- Source branch: $GITHUB_REF_NAME"
             echo "- Deployment: **not performed**"
             echo "- Live website and CRM: **not changed**"
           } >> "$GITHUB_STEP_SUMMARY"
