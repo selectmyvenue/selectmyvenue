@@ -93,6 +93,13 @@ def focus_market(venue: dict) -> str | None:
     city = re.sub(r"[^a-z0-9]+", " ", str(venue.get("city") or "").lower()).strip()
     area = re.sub(r"[^a-z0-9]+", " ", str(venue.get("area") or "").lower()).strip()
 
+    # Reject a specific non-target locality even when the city field conflicts
+    # (e.g. area=Kundli but city=Delhi). Safer to review such records than to
+    # publish them under the wrong city-intent page.
+    non_target_area = re.search(r"\b(noida|greater noida|faridabad|ghaziabad|sonipat|kundli)\b", area)
+    if non_target_area:
+        return None
+
     if re.search(r"\b(gurgaon|gurugram)\b", city):
         return "Gurgaon"
     if "delhi" in city and not re.search(r"\b(ncr|national capital region)\b", city):
