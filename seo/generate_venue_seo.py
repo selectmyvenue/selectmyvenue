@@ -56,18 +56,18 @@ def focus_market(venue: dict) -> str | None:
     city = re.sub(r"[^a-z0-9]+", " ", str(venue.get("city") or "").lower()).strip()
     area = re.sub(r"[^a-z0-9]+", " ", str(venue.get("area") or "").lower()).strip()
 
-    if re.search(r"\b(gurgaon|gurugram)\\b", city):
+    if re.search(r"\b(gurgaon|gurugram)\b", city):
         return "Gurgaon"
-    if "delhi" in city and not re.search(r"\b(ncr|national capital region)\\b", city):
+    if "delhi" in city and not re.search(r"\b(ncr|national capital region)\b", city):
         return "Delhi"
 
     # Do not override a specific non-target city using a broad area label.
-    non_target_city = re.search(r"\b(noida|greater noida|faridabad|ghaziabad)\\b", city)
+    non_target_city = re.search(r"\b(noida|greater noida|faridabad|ghaziabad)\b", city)
     if non_target_city:
         return None
-    if re.search(r"\b(gurgaon|gurugram)\\b", area):
+    if re.search(r"\b(gurgaon|gurugram)\b", area):
         return "Gurgaon"
-    if re.search(r"\b(delhi|new delhi|south delhi|north delhi|east delhi|west delhi)\\b", area):
+    if re.search(r"\b(delhi|new delhi|south delhi|north delhi|east delhi|west delhi)\b", area):
         return "Delhi"
     return None
 
