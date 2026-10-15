@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - seo/all-intent-enquiry-coverage
+      - seo/delhi-gurgaon-venue-engine-review
     paths:
       - 'seo/**'
       - '*.html'
       - 'sitemap.xml'
       - '.github/workflows/seo-audit-tests.yml'
+      - '.github/workflows/prepare-seo-venue-pages.yml'
   pull_request:
     branches:
       - main
@@ -17,6 +19,7 @@ on:
       - '*.html'
       - 'sitemap.xml'
       - '.github/workflows/seo-audit-tests.yml'
+      - '.github/workflows/prepare-seo-venue-pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -32,5 +35,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-      - name: Run SEO unit tests
+      - name: Run existing landing-page and enquiry regression tests
         run: python seo/tests/test_all_event_venue_page.py -v
+      - name: Run SEO generator and audit unit tests
+        run: python -m unittest discover -s seo/tests -p 'test_*seo.py' -v
+      - name: Run read-only static SEO audit
+        run: python seo/audit_static_seo.py
