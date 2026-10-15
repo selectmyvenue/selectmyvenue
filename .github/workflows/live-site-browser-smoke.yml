@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - 'tests/browser-smoke.mjs'
+      - 'tests/fixtures/website-mobile-app-20261002.js'
       - '.github/workflows/live-site-browser-smoke.yml'
 
 permissions:
