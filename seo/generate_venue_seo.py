@@ -298,7 +298,7 @@ def main() -> int:
     temp_sitemap = None
     try:
         with tempfile.NamedTemporaryFile(mode="wb", dir=root, prefix=".sitemap.xml.", suffix=".tmp", delete=False) as temp_file:
-            temp_file.write(ET.tostring(root_xml, encoding="utf-8", xml_declaration=True) + b"\\n")
+            temp_file.write(ET.tostring(root_xml, encoding="utf-8", xml_declaration=True) + b"\n")
             temp_sitemap = Path(temp_file.name)
         ET.parse(temp_sitemap)
         os.replace(temp_sitemap, sitemap_path)
