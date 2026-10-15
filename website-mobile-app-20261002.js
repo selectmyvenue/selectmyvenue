@@ -105,7 +105,8 @@
     ensureMenu();
     document.body.classList.toggle("smv-customer-mobile",phone());
     document.body.classList.toggle("smv-home-mobile",phone() && isHome());
-    arrangeVenueBadges();\n    if(phone()) createBottomNav();
+    arrangeVenueBadges();
+    if(phone()) createBottomNav();
   }
 
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});
