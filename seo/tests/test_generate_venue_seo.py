@@ -70,7 +70,7 @@ class PublicVenueEligibilityTests(unittest.TestCase):
             "venue_type": "Banquet Hall",
         }
         page = generator.venue_page(venue, "https://selectmyvenue.com/venue-pages/sample-banquet-11111111/")
-        match = re.search(r'<script type="application/ld\\+json">(.*?)</script>', page, re.S)
+        match = re.search(r'<script type="application/ld\+json">(.*?)</script>', page, re.S)
         self.assertIsNotNone(match)
         schema = json.loads(match.group(1))
         self.assertEqual(schema["@type"], "LocalBusiness")
