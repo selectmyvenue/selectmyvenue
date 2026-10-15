@@ -34,7 +34,7 @@ def esc(value: object) -> str:
 def plain_text(value: object) -> str:
     """Convert public venue descriptions containing HTML into readable text."""
     text = str(value or "")
-    text = re.sub(r"(?is)<(script|style)\\b[^>]*>.*?</\\1\\s*>", " ", text)
+    text = re.sub(r"(?is)<(script|style)\b[^>]*>.*?</\1\s*>", " ", text)
     text = re.sub(r"(?s)<[^>]*>", " ", text)
     text = html.unescape(text)
     return re.sub(r"\\s+", " ", text).strip()
@@ -171,7 +171,7 @@ def venue_page(venue: dict, url: str) -> str:
     display_city = "" if generic_ncr_city and area else city
     # Avoid repetitive titles such as "Sector 89A, Gurgaon, Gurgaon" when
     # the locality already contains the city name.
-    area_has_city = bool(display_city and re.search(rf"\\b{re.escape(display_city)}\\b", area, re.I))
+    area_has_city = bool(display_city and re.search(rf"\b{re.escape(display_city)}\b", area, re.I))
     location_parts = [area] if area else []
     if display_city and not area_has_city:
         location_parts.append(display_city)
