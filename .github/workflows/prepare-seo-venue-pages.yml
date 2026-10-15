@@ -2,6 +2,9 @@ name: Prepare SEO venue pages (manual, no deployment)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - seo/delhi-gurgaon-venue-engine-review
 
 permissions:
   contents: read
