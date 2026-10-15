@@ -11,6 +11,7 @@ on:
       - 'sitemap.xml'
       - '.github/workflows/seo-audit-tests.yml'
       - '.github/workflows/prepare-seo-venue-pages.yml'
+      - '.github/workflows/publish-generated-venue-pages.yml'
   pull_request:
     branches:
       - main
