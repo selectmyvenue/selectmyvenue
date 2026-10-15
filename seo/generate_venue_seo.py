@@ -179,7 +179,6 @@ def venue_page(venue: dict, url: str) -> str:
         "url": url,
         "image": cover or None,
         "address": {"@type": "PostalAddress", **({"addressLocality": address_locality} if address_locality else {}), **({"addressRegion": address_region} if address_region else {}), **({"postalCode": address_postal_code} if address_postal_code else {}), "addressCountry": "IN"},
-        "additionalType": venue_type,
     }
     schema = {k: v for k, v in schema.items() if v is not None}
     return f"""<!doctype html>
@@ -266,7 +265,7 @@ def main() -> int:
         node = ET.SubElement(root_xml, f"{{{SITEMAP_NS}}}url")
         ET.SubElement(node, loc_tag).text = url
     tree.write(sitemap_path, encoding="utf-8", xml_declaration=True)
-    print(f"Generated {len(rows)} approved, verified public venue pages.")
+    print(f"Generated {len(rows)} public Delhi/Gurgaon venue pages.")
     print(f"Updated {sitemap_path} with {len(new_urls)} venue URLs.")
     print("No Supabase records or existing customer enquiry/CRM code were changed.")
     return 0
