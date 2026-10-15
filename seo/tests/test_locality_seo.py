@@ -27,7 +27,7 @@ class LocalityMetadataTests(unittest.TestCase):
             html = (ROOT / name).read_text(encoding="utf-8")
             match = re.search(r"<title>(.*?)</title>", html, re.I | re.S)
             self.assertIsNotNone(match, name)
-            title = re.sub(r"\\s+", " ", match.group(1)).strip()
+            title = re.sub(r"\s+", " ", match.group(1)).strip()
             self.assertEqual(title, expected, name)
             self.assertLessEqual(len(title), 65, name)
             self.assertIn("Select My Venue", title, name)
