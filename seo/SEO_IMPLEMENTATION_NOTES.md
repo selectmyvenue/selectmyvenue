@@ -73,3 +73,15 @@ Status: review-only preparation; do not merge or deploy without owner approval.
 - The existing public RPC was verified read-only to filter records to approved, verified, publicly enabled venues. The generator fails closed when no eligible Delhi/Gurgaon venue exists, so it does not replace the sitemap with an empty generated-venue set.
 - This is an SEO rollout scope, not a change to the existing venue directory or CRM inventory. No Supabase schema, RLS, customer enquiry form, CRM, merge, or deployment changes are included.
 - Required validation: run the SEO unit-test workflow, inspect the generated artifact and resulting sitemap, verify mobile rendering and quote CTA, and confirm the publishing path before any production release.
+
+
+## Verified release status — 2026-10-16
+
+This status update supersedes the earlier “review-only preparation” statements above where they conflict with later merged work. The earlier notes remain as a historical log of the initial implementation branch.
+
+- Website PR #51 was merged into `main` at commit `34f12049db9e81715fe07181baae1b5dc2b4e9bc`. It changes internal homepage links from `index.html` to the canonical root URL and adds regression tests.
+- Latest SEO workflow passed: 62 HTML files and 61 sitemap URLs audited with 0 errors and 0 warnings; JavaScript syntax, landing-page/enquiry regressions, and SEO tests passed.
+- GitHub Pages deployment run [#38809525588](https://github.com/selectmyvenue/selectmyvenue/actions/runs/38809525588) completed successfully.
+- Search Console still reports 36 submitted URLs for `https://selectmyvenue.com/sitemap.xml`, last downloaded 2026-10-14, while the repository sitemap has 61 URLs. This needs authenticated Search Console UI follow-up; connector field `indexed` is deprecated and must not be interpreted as an indexed-URL count.
+- Direct public fetches and Google URL Inspection/Rich Results Test could not be completed through the available tools. Those checks remain unverified; do not describe the entire SEO program as fully signed off until they are resolved.
+- Safety constraints remain unchanged: no production test leads, no changes to Supabase schema/RLS, no changes to the existing `customer_enquiries` schema or submission flow, and no claims that rankings or organic lead share are guaranteed.
