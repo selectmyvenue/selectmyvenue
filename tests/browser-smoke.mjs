@@ -116,6 +116,17 @@ try {
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
+        if (viewport.name === "mobile-android") {
+          const menuButton = page.locator("#menuToggle");
+          const mainNav = page.locator("#mainNav");
+          if (await menuButton.count()) {
+            await menuButton.click();
+            await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "true" && document.getElementById("mainNav")?.classList.contains("open"));
+            assert(await mainNav.isVisible(), `mobile menu should be visible after opening at ${path}`);
+            await menuButton.click();
+            await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "false" && !document.getElementById("mainNav")?.classList.contains("open"));
+          }
+        }
         const metrics = await page.evaluate(() => ({
           viewport: document.documentElement.clientWidth,
           documentWidth: document.documentElement.scrollWidth,
