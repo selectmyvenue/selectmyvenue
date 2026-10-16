@@ -5,9 +5,9 @@
 
 ## Confirmed static checks
 
-- GitHub Actions ran `python seo/audit_static_seo.py` against an earlier PR merge checkout.
-- Result on that earlier checkout: 38 HTML files checked, 37 sitemap URLs, 0 errors, 0 warnings.
-- **Important freshness caveat:** the audit result above predates website PR #47, which consolidated locality titles and sitemap dates. The current `main` branch sitemap contains 61 `<url>` entries, while this older audit branch's sitemap still contains 37. This documentation-only PR does not change the sitemap; rerun the static audit on current `main` before treating the 61-entry sitemap as passing the audit.
+- **Latest main-branch verification (2026-10-16):** GitHub Actions workflow [#38809469451](https://github.com/selectmyvenue/selectmyvenue/actions/runs/38809469451) passed the JavaScript syntax check, 5 landing-page/enquiry regression tests, 22 SEO generator/audit tests, and the static audit. The audit checked 62 HTML files and 61 sitemap URLs with 0 errors and 0 warnings.
+- Website PR [#51](https://github.com/selectmyvenue/selectmyvenue/pull/51) merged as `34f12049db9e81715fe07181baae1b5dc2b4e9bc`; GitHub Pages deployment [#38809525588](https://github.com/selectmyvenue/selectmyvenue/actions/runs/38809525588) completed successfully. The changes canonicalize internal homepage links to `/` rather than `/index.html`.
+- The repository sitemap has 61 URLs, but the connected Search Console sitemap report still reports 36 submitted URLs and last downloaded 2026-10-14. This discrepancy remains an external Search Console follow-up; it is not evidence that the deployment or static audit failed.
 - `robots.txt` allows crawling and declares `https://selectmyvenue.com/sitemap.xml`.
 - Sampled static landing pages have a title, meta description, canonical URL, one H1, and image alt attributes.
 - The static audit intentionally does not certify live HTTP status, mobile rendering, dynamic JavaScript rendering, Search Console indexing, or Google's structured-data eligibility.
@@ -62,8 +62,11 @@
 - **What this means:** SMV has some organic search activity, but the absolute number of impressions remains small for a venue-discovery site. The next SEO priority is increasing relevant Delhi/Gurgaon wedding/banquet/party query coverage and resolving sitemap/canonical reporting questions—not claiming that SEO already drives most leads.
 - The public Rich Results Test and Search Console URL Inspection have not yet been run to completion for a live set of representative pages. Mobile rendering, Google-selected canonicals, dynamic venue profile indexing, Core Web Vitals, and organic enquiry share remain unverified.
 
-## Safe release rules
+## Safe release rules and current sign-off
 
-- This document and all SEO code changes remain in draft PRs.
-- No production deployment, merge, Supabase schema/RLS change, `customer_enquiries` table change, or CRM/enquiry-flow change is included or authorized here.
-- After approved changes are deployed, submit/refresh the sitemap in Search Console and request inspection for a small set of important URLs. Indexing is not guaranteed or instant.
+- The technical SEO changes described above are merged to `main`; the latest GitHub Pages deployment workflow completed successfully on 2026-10-16.
+- Automated source-level checks are green, but they do not prove that Google has reprocessed the sitemap, selected the intended canonical for every URL, indexed every page, or that organic traffic is generating qualified leads.
+- **Outstanding external verification:** in the authenticated Google Search Console UI, refresh/re-submit `https://selectmyvenue.com/sitemap.xml`, then inspect the homepage, `/venues-in-delhi.html`, `/venues-in-gurgaon.html`, `/list-your-venue.html`, and one real `venue.html?id=...` profile. Confirm last read/submitted counts, crawl/fetch status, Google-selected canonical, and indexing reason. Do not delete the legacy www sitemap based only on the old connector snapshot.
+- Public URL Inspection and Rich Results Test were not completed by the available tools; direct public fetch attempts were inaccessible. Do not claim those checks passed.
+- No Supabase schema/RLS, `customer_enquiries` table, enquiry form payload, or CRM behavior was changed by PR #51. No production test leads were created.
+- Google rankings and an 80% organic-lead share cannot be guaranteed by code changes; measure Search Console performance and qualified CRM outcomes over time.
