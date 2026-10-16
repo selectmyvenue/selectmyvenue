@@ -116,6 +116,27 @@ try {
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
+        if (viewport.name === "mobile-android" && path === "/") {
+          const matchedEdge = page.locator(".smv-home-enquiry-edge");
+          const matchedTab = page.locator("#smvHomeEnquiryTab");
+          const drawer = page.locator("#smvHomeEnquiryDrawer");
+          assert(await matchedEdge.isVisible(), "Get Matched banner should be visible on mobile homepage");
+          const beforeTop = await matchedEdge.evaluate(el => el.getBoundingClientRect().top);
+          await matchedEdge.evaluate(el => {
+            const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+            el.dispatchEvent(new PointerEvent("pointerdown", { bubbles:true, pointerId:77, pointerType:"touch", isPrimary:true, button:0, clientX:x, clientY:y }));
+            el.dispatchEvent(new PointerEvent("pointermove", { bubbles:true, cancelable:true, pointerId:77, pointerType:"touch", isPrimary:true, buttons:1, clientX:x, clientY:y+70 }));
+            el.dispatchEvent(new PointerEvent("pointerup", { bubbles:true, pointerId:77, pointerType:"touch", isPrimary:true, button:0, clientX:x, clientY:y+70 }));
+          });
+          const afterTop = await matchedEdge.evaluate(el => el.getBoundingClientRect().top);
+          assert(Math.abs(afterTop-beforeTop) > 25, "Get Matched banner should move vertically after a drag");
+          assert(!(await drawer.evaluate(el => el.classList.contains("is-open"))), "Dragging should not open the enquiry drawer");
+          await matchedTab.click();
+          await page.waitForFunction(() => document.getElementById("smvHomeEnquiryDrawer")?.classList.contains("is-open"));
+          assert(await drawer.isVisible(), "Get Matched tap should open the enquiry drawer");
+          await page.locator("#smvHomeEnquiryClose").click();
+          await page.waitForFunction(() => !document.getElementById("smvHomeEnquiryDrawer")?.classList.contains("is-open"));
+        }
         if (viewport.name === "mobile-android") {
           const menuButton = page.locator("#menuToggle");
           const mainNav = page.locator("#mainNav");
