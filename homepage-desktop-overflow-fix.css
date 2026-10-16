@@ -1,23 +1,25 @@
-/* Targeted desktop overflow correction for the homepage only.
-   Keeps the existing enquiry flow and venue data untouched. */
+/* Targeted homepage desktop overflow correction.
+   Preserve the animated wedding hero and all existing enquiry/data behavior. */
 @media (min-width: 1121px) {
   html body .site-header,
   html body .site-header .header-inner {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
   }
 
   html body .site-header .header-inner {
-    padding-left: 18px;
-    padding-right: 18px;
-    gap: 14px;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    gap: 10px !important;
   }
 
   html body .site-header .brand {
     flex: 0 1 clamp(220px, 19vw, 270px) !important;
     width: clamp(220px, 19vw, 270px) !important;
-    min-width: 0;
+    min-width: 0 !important;
+    max-width: clamp(220px, 19vw, 270px) !important;
   }
 
   html body .site-header .brand img,
@@ -29,41 +31,54 @@
   }
 
   html body .site-header #mainNav {
-    flex: 1 1 auto;
-    min-width: 0;
-    gap: clamp(7px, .75vw, 12px);
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    gap: clamp(5px, .55vw, 9px) !important;
   }
 
   html body .site-header #mainNav a {
-    font-size: clamp(9px, .72vw, 11px);
+    font-size: clamp(9px, .68vw, 10px) !important;
+    padding-left: 3px !important;
+    padding-right: 3px !important;
   }
 
+  html body .site-header #mainNav .nav-cta,
   html body .site-header .header-contact {
-    flex: 0 0 auto;
+    flex: 0 1 auto !important;
     width: auto !important;
-    max-width: 150px;
-    min-width: 0;
-    padding-left: 10px;
-    padding-right: 10px;
-    white-space: nowrap;
+    max-width: 142px !important;
+    min-width: 0 !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    white-space: nowrap !important;
   }
 
-  /* The homepage already has a static hero image layer; animated oversized
-     slides are decorative and were the source of off-viewport element bounds. */
+  /* Keep the animated hero, but explicitly clip its transformed image slides. */
+  html body .hero {
+    position: relative;
+    overflow: hidden !important;
+    contain: paint;
+  }
+
   html body .hero-slides {
-    display: none !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    contain: paint;
   }
 
-  /* The trust strip is a viewport-width component; its animated track must
-     be clipped by the strip, not expand the document's scrollable width. */
-  html body .trust-strip {
-    width: 100%;
+  html body .hero-slide {
     max-width: 100%;
-    min-width: 0;
-    overflow: hidden;
   }
 
-  html body .smv-trust-marquee-track {
-    max-width: none;
+  /* Keep trust content inside its section if its track is wider than the viewport. */
+  html body .trust-strip {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 }
