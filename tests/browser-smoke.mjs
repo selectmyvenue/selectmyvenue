@@ -146,6 +146,14 @@ try {
             assert(await mainNav.isVisible(), `mobile menu should be visible after opening at ${path}`);
             await menuButton.click();
             await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "false" && !document.getElementById("mainNav")?.classList.contains("open"));
+            const moreButton = page.locator(".smv-nav-more");
+            if (await moreButton.count()) {
+              await moreButton.click();
+              await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "true" && document.getElementById("mainNav")?.classList.contains("open"));
+              assert(await mainNav.isVisible(), `bottom More control should open navigation at ${path}`);
+              await moreButton.click();
+              await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "false" && !document.getElementById("mainNav")?.classList.contains("open"));
+            }
           }
         }
         const metrics = await page.evaluate(() => ({
