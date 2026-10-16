@@ -16,6 +16,7 @@ const paths = [
   '/wedding-venues-in-noida.html',
   '/list-your-venue.html',
   '/venue.html',
+  '/venue.html?id=072729f0-3813-4fc0-9dd9-12b93a772235',
 ];
 
 const browser = await chromium.launch({ headless: true });
