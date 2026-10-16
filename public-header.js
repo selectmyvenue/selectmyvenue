@@ -34,7 +34,8 @@ function markActive(){
 
 function initMenu(){
   var btn=document.getElementById("menuToggle"),nav=document.getElementById("mainNav");
-  if(!btn||!nav)return;
+  if(!btn||!nav||btn.dataset.smvMenuReady==="1")return;
+  btn.dataset.smvMenuReady="1";
   function close(){nav.classList.remove("open");btn.setAttribute("aria-expanded","false");}
   btn.addEventListener("click",function(e){e.stopPropagation();var open=nav.classList.toggle("open");btn.setAttribute("aria-expanded",open?"true":"false");});
   nav.addEventListener("click",function(e){if(e.target.closest("a"))close();});
