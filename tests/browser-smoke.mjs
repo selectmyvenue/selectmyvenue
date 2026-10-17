@@ -128,10 +128,10 @@ try {
           assert.equal(await menuButton.count(), 1, `exactly one mobile menu button should exist at ${path}`);
           assert.equal(await mainNav.count(), 1, `exactly one main navigation should exist at ${path}`);
           await menuButton.click();
-          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'true' && document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 });
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'true' && document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU OPEN: ' + error.message); });
           assert(await mainNav.isVisible(), `mobile menu should open at ${path}`);
           await menuButton.click();
-          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 });
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU CLOSE: ' + error.message); });
           if (path === '/') {
             await page.waitForSelector('.smv-home-enquiry-edge', { state: 'visible', timeout: 10000 });
             const edge = page.locator('.smv-home-enquiry-edge');
@@ -179,10 +179,10 @@ try {
             // Playwright tap uses the browser's real touchscreen-to-click path.
             // Raw CDP touchStart/touchEnd alone does not synthesize a click.
             await tab.tap();
-            await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 });
+            await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('GET MATCHED OPEN: ' + error.message); });
             assert(await drawer.isVisible(), 'Tapping Get Matched must open the enquiry drawer');
             await page.locator('#smvHomeEnquiryClose').click();
-            await page.waitForFunction(() => !document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 });
+            await page.waitForFunction(() => !document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('DRAWER CLOSE: ' + error.message); });
           }
         }
         const metrics = await page.evaluate(() => ({
