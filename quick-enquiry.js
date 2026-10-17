@@ -471,13 +471,13 @@
       edge.classList.remove("smv-get-matched-dragging");
       if(shouldOpen)openDrawer();
       moved=false;
-    },{passive:true});
+    },{passive:true,capture:true});
 
     edge.addEventListener("touchcancel",function(){
       if(!touchDragging)return;
       touchDragging=false;dragging=false;dragPointerId=null;moved=false;
       edge.classList.remove("smv-get-matched-dragging");
-    },{passive:true});
+    },{passive:true,capture:true});
 
     var tab=edge.querySelector("#smvHomeEnquiryTab");
     if(tab){
