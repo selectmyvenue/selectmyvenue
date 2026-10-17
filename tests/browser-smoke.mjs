@@ -164,6 +164,17 @@ try {
           if (path === '/') {
             // Regression: the mobile homepage filter panel must actually appear,
             // not remain hidden behind the redesign stylesheet's display:none!important.
+            // Public venue data can be empty in CI without touching production.
+            // If no real cards arrive, add one isolated DOM fixture so the
+            // filter UI initializer can be exercised deterministically.
+            await page.evaluate(() => {
+              const grid = document.querySelector('#homeVenueGrid');
+              if (!grid || document.querySelector('#featuredVenues .smv-home-filter-toggle')) return;
+              const fixture = document.createElement('article');
+              fixture.className = 'home-venue-card';
+              fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
+              grid.appendChild(fixture);
+            });
             await page.waitForSelector('#featuredVenues .smv-home-filter-toggle', { state: 'visible', timeout: 15000 });
             const filterToggle = page.locator('#featuredVenues .smv-home-filter-toggle');
             const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
