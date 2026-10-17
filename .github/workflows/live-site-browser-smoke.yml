@@ -6,21 +6,23 @@ on:
     - cron: '45 3 * * 1'
   pull_request:
     paths:
-      - 'tests/browser-smoke.mjs'
-      - 'tests/fixtures/website-mobile-app-20261002.js'
+      - '**.html'
+      - '**.js'
+      - '**.css'
+      - 'tests/**'
       - '.github/workflows/live-site-browser-smoke.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: live-site-browser-smoke
+  group: phone-ui-regression
   cancel-in-progress: true
 
 jobs:
   browser-smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,5 +32,15 @@ jobs:
         run: |
           npm install --no-save playwright
           npx playwright install --with-deps chromium
-      - name: Test live landing pages on mobile and desktop
+      - name: Serve this PR's files locally
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/smv-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/ > /dev/null
+      - name: Test phone UI and public pages at multiple viewport sizes
+        env:
+          SMV_SITE_BASE_URL: http://127.0.0.1:4173
         run: node tests/browser-smoke.mjs
