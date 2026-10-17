@@ -144,7 +144,20 @@ try {
           if (event.message) window.__smvBrowserErrors = [...(window.__smvBrowserErrors || []), `${event.message} at ${event.filename || 'inline'}:${event.lineno || 0}:${event.colno || 0}`];
         });
       });
-      page.on('pageerror', error => pageErrors.push(`${error.message} | ${error.stack || ''}`));
+      page.on('pageerror', error => pageErrors.push(`${error.message} | `${error.stack || ''}`));
+      if (path === '/' && viewport.name.startsWith('mobile-')) {
+        // Seed a DOM-only card before the real DOMContentLoaded initializer runs.
+        await page.addInitScript(() => {
+          document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.querySelector('#homeVenueGrid');
+            if (!grid || grid.querySelector('.home-venue-card')) return;
+            const fixture = document.createElement('article');
+            fixture.className = 'home-venue-card';
+            fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
+            grid.appendChild(fixture);
+          }, { once: true });
+        });
+      }
       try {
         const response = await page.goto(base + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
@@ -164,17 +177,7 @@ try {
           if (path === '/') {
             // Regression: the mobile homepage filter panel must actually appear,
             // not remain hidden behind the redesign stylesheet's display:none!important.
-            // Public venue data can be empty in CI without touching production.
-            // If no real cards arrive, add one isolated DOM fixture so the
-            // filter UI initializer can be exercised deterministically.
-            await page.evaluate(() => {
-              const grid = document.querySelector('#homeVenueGrid');
-              if (!grid || document.querySelector('#featuredVenues .smv-home-filter-toggle')) return;
-              const fixture = document.createElement('article');
-              fixture.className = 'home-venue-card';
-              fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
-              grid.appendChild(fixture);
-            });
+            // The isolated fixture is seeded before DOMContentLoaded above.
             await page.waitForSelector('#featuredVenues .smv-home-filter-toggle', { state: 'visible', timeout: 15000 });
             const filterToggle = page.locator('#featuredVenues .smv-home-filter-toggle');
             const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
