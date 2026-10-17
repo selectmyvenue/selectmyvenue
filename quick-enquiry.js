@@ -426,12 +426,12 @@
 
     edge.addEventListener("pointerup",function(e){
       if(e.pointerType==="touch"||!dragging||e.pointerId!==dragPointerId)return;
-      var shouldOpen=!moved;
       if(moved)suppressClickUntil=Date.now()+500;
       dragging=false;dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
       if(edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){}}
-      if(shouldOpen)openDrawer();
+      // Let the resulting click event handle taps. Opening here as well can
+      // cause the follow-up touch/click to land on the newly visible backdrop.
       moved=false;
     });
 
@@ -468,11 +468,11 @@
 
     edge.addEventListener("touchend",function(){
       if(!touchDragging)return;
-      var shouldOpen=!moved;
       if(moved)suppressClickUntil=Date.now()+500;
       touchDragging=false;dragging=false;dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
-      if(shouldOpen)openDrawer();
+      // A tap is activated by the click handler below; do not open on touchend
+      // or the synthetic click may hit the new backdrop and close the drawer.
       moved=false;
     },{passive:true,capture:true});
 
