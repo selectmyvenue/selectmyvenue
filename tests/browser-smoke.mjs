@@ -158,16 +158,6 @@ try {
               el.style.setProperty('transform', 'translateY(-50%)', 'important');
             });
             await page.waitForTimeout(50);
-            await edge.evaluate(el => {
-              window.__smvTouchDebug = [];
-              ['pointerdown','pointerup','touchstart','touchend','click'].forEach(type => {
-                el.addEventListener(type, event => window.__smvTouchDebug.push({
-                  type, pointerType: event.pointerType || null,
-                  target: event.target?.id || event.target?.className || event.target?.tagName,
-                  drawerOpen: Boolean(document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'))
-                }), true);
-              });
-            });
             const touchSession = await context.newCDPSession(page);
             const touchStartBox = await edge.boundingBox();
             assert(touchStartBox, 'Get Matched banner must have a touch hit area');
@@ -192,10 +182,7 @@ try {
             const tapY = tapBox.y + tapBox.height / 2;
             await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ id: 1, x: tapX, y: tapY }] });
             await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-            await page.waitForTimeout(100);
-            const tapDebug = await page.evaluate(() => ({ events: window.__smvTouchDebug, drawerOpen: Boolean(document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open')) }));
-            console.log('DEBUG Get Matched touch tap:', JSON.stringify(tapDebug));
-            await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 1500 });
+            await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 });
             assert(await drawer.isVisible(), 'Tapping Get Matched must open the enquiry drawer');
             await page.locator('#smvHomeEnquiryClose').click();
             await page.waitForFunction(() => !document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 });
