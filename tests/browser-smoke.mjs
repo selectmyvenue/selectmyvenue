@@ -144,7 +144,7 @@ try {
           if (event.message) window.__smvBrowserErrors = [...(window.__smvBrowserErrors || []), `${event.message} at ${event.filename || 'inline'}:${event.lineno || 0}:${event.colno || 0}`];
         });
       });
-      page.on('pageerror', error => pageErrors.push(`${error.message} | `${error.stack || ''}`));
+      page.on('pageerror', error => pageErrors.push(`${error.message} | ${error.stack || ''}`));
       if (path === '/' && viewport.name.startsWith('mobile-')) {
         // Seed a DOM-only card before the real DOMContentLoaded initializer runs.
         await page.addInitScript(() => {
