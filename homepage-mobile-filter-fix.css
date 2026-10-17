@@ -1,0 +1,19 @@
+/* Homepage phone filter visibility regression fix.
+   The marketplace redesign intentionally hides the panel for its compact layout,
+   but the mobile toggle must override that rule when the panel is open. */
+@media (max-width: 1000px) {
+  html body #featuredVenues .smv-home-filter-panel {
+    display: none !important;
+  }
+
+  html body #featuredVenues .smv-home-filter-panel.open {
+    display: block !important;
+    position: relative !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    z-index: 5 !important;
+  }
+}
