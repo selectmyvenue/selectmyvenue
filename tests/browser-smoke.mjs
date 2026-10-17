@@ -149,8 +149,33 @@ try {
             const after = await edge.evaluate(el => el.getBoundingClientRect().top);
             assert(Math.abs(after - before) > 25, 'Get Matched banner must move vertically after drag');
             assert(!(await drawer.evaluate(el => el.classList.contains('is-open'))), 'Dragging must not open the enquiry drawer');
+
+            // Exercise the actual touch path as well as mouse input. CDP dispatches
+            // touch events, which become PointerEvents with pointerType="touch".
+            const touchSession = await context.newCDPSession(page);
+            const touchStartBox = await edge.boundingBox();
+            assert(touchStartBox, 'Get Matched banner must have a touch hit area');
+            const touchX = Math.min(page.viewportSize().width - 8, touchStartBox.x + 28);
+            const touchStartY = touchStartBox.y + touchStartBox.height / 2;
+            const touchPoints = (y) => [{ id: 1, x: touchX, y }];
+            const touchBefore = await edge.evaluate(el => el.getBoundingClientRect().top);
+            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: touchPoints(touchStartY) });
+            for (let i = 1; i <= 8; i++) {
+              await touchSession.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: touchPoints(touchStartY + 56 * i / 8) });
+            }
+            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+            await page.waitForTimeout(100);
+            const touchAfter = await edge.evaluate(el => el.getBoundingClientRect().top);
+            assert(Math.abs(touchAfter - touchBefore) > 25, 'Get Matched banner must move vertically on a real touch drag');
+            assert(!(await drawer.evaluate(el => el.classList.contains('is-open'))), 'Touch-dragging must not open the enquiry drawer');
+
             await page.waitForTimeout(550);
-            await tab.click();
+            const tapBox = await tab.boundingBox();
+            assert(tapBox, 'Get Matched tab must have a touch hit area');
+            const tapX = tapBox.x + tapBox.width / 2;
+            const tapY = tapBox.y + tapBox.height / 2;
+            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ id: 1, x: tapX, y: tapY }] });
+            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
             await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), { timeout: 5000 });
             assert(await drawer.isVisible(), 'Tapping Get Matched must open the enquiry drawer');
             await page.locator('#smvHomeEnquiryClose').click();
