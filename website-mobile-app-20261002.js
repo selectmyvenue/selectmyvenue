@@ -87,7 +87,11 @@
       if(enquiry){ enquiry.scrollIntoView({behavior:"smooth",block:"start"}); }
     });
 
-    nav.querySelector(".smv-nav-more").addEventListener("click",function(){
+    nav.querySelector(".smv-nav-more").addEventListener("click",function(e){
+      // The original More click bubbles to document after btn.click(). Keep
+      // the outside-click closer from immediately reversing the menu state.
+      e.preventDefault();
+      e.stopPropagation();
       var btn=document.getElementById("menuToggle");
       if(btn) btn.click();
       else window.scrollTo({top:0,behavior:"smooth"});
