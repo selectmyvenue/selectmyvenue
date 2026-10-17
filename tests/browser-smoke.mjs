@@ -1,7 +1,23 @@
 import { chromium, devices } from 'playwright';
 import assert from 'node:assert/strict';
 const base = (process.env.SMV_SITE_BASE_URL || 'https://selectmyvenue.com').replace(/\/$/, '');
-const paths = ['/'];
+const paths = [
+  '/',
+  '/venues.html',
+  '/venues-in-delhi.html',
+  '/venues-in-gurgaon.html',
+  '/venues-in-noida.html',
+  '/venues-in-faridabad.html',
+  '/banquet-halls-in-delhi.html',
+  '/banquet-halls-in-gurgaon.html',
+  '/wedding-venues-delhi-ncr.html',
+  '/wedding-venues-in-delhi.html',
+  '/wedding-venues-in-gurgaon.html',
+  '/wedding-venues-in-noida.html',
+  '/list-your-venue.html',
+  '/venue.html',
+  '/venue.html?id=072729f0-3813-4fc0-9dd9-12b93a772235',
+];
 
 const browser = await chromium.launch({ headless: true });
 const failures = [];
@@ -122,16 +138,6 @@ try {
             const tab = page.locator('#smvHomeEnquiryTab');
             const drawer = page.locator('#smvHomeEnquiryDrawer');
             assert.equal(await tab.count(), 1, 'exactly one Get Matched tab must exist on mobile homepage');
-            await edge.evaluate(el => {
-              window.__smvTouchDebug = [];
-              ['pointerdown','pointerup','pointermove','touchstart','touchmove','touchend','click'].forEach(type => {
-                el.addEventListener(type, event => window.__smvTouchDebug.push({
-                  type, pointerType: event.pointerType || null,
-                  target: event.target?.id || event.target?.className || event.target?.tagName,
-                  drawerOpen: Boolean(document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'))
-                }), true);
-              });
-            });
             const before = await edge.evaluate(el => el.getBoundingClientRect().top);
             const rect = await edge.boundingBox();
             assert(rect, 'Get Matched banner must have a hit area');
@@ -172,8 +178,6 @@ try {
             await page.waitForTimeout(550);
             // Verify a genuine touchscreen tap after the drag gesture.
             await tab.tap();
-            await page.waitForTimeout(100);
-            console.log('DEBUG actual tab.tap:', JSON.stringify(await page.evaluate(() => ({events:window.__smvTouchDebug,drawerOpen:Boolean(document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'))}))));
             await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 1500 }).catch(error => { throw new Error('GET MATCHED OPEN: ' + error.message); });
             assert(await drawer.isVisible(), 'Tapping Get Matched must open the enquiry drawer');
             await page.locator('#smvHomeEnquiryClose').click();
