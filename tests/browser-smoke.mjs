@@ -123,12 +123,14 @@ try {
           const drawer = page.locator("#smvHomeEnquiryDrawer");
           assert(await matchedEdge.isVisible(), "Get Matched banner should be visible on mobile homepage");
           const beforeTop = await matchedEdge.evaluate(el => el.getBoundingClientRect().top);
-          await matchedEdge.evaluate(el => {
-            const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
-            el.dispatchEvent(new PointerEvent("pointerdown", { bubbles:true, pointerId:77, pointerType:"touch", isPrimary:true, button:0, clientX:x, clientY:y }));
-            el.dispatchEvent(new PointerEvent("pointermove", { bubbles:true, cancelable:true, pointerId:77, pointerType:"touch", isPrimary:true, buttons:1, clientX:x, clientY:y+70 }));
-            el.dispatchEvent(new PointerEvent("pointerup", { bubbles:true, pointerId:77, pointerType:"touch", isPrimary:true, button:0, clientX:x, clientY:y+70 }));
-          });
+          const dragRect = await matchedEdge.boundingBox();
+          assert(dragRect, "Get Matched banner should have a measurable hit area");
+          const dragX = dragRect.x + dragRect.width / 2;
+          const dragY = dragRect.y + dragRect.height / 2;
+          await page.mouse.move(dragX, dragY);
+          await page.mouse.down();
+          await page.mouse.move(dragX, dragY + 70, { steps: 8 });
+          await page.mouse.up();
           const afterTop = await matchedEdge.evaluate(el => el.getBoundingClientRect().top);
           assert(Math.abs(afterTop-beforeTop) > 25, "Get Matched banner should move vertically after a drag");
           assert(!(await drawer.evaluate(el => el.classList.contains("is-open"))), "Dragging should not open the enquiry drawer");
