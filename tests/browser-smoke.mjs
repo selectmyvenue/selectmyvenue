@@ -128,10 +128,10 @@ try {
           assert.equal(await menuButton.count(), 1, `exactly one mobile menu button should exist at ${path}`);
           assert.equal(await mainNav.count(), 1, `exactly one main navigation should exist at ${path}`);
           await menuButton.click();
-          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'true' && document.getElementById('mainNav')?.classList.contains('open'), { timeout: 5000 });
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'true' && document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 });
           assert(await mainNav.isVisible(), `mobile menu should open at ${path}`);
           await menuButton.click();
-          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), { timeout: 5000 });
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 });
           if (path === '/') {
             await page.waitForSelector('.smv-home-enquiry-edge', { state: 'visible', timeout: 10000 });
             const edge = page.locator('.smv-home-enquiry-edge');
@@ -182,10 +182,10 @@ try {
             const tapY = tapBox.y + tapBox.height / 2;
             await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ id: 1, x: tapX, y: tapY }] });
             await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-            await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), { timeout: 5000 });
+            await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 });
             assert(await drawer.isVisible(), 'Tapping Get Matched must open the enquiry drawer');
             await page.locator('#smvHomeEnquiryClose').click();
-            await page.waitForFunction(() => !document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), { timeout: 5000 });
+            await page.waitForFunction(() => !document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 });
           }
         }
         const metrics = await page.evaluate(() => ({
