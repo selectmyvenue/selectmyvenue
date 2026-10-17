@@ -170,6 +170,7 @@ try {
             const before = await edge.evaluate(el => el.getBoundingClientRect().top);
             const rect = await edge.boundingBox();
             assert(rect, 'Get Matched banner must have a hit area');
+            assert(rect.x <= 2, `Get Matched banner must stay attached to the left edge on mobile (x=${rect.x})`);
             await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2);
             await page.mouse.down();
             await page.mouse.move(rect.x + rect.width / 2, Math.min(page.viewportSize().height - 12, rect.y + rect.height / 2 + 70), { steps: 8 });
