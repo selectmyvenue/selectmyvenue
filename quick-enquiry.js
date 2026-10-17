@@ -374,7 +374,7 @@
     // GET MATCHED interaction — deliberately simple:
     // desktop uses pointer drag; mobile uses a tiny tap window so a normal
     // tap opens immediately while any vertical movement switches to dragging.
-    var dragging=false,moved=false,dragPointerId=null,dragStartY=0,dragStartCenter=0,touchTimer=null,touchOpened=false;
+    var dragging=false,moved=false,dragPointerId=null,dragStartY=0,dragStartCenter=0,touchTimer=null,touchOpened=false,suppressClickUntil=0;
 
     function setEdgeCenter(center){
       var h=edge.offsetHeight||42;
@@ -439,6 +439,7 @@
     edge.addEventListener("pointerup",function(e){
       if(!dragging||e.pointerId!==dragPointerId)return;
       var shouldOpen=!moved;
+      if(moved)suppressClickUntil=Date.now()+500;
       dragging=false;dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
       if(edge.releasePointerCapture){try{edge.releasePointerCapture(e.pointerId);}catch(_){}}
@@ -458,6 +459,9 @@
       tab.addEventListener("click",function(e){
         e.preventDefault();
         e.stopPropagation();
+        // Browsers synthesize a click after pointerup even when the pointer
+        // was dragged. Suppress that click so dragging only repositions.
+        if(Date.now()<suppressClickUntil)return;
         openDrawer();
       });
     }
