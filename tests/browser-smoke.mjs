@@ -205,18 +205,18 @@ try {
           await menuButton.click();
           await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU CLOSE: ' + error.message); });
           if (path === '/') {
-            // Regression: the mobile homepage filter panel must actually appear,
-            // not remain hidden behind the redesign stylesheet's display:none!important.
-            // The isolated fixture is seeded before DOMContentLoaded above.
-            await page.waitForSelector('#featuredVenues .smv-home-filter-toggle', { state: 'visible', timeout: 15000 });
-            const filterToggle = page.locator('#featuredVenues .smv-home-filter-toggle');
+            // Regression: the active marketplace filter panel must open from its own
+            // mobile toggle, despite the redesign stylesheet's display:none!important.
+            // This test never submits an enquiry or writes to Supabase.
+            await page.waitForSelector('#featuredVenues .smv-home-market-filter-toggle', { state: 'visible', timeout: 15000 });
+            const filterToggle = page.locator('#featuredVenues .smv-home-market-filter-toggle');
             const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
             await filterToggle.click();
             await page.waitForFunction(() => {
               const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
               return !!panel && panel.classList.contains('open') && getComputedStyle(panel).display !== 'none' && panel.getBoundingClientRect().height > 0;
             }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER OPEN: ' + error.message); });
-            assert(await page.locator('#smvHomeSearch').isVisible(), 'homepage filter search must be visible after tapping Filter Venues');
+            assert(await page.locator('#featuredVenues .smv-filter-choice').first().isVisible(), 'current marketplace filter choices must be visible after tapping Filter Venues');
             await filterToggle.click();
             await page.waitForFunction(() => {
               const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
