@@ -162,6 +162,23 @@ try {
           await menuButton.click();
           await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU CLOSE: ' + error.message); });
           if (path === '/') {
+            // Regression: the mobile homepage filter panel must actually appear,
+            // not remain hidden behind the redesign stylesheet's display:none!important.
+            await page.waitForSelector('#featuredVenues .smv-home-filter-toggle', { state: 'visible', timeout: 15000 });
+            const filterToggle = page.locator('#featuredVenues .smv-home-filter-toggle');
+            const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
+            await filterToggle.click();
+            await page.waitForFunction(() => {
+              const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
+              return !!panel && panel.classList.contains('open') && getComputedStyle(panel).display !== 'none' && panel.getBoundingClientRect().height > 0;
+            }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER OPEN: ' + error.message); });
+            assert(await page.locator('#smvHomeSearch').isVisible(), 'homepage filter search must be visible after tapping Filter Venues');
+            await filterToggle.click();
+            await page.waitForFunction(() => {
+              const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
+              return !!panel && !panel.classList.contains('open') && getComputedStyle(panel).display === 'none';
+            }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER CLOSE: ' + error.message); });
+
             await page.waitForSelector('.smv-home-enquiry-edge', { state: 'visible', timeout: 10000 });
             const edge = page.locator('.smv-home-enquiry-edge');
             const tab = page.locator('#smvHomeEnquiryTab');
