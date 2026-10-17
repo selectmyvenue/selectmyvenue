@@ -16,6 +16,7 @@ const paths = [
   '/wedding-venues-in-noida.html',
   '/list-your-venue.html',
   '/venue.html',
+  '/venue.html?id=072729f0-3813-4fc0-9dd9-12b93a772235',
 ];
 
 const browser = await chromium.launch({ headless: true });
@@ -90,12 +91,45 @@ async function testQuickEnquiryMock() {
     await context.close();
   }
 }
+
+async function testMobileMenuOptionNavigation() {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 1,
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  try {
+    const response = await page.goto(base + '/', { waitUntil: 'domcontentloaded', timeout: 45000 });
+    assert(response && response.status() < 400, 'homepage should load for menu-option test');
+    const menuButton = page.locator('#menuToggle');
+    const mainNav = page.locator('#mainNav');
+    await menuButton.waitFor({ state: 'visible', timeout: 10000 });
+    await menuButton.click();
+    await page.waitForFunction(() => document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 });
+    const venuesLink = page.locator('#mainNav a[href="venues.html"]');
+    assert(await venuesLink.isVisible(), 'Browse Venues menu option should be visible when menu opens');
+    await venuesLink.click();
+    await page.waitForFunction(() => location.pathname.endsWith('/venues.html'), undefined, { timeout: 5000 });
+    assert(!(await mainNav.evaluate(el => el.classList.contains('open'))), 'menu should close after selecting a navigation option');
+    console.log('PASS mobile hamburger option: Browse Venues is clickable, navigates, and closes menu');
+  } finally {
+    await context.close();
+  }
+}
+
 try {
   await testQuickEnquiryMock();
+  await testMobileMenuOptionNavigation();
   for (const path of paths) {
     for (const viewport of [
-      { name: 'mobile-android', ...devices['Pixel 7'] },
-      { name: 'desktop', viewport: { width: 1365, height: 900 }, deviceScaleFactor: 1 },
+      { name: 'mobile-320', viewport: { width: 320, height: 780 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'mobile-360', viewport: { width: 360, height: 800 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'mobile-390', viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'mobile-430', viewport: { width: 430, height: 932 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'tablet', viewport: { width: 768, height: 1024 }, deviceScaleFactor: 1, isMobile: false, hasTouch: true },
+      { name: 'desktop', viewport: { width: 1365, height: 900 }, deviceScaleFactor: 1, isMobile: false, hasTouch: false },
     ]) {
       const context = await browser.newContext({
         viewport: viewport.viewport,
@@ -116,6 +150,70 @@ try {
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
+        if (viewport.name.startsWith('mobile-')) {
+          await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
+          const menuButton = page.locator('#menuToggle');
+          const mainNav = page.locator('#mainNav');
+          assert.equal(await menuButton.count(), 1, `exactly one mobile menu button should exist at ${path}`);
+          assert.equal(await mainNav.count(), 1, `exactly one main navigation should exist at ${path}`);
+          await menuButton.click();
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'true' && document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU OPEN: ' + error.message); });
+          assert(await mainNav.isVisible(), `mobile menu should open at ${path}`);
+          await menuButton.click();
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU CLOSE: ' + error.message); });
+          if (path === '/') {
+            await page.waitForSelector('.smv-home-enquiry-edge', { state: 'visible', timeout: 10000 });
+            const edge = page.locator('.smv-home-enquiry-edge');
+            const tab = page.locator('#smvHomeEnquiryTab');
+            const drawer = page.locator('#smvHomeEnquiryDrawer');
+            assert.equal(await tab.count(), 1, 'exactly one Get Matched tab must exist on mobile homepage');
+            const before = await edge.evaluate(el => el.getBoundingClientRect().top);
+            const rect = await edge.boundingBox();
+            assert(rect, 'Get Matched banner must have a hit area');
+            assert(rect.x <= 2, `Get Matched banner must stay attached to the left edge on mobile (x=${rect.x})`);
+            await page.mouse.move(rect.x + rect.width / 2, rect.y + rect.height / 2);
+            await page.mouse.down();
+            await page.mouse.move(rect.x + rect.width / 2, Math.min(page.viewportSize().height - 12, rect.y + rect.height / 2 + 70), { steps: 8 });
+            await page.mouse.up();
+            await page.waitForTimeout(100);
+            const after = await edge.evaluate(el => el.getBoundingClientRect().top);
+            assert(Math.abs(after - before) > 25, 'Get Matched banner must move vertically after drag');
+            assert(!(await drawer.evaluate(el => el.classList.contains('is-open'))), 'Dragging must not open the enquiry drawer');
+
+            // Exercise the actual touch path as well as mouse input. Reset the
+            // tab to a known central position first so the second drag has room
+            // to move even after the mouse-drag test above.
+            await edge.evaluate(el => {
+              el.style.setProperty('top', '44%', 'important');
+              el.style.setProperty('transform', 'translateY(-50%)', 'important');
+            });
+            await page.waitForTimeout(50);
+            const touchSession = await context.newCDPSession(page);
+            const touchStartBox = await edge.boundingBox();
+            assert(touchStartBox, 'Get Matched banner must have a touch hit area');
+            const touchX = Math.min(page.viewportSize().width - 8, touchStartBox.x + 28);
+            const touchStartY = touchStartBox.y + touchStartBox.height / 2;
+            const touchPoints = (y) => [{ id: 1, x: touchX, y }];
+            const touchBefore = await edge.evaluate(el => el.getBoundingClientRect().top);
+            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: touchPoints(touchStartY) });
+            for (let i = 1; i <= 8; i++) {
+              await touchSession.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: touchPoints(touchStartY + 56 * i / 8) });
+            }
+            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+            await page.waitForTimeout(100);
+            const touchAfter = await edge.evaluate(el => el.getBoundingClientRect().top);
+            assert(Math.abs(touchAfter - touchBefore) > 25, 'Get Matched banner must move vertically on a real touch drag');
+            assert(!(await drawer.evaluate(el => el.classList.contains('is-open'))), 'Touch-dragging must not open the enquiry drawer');
+
+            await page.waitForTimeout(550);
+            // Verify a genuine touchscreen tap after the drag gesture.
+            await tab.tap();
+            await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 1500 }).catch(error => { throw new Error('GET MATCHED OPEN: ' + error.message); });
+            assert(await drawer.isVisible(), 'Tapping Get Matched must open the enquiry drawer');
+            await page.locator('#smvHomeEnquiryClose').click();
+            await page.waitForFunction(() => !document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('DRAWER CLOSE: ' + error.message); });
+          }
+        }
         const metrics = await page.evaluate(() => ({
           viewport: document.documentElement.clientWidth,
           documentWidth: document.documentElement.scrollWidth,
