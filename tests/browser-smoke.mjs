@@ -144,7 +144,32 @@ try {
           if (event.message) window.__smvBrowserErrors = [...(window.__smvBrowserErrors || []), `${event.message} at ${event.filename || 'inline'}:${event.lineno || 0}:${event.colno || 0}`];
         });
       });
-      page.on('pageerror', error => pageErrors.push(`${error.message} | ${error.stack || ''}`));
+      page.on('pageerror', error => pageErrors.push(`${error.message} | `${error.stack || ''}`));
+      if (path === '/' && viewport.name.startsWith('mobile-')) {
+        // Seed a dedicated card as soon as the homepage grid is parsed, before
+        // the inline smart-filter initializer runs. This avoids dependence on
+        // whether public venue data is available during CI.
+        await page.addInitScript(() => {
+          const addFixture = () => {
+            const grid = document.querySelector('#homeVenueGrid');
+            if (!grid) return false;
+            if (!grid.querySelector('[data-smv-filter-fixture="1"]')) {
+              const fixture = document.createElement('article');
+              fixture.className = 'home-venue-card';
+              fixture.dataset.smvFilterFixture = '1';
+              fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
+              grid.appendChild(fixture);
+            }
+            return true;
+          };
+          if (!addFixture()) {
+            const observer = new MutationObserver(() => {
+              if (addFixture()) observer.disconnect();
+            });
+            observer.observe(document, { childList: true, subtree: true });
+          }
+        });
+      }
       try {
         const response = await page.goto(base + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
