@@ -235,6 +235,7 @@
   <link rel="stylesheet" href="website-mobile-app-20261002.css?v=20261011-venue-name-contrast-1">
   <link rel="stylesheet" href="mobile-ui-final-20261001.css?v=20261005-getmatched-restore-1">
   <link rel="stylesheet" href="homepage-desktop-overflow-fix.css?v=20261017-1">
+  <link rel="stylesheet" href="homepage-mobile-filter-fix.css?v=20261018-marketplace-filter-1">
 </head>
 
 <body>
@@ -2901,7 +2902,7 @@
 
 <script src="website-enquiry-details.js?v=20260922-1"></script>
 
-<script src="homepage-venues.js?v=20261005-all-public-venues-2"></script>
+<script src="homepage-venues.js?v=20261018-mobile-filter-1"></script>
 
 <script>
 (function(){
@@ -3058,11 +3059,18 @@
   }
 
   function watchHomeVenues(){
-    var grid=document.getElementById("homeVenueGrid");
-    if(!grid)return;
+    var section=document.getElementById("featuredVenues");
+    if(!section)return;
     installHomeSmartVenueFilters();
-    var observer=new MutationObserver(function(){installHomeSmartVenueFilters();});
-    observer.observe(grid,{childList:true});
+    // Watch the stable section, not the grid node itself. The public venue
+    // loader can replace #homeVenueGrid while loading data; observing the old
+    // grid would then miss later cards and leave mobile filters unavailable.
+    var observer=new MutationObserver(function(){
+      var currentGrid=document.getElementById("homeVenueGrid");
+      if(!currentGrid||currentGrid.dataset.smartFiltersInstalled==="1")return;
+      installHomeSmartVenueFilters();
+    });
+    observer.observe(section,{childList:true,subtree:true});
   }
 
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",watchHomeVenues,{once:true});
