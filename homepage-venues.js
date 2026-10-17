@@ -69,7 +69,7 @@
       #featuredVenues .smv-home-result-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;padding:11px 14px;border:1px solid rgba(94,226,207,.15);border-radius:12px;background:linear-gradient(135deg,rgba(17,74,66,.62),rgba(7,43,39,.68));color:#c9dfda;font-size:12px;font-weight:850}#featuredVenues .smv-home-result-bar strong{color:#f5d986}
       #featuredVenues .smv-home-clear-all{min-height:35px;padding:0 11px;border:1px solid rgba(235,199,101,.3);border-radius:9px;background:rgba(235,199,101,.08);color:#f3d47c;font:inherit;font-size:11px;font-weight:950;cursor:pointer}
       #featuredVenues .smv-home-no-results{display:none;padding:26px;border:1px dashed rgba(94,226,207,.22);border-radius:15px;color:#9bbdb7;text-align:center;font-weight:850}
-      #featuredVenues .smv-home-market-search,#featuredVenues .smv-home-filter-toggle{display:none!important}#featuredVenues .home-venue-card[hidden]{display:none!important}
+      #featuredVenues .smv-home-market-search,#featuredVenues .smv-home-filter-toggle,#featuredVenues .smv-home-market-filter-toggle{display:none!important}#featuredVenues .home-venue-card[hidden]{display:none!important}
       @media(max-width:980px){#featuredVenues .smv-home-filter-layout{grid-template-columns:1fr!important}#featuredVenues .smv-home-filter-panel{position:static!important}#featuredVenues .smv-filter-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
       @media(max-width:620px){#featuredVenues .smv-filter-list{grid-template-columns:1fr}#featuredVenues .smv-filter-choice{font-size:12px}}
     `;document.head.appendChild(s)
@@ -84,7 +84,19 @@
     const section=document.getElementById("featuredVenues"),grid=document.getElementById("homeVenueGrid");if(!section||!grid)return;marketplaceCss();grid.dataset.smartFiltersInstalled="1";
     const legacyPanel=section.querySelector(".smv-home-filter-panel");if(legacyPanel)legacyPanel.remove();section.querySelectorAll(".smv-home-filter-toggle,.smv-home-market-search").forEach(n=>n.remove());
     let layout=grid.closest(".smv-home-filter-layout"),results=grid.closest(".smv-home-results");if(!layout||!results){layout=document.createElement("div");layout.className="smv-home-filter-layout";results=document.createElement("div");results.className="smv-home-results";grid.parentNode.insertBefore(layout,grid);layout.appendChild(results);results.appendChild(grid)}
-    const panel=document.createElement("aside");panel.className="smv-home-filter-panel";layout.insertBefore(panel,results);
+    const panel=document.createElement("aside");panel.className="smv-home-filter-panel";panel.id="smvHomeMarketplaceFilterPanel";layout.insertBefore(panel,results);
+    const mobileToggle=document.createElement("button");
+    mobileToggle.type="button";
+    mobileToggle.className="smv-home-market-filter-toggle";
+    mobileToggle.setAttribute("aria-expanded","false");
+    mobileToggle.setAttribute("aria-controls",panel.id);
+    mobileToggle.textContent="☰ Filter Venues";
+    mobileToggle.addEventListener("click",function(){
+      const open=!panel.classList.contains("open");
+      panel.classList.toggle("open",open);
+      mobileToggle.setAttribute("aria-expanded",String(open));
+    });
+    section.insertBefore(mobileToggle,layout);
     const maps={type:new Map(),location:new Map(),food:new Map(),occasion:new Map(),capacity:new Map(),budget:new Map(),more:new Map()},inc=(m,k)=>{if(k)m.set(k,(m.get(k)||0)+1)};
     rows.forEach(v=>{inc(maps.type,clean(v.venue_type)||"Venue");inc(maps.location,clean(v.city));inc(maps.location,clean(v.area));eventTypes(v).forEach(e=>inc(maps.occasion,e));inc(maps.capacity,capacityBucket(Number(v.capacity_max||v.capacity_min||0)));if(v.food_veg)inc(maps.food,"Vegetarian");if(v.food_non_veg)inc(maps.food,"Non-Vegetarian");if(v.parking_available)inc(maps.more,"Parking");if(v.rooms_available)inc(maps.more,"Rooms");if(v.catering_available)inc(maps.more,"Catering");if(v.decoration_available)inc(maps.more,"Decoration");const p=Number(v.price_min_per_person||0);if(p)inc(maps.budget,p<=1000?BUDGET_ORDER[0]:p<=1500?BUDGET_ORDER[1]:p<=2000?BUDGET_ORDER[2]:p<=3000?BUDGET_ORDER[3]:BUDGET_ORDER[4])});
     const ordered=(cat,map)=>{if(cat==="capacity")return CAPACITY_ORDER.filter(x=>map.has(x)).map(x=>[x,map.get(x)]);if(cat==="budget")return BUDGET_ORDER.filter(x=>map.has(x)).map(x=>[x,map.get(x)]);if(cat==="food")return ["Vegetarian","Non-Vegetarian"].filter(x=>map.has(x)).map(x=>[x,map.get(x)]);return [...map.entries()].sort((a,b)=>a[0].localeCompare(b[0],undefined,{numeric:true,sensitivity:"base"}))};
