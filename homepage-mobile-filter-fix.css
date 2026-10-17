@@ -2,6 +2,23 @@
    The marketplace redesign intentionally hides the panel for its compact layout,
    but the mobile toggle must override that rule when the panel is open. */
 @media (max-width: 1000px) {
+  html body #featuredVenues .smv-home-market-filter-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    margin: 0 0 12px !important;
+    padding: 0 14px !important;
+    border: 1px solid rgba(9, 117, 94, .28) !important;
+    border-radius: 12px !important;
+    background: linear-gradient(180deg, #0b806a, #075c4e) !important;
+    color: #fff !important;
+    font: inherit !important;
+    font-size: 13px !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+  }
   html body #featuredVenues .smv-home-filter-panel {
     display: none !important;
   }
