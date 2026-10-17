@@ -3059,11 +3059,18 @@
   }
 
   function watchHomeVenues(){
-    var grid=document.getElementById("homeVenueGrid");
-    if(!grid)return;
+    var section=document.getElementById("featuredVenues");
+    if(!section)return;
     installHomeSmartVenueFilters();
-    var observer=new MutationObserver(function(){installHomeSmartVenueFilters();});
-    observer.observe(grid,{childList:true});
+    // Watch the stable section, not the grid node itself. The public venue
+    // loader can replace #homeVenueGrid while loading data; observing the old
+    // grid would then miss later cards and leave mobile filters unavailable.
+    var observer=new MutationObserver(function(){
+      var currentGrid=document.getElementById("homeVenueGrid");
+      if(!currentGrid||currentGrid.dataset.smartFiltersInstalled==="1")return;
+      installHomeSmartVenueFilters();
+    });
+    observer.observe(section,{childList:true,subtree:true});
   }
 
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",watchHomeVenues,{once:true});
