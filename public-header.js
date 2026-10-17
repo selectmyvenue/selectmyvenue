@@ -33,14 +33,37 @@ function markActive(){
 }
 
 function initMenu(){
-  var btn=document.getElementById("menuToggle"),nav=document.getElementById("mainNav");
-  if(!btn||!nav||btn.dataset.smvMenuReady==="1")return;
-  btn.dataset.smvMenuReady="1";
-  function close(){nav.classList.remove("open");btn.setAttribute("aria-expanded","false");}
-  btn.addEventListener("click",function(e){e.stopPropagation();var open=nav.classList.toggle("open");btn.setAttribute("aria-expanded",open?"true":"false");});
-  nav.addEventListener("click",function(e){if(e.target.closest("a"))close();});
+  // Delegate from document so the handler survives header replacement and
+  // script-order differences across static/SEO pages. One global guard avoids
+  // duplicate toggles when both the shared header and mobile shell load.
+  if(window.__smvMenuDelegationInstalled)return;
+  window.__smvMenuDelegationInstalled=true;
+  function close(){
+    var btn=document.getElementById("menuToggle"),nav=document.getElementById("mainNav");
+    if(nav)nav.classList.remove("open");
+    if(btn)btn.setAttribute("aria-expanded","false");
+  }
+  document.addEventListener("click",function(e){
+    var target=e.target;
+    if(!target||!target.closest)return;
+    var more=target.closest(".smv-nav-more");
+    if(more)return;
+    var btn=target.closest("#menuToggle");
+    if(btn){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      var nav=document.getElementById("mainNav");
+      if(!nav)return;
+      var open=nav.classList.toggle("open");
+      btn.setAttribute("aria-expanded",open?"true":"false");
+      return;
+    }
+    var link=target.closest("#mainNav a");
+    if(link){close();return;}
+    if(!target.closest(".site-header"))close();
+  },true);
   document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});
-  document.addEventListener("click",function(e){if(e.target.closest(".smv-nav-more"))return;if(!e.target.closest(".site-header"))close();});
 }
 
 function init(){ensureStyle();rebuildHeader();markActive();initMenu();}
