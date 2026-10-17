@@ -16,14 +16,32 @@
   }
 
   function ensureMenu(){
-    var btn=document.getElementById("menuToggle"),nav=document.getElementById("mainNav");
-    if(!btn||!nav||btn.dataset.smvMenuReady==="1")return;
-    btn.dataset.smvMenuReady="1";
-    function close(){nav.classList.remove("open");btn.setAttribute("aria-expanded","false")}
-    btn.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();var open=nav.classList.toggle("open");btn.setAttribute("aria-expanded",open?"true":"false")});
-    nav.addEventListener("click",function(e){if(e.target.closest("a"))close()});
-    document.addEventListener("click",function(e){if(!e.target.closest(".site-header"))close()});
-    document.addEventListener("keydown",function(e){if(e.key==="Escape")close()});
+    if(window.__smvMenuDelegationInstalled)return;
+    window.__smvMenuDelegationInstalled=true;
+    function close(){
+      var btn=document.getElementById("menuToggle"),nav=document.getElementById("mainNav");
+      if(nav)nav.classList.remove("open");
+      if(btn)btn.setAttribute("aria-expanded","false");
+    }
+    document.addEventListener("click",function(e){
+      var target=e.target;
+      if(!target||!target.closest)return;
+      if(target.closest(".smv-nav-more"))return;
+      var btn=target.closest("#menuToggle");
+      if(btn){
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        var nav=document.getElementById("mainNav");
+        if(!nav)return;
+        var open=nav.classList.toggle("open");
+        btn.setAttribute("aria-expanded",open?"true":"false");
+        return;
+      }
+      if(target.closest("#mainNav a")){close();return;}
+      if(!target.closest(".site-header"))close();
+    },true);
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});
   }
 
   function arrangeVenueBadges(){
