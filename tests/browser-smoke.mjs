@@ -122,20 +122,22 @@ try {
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
         if (viewport.name.startsWith('mobile-')) {
+          await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
           const menuButton = page.locator('#menuToggle');
           const mainNav = page.locator('#mainNav');
-          if (await menuButton.count()) {
-            await menuButton.click();
-            await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'true' && document.getElementById('mainNav')?.classList.contains('open'), { timeout: 5000 });
-            assert(await mainNav.isVisible(), `mobile menu should open at ${path}`);
-            await menuButton.click();
-            await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), { timeout: 5000 });
-          }
+          assert.equal(await menuButton.count(), 1, `exactly one mobile menu button should exist at ${path}`);
+          assert.equal(await mainNav.count(), 1, `exactly one main navigation should exist at ${path}`);
+          await menuButton.click();
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'true' && document.getElementById('mainNav')?.classList.contains('open'), { timeout: 5000 });
+          assert(await mainNav.isVisible(), `mobile menu should open at ${path}`);
+          await menuButton.click();
+          await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), { timeout: 5000 });
           if (path === '/') {
+            await page.waitForSelector('.smv-home-enquiry-edge', { state: 'visible', timeout: 10000 });
             const edge = page.locator('.smv-home-enquiry-edge');
             const tab = page.locator('#smvHomeEnquiryTab');
             const drawer = page.locator('#smvHomeEnquiryDrawer');
-            assert(await edge.isVisible(), 'Get Matched banner must be visible on mobile homepage');
+            assert.equal(await tab.count(), 1, 'exactly one Get Matched tab must exist on mobile homepage');
             const before = await edge.evaluate(el => el.getBoundingClientRect().top);
             const rect = await edge.boundingBox();
             assert(rect, 'Get Matched banner must have a hit area');
