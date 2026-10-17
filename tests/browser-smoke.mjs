@@ -176,12 +176,9 @@ try {
             assert(!(await drawer.evaluate(el => el.classList.contains('is-open'))), 'Touch-dragging must not open the enquiry drawer');
 
             await page.waitForTimeout(550);
-            const tapBox = await tab.boundingBox();
-            assert(tapBox, 'Get Matched tab must have a touch hit area');
-            const tapX = tapBox.x + tapBox.width / 2;
-            const tapY = tapBox.y + tapBox.height / 2;
-            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ id: 1, x: tapX, y: tapY }] });
-            await touchSession.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+            // Playwright tap uses the browser's real touchscreen-to-click path.
+            // Raw CDP touchStart/touchEnd alone does not synthesize a click.
+            await tab.tap();
             await page.waitForFunction(() => document.getElementById('smvHomeEnquiryDrawer')?.classList.contains('is-open'), undefined, { timeout: 5000 });
             assert(await drawer.isVisible(), 'Tapping Get Matched must open the enquiry drawer');
             await page.locator('#smvHomeEnquiryClose').click();
