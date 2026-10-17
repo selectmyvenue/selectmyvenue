@@ -44,13 +44,25 @@
 
   html body .site-header #mainNav .nav-cta,
   html body .site-header .header-contact {
-    flex: 0 1 auto !important;
-    width: auto !important;
+    flex: 0 0 142px !important;
+    width: 142px !important;
     max-width: 142px !important;
     min-width: 0 !important;
     padding-left: 8px !important;
     padding-right: 8px !important;
     white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+
+  /* The legacy pseudo-label contains both phone + contact copy and can exceed
+     its flex item. Keep the phone CTA, but fit its content to the header. */
+  html body .site-header .header-contact::before {
+    content: "☎ +91 83683 22256" !important;
+    font-size: 10px !important;
+  }
+  html body .site-header .header-contact::after {
+    display: none !important;
+    content: none !important;
   }
 
   /* Keep the animated hero, but explicitly clip its transformed image slides. */
