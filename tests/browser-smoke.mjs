@@ -91,8 +91,37 @@ async function testQuickEnquiryMock() {
     await context.close();
   }
 }
+
+async function testMobileMenuOptionNavigation() {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 1,
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  try {
+    const response = await page.goto(base + '/', { waitUntil: 'domcontentloaded', timeout: 45000 });
+    assert(response && response.status() < 400, 'homepage should load for menu-option test');
+    const menuButton = page.locator('#menuToggle');
+    const mainNav = page.locator('#mainNav');
+    await menuButton.waitFor({ state: 'visible', timeout: 10000 });
+    await menuButton.click();
+    await page.waitForFunction(() => document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 });
+    const venuesLink = page.locator('#mainNav a[href="venues.html"]');
+    assert(await venuesLink.isVisible(), 'Browse Venues menu option should be visible when menu opens');
+    await venuesLink.click();
+    await page.waitForFunction(() => location.pathname.endsWith('/venues.html'), undefined, { timeout: 5000 });
+    assert(!(await mainNav.evaluate(el => el.classList.contains('open'))), 'menu should close after selecting a navigation option');
+    console.log('PASS mobile hamburger option: Browse Venues is clickable, navigates, and closes menu');
+  } finally {
+    await context.close();
+  }
+}
+
 try {
   await testQuickEnquiryMock();
+  await testMobileMenuOptionNavigation();
   for (const path of paths) {
     for (const viewport of [
       { name: 'mobile-320', viewport: { width: 320, height: 780 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
