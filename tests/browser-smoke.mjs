@@ -154,18 +154,12 @@ try {
           body: '[]',
         }));
 
-            observer.observe(document, { childList: true, subtree: true });
-          }
-        });
       }
       try {
         const response = await page.goto(base + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
-        if (path === '/' && viewport.name.startsWith('mobile-')) {
-
-        }
         if (viewport.name.startsWith('mobile-')) {
           await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
           const menuButton = page.locator('#menuToggle');
