@@ -150,8 +150,14 @@ try {
             assert(Math.abs(after - before) > 25, 'Get Matched banner must move vertically after drag');
             assert(!(await drawer.evaluate(el => el.classList.contains('is-open'))), 'Dragging must not open the enquiry drawer');
 
-            // Exercise the actual touch path as well as mouse input. CDP dispatches
-            // touch events, which become PointerEvents with pointerType="touch".
+            // Exercise the actual touch path as well as mouse input. Reset the
+            // tab to a known central position first so the second drag has room
+            // to move even after the mouse-drag test above.
+            await edge.evaluate(el => {
+              el.style.setProperty('top', '44%', 'important');
+              el.style.setProperty('transform', 'translateY(-50%)', 'important');
+            });
+            await page.waitForTimeout(50);
             const touchSession = await context.newCDPSession(page);
             const touchStartBox = await edge.boundingBox();
             assert(touchStartBox, 'Get Matched banner must have a touch hit area');
