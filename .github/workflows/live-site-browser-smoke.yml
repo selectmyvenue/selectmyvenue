@@ -6,8 +6,10 @@ on:
     - cron: '45 3 * * 1'
   pull_request:
     paths:
-      - 'tests/browser-smoke.mjs'
-      - 'tests/fixtures/website-mobile-app-20261002.js'
+      - '**.html'
+      - '**.js'
+      - '**.css'
+      - 'tests/**'
       - '.github/workflows/live-site-browser-smoke.yml'
 
 permissions:
@@ -30,5 +32,15 @@ jobs:
         run: |
           npm install --no-save playwright
           npx playwright install --with-deps chromium
-      - name: Test live landing pages on mobile and desktop
+      - name: Serve this PR's website files locally
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/smv-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/ > /dev/null
+      - name: Test this PR's pages on mobile and desktop
+        env:
+          SMV_SITE_BASE_URL: http://127.0.0.1:4173
         run: node tests/browser-smoke.mjs
