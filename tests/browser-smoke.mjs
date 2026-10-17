@@ -95,8 +95,12 @@ try {
   await testQuickEnquiryMock();
   for (const path of paths) {
     for (const viewport of [
-      { name: 'mobile-android', ...devices['Pixel 7'] },
-      { name: 'desktop', viewport: { width: 1365, height: 900 }, deviceScaleFactor: 1 },
+      { name: 'mobile-320', viewport: { width: 320, height: 780 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'mobile-360', viewport: { width: 360, height: 800 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'mobile-390', viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'mobile-430', viewport: { width: 430, height: 932 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+      { name: 'tablet', viewport: { width: 768, height: 1024 }, deviceScaleFactor: 1, isMobile: false, hasTouch: true },
+      { name: 'desktop', viewport: { width: 1365, height: 900 }, deviceScaleFactor: 1, isMobile: false, hasTouch: false },
     ]) {
       const context = await browser.newContext({
         viewport: viewport.viewport,
@@ -117,7 +121,7 @@ try {
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
-        if (viewport.name === "mobile-android" && path === "/") {
+        if (viewport.name.startsWith("mobile-") && path === "/") {
           const matchedEdge = page.locator(".smv-home-enquiry-edge");
           const matchedTab = page.locator("#smvHomeEnquiryTab");
           const drawer = page.locator("#smvHomeEnquiryDrawer");
@@ -143,7 +147,7 @@ try {
           await page.locator("#smvHomeEnquiryClose").click();
           await page.waitForFunction(() => !document.getElementById("smvHomeEnquiryDrawer")?.classList.contains("is-open"), { timeout: 5000 });
         }
-        if (viewport.name === "mobile-android") {
+        if (viewport.name.startsWith("mobile-")) {
           const menuButton = page.locator("#menuToggle");
           const mainNav = page.locator("#mainNav");
           if (await menuButton.count()) {
