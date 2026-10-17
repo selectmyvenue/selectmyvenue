@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: homepage-desktop-overflow-regression
+  group: phone-ui-regression
   cancel-in-progress: true
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
             sleep 1
           done
           curl --fail --silent http://127.0.0.1:4173/ > /dev/null
-      - name: Test public pages on mobile and desktop
+      - name: Test phone UI and public pages at multiple viewport sizes
         env:
           SMV_SITE_BASE_URL: http://127.0.0.1:4173
         run: node tests/browser-smoke.mjs
