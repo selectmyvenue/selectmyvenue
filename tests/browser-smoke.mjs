@@ -145,24 +145,25 @@ try {
         });
       });
       page.on('pageerror', error => pageErrors.push(`${error.message} | ${error.stack || ''}`));
-      if (path === '/' && viewport.name.startsWith('mobile-')) {
-        // Seed a DOM-only card before the real DOMContentLoaded initializer runs.
-        await page.addInitScript(() => {
-          document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const response = await page.goto(base + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
+        assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
+        await page.locator('body').waitFor({ state: 'visible' });
+        assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
+        if (path === '/' && viewport.name.startsWith('mobile-')) {
+          // CI may not receive public venue data. Add an isolated fixture after
+          // the page scripts and their grid observer are ready; this never
+          // submits an enquiry or writes to Supabase.
+          await page.evaluate(() => {
             const grid = document.querySelector('#homeVenueGrid');
             if (!grid || grid.querySelector('.home-venue-card')) return;
             const fixture = document.createElement('article');
             fixture.className = 'home-venue-card';
             fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
             grid.appendChild(fixture);
-          }, { once: true });
-        });
-      }
-      try {
-        const response = await page.goto(base + path, { waitUntil: 'domcontentloaded', timeout: 45000 });
-        assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
-        await page.locator('body').waitFor({ state: 'visible' });
-        assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
+          });
+          await page.waitForTimeout(150);
+        }
         if (viewport.name.startsWith('mobile-')) {
           await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
           const menuButton = page.locator('#menuToggle');
