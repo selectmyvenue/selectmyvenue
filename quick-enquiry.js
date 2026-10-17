@@ -400,6 +400,10 @@
     }
 
     edge.addEventListener("pointerdown",function(e){
+      // Touch input is handled by the explicit touch listeners below. Keeping
+      // mouse/pen on Pointer Events avoids inconsistent touch-pointer capture
+      // behaviour across mobile browsers.
+      if(e.pointerType==="touch")return;
       if(e.button!==undefined&&e.button!==0)return;
       dragging=true;moved=false;dragPointerId=e.pointerId;
       dragStartY=e.clientY;
@@ -410,7 +414,7 @@
     });
 
     edge.addEventListener("pointermove",function(e){
-      if(!dragging||e.pointerId!==dragPointerId)return;
+      if(e.pointerType==="touch"||!dragging||e.pointerId!==dragPointerId)return;
       var dy=e.clientY-dragStartY;
       if(Math.abs(dy)>6)moved=true;
       if(moved){
@@ -420,7 +424,7 @@
     });
 
     edge.addEventListener("pointerup",function(e){
-      if(!dragging||e.pointerId!==dragPointerId)return;
+      if(e.pointerType==="touch"||!dragging||e.pointerId!==dragPointerId)return;
       var shouldOpen=!moved;
       if(moved)suppressClickUntil=Date.now()+500;
       dragging=false;dragPointerId=null;
@@ -431,10 +435,49 @@
     });
 
     edge.addEventListener("pointercancel",function(e){
-      if(!dragging||e.pointerId!==dragPointerId)return;
+      if(e.pointerType==="touch"||!dragging||e.pointerId!==dragPointerId)return;
       dragging=false;dragPointerId=null;moved=false;
       edge.classList.remove("smv-get-matched-dragging");
     });
+
+    // Native Touch Events are deliberately explicit for phones. The tab uses
+    // touch-action:none, but a few mobile browsers/WebViews still fail to
+    // deliver a reliable pointermove stream for a fixed draggable element.
+    edge.addEventListener("touchstart",function(e){
+      if(!e.touches||e.touches.length!==1)return;
+      var touch=e.touches[0];
+      dragging=true;moved=false;dragPointerId=null;
+      dragStartY=touch.clientY;
+      var rect=edge.getBoundingClientRect();
+      dragStartCenter=rect.top+rect.height/2;
+      edge.classList.add("smv-get-matched-dragging");
+    },{passive:true});
+
+    edge.addEventListener("touchmove",function(e){
+      if(!dragging||!e.touches||e.touches.length!==1)return;
+      var dy=e.touches[0].clientY-dragStartY;
+      if(Math.abs(dy)>6)moved=true;
+      if(moved){
+        if(e.cancelable)e.preventDefault();
+        setEdgeCenter(dragStartCenter+dy);
+      }
+    },{passive:false});
+
+    edge.addEventListener("touchend",function(){
+      if(!dragging||dragPointerId!==null)return;
+      var shouldOpen=!moved;
+      if(moved)suppressClickUntil=Date.now()+500;
+      dragging=false;
+      edge.classList.remove("smv-get-matched-dragging");
+      if(shouldOpen)openDrawer();
+      moved=false;
+    },{passive:true});
+
+    edge.addEventListener("touchcancel",function(){
+      if(!dragging||dragPointerId!==null)return;
+      dragging=false;moved=false;
+      edge.classList.remove("smv-get-matched-dragging");
+    },{passive:true});
 
     var tab=edge.querySelector("#smvHomeEnquiryTab");
     if(tab){
