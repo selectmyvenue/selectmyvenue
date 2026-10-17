@@ -82,7 +82,7 @@
 
   function buildMarketplace(rows){
     const section=document.getElementById("featuredVenues"),grid=document.getElementById("homeVenueGrid");if(!section||!grid)return;marketplaceCss();grid.dataset.smartFiltersInstalled="1";
-    const legacyPanel=section.querySelector(".smv-home-filter-panel");if(legacyPanel)legacyPanel.remove();section.querySelectorAll(".smv-home-filter-toggle,.smv-home-market-search").forEach(n=>n.remove());
+    const legacyPanel=section.querySelector(".smv-home-filter-panel");if(legacyPanel)legacyPanel.remove();section.querySelectorAll(".smv-home-filter-toggle,.smv-home-market-search,.smv-home-market-filter-toggle").forEach(n=>n.remove());
     let layout=grid.closest(".smv-home-filter-layout"),results=grid.closest(".smv-home-results");if(!layout||!results){layout=document.createElement("div");layout.className="smv-home-filter-layout";results=document.createElement("div");results.className="smv-home-results";grid.parentNode.insertBefore(layout,grid);layout.appendChild(results);results.appendChild(grid)}
     const panel=document.createElement("aside");panel.className="smv-home-filter-panel";panel.id="smvHomeMarketplaceFilterPanel";layout.insertBefore(panel,results);
     const mobileToggle=document.createElement("button");
