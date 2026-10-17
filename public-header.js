@@ -40,7 +40,7 @@ function initMenu(){
   btn.addEventListener("click",function(e){e.stopPropagation();var open=nav.classList.toggle("open");btn.setAttribute("aria-expanded",open?"true":"false");});
   nav.addEventListener("click",function(e){if(e.target.closest("a"))close();});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});
-  document.addEventListener("click",function(e){if(!e.target.closest(".site-header"))close();});
+  document.addEventListener("click",function(e){if(e.target.closest(".smv-nav-more"))return;if(!e.target.closest(".site-header"))close();});
 }
 
 function init(){ensureStyle();rebuildHeader();markActive();initMenu();}
