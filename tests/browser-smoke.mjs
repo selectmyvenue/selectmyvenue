@@ -156,13 +156,17 @@ try {
           // submits an enquiry or writes to Supabase.
           await page.evaluate(() => {
             const grid = document.querySelector('#homeVenueGrid');
-            if (!grid || grid.querySelector('.home-venue-card')) return;
+            if (!grid || grid.querySelector('[data-smv-filter-fixture="1"]')) return;
+            // Always add one dedicated fixture, even when public venue cards
+            // exist. That guarantees a childList mutation after the page's
+            // observer has started and keeps this test independent of live data.
             const fixture = document.createElement('article');
             fixture.className = 'home-venue-card';
+            fixture.dataset.smvFilterFixture = '1';
             fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
             grid.appendChild(fixture);
           });
-          await page.waitForTimeout(150);
+          await page.waitForTimeout(300);
         }
         if (viewport.name.startsWith('mobile-')) {
           await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
