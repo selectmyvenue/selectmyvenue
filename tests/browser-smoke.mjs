@@ -127,10 +127,13 @@ try {
           assert(dragRect, "Get Matched banner should have a measurable hit area");
           const dragX = dragRect.x + dragRect.width / 2;
           const dragY = dragRect.y + dragRect.height / 2;
-          await page.mouse.move(dragX, dragY);
-          await page.mouse.down();
-          await page.mouse.move(dragX, dragY + 70, { steps: 8 });
-          await page.mouse.up();
+          await matchedEdge.evaluate((el, p) => {
+            const options = { bubbles:true, cancelable:true, pointerId:77, pointerType:"touch", isPrimary:true, button:0, buttons:1, clientX:p.x, clientY:p.y };
+            el.dispatchEvent(new PointerEvent("pointerdown", options));
+            el.dispatchEvent(new PointerEvent("pointermove", {...options, clientY:p.y + 70}));
+            el.dispatchEvent(new PointerEvent("pointerup", {...options, clientY:p.y + 70, buttons:0}));
+          }, {x:dragX,y:dragY});
+          await page.waitForTimeout(100);
           const afterTop = await matchedEdge.evaluate(el => el.getBoundingClientRect().top);
           assert(Math.abs(afterTop-beforeTop) > 25, "Get Matched banner should move vertically after a drag");
           assert(!(await drawer.evaluate(el => el.classList.contains("is-open"))), "Dragging should not open the enquiry drawer");
