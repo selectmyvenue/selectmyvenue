@@ -33,13 +33,34 @@ function markActive(){
 }
 
 function initMenu(){
-  var btn=document.getElementById("menuToggle"),nav=document.getElementById("mainNav");
-  if(!btn||!nav)return;
-  function close(){nav.classList.remove("open");btn.setAttribute("aria-expanded","false");}
-  btn.addEventListener("click",function(e){e.stopPropagation();var open=nav.classList.toggle("open");btn.setAttribute("aria-expanded",open?"true":"false");});
-  nav.addEventListener("click",function(e){if(e.target.closest("a"))close();});
+  // One delegated owner for the menu. The mobile shell calls the same
+  // installer, so a tap can never toggle the menu twice.
+  if(window.__smvMenuDelegationInstalled)return;
+  window.__smvMenuDelegationInstalled=true;
+  function close(){
+    var btn=document.getElementById("menuToggle"),nav=document.getElementById("mainNav");
+    if(nav)nav.classList.remove("open");
+    if(btn)btn.setAttribute("aria-expanded","false");
+  }
+  document.addEventListener("click",function(e){
+    var target=e.target;
+    if(!target||!target.closest)return;
+    var btn=target.closest("#menuToggle");
+    if(btn){
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      var nav=document.getElementById("mainNav");
+      if(!nav)return;
+      var open=nav.classList.toggle("open");
+      btn.setAttribute("aria-expanded",open?"true":"false");
+      return;
+    }
+    if(target.closest(".smv-nav-more"))return;
+    if(target.closest("#mainNav a")){close();return;}
+    if(!target.closest(".site-header"))close();
+  },true);
   document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});
-  document.addEventListener("click",function(e){if(!e.target.closest(".site-header"))close();});
 }
 
 function init(){ensureStyle();rebuildHeader();markActive();initMenu();}
