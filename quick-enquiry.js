@@ -405,6 +405,7 @@
       // behaviour across mobile browsers.
       if(e.pointerType==="touch")return;
       if(e.button!==undefined&&e.button!==0)return;
+      suppressClickUntil=0;
       dragging=true;moved=false;dragPointerId=e.pointerId;
       dragStartY=e.clientY;
       var rect=edge.getBoundingClientRect();
@@ -446,6 +447,8 @@
     edge.addEventListener("touchstart",function(e){
       if(!e.touches||e.touches.length!==1)return;
       var touch=e.touches[0];
+      // A fresh gesture must not inherit the click suppression from a prior drag.
+      suppressClickUntil=0;
       touchDragging=true;dragging=true;moved=false;dragPointerId=null;
       dragStartY=touch.clientY;
       var rect=edge.getBoundingClientRect();
