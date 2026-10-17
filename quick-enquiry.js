@@ -372,7 +372,7 @@
     function closeDrawer(){drawer.classList.remove("is-open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("smv-home-drawer-open");document.documentElement.classList.remove("smv-home-drawer-open");edge.classList.remove("smv-get-matched-open");resetEdgePosition();setTimeout(function(){backdrop.hidden=true;},300);}
     // Unified Pointer Events support touch, mouse and pen. A vertical
     // drag moves the left-side tab; a tap opens the existing quick enquiry.
-    var dragging=false,moved=false,dragPointerId=null,dragStartY=0,dragStartCenter=0,suppressClickUntil=0;
+    var dragging=false,moved=false,dragPointerId=null,dragStartY=0,dragStartCenter=0,suppressClickUntil=0,touchDragging=false;
 
     function setEdgeCenter(center){
       var h=edge.offsetHeight||42;
@@ -446,7 +446,7 @@
     edge.addEventListener("touchstart",function(e){
       if(!e.touches||e.touches.length!==1)return;
       var touch=e.touches[0];
-      dragging=true;moved=false;dragPointerId=null;
+      touchDragging=true;dragging=true;moved=false;dragPointerId=null;
       dragStartY=touch.clientY;
       var rect=edge.getBoundingClientRect();
       dragStartCenter=rect.top+rect.height/2;
@@ -454,7 +454,7 @@
     },{passive:true});
 
     edge.addEventListener("touchmove",function(e){
-      if(!dragging||!e.touches||e.touches.length!==1)return;
+      if(!touchDragging||!e.touches||e.touches.length!==1)return;
       var dy=e.touches[0].clientY-dragStartY;
       if(Math.abs(dy)>6)moved=true;
       if(moved){
@@ -464,18 +464,18 @@
     },{passive:false});
 
     edge.addEventListener("touchend",function(){
-      if(!dragging||dragPointerId!==null)return;
+      if(!touchDragging)return;
       var shouldOpen=!moved;
       if(moved)suppressClickUntil=Date.now()+500;
-      dragging=false;
+      touchDragging=false;dragging=false;dragPointerId=null;
       edge.classList.remove("smv-get-matched-dragging");
       if(shouldOpen)openDrawer();
       moved=false;
     },{passive:true});
 
     edge.addEventListener("touchcancel",function(){
-      if(!dragging||dragPointerId!==null)return;
-      dragging=false;moved=false;
+      if(!touchDragging)return;
+      touchDragging=false;dragging=false;dragPointerId=null;moved=false;
       edge.classList.remove("smv-get-matched-dragging");
     },{passive:true});
 
