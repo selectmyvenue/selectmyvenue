@@ -146,26 +146,14 @@ try {
       });
       page.on('pageerror', error => pageErrors.push(`${error.message} | ${error.stack || ''}`));
       if (path === '/' && viewport.name.startsWith('mobile-')) {
-        // Seed a dedicated card as soon as the homepage grid is parsed, before
-        // the inline smart-filter initializer runs. This avoids dependence on
-        // whether public venue data is available during CI.
-        await page.addInitScript(() => {
-          const addFixture = () => {
-            const grid = document.querySelector('#homeVenueGrid');
-            if (!grid) return false;
-            if (!grid.querySelector('[data-smv-filter-fixture="1"]')) {
-              const fixture = document.createElement('article');
-              fixture.className = 'home-venue-card';
-              fixture.dataset.smvFilterFixture = '1';
-              fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
-              grid.appendChild(fixture);
-            }
-            return true;
-          };
-          if (!addFixture()) {
-            const observer = new MutationObserver(() => {
-              if (addFixture()) observer.disconnect();
-            });
+        // Stub the read-only public venue RPC so the current marketplace filter
+        // UI is tested deterministically without relying on production venue data.
+        await page.route('**/rest/v1/rpc/smv_public_venues*', route => route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: '[]',
+        }));
+
             observer.observe(document, { childList: true, subtree: true });
           }
         });
@@ -176,22 +164,7 @@ try {
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
         if (path === '/' && viewport.name.startsWith('mobile-')) {
-          // CI may not receive public venue data. Add an isolated fixture after
-          // the page scripts and their grid observer are ready; this never
-          // submits an enquiry or writes to Supabase.
-          await page.evaluate(() => {
-            const grid = document.querySelector('#homeVenueGrid');
-            if (!grid || grid.querySelector('[data-smv-filter-fixture="1"]')) return;
-            // Always add one dedicated fixture, even when public venue cards
-            // exist. That guarantees a childList mutation after the page's
-            // observer has started and keeps this test independent of live data.
-            const fixture = document.createElement('article');
-            fixture.className = 'home-venue-card';
-            fixture.dataset.smvFilterFixture = '1';
-            fixture.innerHTML = '<div class="home-venue-content"><h3><a href="venue.html?id=smv-filter-test">QA Fixture Venue</a></h3><div class="home-venue-location">Delhi, Gurgaon</div><div class="home-venue-facts"><span>Capacity 100–300</span><span>₹1,500</span></div><div class="home-venue-features">Parking, Rooms, Vegetarian, Non-Vegetarian</div></div>';
-            grid.appendChild(fixture);
-          });
-          await page.waitForTimeout(300);
+
         }
         if (viewport.name.startsWith('mobile-')) {
           await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
