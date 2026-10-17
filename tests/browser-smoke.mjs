@@ -135,27 +135,27 @@ try {
           assert(Math.abs(afterTop-beforeTop) > 25, "Get Matched banner should move vertically after a drag");
           assert(!(await drawer.evaluate(el => el.classList.contains("is-open"))), "Dragging should not open the enquiry drawer");
           await matchedTab.click();
-          await page.waitForFunction(() => document.getElementById("smvHomeEnquiryDrawer")?.classList.contains("is-open"));
+          await page.waitForFunction(() => document.getElementById("smvHomeEnquiryDrawer")?.classList.contains("is-open"), { timeout: 5000 });
           assert(await drawer.isVisible(), "Get Matched tap should open the enquiry drawer");
           await page.locator("#smvHomeEnquiryClose").click();
-          await page.waitForFunction(() => !document.getElementById("smvHomeEnquiryDrawer")?.classList.contains("is-open"));
+          await page.waitForFunction(() => !document.getElementById("smvHomeEnquiryDrawer")?.classList.contains("is-open"), { timeout: 5000 });
         }
         if (viewport.name === "mobile-android") {
           const menuButton = page.locator("#menuToggle");
           const mainNav = page.locator("#mainNav");
           if (await menuButton.count()) {
             await menuButton.click();
-            await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "true" && document.getElementById("mainNav")?.classList.contains("open"));
+            await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "true" && document.getElementById("mainNav")?.classList.contains("open"), { timeout: 5000 });
             assert(await mainNav.isVisible(), `mobile menu should be visible after opening at ${path}`);
             await menuButton.click();
-            await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "false" && !document.getElementById("mainNav")?.classList.contains("open"));
+            await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "false" && !document.getElementById("mainNav")?.classList.contains("open"), { timeout: 5000 });
             const moreButton = page.locator(".smv-nav-more");
             if (await moreButton.count()) {
               await moreButton.click();
-              await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "true" && document.getElementById("mainNav")?.classList.contains("open"));
+              await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "true" && document.getElementById("mainNav")?.classList.contains("open"), { timeout: 5000 });
               assert(await mainNav.isVisible(), `bottom More control should open navigation at ${path}`);
               await moreButton.click();
-              await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "false" && !document.getElementById("mainNav")?.classList.contains("open"));
+              await page.waitForFunction(() => document.getElementById("menuToggle")?.getAttribute("aria-expanded") === "false" && !document.getElementById("mainNav")?.classList.contains("open"), { timeout: 5000 });
             }
           }
         }
