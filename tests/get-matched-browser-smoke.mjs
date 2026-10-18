@@ -18,7 +18,11 @@ async function checkPage(browser, target, device) {
   });
   const page = await context.newPage();
   const runtimeErrors = [];
+  const consoleErrors = [];
   page.on('pageerror', error => runtimeErrors.push(error.message));
+  page.on('console', message => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
   try {
     const response = await page.goto(base + target.path, {
       waitUntil: 'domcontentloaded',
@@ -137,6 +141,7 @@ async function checkPage(browser, target, device) {
     };
 
     const initialErrors = runtimeErrors.length;
+    const initialConsoleErrors = consoleErrors.length;
     await click();
     assert(await drawer.isVisible(), `${target.label}: Get Matched should visibly open the drawer`);
     const opened = await drawer.evaluate(el => ({
@@ -164,8 +169,36 @@ async function checkPage(browser, target, device) {
     await click();
     await assertClosed(() => page.keyboard.press('Escape'));
 
+    if (!device.isMobile) {
+      const before = await edge.boundingBox();
+      assert(before, `${target.label}: draggable banner has a desktop bounding box`);
+      const startX = before.x + before.width / 2;
+      const startY = before.y + before.height / 2;
+      const targetY = Math.min(device.viewport.height - 20, startY + 90);
+      await page.mouse.move(startX, startY);
+      await page.mouse.down();
+      await page.mouse.move(startX, targetY, { steps: 6 });
+      await page.mouse.up();
+      await page.waitForTimeout(100);
+      const dragState = await page.evaluate(() => {
+        const drawer = document.getElementById('smvHomeEnquiryDrawer');
+        const backdrop = document.getElementById('smvHomeEnquiryBackdrop');
+        return { drawerOpen: drawer?.classList.contains('is-open'), ariaHidden: drawer?.getAttribute('aria-hidden'), backdropHidden: backdrop?.hidden };
+      });
+      assert.equal(dragState.drawerOpen, false, `${target.label}: dragging the floating banner must not open the enquiry drawer: ${JSON.stringify(dragState)}`);
+      assert.equal(dragState.ariaHidden, 'true');
+      assert.equal(dragState.backdropHidden, true);
+      const after = await edge.boundingBox();
+      assert(after && Math.abs(after.y - before.y) > 25, `${target.label}: desktop drag should move the banner; before=${JSON.stringify(before)}, after=${JSON.stringify(after)}`);
+      await page.waitForTimeout(450);
+      assert.equal(await drawer.getAttribute('aria-hidden'), 'true', `${target.label}: delayed drag click must not open the enquiry drawer`);
+      console.log(`PASS desktop banner drag ${target.label}: moved by ${Math.round(Math.abs(after.y - before.y))}px without opening the drawer`);
+    }
+
     assert.equal(runtimeErrors.length, initialErrors,
-      `${target.label}: runtime errors were raised during Get Matched interactions: ${runtimeErrors.slice(initialErrors).join('; ')}`);
+      `${target.label}: runtime JavaScript errors were raised during interactions: ${runtimeErrors.slice(initialErrors).join('; ')}`);
+    assert.equal(consoleErrors.length, initialConsoleErrors,
+      `${target.label}: console errors were raised during interactions: ${consoleErrors.slice(initialConsoleErrors).join('; ')}`);
     console.log(`PASS Get Matched ${target.label} ${device.name}: asset=${scriptUrl}; opened=${JSON.stringify(opened)}; closed by button, ${device.isMobile ? 'Escape' : 'backdrop'}, and Escape`);
   } finally {
     await context.close();
