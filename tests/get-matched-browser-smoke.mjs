@@ -74,7 +74,34 @@ async function checkPage(browser, target, device) {
           Number(style.opacity) > 0 &&
           rect.width > 0 && rect.height > 0 &&
           rect.left >= -1 && rect.left < window.innerWidth;
-      }, undefined, { timeout: 4000 });
+      }, undefined, { timeout: 4000 }).catch(async error => {
+        const diagnostic = await page.evaluate(() => {
+          const tab = document.getElementById('smvHomeEnquiryTab');
+          const edge = document.querySelector('.smv-home-enquiry-edge');
+          const drawer = document.getElementById('smvHomeEnquiryDrawer');
+          const backdrop = document.getElementById('smvHomeEnquiryBackdrop');
+          const snapshot = el => {
+            if (!el) return null;
+            const style = getComputedStyle(el);
+            const rect = el.getBoundingClientRect();
+            return {
+              id: el.id,
+              className: el.className,
+              hidden: el.hidden,
+              ariaHidden: el.getAttribute('aria-hidden'),
+              inlineStyle: el.getAttribute('style'),
+              display: style.display,
+              visibility: style.visibility,
+              opacity: style.opacity,
+              transform: style.transform,
+              zIndex: style.zIndex,
+              rect: { left: rect.left, top: rect.top, right: rect.right, width: rect.width, height: rect.height },
+            };
+          };
+          return { tab: snapshot(tab), edge: snapshot(edge), drawer: snapshot(drawer), backdrop: snapshot(backdrop), bodyClass: document.body.className };
+        });
+        throw new Error(`click did not produce a visible drawer state: ${JSON.stringify(diagnostic)}; ${error.message}`);
+      });
     };
     const assertClosed = async action => {
       await action();
