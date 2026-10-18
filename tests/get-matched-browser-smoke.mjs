@@ -293,7 +293,7 @@ async function checkMobileVenueFilters(browser, width) {
     const toggleBox = await toggle.boundingBox();
     assert(toggleBox && toggleBox.width > 0 && toggleBox.height > 0,
       `mobile venue filters ${width}px: filter toggle has no tappable bounds`);
-    await toggle.tap({ timeout: 4000 });
+    await toggle.tap({ timeout: 4000 }).catch(error => { throw new Error('filter toggle tap failed: ' + error.message); });
     await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'),
       undefined, { timeout: 4000 });
 
@@ -309,6 +309,13 @@ async function checkMobileVenueFilters(browser, width) {
         position: style.position,
         visibility: style.visibility,
         zIndex: style.zIndex,
+        left: style.left,
+        right: style.right,
+        top: style.top,
+        bottom: style.bottom,
+        selectorMatches: shell.matches('html body.smv-mobile-filter-open .venue-filter-shell'),
+        mainContainsShell: !!shell.closest('main.venue-directory-main'),
+        overrideRulePresent: (document.getElementById('smv-browse-layout-fix-v2')?.textContent || '').includes('html body.smv-mobile-filter-open .venue-filter-shell'),
         rect: { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height },
         backdropHidden: backdrop.hidden,
         expanded: toggle.getAttribute('aria-expanded'),
@@ -336,7 +343,7 @@ async function checkMobileVenueFilters(browser, width) {
     const typeChoice = shell.locator('[data-list="type"] .smv-filter-choice').nth(1);
     if (await typeChoice.count()) {
       const before = await page.locator('#smvMobileFilterCount').textContent();
-      await typeChoice.tap({ timeout: 4000 });
+      await typeChoice.tap({ timeout: 4000 }).catch(error => { throw new Error('filter choice tap failed: ' + error.message); });
       await page.waitForFunction(() => {
         const count = document.getElementById('smvMobileFilterCount');
         const results = document.getElementById('smvMobileResultCount');
@@ -364,14 +371,14 @@ async function checkMobileVenueFilters(browser, width) {
     assert(await backdrop.evaluate(el => el.hidden),
       `mobile venue filters ${width}px: Done should hide the backdrop`);
 
-    await toggle.tap({ timeout: 4000 });
+    await toggle.tap({ timeout: 4000 }).catch(error => { throw new Error('filter toggle tap failed: ' + error.message); });
     await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
-    await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 20 }, timeout: 4000 });
+    await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 20 }, timeout: 4000 }).catch(error => { throw new Error('backdrop tap failed: ' + error.message); });
     await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     assert(await backdrop.evaluate(el => el.hidden),
       `mobile venue filters ${width}px: backdrop tap should close the drawer`);
 
-    await toggle.tap({ timeout: 4000 });
+    await toggle.tap({ timeout: 4000 }).catch(error => { throw new Error('filter toggle tap failed: ' + error.message); });
     await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     await page.keyboard.press('Escape');
     await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
