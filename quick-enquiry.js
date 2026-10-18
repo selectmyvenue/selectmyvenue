@@ -389,6 +389,16 @@
           </form><div class="smv-home-enquiry-benefits"><span>✓ Suitable matches</span><span>✓ Compare options</span><span>✓ Personal assistance</span></div></div>
         </aside>`);
     }
+    // Bind any form that had to be repaired/injected above. The initial
+    // DOMContentLoaded pass runs before this markup exists on legacy pages.
+    document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function(form){
+      if(form.dataset.smvQuickSubmitBound==="true")return;
+      form.dataset.smvQuickSubmitBound="true";
+      var dateField=form.elements.event_date;
+      if(dateField)dateField.min=todayIso();
+      addHoneypot(form);
+      form.addEventListener("submit",handleSubmit);
+    });
     var edge=document.querySelector(".smv-home-enquiry-edge"),drawer=document.getElementById("smvHomeEnquiryDrawer"),backdrop=document.getElementById("smvHomeEnquiryBackdrop"),close=document.getElementById("smvHomeEnquiryClose");
     if(!edge||!drawer||!backdrop||!close)return;
     function openDrawer(){drawer.classList.add("is-open");drawer.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.classList.add("smv-home-drawer-open");document.documentElement.classList.add("smv-home-drawer-open");edge.classList.add("smv-get-matched-open");setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);}
