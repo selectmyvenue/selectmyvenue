@@ -281,9 +281,10 @@ async function checkMobileVenueFilters(browser, width) {
       `mobile venue filters ${width}px: drawer is hidden: ${JSON.stringify(opened)}`);
     assert.equal(opened.position, 'fixed',
       `mobile venue filters ${width}px: drawer should be fixed to viewport: ${JSON.stringify(opened)}`);
-    assert(opened.rect.width >= width - 2 && opened.rect.height > 200 &&
-      opened.rect.left <= 1 && opened.rect.right >= width - 1,
-      `mobile venue filters ${width}px: drawer does not cover the usable viewport: ${JSON.stringify(opened)}`);
+    assert(opened.rect.width >= width - 2 && opened.rect.height >= 780 &&
+      opened.rect.left <= 1 && opened.rect.right >= width - 1 &&
+      opened.rect.top >= 59 && opened.rect.top <= 61 && opened.rect.bottom >= 843,
+      `mobile venue filters ${width}px: drawer does not cover the usable viewport from the expected 60px header offset: ${JSON.stringify(opened)}`);
     assert.equal(opened.backdropHidden, false,
       `mobile venue filters ${width}px: backdrop should be visible while open`);
     assert.equal(opened.expanded, 'true',
