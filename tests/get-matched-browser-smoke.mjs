@@ -40,7 +40,7 @@ async function checkPage(browser, target, device) {
     // cache-busting is not treated as proof that the expected source arrived.
     const scriptUrl = await page.locator('script[src*="quick-enquiry.js"]').last().getAttribute('src');
     assert(scriptUrl, `${target.label}: quick-enquiry.js script reference exists`);
-    assert(scriptUrl.includes('v=20261018-desktop-drawer-fix-3'),
+    assert(scriptUrl.includes('v=20261018-desktop-drawer-fix-4'),
       `${target.label}: page is not referencing the current quick-enquiry asset revision: ${scriptUrl}`);
     const assetResponse = await page.evaluate(async src => {
       const response = await fetch(src, { cache: 'no-store' });
