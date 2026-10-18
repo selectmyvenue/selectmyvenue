@@ -1,0 +1,55 @@
+name: Get Matched browser regression
+
+on:
+  pull_request:
+    paths:
+      - '**.html'
+      - '**.js'
+      - '**.css'
+      - 'tests/get-matched-browser-smoke.mjs'
+      - '.github/workflows/get-matched-regression.yml'
+  workflow_run:
+    workflows: ["pages build and deployment"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  get-matched-smoke:
+    if: >-
+      ${{ github.event_name != 'workflow_run' ||
+          (github.event.workflow_run.conclusion == 'success' &&
+           github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Serve the PR files locally
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/smv-http.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:4173/ > /dev/null
+      - name: Exercise the PR checkout (no enquiry submissions)
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+        env:
+          SMV_SITE_BASE_URL: http://127.0.0.1:4173
+        run: node tests/get-matched-browser-smoke.mjs
+      - name: Verify the live production site (no enquiry submissions)
+        if: always()
+        env:
+          SMV_SITE_BASE_URL: https://selectmyvenue.com
+        continue-on-error: ${{ github.event_name == 'pull_request' }}
+        run: node tests/get-matched-browser-smoke.mjs
