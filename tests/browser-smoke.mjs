@@ -67,6 +67,32 @@ const paths = [
   '/venue.html',
   '/venue.html?id=072729f0-3813-4fc0-9dd9-12b93a772235',
 ];
+const legacyVenuePaths = [
+  'venue-pages/awadh-bagh-a8684463/index.html',
+  'venue-pages/bottles-n-barrels-32fa6096/index.html',
+  'venue-pages/cuisineo-banquet-d9da72b3/index.html',
+  'venue-pages/forever-banquet-b9b4fab8/index.html',
+  'venue-pages/grand-utsav-416d7571/index.html',
+  'venue-pages/hari-s-court-hotel-banquet-548b548b/index.html',
+  'venue-pages/hari-s-court-hotel-banquet-9134c560/index.html',
+  'venue-pages/hari-s-court-hotel-banquet-c8f97946/index.html',
+  'venue-pages/haris-court-hotel-banquet-6bc42744/index.html',
+  'venue-pages/hotel-acme-inn-7e66f4eb/index.html',
+  'venue-pages/kiara-soul-kitchen-8318c273/index.html',
+  'venue-pages/lavanya-motel-3bb9f522/index.html',
+  'venue-pages/mitron-farms-resorts-fd910df3/index.html',
+  'venue-pages/namah-grand-delhi-8d364f9e/index.html',
+  'venue-pages/punjabi-cafe-restaurant-83cabb7d/index.html',
+  'venue-pages/royal-occasion-banquet-2ca7f0d4/index.html',
+  'venue-pages/sangam-banquet-hall-838f92f0/index.html',
+  'venue-pages/the-acura-bmk-7d47f088/index.html',
+  'venue-pages/the-ananta-banquet-be0988e8/index.html',
+  'venue-pages/the-paradise-hotel-banquet-8b1f25a1/index.html',
+  'venue-pages/the-resort-inn-35594267/index.html',
+  'venue-pages/veda-farms-banquets-2e50fb82/index.html',
+  'venue-pages/veggie-bites-072729f0/index.html',
+  'venue-pages/woodapple-residency-a8cff04f/index.html',
+];
 const fullViewportPaths = new Set([
   '/',
   '/venues.html',
@@ -342,6 +368,51 @@ try {
       }
     }
   }
+  // Legacy venue detail HTML files are intentionally noindex and excluded from
+  // sitemap.xml, but remain public URLs. Smoke-test them without requiring the
+  // shared Get Matched widget, which these legacy templates do not include.
+  for (const path of legacyVenuePaths) {
+    for (const viewport of sitemapViewports) {
+      const context = await browser.newContext({
+        viewport: viewport.viewport,
+        deviceScaleFactor: viewport.deviceScaleFactor,
+        isMobile: viewport.isMobile,
+        hasTouch: viewport.hasTouch,
+      });
+      const page = await context.newPage();
+      const pageErrors = [];
+      page.on('pageerror', error => pageErrors.push(error.message));
+      try {
+        const response = await page.goto(base + '/' + path, {
+          waitUntil: 'domcontentloaded',
+          timeout: 45000,
+        });
+        assert(response && response.status() < 400,
+          `legacy venue page ${path} [${viewport.name}]: HTTP ${response?.status()}`);
+        const state = await page.evaluate(() => ({
+          title: document.title.trim(),
+          h1Count: document.querySelectorAll('h1').length,
+          scrollWidth: document.documentElement.scrollWidth,
+          robots: document.querySelector('meta[name="robots"]')?.content || '',
+        }));
+        assert(state.title, `legacy venue page ${path} [${viewport.name}]: missing title`);
+        assert(state.h1Count >= 1, `legacy venue page ${path} [${viewport.name}]: missing H1`);
+        assert(state.robots.toLowerCase().includes('noindex'),
+          `legacy venue page ${path} [${viewport.name}]: expected intentional noindex, got "${state.robots}"`);
+        assert(state.scrollWidth <= viewport.viewport.width + 2,
+          `legacy venue page ${path} [${viewport.name}]: horizontal overflow ${state.scrollWidth}px > ${viewport.viewport.width}px`);
+        assert.equal(pageErrors.length, 0,
+          `legacy venue page ${path} [${viewport.name}]: runtime errors: ${pageErrors.join(' | ')}`);
+        console.log(`PASS legacy venue page ${path} [${viewport.name}] noindex=true`);
+      } catch (error) {
+        failures.push(`legacy venue page ${path} [${viewport.name}]: ${error.message}`);
+        console.error(`FAIL legacy venue page ${path} [${viewport.name}]: ${error.message}`);
+      } finally {
+        await context.close();
+      }
+    }
+  }
+
 } finally {
   await browser.close();
 }
