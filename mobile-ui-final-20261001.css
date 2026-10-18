@@ -935,9 +935,12 @@
     bottom:190px!important;
   }
 
-  /* Do not show the large desktop enquiry edge on non-home mobile pages. */
-  html body:not(.smv-home-mobile) .smv-home-enquiry-edge{
-    display:none!important;
+  /* The shared Get Matched CTA is injected on every public page. Never hide it on non-home pages. */
+  html body .smv-home-enquiry-edge{
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
   }
 }
 
