@@ -258,7 +258,7 @@
     const style = document.createElement("style");
     style.id = "smvQuickEnquiryFixStyles";
     style.textContent = `
-      .smv-home-enquiry-edge{position:fixed!important;left:0!important;top:var(--smv-edge-top,44%)!important;transform:translateY(-50%)!important;z-index:10040!important;display:block!important;pointer-events:auto!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;cursor:grab!important;will-change:top,transform!important}.smv-home-enquiry-edge.smv-get-matched-dragging{cursor:grabbing!important}
+      .smv-home-enquiry-edge{position:fixed!important;left:0!important;top:var(--smv-get-matched-top,var(--smv-edge-top,44%))!important;transform:translateY(-50%)!important;z-index:10040!important;display:block!important;pointer-events:auto!important;touch-action:none!important;user-select:none!important;-webkit-user-select:none!important;cursor:grab!important;will-change:top,transform!important}.smv-home-enquiry-edge.smv-get-matched-dragging{cursor:grabbing!important}
       .smv-home-enquiry-edge.smv-get-matched-open{top:72px!important;transform:translateY(-50%)!important}
       .smv-home-enquiry-tab{position:relative!important;overflow:hidden!important;isolation:isolate!important;width:116px!important;height:42px!important;border:1px solid #f2da91!important;border-left:0!important;border-radius:0 11px 11px 0!important;background:linear-gradient(135deg,#f7df8e 0%,#d9b954 58%,#b99536 100%)!important;color:#173d35!important;font:900 11px/1 Arial,sans-serif!important;letter-spacing:.04em!important;box-shadow:8px 10px 24px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.8)!important;cursor:pointer!important}
       .smv-home-enquiry-tab span{position:relative!important;z-index:5!important}
@@ -389,7 +389,7 @@
       var header=document.querySelector(".site-header");
       var top=strip?Math.max(88,Math.round(strip.getBoundingClientRect().bottom+2)):
         header?Math.max(88,Math.round(header.getBoundingClientRect().bottom+58)):118;
-      edge.style.setProperty("--smv-get-matched-top",top+"px");
+      edge.style.setProperty("--smv-get-matched-top",top+"px");edge.style.setProperty("--smv-edge-top",top+"px");
     }
 
     function resetEdgePosition(){
