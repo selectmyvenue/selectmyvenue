@@ -290,7 +290,6 @@ async function checkMobileVenueFilters(browser, width) {
       `mobile venue filters ${width}px: toggle aria-expanded should be true`);
 
     // Ensure the drawer has real filter controls, not just an empty overlay.
-    const choices = shell.locator('.smv-filter-choice').filter({ hasNot: page.locator('text=') });
     assert(await shell.locator('.smv-filter-choice').count() > 0,
       `mobile venue filters ${width}px: filter choices did not render`);
     const typeChoice = shell.locator('[data-list="type"] .smv-filter-choice').nth(1);
