@@ -64,7 +64,7 @@ async function checkPage(browser, target, device) {
 
     if (target.label === 'venue directory') {
       const directoryScriptUrl = await page.locator('script[src*="venues.js"]').last().getAttribute('src');
-      assert(directoryScriptUrl && directoryScriptUrl.includes('v=20261018-search-header-fallback-1'),
+      assert(directoryScriptUrl && directoryScriptUrl.includes('v=20261019-mobile-filter-drawer-1'),
         `venue directory: page must request the current search-initialization asset: ${directoryScriptUrl}`);
       const directoryAsset = await page.evaluate(async src => {
         const response = await fetch(src, { cache: 'no-store' });
