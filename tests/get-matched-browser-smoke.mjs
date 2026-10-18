@@ -218,6 +218,121 @@ async function checkPage(browser, target, device) {
   }
 }
 
+
+async function checkMobileVenueFilters(browser, width) {
+  const context = await browser.newContext({
+    viewport: { width, height: 844 },
+    deviceScaleFactor: 1,
+    isMobile: true,
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  const runtimeErrors = [];
+  const consoleErrors = [];
+  page.on('pageerror', error => runtimeErrors.push(error.message));
+  page.on('console', message => {
+    if (message.type() === 'error') consoleErrors.push(message.text());
+  });
+  try {
+    const response = await page.goto(base + '/venues.html', {
+      waitUntil: 'domcontentloaded',
+      timeout: 45000,
+    });
+    assert(response && response.status() < 400,
+      `mobile venue filters ${width}px: expected successful page response, got ${response?.status()}`);
+
+    const toggle = page.locator('#smvMobileFilterToggle');
+    const shell = page.locator('.venue-filter-shell');
+    const backdrop = page.locator('#smvMobileFilterBackdrop');
+    await toggle.waitFor({ state: 'visible', timeout: 15000 });
+    await page.waitForFunction(() => {
+      const shell = document.querySelector('.venue-filter-shell');
+      return !!shell && !/Loading filters/i.test(shell.textContent || '');
+    }, undefined, { timeout: 20000 });
+
+    const toggleBox = await toggle.boundingBox();
+    assert(toggleBox && toggleBox.width > 0 && toggleBox.height > 0,
+      `mobile venue filters ${width}px: filter toggle has no tappable bounds`);
+    await toggle.tap();
+    await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'),
+      undefined, { timeout: 4000 });
+
+    const opened = await page.evaluate(() => {
+      const shell = document.querySelector('.venue-filter-shell');
+      const backdrop = document.querySelector('#smvMobileFilterBackdrop');
+      const toggle = document.querySelector('#smvMobileFilterToggle');
+      if (!shell || !backdrop || !toggle) return null;
+      const style = getComputedStyle(shell);
+      const rect = shell.getBoundingClientRect();
+      return {
+        display: style.display,
+        position: style.position,
+        visibility: style.visibility,
+        zIndex: style.zIndex,
+        rect: { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height },
+        backdropHidden: backdrop.hidden,
+        expanded: toggle.getAttribute('aria-expanded'),
+      };
+    });
+    assert(opened, `mobile venue filters ${width}px: drawer elements missing`);
+    assert.notEqual(opened.display, 'none',
+      `mobile venue filters ${width}px: drawer is still display:none: ${JSON.stringify(opened)}`);
+    assert.notEqual(opened.visibility, 'hidden',
+      `mobile venue filters ${width}px: drawer is hidden: ${JSON.stringify(opened)}`);
+    assert.equal(opened.position, 'fixed',
+      `mobile venue filters ${width}px: drawer should be fixed to viewport: ${JSON.stringify(opened)}`);
+    assert(opened.rect.width >= width - 2 && opened.rect.height > 200 &&
+      opened.rect.left <= 1 && opened.rect.right >= width - 1,
+      `mobile venue filters ${width}px: drawer does not cover the usable viewport: ${JSON.stringify(opened)}`);
+    assert.equal(opened.backdropHidden, false,
+      `mobile venue filters ${width}px: backdrop should be visible while open`);
+    assert.equal(opened.expanded, 'true',
+      `mobile venue filters ${width}px: toggle aria-expanded should be true`);
+
+    // Ensure the drawer has real filter controls, not just an empty overlay.
+    const choices = shell.locator('.smv-filter-choice').filter({ hasNot: page.locator('text=') });
+    assert(await shell.locator('.smv-filter-choice').count() > 0,
+      `mobile venue filters ${width}px: filter choices did not render`);
+    const typeChoice = shell.locator('[data-list="type"] .smv-filter-choice').nth(1);
+    if (await typeChoice.count()) {
+      const before = await page.locator('#smvMobileFilterCount').textContent();
+      await typeChoice.tap();
+      await page.waitForFunction(() => {
+        const count = document.getElementById('smvMobileFilterCount');
+        return !!count && /[1-9]\d* active/.test(count.textContent || '');
+      }, undefined, { timeout: 5000 });
+      assert.notEqual(await page.locator('#smvMobileFilterCount').textContent(), before,
+        `mobile venue filters ${width}px: choosing a filter did not update the active count`);
+    }
+
+    await shell.locator('#smvMobileFilterDone').tap();
+    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'));
+    assert(await backdrop.evaluate(el => el.hidden),
+      `mobile venue filters ${width}px: Done should hide the backdrop`);
+
+    await toggle.tap();
+    await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'));
+    await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 200 } });
+    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'));
+    assert(await backdrop.evaluate(el => el.hidden),
+      `mobile venue filters ${width}px: backdrop tap should close the drawer`);
+
+    await toggle.tap();
+    await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'));
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'));
+    assert.equal(await toggle.getAttribute('aria-expanded'), 'false',
+      `mobile venue filters ${width}px: Escape should reset aria-expanded`);
+    assert.deepEqual(runtimeErrors, [],
+      `mobile venue filters ${width}px: runtime errors: ${runtimeErrors.join('; ')}`);
+    assert.deepEqual(consoleErrors, [],
+      `mobile venue filters ${width}px: console errors: ${consoleErrors.join('; ')}`);
+    console.log(`PASS mobile venue filters ${width}px: open, viewport geometry, choices, Done, backdrop and Escape`);
+  } finally {
+    await context.close();
+  }
+}
+
 const browser = await chromium.launch({ headless: true });
 const failures = [];
 try {
@@ -232,6 +347,15 @@ try {
         failures.push(`${target.label} ${device.name}: ${error.message}`);
         console.error(`FAIL Get Matched ${target.label} ${device.name}: ${error.message}`);
       }
+    }
+  }
+
+  for (const width of [320, 360, 390, 430, 767]) {
+    try {
+      await checkMobileVenueFilters(browser, width);
+    } catch (error) {
+      failures.push(`mobile venue filters ${width}px: ${error.message}`);
+      console.error(`FAIL mobile venue filters ${width}px: ${error.message}`);
     }
   }
 } finally {
