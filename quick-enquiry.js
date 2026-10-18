@@ -402,7 +402,20 @@
     var edge=document.querySelector(".smv-home-enquiry-edge"),drawer=document.getElementById("smvHomeEnquiryDrawer"),backdrop=document.getElementById("smvHomeEnquiryBackdrop"),close=document.getElementById("smvHomeEnquiryClose");
     if(!edge||!drawer||!backdrop||!close)return;
     function openDrawer(){drawer.classList.add("is-open");drawer.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.classList.add("smv-home-drawer-open");document.documentElement.classList.add("smv-home-drawer-open");edge.classList.add("smv-get-matched-open");setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);}
-    function closeDrawer(){drawer.classList.remove("is-open");drawer.setAttribute("aria-hidden","true");document.body.classList.remove("smv-home-drawer-open");document.documentElement.classList.remove("smv-home-drawer-open");edge.classList.remove("smv-get-matched-open");resetEdgePosition();setTimeout(function(){backdrop.hidden=true;},300);}
+    function closeDrawer(){
+      drawer.classList.remove("is-open");
+      drawer.setAttribute("aria-hidden","true");
+      // The delegated compatibility handler uses important inline overrides
+      // to defeat legacy desktop CSS. Every close path, including Escape, must
+      // remove those overrides or the drawer remains visible when "closed".
+      ["display","visibility","opacity","position","z-index","transform","left","top","right","bottom","height"].forEach(function(prop){drawer.style.removeProperty(prop);});
+      ["display","visibility","opacity","z-index"].forEach(function(prop){backdrop.style.removeProperty(prop);});
+      document.body.classList.remove("smv-home-drawer-open");
+      document.documentElement.classList.remove("smv-home-drawer-open");
+      edge.classList.remove("smv-get-matched-open");
+      resetEdgePosition();
+      setTimeout(function(){backdrop.hidden=true;},300);
+    }
     // Unified Pointer Events support touch, mouse and pen. A vertical
     // drag moves the left-side tab; a tap opens the existing quick enquiry.
     var dragging=false,moved=false,dragPointerId=null,dragStartY=0,dragStartCenter=0,suppressClickUntil=0,touchDragging=false;
@@ -444,7 +457,9 @@
       var rect=edge.getBoundingClientRect();
       dragStartCenter=rect.top+rect.height/2;
       edge.classList.add("smv-get-matched-dragging");
-      if(edge.setPointerCapture){try{edge.setPointerCapture(e.pointerId);}catch(_){}}
+      // Do not capture the pointer on pointerdown: capture retargets an ordinary
+      // desktop tap's click from the button to this wrapper, making GET MATCHED
+      // appear dead. Capture only after movement crosses the drag threshold.
     });
 
     edge.addEventListener("pointermove",function(e){
@@ -452,6 +467,9 @@
       var dy=e.clientY-dragStartY;
       if(Math.abs(dy)>6)moved=true;
       if(moved){
+        if(edge.setPointerCapture&&(!edge.hasPointerCapture||!edge.hasPointerCapture(e.pointerId))){
+          try{edge.setPointerCapture(e.pointerId);}catch(_){}
+        }
         if(e.cancelable)e.preventDefault();
         setEdgeCenter(dragStartCenter+dy);
       }
