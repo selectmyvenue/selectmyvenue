@@ -1,6 +1,6 @@
 (function(){"use strict";
 
-var HEADER_HTML='<header class="site-header"><div class="header-inner"><a href="index.html#home" class="brand" aria-label="Select My Venue Home"><img src="logo.png" alt="Select My Venue" class="main-logo"></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button><nav id="mainNav"><a href="index.html#home">Home</a><a href="index.html#how">How It Works</a><a href="index.html#smart">Smart Discovery</a><a href="index.html#aiPlanner">AI Planner</a><a href="venues.html">Browse Venues</a><a href="delhi-ncr-venues.html">Delhi NCR</a><a href="index.html#enquiry" class="nav-cta">Find My Venue</a><a href="list-your-venue.html">List Your Venue</a></nav><a href="index.html#contact" class="header-contact">Get in touch</a></div></header>';
+var HEADER_HTML='<header class="site-header"><div class="header-inner"><a href="index.html#home" class="brand" aria-label="Select My Venue Home"><img src="logo.png" alt="Select My Venue" class="main-logo"></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button><nav id="mainNav"><a href="index.html#home">Home</a><a href="index.html#how">How It Works</a><a href="index.html#smart">Smart Discovery</a><a href="index.html#aiPlanner">AI Planner</a><a href="venues.html">Browse Venues</a><a href="delhi-ncr-venues.html">Delhi NCR</a><a href="index.html#enquiry" class="nav-cta">Find My Venue</a><a href="list-your-venue.html">List Your Venue</a></nav><a href="tel:+918368322256" class="header-contact" aria-label="Call Select My Venue at +91 83683 22256">☎ +91 83683 22256 <span aria-hidden="true">•</span> Contact</a></div></header>';
 
 function ensureStyle(){
   var old=document.getElementById("smvCanonicalHeaderCss");
@@ -8,7 +8,7 @@ function ensureStyle(){
   var link=document.createElement("link");
   link.id="smvCanonicalHeaderCss";
   link.rel="stylesheet";
-  link.href="shared-home-header.css?v=20260922-2";
+  link.href="shared-home-header.css?v=20261018-phone-visible-4";
   document.head.appendChild(link);var mobile=document.createElement("link");mobile.id="smvCustomerMobileCss";mobile.rel="stylesheet";mobile.href="customer-mobile-20261001.css?v=20261001-v3";document.head.appendChild(mobile);var finalMobile=document.createElement("link");finalMobile.id="smvFinalMobileUiCss";finalMobile.rel="stylesheet";finalMobile.href="mobile-ui-final-20261001.css?v=20261001-final-3";document.head.appendChild(finalMobile);
 }
 
