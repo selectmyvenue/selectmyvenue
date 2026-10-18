@@ -84,6 +84,23 @@ async function checkPage(browser, target, device) {
       await page.waitForTimeout(350);
       assert(await backdrop.evaluate(el => el.hidden),
         `${target.label}: backdrop should be hidden after closing`);
+      const closedVisual = await drawer.evaluate(el => {
+        const style = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        return {
+          ariaHidden: el.getAttribute('aria-hidden'),
+          display: style.display,
+          visibility: style.visibility,
+          opacity: Number(style.opacity),
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+        };
+      });
+      const visuallyClosed = closedVisual.display === 'none' ||
+        closedVisual.visibility === 'hidden' || closedVisual.opacity === 0 ||
+        closedVisual.right <= 1;
+      assert(visuallyClosed,
+        `${target.label}: drawer state says closed but it remains visible: ${JSON.stringify(closedVisual)}`);
     };
 
     const initialErrors = runtimeErrors.length;
