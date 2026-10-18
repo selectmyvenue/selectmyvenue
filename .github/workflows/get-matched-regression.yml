@@ -48,6 +48,7 @@ jobs:
           SMV_SITE_BASE_URL: http://127.0.0.1:4173
         run: node tests/get-matched-browser-smoke.mjs
       - name: Verify the live production site (no enquiry submissions)
+        if: always()
         env:
           SMV_SITE_BASE_URL: https://selectmyvenue.com
         continue-on-error: ${{ github.event_name == 'pull_request' }}
