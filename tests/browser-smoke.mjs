@@ -11,6 +11,55 @@ const paths = [
   '/banquet-halls-in-delhi.html',
   '/banquet-halls-in-gurgaon.html',
   '/wedding-venues-delhi-ncr.html',
+  // Remaining public URLs from sitemap.xml; exercise every static SEO/legal page.
+  '/delhi-ncr-venues.html',
+  '/seo-searches.html',
+  '/party-halls-delhi-ncr.html',
+  '/corporate-event-venues-delhi-ncr.html',
+  '/banquet-halls-in-noida.html',
+  '/party-halls-in-delhi.html',
+  '/party-halls-in-gurgaon.html',
+  '/party-halls-in-noida.html',
+  '/engagement-venues-delhi-ncr.html',
+  '/birthday-party-venues-delhi-ncr.html',
+  '/reception-venues-delhi-ncr.html',
+  '/wedding-lawns-delhi-ncr.html',
+  '/wedding-farmhouses-delhi-ncr.html',
+  '/affordable-wedding-venues-delhi-ncr.html',
+  '/luxury-wedding-venues-delhi-ncr.html',
+  '/wedding-venues-with-rooms-delhi-ncr.html',
+  '/wedding-venues-with-parking-delhi-ncr.html',
+  '/pure-veg-wedding-venues-delhi-ncr.html',
+  '/privacy.html',
+  '/terms.html',
+  '/wedding-venues-in-chhatarpur.html',
+  '/wedding-venues-gt-karnal-road.html',
+  '/wedding-venues-in-kapashera.html',
+  '/venues-for-every-event-delhi-ncr.html',
+  // Every remaining venue profile URL currently listed in sitemap.xml.
+  '/venue.html?id=2ca7f0d4-2b46-473f-a733-1a703ce78aa2',
+  '/venue.html?id=2e50fb82-d85f-4c14-8640-ab6a92641404',
+  '/venue.html?id=32fa6096-14ce-48c6-909b-a8836d4a5c3f',
+  '/venue.html?id=35594267-72ef-4f97-9c44-e7ab2838d786',
+  '/venue.html?id=3bb9f522-156a-4417-bfa2-5dfb3915d2d2',
+  '/venue.html?id=416d7571-1b79-4723-bc99-8b236826699d',
+  '/venue.html?id=548b548b-7bbf-4e48-97e2-e0003d791c5e',
+  '/venue.html?id=6bc42744-dd8e-4e72-a7f8-01dd57f902c1',
+  '/venue.html?id=7d47f088-ceea-43fa-9c44-e7ab2838d786',
+  '/venue.html?id=7e66f4eb-436b-4906-8f1c-a28a05a0d0d1',
+  '/venue.html?id=8318c273-ab5e-4c50-b562-1e52de3ae560',
+  '/venue.html?id=838f92f0-91c6-4143-8442-be4d46094283',
+  '/venue.html?id=83cabb7d-196d-4181-bfc6-49cf4988035a',
+  '/venue.html?id=8b1f25a1-367d-4473-b213-06dc19196e11',
+  '/venue.html?id=8d364f9e-c67a-4205-b2fa-3126a6c50071',
+  '/venue.html?id=9134c560-9111-4113-a76c-5b0d961e4fae',
+  '/venue.html?id=a8684463-d451-429c-bcf8-7df02ae85e17',
+  '/venue.html?id=a8cff04f-129b-4b96-ad81-76124a3e4c67',
+  '/venue.html?id=b9b4fab8-91ef-4932-90f6-0c6517a7facb',
+  '/venue.html?id=be0988e8-5e9c-4668-ae25-4d2ecf5dc7dd',
+  '/venue.html?id=c8f97946-6bb2-4f3b-8ae9-0341cb720eb2',
+  '/venue.html?id=d9da72b3-8a44-4c9c-9448-432032f45add',
+  '/venue.html?id=fd910df3-a01b-40bf-969a-9f0ee5bfc92c',
   '/wedding-venues-in-delhi.html',
   '/wedding-venues-in-gurgaon.html',
   '/wedding-venues-in-noida.html',
@@ -18,6 +67,16 @@ const paths = [
   '/venue.html',
   '/venue.html?id=072729f0-3813-4fc0-9dd9-12b93a772235',
 ];
+const fullViewportPaths = new Set(paths.slice(0, 15));
+const allViewports = [
+  { name: 'mobile-320', viewport: { width: 320, height: 780 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+  { name: 'mobile-360', viewport: { width: 360, height: 800 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+  { name: 'mobile-390', viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+  { name: 'mobile-430', viewport: { width: 430, height: 932 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
+  { name: 'tablet', viewport: { width: 768, height: 1024 }, deviceScaleFactor: 1, isMobile: false, hasTouch: true },
+  { name: 'desktop', viewport: { width: 1365, height: 900 }, deviceScaleFactor: 1, isMobile: false, hasTouch: false },
+];
+const sitemapViewports = allViewports.filter(viewport => ['mobile-390', 'desktop'].includes(viewport.name));
 
 const browser = await chromium.launch({ headless: true });
 const failures = [];
@@ -123,14 +182,7 @@ try {
   await testQuickEnquiryMock();
   await testMobileMenuOptionNavigation();
   for (const path of paths) {
-    for (const viewport of [
-      { name: 'mobile-320', viewport: { width: 320, height: 780 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
-      { name: 'mobile-360', viewport: { width: 360, height: 800 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
-      { name: 'mobile-390', viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
-      { name: 'mobile-430', viewport: { width: 430, height: 932 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
-      { name: 'tablet', viewport: { width: 768, height: 1024 }, deviceScaleFactor: 1, isMobile: false, hasTouch: true },
-      { name: 'desktop', viewport: { width: 1365, height: 900 }, deviceScaleFactor: 1, isMobile: false, hasTouch: false },
-    ]) {
+    for (const viewport of (fullViewportPaths.has(path) ? allViewports : sitemapViewports)) {
       const context = await browser.newContext({
         viewport: viewport.viewport,
         deviceScaleFactor: viewport.deviceScaleFactor || 1,
