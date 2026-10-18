@@ -342,6 +342,23 @@ async function checkMobileVenueFilters(browser, width) {
       `mobile venue filters ${width}px: filter choices did not render`);
     const typeChoice = shell.locator('[data-list="type"] .smv-filter-choice').nth(1);
     if (await typeChoice.count()) {
+      await typeChoice.scrollIntoViewIfNeeded({ timeout: 4000 });
+      const choiceBox = await typeChoice.boundingBox();
+      assert(choiceBox && choiceBox.width > 0 && choiceBox.height > 0,
+        `mobile venue filters ${width}px: first venue-type choice has no tappable bounds`);
+      const choiceHit = await page.evaluate(({ x, y, expected }) => {
+        const el = document.elementFromPoint(x, y);
+        const hitChoice = el?.closest('.smv-filter-choice');
+        return {
+          tag: el?.tagName,
+          id: el?.id,
+          className: typeof el?.className === 'string' ? el.className : '',
+          hitValue: hitChoice?.getAttribute('data-value') || '',
+          expected,
+        };
+      }, { x: choiceBox.x + choiceBox.width / 2, y: choiceBox.y + choiceBox.height / 2, expected: await typeChoice.getAttribute('data-value') });
+      assert(choiceHit.hitValue === choiceHit.expected,
+        `mobile venue filters ${width}px: filter choice is covered by another element: ${JSON.stringify(choiceHit)}`);
       const before = await page.locator('#smvMobileFilterCount').textContent();
       await typeChoice.tap({ timeout: 4000 }).catch(error => { throw new Error('filter choice tap failed: ' + error.message); });
       await page.waitForFunction(() => {
