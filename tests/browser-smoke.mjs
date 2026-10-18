@@ -67,7 +67,23 @@ const paths = [
   '/venue.html',
   '/venue.html?id=072729f0-3813-4fc0-9dd9-12b93a772235',
 ];
-const fullViewportPaths = new Set(paths.slice(0, 15));
+const fullViewportPaths = new Set([
+  '/',
+  '/venues.html',
+  '/venues-in-delhi.html',
+  '/venues-in-gurgaon.html',
+  '/venues-in-noida.html',
+  '/venues-in-faridabad.html',
+  '/banquet-halls-in-delhi.html',
+  '/banquet-halls-in-gurgaon.html',
+  '/wedding-venues-delhi-ncr.html',
+  '/wedding-venues-in-delhi.html',
+  '/wedding-venues-in-gurgaon.html',
+  '/wedding-venues-in-noida.html',
+  '/list-your-venue.html',
+  '/venue.html',
+  '/venue.html?id=072729f0-3813-4fc0-9dd9-12b93a772235',
+]);
 const allViewports = [
   { name: 'mobile-320', viewport: { width: 320, height: 780 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
   { name: 'mobile-360', viewport: { width: 360, height: 800 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true },
