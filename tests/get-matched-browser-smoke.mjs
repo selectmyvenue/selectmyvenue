@@ -306,21 +306,21 @@ async function checkMobileVenueFilters(browser, width) {
     }
 
     await shell.locator('#smvMobileFilterDone').tap();
-    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'));
+    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     assert(await backdrop.evaluate(el => el.hidden),
       `mobile venue filters ${width}px: Done should hide the backdrop`);
 
     await toggle.tap();
-    await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'));
+    await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 20 } });
-    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'));
+    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     assert(await backdrop.evaluate(el => el.hidden),
       `mobile venue filters ${width}px: backdrop tap should close the drawer`);
 
     await toggle.tap();
-    await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'));
+    await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'));
+    await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     assert.equal(await toggle.getAttribute('aria-expanded'), 'false',
       `mobile venue filters ${width}px: Escape should reset aria-expanded`);
     assert.deepEqual(runtimeErrors, [],
