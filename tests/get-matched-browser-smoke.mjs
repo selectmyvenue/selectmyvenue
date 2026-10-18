@@ -311,7 +311,7 @@ async function checkMobileVenueFilters(browser, width) {
 
     await toggle.tap();
     await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'));
-    await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 200 } });
+    await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 20 } });
     await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'));
     assert(await backdrop.evaluate(el => el.hidden),
       `mobile venue filters ${width}px: backdrop tap should close the drawer`);
