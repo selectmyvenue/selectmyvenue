@@ -159,20 +159,17 @@
     border-radius:18px 18px 0 0!important;
     box-sizing:border-box!important;
   }
+  /* public-header.js appends legacy mobile CSS after this page's styles.
+     Keep all geometry in the same open-state selector used by that script so
+     the drawer wins over its older 8px / 68px inset rule. */
   html body.smv-mobile-filter-open .venue-filter-shell{
-    display:block!important;
-  }
-  /* public-header.js loads mobile-ui-final after this page's styles. Its legacy
-     8px inset / 68px top rule otherwise wins and leaves the drawer clipped.
-     Scope this open-state override to the directory and use stronger specificity. */
-  html body.smv-mobile-filter-open main.venue-directory-main .venue-filter-shell{
     display:block!important;
     position:fixed!important;
     left:0!important;
     right:0!important;
     top:60px!important;
     bottom:0!important;
-    z-index:10020!important;
+    z-index:12000!important;
     width:100%!important;
     max-height:none!important;
     margin:0!important;
