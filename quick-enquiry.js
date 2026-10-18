@@ -327,19 +327,19 @@
       .smv-quick-whatsapp-opt,[data-smv-whatsapp-option],input[name="send_whatsapp"]{display:none!important}
       form[data-smv-quick-enquiry].is-submitted{outline:2px solid rgba(19,155,141,.16)!important;outline-offset:4px!important}
       @media(max-width:767px){
-        html body.smv-home-mobile .smv-home-enquiry-edge{
+        html body .smv-home-enquiry-edge{
           position:fixed!important;left:0!important;right:auto!important;top:44%!important;bottom:auto!important;
           width:auto!important;height:auto!important;transform:translateY(-50%)!important;z-index:10850!important;
           display:block!important;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
           touch-action:none!important;cursor:grab!important;
         }
-        html body.smv-home-mobile .smv-home-enquiry-tab{
+        html body .smv-home-enquiry-tab{
           width:116px!important;height:42px!important;border:1px solid #f2da91!important;border-left:0!important;
           border-radius:0 11px 11px 0!important;background:linear-gradient(135deg,#f8e49a,#d9b954,#b99536)!important;
           color:#173d35!important;font-size:10px!important;font-weight:950!important;
         }
-        html body.smv-home-mobile .smv-home-enquiry-edge.smv-get-matched-open{display:none!important}
-        html body.smv-home-mobile .smv-home-enquiry-edge.smv-get-matched-dragging{cursor:grabbing!important;user-select:none!important}
+        html body .smv-home-enquiry-edge.smv-get-matched-open{display:block!important}
+        html body .smv-home-enquiry-edge.smv-get-matched-dragging{cursor:grabbing!important;user-select:none!important}
       }
     `;
     document.head.appendChild(style);
