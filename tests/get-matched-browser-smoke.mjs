@@ -62,6 +62,19 @@ async function checkPage(browser, target, device) {
     assert(assetResponse.hasDelegatedClickHandler,
       `${target.label}: served quick-enquiry.js is missing delegated Get Matched click handling (${scriptUrl})`);
 
+    if (target.label === 'venue directory') {
+      const directoryScriptUrl = await page.locator('script[src*="venues.js"]').last().getAttribute('src');
+      assert(directoryScriptUrl && directoryScriptUrl.includes('v=20261018-search-header-fallback-1'),
+        `venue directory: page must request the current search-initialization asset: ${directoryScriptUrl}`);
+      const directoryAsset = await page.evaluate(async src => {
+        const response = await fetch(src, { cache: 'no-store' });
+        return { status: response.status, body: await response.text() };
+      }, new URL(directoryScriptUrl, base).href);
+      assert.equal(directoryAsset.status, 200, 'venue directory: venues.js must be served successfully');
+      assert(directoryAsset.body.includes('The public directory uses .site-header rather than .page-header'),
+        'venue directory: served venues.js does not contain the search-anchor fallback');
+    }
+
     const click = async () => {
       if (device.isMobile) await tab.tap();
       else await tab.click();
