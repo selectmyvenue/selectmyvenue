@@ -91,8 +91,14 @@
 
   function installTopSearch(){
     if(document.getElementById("smvBrowseTop"))return;
-    const header=document.querySelector(".page-header");if(!header)return;
-    const bar=document.createElement("div");bar.id="smvBrowseTop";bar.className="smv-browse-top";bar.innerHTML='<div class="smv-browse-top-inner"><select id="smvBrowseCity"><option value="">All Delhi NCR</option></select><input id="smvBrowseSearch" type="search" placeholder="Search venue, category, locality or occasion"><select id="smvBrowseSort"><option value="recommended">Recommended</option><option value="price-low">Price: Low to High</option><option value="capacity-high">Capacity: High to Low</option><option value="name">Name: A–Z</option></select><button id="smvBrowseFind" type="button">Search Venues →</button></div><div class="smv-browse-marquee"><div class="smv-browse-marquee-track"><span>✦ <b>No commission from venues</b> · Verified venue partners · Smart matching · Free venue discovery</span><span>✦ <b>No commission from venues</b> · Verified venue partners · Smart matching · Free venue discovery</span></div></div>';header.insertAdjacentElement("afterend",bar)
+    // The public directory uses .site-header rather than .page-header. Place
+    // its intended search bar after the inline enquiry CTA when no legacy
+    // page-header exists, so filter initialization can safely find its controls.
+    const anchor=document.querySelector(".page-header")||
+      document.querySelector(".venue-enquiry-trigger")||
+      document.querySelector(".venue-directory-hero");
+    if(!anchor)return;
+    const bar=document.createElement("div");bar.id="smvBrowseTop";bar.className="smv-browse-top";bar.innerHTML='<div class="smv-browse-top-inner"><select id="smvBrowseCity"><option value="">All Delhi NCR</option></select><input id="smvBrowseSearch" type="search" placeholder="Search venue, category, locality or occasion"><select id="smvBrowseSort"><option value="recommended">Recommended</option><option value="price-low">Price: Low to High</option><option value="capacity-high">Capacity: High to Low</option><option value="name">Name: A–Z</option></select><button id="smvBrowseFind" type="button">Search Venues →</button></div><div class="smv-browse-marquee"><div class="smv-browse-marquee-track"><span>✦ <b>No commission from venues</b> · Verified venue partners · Smart matching · Free venue discovery</span><span>✦ <b>No commission from venues</b> · Verified venue partners · Smart matching · Free venue discovery</span></div></div>';anchor.insertAdjacentElement("afterend",bar)
   }
 
   function choice(label,value,count,cat){return `<button type="button" class="smv-filter-choice" data-category="${cat}" data-value="${escapeHtml(value)}"><span>${escapeHtml(label)}</span><b>${count}</b></button>`}
