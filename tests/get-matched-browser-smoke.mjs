@@ -281,7 +281,7 @@ async function checkMobileVenueFilters(browser, width) {
     const toggleBox = await toggle.boundingBox();
     assert(toggleBox && toggleBox.width > 0 && toggleBox.height > 0,
       `mobile venue filters ${width}px: filter toggle has no tappable bounds`);
-    await toggle.tap();
+    await toggle.tap({ timeout: 4000 });
     await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'),
       undefined, { timeout: 4000 });
 
@@ -324,7 +324,7 @@ async function checkMobileVenueFilters(browser, width) {
     const typeChoice = shell.locator('[data-list="type"] .smv-filter-choice').nth(1);
     if (await typeChoice.count()) {
       const before = await page.locator('#smvMobileFilterCount').textContent();
-      await typeChoice.tap();
+      await typeChoice.tap({ timeout: 4000 });
       await page.waitForFunction(() => {
         const count = document.getElementById('smvMobileFilterCount');
         const results = document.getElementById('smvMobileResultCount');
@@ -337,19 +337,29 @@ async function checkMobileVenueFilters(browser, width) {
         `mobile venue filters ${width}px: filtering did not update the venue result count`);
     }
 
-    await shell.locator('#smvMobileFilterDone').tap();
+    const done = shell.locator('#smvMobileFilterDone');
+    const doneBox = await done.boundingBox();
+    assert(doneBox && doneBox.width > 0 && doneBox.height > 0,
+      `mobile venue filters ${width}px: Done button has no tappable bounds`);
+    const doneHit = await page.evaluate(({ x, y }) => {
+      const el = document.elementFromPoint(x, y);
+      return { tag: el?.tagName, id: el?.id, className: typeof el?.className === 'string' ? el.className : '', insideDone: !!el?.closest('#smvMobileFilterDone') };
+    }, { x: doneBox.x + doneBox.width / 2, y: doneBox.y + doneBox.height / 2 });
+    assert(doneHit.insideDone,
+      `mobile venue filters ${width}px: Done button is covered by another element: ${JSON.stringify(doneHit)}`);
+    await done.tap({ timeout: 4000 });
     await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     assert(await backdrop.evaluate(el => el.hidden),
       `mobile venue filters ${width}px: Done should hide the backdrop`);
 
-    await toggle.tap();
+    await toggle.tap({ timeout: 4000 });
     await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
-    await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 20 } });
+    await backdrop.tap({ position: { x: Math.max(5, width - 5), y: 20 }, timeout: 4000 });
     await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     assert(await backdrop.evaluate(el => el.hidden),
       `mobile venue filters ${width}px: backdrop tap should close the drawer`);
 
-    await toggle.tap();
+    await toggle.tap({ timeout: 4000 });
     await page.waitForFunction(() => document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
     await page.keyboard.press('Escape');
     await page.waitForFunction(() => !document.body.classList.contains('smv-mobile-filter-open'), undefined, { timeout: 4000 });
