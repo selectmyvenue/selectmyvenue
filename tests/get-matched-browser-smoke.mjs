@@ -234,6 +234,34 @@ async function checkMobileVenueFilters(browser, width) {
     if (message.type() === 'error') consoleErrors.push(message.text());
   });
   try {
+    // Keep the drawer regression deterministic and read-only: fixture two public
+    // venue records instead of depending on live Supabase availability or data.
+    await page.route('**/rest/v1/rpc/smv_public_venues*', route => route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify([
+        {
+          id: 'qa-venue-banquet', venue_name: 'QA Banquet Hall', venue_type: 'Banquet Hall',
+          description: 'Browser-test fixture only', city: 'Delhi', area: 'Janakpuri',
+          capacity_min: 50, capacity_max: 250, price_min_per_person: 1200,
+          price_max_per_person: 1800, food_veg: true, food_non_veg: true,
+          parking_available: true, rooms_available: false, catering_available: true,
+          decoration_available: true, cover_image_url: '', featured: false,
+          event_types: ['Wedding', 'Reception'], venue_status: 'approved',
+          verification_status: 'verified', public_listing_enabled: true,
+        },
+        {
+          id: 'qa-venue-farmhouse', venue_name: 'QA Farmhouse', venue_type: 'Farmhouse',
+          description: 'Browser-test fixture only', city: 'Gurgaon', area: 'Sector 57',
+          capacity_min: 100, capacity_max: 500, price_min_per_person: 1800,
+          price_max_per_person: 3000, food_veg: true, food_non_veg: false,
+          parking_available: true, rooms_available: true, catering_available: true,
+          decoration_available: false, cover_image_url: '', featured: false,
+          event_types: ['Wedding', 'Birthday'], venue_status: 'approved',
+          verification_status: 'verified', public_listing_enabled: true,
+        },
+      ]),
+    }));
     const response = await page.goto(base + '/venues.html', {
       waitUntil: 'domcontentloaded',
       timeout: 45000,
@@ -299,10 +327,14 @@ async function checkMobileVenueFilters(browser, width) {
       await typeChoice.tap();
       await page.waitForFunction(() => {
         const count = document.getElementById('smvMobileFilterCount');
-        return !!count && /[1-9]\d* active/.test(count.textContent || '');
+        const results = document.getElementById('smvMobileResultCount');
+        return !!count && /[1-9]\d* active/.test(count.textContent || '') &&
+          !!results && results.textContent === '1 venue';
       }, undefined, { timeout: 5000 });
       assert.notEqual(await page.locator('#smvMobileFilterCount').textContent(), before,
         `mobile venue filters ${width}px: choosing a filter did not update the active count`);
+      assert.equal(await page.locator('#smvMobileResultCount').textContent(), '1 venue',
+        `mobile venue filters ${width}px: filtering did not update the venue result count`);
     }
 
     await shell.locator('#smvMobileFilterDone').tap();
