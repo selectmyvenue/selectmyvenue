@@ -677,7 +677,7 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  function initQuickEnquiry() {
     // Bind enquiry submission before unrelated drawer/edge UI setup. If that UI
     // throws during initialization, the SEO forms must still remain usable.
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
@@ -700,5 +700,45 @@
     } catch (error) {
       console.error("Quick enquiry UI enhancement warning:", error);
     }
-  });
+  }
+
+  // Handle the CTA at document level as a resilient fallback. This also covers
+  // pages where another script replaces the tab after the component initialized.
+  document.addEventListener("click", function (event) {
+    const tab = event.target && event.target.closest ? event.target.closest("#smvHomeEnquiryTab") : null;
+    if (tab) {
+      const drawer = document.getElementById("smvHomeEnquiryDrawer");
+      const backdrop = document.getElementById("smvHomeEnquiryBackdrop");
+      const edge = document.querySelector(".smv-home-enquiry-edge");
+      if (drawer && backdrop) {
+        drawer.classList.add("is-open");
+        drawer.setAttribute("aria-hidden", "false");
+        backdrop.hidden = false;
+        document.body.classList.add("smv-home-drawer-open");
+        document.documentElement.classList.add("smv-home-drawer-open");
+        if (edge) edge.classList.add("smv-get-matched-open");
+      }
+      return;
+    }
+    if (event.target && event.target.closest &&
+        (event.target.closest("#smvHomeEnquiryClose") || event.target.closest("#smvHomeEnquiryBackdrop"))) {
+      const drawer = document.getElementById("smvHomeEnquiryDrawer");
+      const backdrop = document.getElementById("smvHomeEnquiryBackdrop");
+      const edge = document.querySelector(".smv-home-enquiry-edge");
+      if (drawer && backdrop) {
+        drawer.classList.remove("is-open");
+        drawer.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("smv-home-drawer-open");
+        document.documentElement.classList.remove("smv-home-drawer-open");
+        if (edge) edge.classList.remove("smv-get-matched-open");
+        window.setTimeout(function () { backdrop.hidden = true; }, 300);
+      }
+    }
+  }, true);
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initQuickEnquiry, { once: true });
+  } else {
+    initQuickEnquiry();
+  }
 })();
