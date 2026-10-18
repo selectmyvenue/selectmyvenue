@@ -255,8 +255,11 @@
      ======================================================= */
 
   html body .smv-home-enquiry-edge{
-    display:none!important;
-    pointer-events:none!important;
+    display:block!important;
+    visibility:visible!important;
+    opacity:1!important;
+    pointer-events:auto!important;
+    touch-action:none!important;
   }
 
   /* If the enquiry drawer is explicitly opened, make it a
