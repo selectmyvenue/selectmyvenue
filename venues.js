@@ -69,15 +69,45 @@
       backdrop.addEventListener("click",()=>window.smvCloseMobileVenueFilters?.());
     }
     const toggle=document.getElementById("smvMobileFilterToggle");
+    const filterParent=shell?.parentNode||null;
+    const filterNextSibling=shell?.nextSibling||null;
+    const setMobileFilterGeometry=open=>{
+      if(!shell)return;
+      if(open&&shell.parentNode!==document.body){
+        // Escape any stacking context created by the directory layout. The
+        // body-level backdrop otherwise can sit above the drawer despite z-index.
+        document.body.appendChild(shell);
+      }
+      const props={
+        position:"fixed",left:"0px",right:"0px",top:"60px",bottom:"0px",
+        width:"100%", "max-height":"none", margin:"0", "overflow-y":"auto",
+        "border-radius":"18px 18px 0 0", "box-sizing":"border-box", "z-index":"12000"
+      };
+      Object.entries(props).forEach(([name,value])=>{
+        if(open)shell.style.setProperty(name,value,"important");
+        else shell.style.removeProperty(name);
+      });
+      const backdrop=document.getElementById("smvMobileFilterBackdrop");
+      if(backdrop){
+        if(open)backdrop.style.setProperty("z-index","11990","important");
+        else backdrop.style.removeProperty("z-index");
+      }
+      if(!open&&filterParent&&shell.parentNode===document.body){
+        if(filterNextSibling&&filterNextSibling.parentNode===filterParent)filterParent.insertBefore(shell,filterNextSibling);
+        else filterParent.appendChild(shell);
+      }
+    };
     toggle?.addEventListener("click",()=>{
       const open=!document.body.classList.contains("smv-mobile-filter-open");
       document.body.classList.toggle("smv-mobile-filter-open",open);
+      setMobileFilterGeometry(open);
       const backdrop=document.getElementById("smvMobileFilterBackdrop");
       if(backdrop)backdrop.hidden=!open;
       toggle.setAttribute("aria-expanded",open?"true":"false");
     });
     window.smvCloseMobileVenueFilters=()=>{
       document.body.classList.remove("smv-mobile-filter-open");
+      setMobileFilterGeometry(false);
       const backdrop=document.getElementById("smvMobileFilterBackdrop");
       if(backdrop)backdrop.hidden=true;
       toggle?.setAttribute("aria-expanded","false");

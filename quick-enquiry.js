@@ -345,6 +345,19 @@
     document.head.appendChild(style);
   }
 
+  // Shared by the component initializer and resize/orientation handlers.
+  // Keep this in the IIFE scope: the initializer calls it after the edge is created.
+  function positionEdgeBelowOffer() {
+    var edge = document.querySelector(".smv-home-enquiry-edge");
+    if (!edge || !window.matchMedia("(max-width:767px)").matches) return;
+    var strip = document.querySelector(".smv-home-launch-strip");
+    var header = document.querySelector(".site-header");
+    var top = strip ? Math.max(88, Math.round(strip.getBoundingClientRect().bottom + 2)) :
+      header ? Math.max(88, Math.round(header.getBoundingClientRect().bottom + 58)) : 118;
+    edge.style.setProperty("--smv-get-matched-top", top + "px");
+    edge.style.setProperty("--smv-edge-top", top + "px");
+  }
+
   function ensureGlobalQuickEnquiry(){
     if(!document.body) return;
     // Reuse the existing homepage markup when it is already present; do not
@@ -427,15 +440,6 @@
       var next=Math.max(minCenter,Math.min(maxCenter,center));
       edge.style.setProperty("top",next+"px","important");
       edge.style.setProperty("transform","translateY(-50%)","important");
-    }
-
-    function positionEdgeBelowOffer(){
-      if(!edge||!window.matchMedia("(max-width:767px)").matches)return;
-      var strip=document.querySelector(".smv-home-launch-strip");
-      var header=document.querySelector(".site-header");
-      var top=strip?Math.max(88,Math.round(strip.getBoundingClientRect().bottom+2)):
-        header?Math.max(88,Math.round(header.getBoundingClientRect().bottom+58)):118;
-      edge.style.setProperty("--smv-get-matched-top",top+"px");edge.style.setProperty("--smv-edge-top",top+"px");
     }
 
     function resetEdgePosition(){
