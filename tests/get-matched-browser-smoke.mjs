@@ -127,7 +127,11 @@ async function checkPage(browser, target, device) {
       });
       const visuallyClosed = closedVisual.display === 'none' ||
         closedVisual.visibility === 'hidden' || closedVisual.opacity === 0 ||
-        closedVisual.right <= 1;
+        closedVisual.right <= 1 ||
+        await drawer.evaluate(el => {
+          const rect = el.getBoundingClientRect();
+          return rect.bottom <= 0 || rect.top >= window.innerHeight;
+        });
       assert(visuallyClosed,
         `${target.label}: drawer state says closed but it remains visible: ${JSON.stringify(closedVisual)}`);
     };
