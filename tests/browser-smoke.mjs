@@ -389,21 +389,24 @@ try {
         });
         assert(response && response.status() < 400,
           `legacy venue page ${path} [${viewport.name}]: HTTP ${response?.status()}`);
+        const finalUrl = new URL(page.url());
+        assert.equal(finalUrl.pathname, '/venue.html',
+          `legacy venue page ${path} [${viewport.name}]: expected redirect to canonical venue profile, got ${finalUrl.pathname}`);
+        assert(finalUrl.searchParams.has('id'),
+          `legacy venue page ${path} [${viewport.name}]: canonical redirect is missing venue id`);
         const state = await page.evaluate(() => ({
           title: document.title.trim(),
           h1Count: document.querySelectorAll('h1').length,
           scrollWidth: document.documentElement.scrollWidth,
           robots: document.querySelector('meta[name="robots"]')?.content || '',
         }));
-        assert(state.title, `legacy venue page ${path} [${viewport.name}]: missing title`);
-        assert(state.h1Count >= 1, `legacy venue page ${path} [${viewport.name}]: missing H1`);
-        assert(state.robots.toLowerCase().includes('noindex'),
-          `legacy venue page ${path} [${viewport.name}]: expected intentional noindex, got "${state.robots}"`);
+        assert(state.title, `legacy venue page ${path} [${viewport.name}]: missing title after redirect`);
+        assert(state.h1Count >= 1, `legacy venue page ${path} [${viewport.name}]: missing H1 after redirect`);
         assert(state.scrollWidth <= viewport.viewport.width + 2,
           `legacy venue page ${path} [${viewport.name}]: horizontal overflow ${state.scrollWidth}px > ${viewport.viewport.width}px`);
         assert.equal(pageErrors.length, 0,
           `legacy venue page ${path} [${viewport.name}]: runtime errors: ${pageErrors.join(' | ')}`);
-        console.log(`PASS legacy venue page ${path} [${viewport.name}] noindex=true`);
+        console.log(`PASS legacy venue page ${path} [${viewport.name}] redirected=${finalUrl.pathname}${finalUrl.search}`);
       } catch (error) {
         failures.push(`legacy venue page ${path} [${viewport.name}]: ${error.message}`);
         console.error(`FAIL legacy venue page ${path} [${viewport.name}]: ${error.message}`);
