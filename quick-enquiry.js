@@ -366,6 +366,29 @@
           <p class="quick-enquiry-message" data-quick-message aria-live="polite"></p>
         </form><div class="smv-home-enquiry-benefits"><span>✓ Suitable matches</span><span>✓ Compare options</span><span>✓ Personal assistance</span></div></div>
       </aside>`);
+    // Repair partial/legacy markup independently. Some older pages already
+    // contain the edge tab but do not contain its drawer or backdrop; checking
+    // only for the edge left those pages with a dead CTA.
+    if(!document.getElementById("smvHomeEnquiryBackdrop")){
+      document.body.insertAdjacentHTML("beforeend", '<div class="smv-home-enquiry-backdrop" id="smvHomeEnquiryBackdrop" hidden></div>');
+    }
+    if(!document.getElementById("smvHomeEnquiryDrawer")){
+      document.body.insertAdjacentHTML("beforeend", `
+        <aside class="smv-home-enquiry-drawer" id="smvHomeEnquiryDrawer" aria-label="Quick venue enquiry" aria-hidden="true">
+          <div class="smv-home-enquiry-head"><div><p>QUICK VENUE ENQUIRY</p><h2>Tell us what you're looking for.</h2><span>Share a few details and we’ll help you find suitable venue options for your event.</span></div><button id="smvHomeEnquiryClose" type="button" aria-label="Close enquiry form"><span aria-hidden="true">×</span><b class="smv-home-enquiry-close-label">Close</b></button></div>
+          <div class="smv-home-enquiry-body"><form class="quick-enquiry-form" data-smv-quick-enquiry data-source="Website - Quick Enquiry">
+            <div class="form-field"><label>YOUR NAME *</label><input name="customer_name" autocomplete="name" placeholder="Your name" required></div>
+            <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
+            <div class="form-field"><label>EVENT TYPE *</label><select name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Birthday</option><option>Party</option><option>Corporate Event</option><option>Reception</option><option>Other</option></select></div>
+            <div class="form-field"><label>LOCATION *</label><select name="location" required><option value="">Select location</option><option>Delhi</option><option>Gurgaon</option><option>Noida</option><option>Faridabad</option><option>Delhi NCR</option></select></div>
+            <div class="form-field"><label>EVENT DATE *</label><input name="event_date" type="date" required></div>
+            <div class="form-field"><label>GUESTS</label><input name="guests" type="number" min="1" placeholder="e.g. 300"></div>
+            <div class="form-field full"><label>BUDGET / PERSON</label><input name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></div>
+            <div class="form-field full"><button class="button button-primary" type="submit">Get My Venue Options →</button></div>
+            <p class="quick-enquiry-message" data-quick-message aria-live="polite"></p>
+          </form><div class="smv-home-enquiry-benefits"><span>✓ Suitable matches</span><span>✓ Compare options</span><span>✓ Personal assistance</span></div></div>
+        </aside>`);
+    }
     var edge=document.querySelector(".smv-home-enquiry-edge"),drawer=document.getElementById("smvHomeEnquiryDrawer"),backdrop=document.getElementById("smvHomeEnquiryBackdrop"),close=document.getElementById("smvHomeEnquiryClose");
     if(!edge||!drawer||!backdrop||!close)return;
     function openDrawer(){drawer.classList.add("is-open");drawer.setAttribute("aria-hidden","false");backdrop.hidden=false;document.body.classList.add("smv-home-drawer-open");document.documentElement.classList.add("smv-home-drawer-open");edge.classList.add("smv-get-matched-open");setTimeout(function(){var first=drawer.querySelector("input");if(first)first.focus();},220);}
