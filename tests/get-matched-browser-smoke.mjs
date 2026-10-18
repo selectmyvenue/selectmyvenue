@@ -236,32 +236,44 @@ async function checkMobileVenueFilters(browser, width) {
   try {
     // Keep the drawer regression deterministic and read-only: fixture two public
     // venue records instead of depending on live Supabase availability or data.
-    await page.route('**/rest/v1/rpc/smv_public_venues*', route => route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify([
-        {
-          id: 'qa-venue-banquet', venue_name: 'QA Banquet Hall', venue_type: 'Banquet Hall',
-          description: 'Browser-test fixture only', city: 'Delhi', area: 'Janakpuri',
-          capacity_min: 50, capacity_max: 250, price_min_per_person: 1200,
-          price_max_per_person: 1800, food_veg: true, food_non_veg: true,
-          parking_available: true, rooms_available: false, catering_available: true,
-          decoration_available: true, cover_image_url: '', featured: false,
-          event_types: ['Wedding', 'Reception'], venue_status: 'approved',
-          verification_status: 'verified', public_listing_enabled: true,
-        },
-        {
-          id: 'qa-venue-farmhouse', venue_name: 'QA Farmhouse', venue_type: 'Farmhouse',
-          description: 'Browser-test fixture only', city: 'Gurgaon', area: 'Sector 57',
-          capacity_min: 100, capacity_max: 500, price_min_per_person: 1800,
-          price_max_per_person: 3000, food_veg: true, food_non_veg: false,
-          parking_available: true, rooms_available: true, catering_available: true,
-          decoration_available: false, cover_image_url: '', featured: false,
-          event_types: ['Wedding', 'Birthday'], venue_status: 'approved',
-          verification_status: 'verified', public_listing_enabled: true,
-        },
-      ]),
-    }));
+    await page.route('**/rest/v1/rpc/smv_public_venues*', async route => {
+      const corsHeaders = {
+        'access-control-allow-origin': '*',
+        'access-control-allow-methods': 'POST, OPTIONS',
+        'access-control-allow-headers': 'apikey, authorization, content-type, x-client-info, accept-profile, content-profile, prefer',
+        'access-control-max-age': '86400',
+      };
+      if (route.request().method() === 'OPTIONS') {
+        return route.fulfill({ status: 204, headers: corsHeaders, body: '' });
+      }
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        headers: corsHeaders,
+        body: JSON.stringify([
+          {
+            id: 'qa-venue-banquet', venue_name: 'QA Banquet Hall', venue_type: 'Banquet Hall',
+            description: 'Browser-test fixture only', city: 'Delhi', area: 'Janakpuri',
+            capacity_min: 50, capacity_max: 250, price_min_per_person: 1200,
+            price_max_per_person: 1800, food_veg: true, food_non_veg: true,
+            parking_available: true, rooms_available: false, catering_available: true,
+            decoration_available: true, cover_image_url: '', featured: false,
+            event_types: ['Wedding', 'Reception'], venue_status: 'approved',
+            verification_status: 'verified', public_listing_enabled: true,
+          },
+          {
+            id: 'qa-venue-farmhouse', venue_name: 'QA Farmhouse', venue_type: 'Farmhouse',
+            description: 'Browser-test fixture only', city: 'Gurgaon', area: 'Sector 57',
+            capacity_min: 100, capacity_max: 500, price_min_per_person: 1800,
+            price_max_per_person: 3000, food_veg: true, food_non_veg: false,
+            parking_available: true, rooms_available: true, catering_available: true,
+            decoration_available: false, cover_image_url: '', featured: false,
+            event_types: ['Wedding', 'Birthday'], venue_status: 'approved',
+            verification_status: 'verified', public_listing_enabled: true,
+          },
+        ]),
+      });
+    });
     const response = await page.goto(base + '/venues.html', {
       waitUntil: 'domcontentloaded',
       timeout: 45000,
@@ -276,7 +288,7 @@ async function checkMobileVenueFilters(browser, width) {
     await page.waitForFunction(() => {
       const shell = document.querySelector('.venue-filter-shell');
       return !!shell && !/Loading filters/i.test(shell.textContent || '');
-    }, undefined, { timeout: 20000 });
+    }, undefined, { timeout: 10000 });
 
     const toggleBox = await toggle.boundingBox();
     assert(toggleBox && toggleBox.width > 0 && toggleBox.height > 0,
