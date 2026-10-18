@@ -713,7 +713,23 @@
       if (drawer && backdrop) {
         drawer.classList.add("is-open");
         drawer.setAttribute("aria-hidden", "false");
+        // Force a visible desktop drawer even if a legacy/mobile stylesheet
+        // wins the transform cascade. Class-only opening was unreliable on desktop.
+        drawer.style.setProperty("display", "block", "important");
+        drawer.style.setProperty("visibility", "visible", "important");
+        drawer.style.setProperty("opacity", "1", "important");
+        drawer.style.setProperty("position", "fixed", "important");
+        drawer.style.setProperty("z-index", "100390", "important");
+        drawer.style.setProperty("transform", "translateX(0)", "important");
+        drawer.style.setProperty("left", "0", "important");
+        drawer.style.setProperty("top", window.matchMedia("(max-width:767px)").matches ? "60px" : "72px", "important");
+        drawer.style.setProperty("bottom", "auto", "important");
+        drawer.style.setProperty("height", window.matchMedia("(max-width:767px)").matches ? "calc(100vh - 60px)" : "calc(100vh - 72px)", "important");
         backdrop.hidden = false;
+        backdrop.style.setProperty("display", "block", "important");
+        backdrop.style.setProperty("visibility", "visible", "important");
+        backdrop.style.setProperty("opacity", "1", "important");
+        backdrop.style.setProperty("z-index", "100380", "important");
         document.body.classList.add("smv-home-drawer-open");
         document.documentElement.classList.add("smv-home-drawer-open");
         if (edge) edge.classList.add("smv-get-matched-open");
@@ -728,6 +744,11 @@
       if (drawer && backdrop) {
         drawer.classList.remove("is-open");
         drawer.setAttribute("aria-hidden", "true");
+        ["display","visibility","opacity","position","z-index","transform","left","top","bottom","height"].forEach(function(prop){drawer.style.removeProperty(prop);});
+        backdrop.style.removeProperty("display");
+        backdrop.style.removeProperty("visibility");
+        backdrop.style.removeProperty("opacity");
+        backdrop.style.removeProperty("z-index");
         document.body.classList.remove("smv-home-drawer-open");
         document.documentElement.classList.remove("smv-home-drawer-open");
         if (edge) edge.classList.remove("smv-get-matched-open");
