@@ -69,8 +69,15 @@
       backdrop.addEventListener("click",()=>window.smvCloseMobileVenueFilters?.());
     }
     const toggle=document.getElementById("smvMobileFilterToggle");
+    const filterParent=shell?.parentNode||null;
+    const filterNextSibling=shell?.nextSibling||null;
     const setMobileFilterGeometry=open=>{
       if(!shell)return;
+      if(open&&shell.parentNode!==document.body){
+        // Escape any stacking context created by the directory layout. The
+        // body-level backdrop otherwise can sit above the drawer despite z-index.
+        document.body.appendChild(shell);
+      }
       const props={
         position:"fixed",left:"0px",right:"0px",top:"60px",bottom:"0px",
         width:"100%", "max-height":"none", margin:"0", "overflow-y":"auto",
@@ -84,6 +91,10 @@
       if(backdrop){
         if(open)backdrop.style.setProperty("z-index","11990","important");
         else backdrop.style.removeProperty("z-index");
+      }
+      if(!open&&filterParent&&shell.parentNode===document.body){
+        if(filterNextSibling&&filterNextSibling.parentNode===filterParent)filterParent.insertBefore(shell,filterNextSibling);
+        else filterParent.appendChild(shell);
       }
     };
     toggle?.addEventListener("click",()=>{
