@@ -56,13 +56,14 @@ jobs:
           set -eu
           for attempt in $(seq 1 36); do
             html="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/" 2>/dev/null || true)"
-            script="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/quick-enquiry.js?v=20261018-desktop-drawer-fix-4" 2>/dev/null || true)"
+            script="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/quick-enquiry.js?v=20261019-mobile-edge-scope-fix-1" 2>/dev/null || true)"
             directory_html="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/venues.html" 2>/dev/null || true)"
-            directory_script="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/venues.js?v=20261018-search-header-fallback-1" 2>/dev/null || true)"
-            if printf '%s' "$html" | grep -Fq 'quick-enquiry.js?v=20261018-desktop-drawer-fix-4' &&
+            directory_script="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/venues.js?v=20261019-mobile-filter-drawer-1" 2>/dev/null || true)"
+            if printf '%s' "$html" | grep -Fq 'quick-enquiry.js?v=20261019-mobile-edge-scope-fix-1' &&
                printf '%s' "$script" | grep -Fq 'Capture only after movement crosses the drag threshold' &&
                printf '%s' "$script" | grep -Fq 'Every close path, including Escape' &&
-               printf '%s' "$directory_html" | grep -Fq 'venues.js?v=20261018-search-header-fallback-1' &&
+               printf '%s' "$script" | grep -Fq 'function positionEdgeBelowOffer' &&
+               printf '%s' "$directory_html" | grep -Fq 'venues.js?v=20261019-mobile-filter-drawer-1' &&
                printf '%s' "$directory_script" | grep -Fq 'The public directory uses .site-header rather than .page-header'; then
               echo 'PASS production serves the fixed Get Matched asset and cache-busted venue directory search fallback'
               exit 0
