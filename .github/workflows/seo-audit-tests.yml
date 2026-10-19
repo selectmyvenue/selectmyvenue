@@ -39,6 +39,8 @@ jobs:
           node-version: '22'
       - name: Check customer mobile app JavaScript syntax
         run: node --check website-mobile-app-20261002.js
+      - name: Check website enquiry and SEO attribution JavaScript syntax
+        run: node --check script.js
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
