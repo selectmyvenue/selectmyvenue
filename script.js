@@ -183,7 +183,7 @@ function setupTrafficAttribution() {
   const storageKey = "smv-traffic-attribution-v1";
   const params = new URLSearchParams(window.location.search);
   const searchReferrer = document.referrer || "";
-  const searchEnginePattern = /(^|\\.)((google|bing|yahoo|duckduckgo|ecosia|brave)\\.)/i;
+  const searchEnginePattern = /(^|\.)((google|bing|yahoo|duckduckgo|ecosia|brave)\.)/i;
   const utmNames = [
     "gclid", "gbraid", "wbraid", "utm_source", "utm_medium",
     "utm_campaign", "utm_term", "utm_content"
@@ -202,8 +202,7 @@ function setupTrafficAttribution() {
   });
 
   const currentUrl = window.location.href.slice(0, 1000);
-  const currentPath = window.location.pathname || "/";
-  const currentTitle = (document.title || "Select My Venue").trim().slice(0, 180);
+    const currentTitle = (document.title || "Select My Venue").trim().slice(0, 180);
 
   if (!attribution.landing_page) attribution.landing_page = currentUrl;
   if (!attribution.landing_title) attribution.landing_title = currentTitle;
@@ -218,7 +217,7 @@ function setupTrafficAttribution() {
     attribution.gclid || attribution.gbraid || attribution.wbraid
   );
   const organicSearch = searchEnginePattern.test(searchReferrer);
-  const seoLanding = /(^|\\/)venue-pages\\//i.test(attribution.landing_page || "") ||
+  const seoLanding = /(^|\/)venue-pages\//i.test(attribution.landing_page || "") ||
     organicSearch ||
     /(^|[?&])source_page=seo([&#]|$)/i.test(window.location.search);
 
@@ -235,7 +234,7 @@ function setupTrafficAttribution() {
   const sourceInput = byId("leadSource");
   if (sourceInput && attribution.source === "SEO - Organic") {
     const pageName = (attribution.landing_title || currentTitle)
-      .replace(/\\s+/g, " ")
+      .replace(/\s+/g, " ")
       .trim()
       .slice(0, 90);
     sourceInput.value = ("SEO - Organic - " + pageName).slice(0, 120);
