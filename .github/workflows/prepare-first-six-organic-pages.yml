@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - seo/publish-first-six-event-pages
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
