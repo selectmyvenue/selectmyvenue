@@ -15,7 +15,7 @@ class InventoryAuditTests(unittest.TestCase):
         inventory = root / "inventory.csv"
         with inventory.open("w", encoding="utf-8", newline="") as handle:
             import csv
-            writer = csv.DictWriter(handle, fieldnames=sorted(audit.REQUIRED_COLUMNS))
+            writer = csv.DictWriter(handle, fieldnames=["id", "cluster", "target_keyword", "city_or_scope", "locality", "page_type", "proposed_slug", "status", "publication_gate"])
             writer.writeheader()
             writer.writerows(rows)
 
