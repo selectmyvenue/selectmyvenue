@@ -32,6 +32,16 @@ The detailed 500-row candidate inventory is maintained in `seo/SEO_500_PAGE_INVE
 6. Pages that fail the uniqueness or inventory gate remain drafts; do not force a quota by publishing thin or doorway pages.
 7. Delhi and Gurgaon/Gurugram are the first focus markets. Do not automatically reclassify Noida, Faridabad, Ghaziabad, Sonipat or Kundli as Delhi/Gurgaon.
 
+## Footer and internal-link policy
+
+The current homepage already has a small set of descriptive links to key discovery pages. Keep this useful navigation; do not add a long block of hundreds of exact-match keywords.
+
+- Use a compact, human-readable footer group such as **Explore venues** with roughly 5–10 high-value links (for example, Wedding Venues in Delhi, Wedding Venues in Gurgaon, Banquet Halls in Delhi, Banquet Halls in Gurgaon, Party Venues, and Browse Venues), only when each destination is live, indexable and genuinely useful.
+- On relevant SEO landing pages, add a few contextual links to closely related live pages and the main venue directory. Do not repeat the same large keyword list on every page.
+- Keep labels natural and accurate. Do not create footer links for unpublished pages, noindex redirect helpers, unsupported localities, or pages with no useful venue coverage.
+- Footer links help users navigate and help crawlers discover important pages; they are not a shortcut that guarantees ranking. The page's unique content, search intent match, internal context, technical indexability and real venue coverage matter more.
+- Preserve the current footer design and mobile usability. Footer changes remain branch-only until visual/mobile regression checks pass.
+
 ## Lead attribution contract
 - Existing destination: `customer_enquiries` -> Master CRM.
 - No schema/table/RLS change.
