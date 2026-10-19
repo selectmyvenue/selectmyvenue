@@ -51,5 +51,9 @@ jobs:
         run: python seo/tests/test_all_event_venue_page.py -v
       - name: Run SEO generator and audit unit tests
         run: python -m unittest discover -s seo/tests -p 'test_*seo.py' -v
+      - name: Run 500-page inventory audit unit tests
+        run: python -m unittest discover -s seo/tests -p 'test_audit_500_page_inventory.py' -v
+      - name: Audit 500-page candidate inventory against existing pages and sitemap
+        run: python seo/audit_500_page_inventory.py
       - name: Run read-only static SEO audit
         run: python seo/audit_static_seo.py
