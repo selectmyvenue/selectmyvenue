@@ -152,14 +152,16 @@ def price_matches(venue: dict, keyword: str) -> bool:
         pmax = float(pmax) if pmax not in (None, "") else None
     except (TypeError, ValueError):
         return False
-    if "under 1000" in k or "below 1000" in k:
+    # Parse currency strings with commas (e.g. ₹1,000–₹1,500) without
+    # treating the comma as a separate digit group.
+    amounts = [int(value.replace(",", "")) for value in re.findall(r"\d[\d,]*", keyword)]
+    if ("under 1000" in k or "below 1000" in k or "under 1 000" in k or "below 1 000" in k):
         return pmax is not None and pmax <= 1000
-    if "1000 1500" in k:
-        return pmin is not None and pmax is not None and pmin >= 1000 and pmax <= 1500
-    if "1500 2500" in k:
-        return pmin is not None and pmax is not None and pmin >= 1500 and pmax <= 2500
-    if "under 1500" in k or "below 1500" in k:
+    if ("under 1500" in k or "below 1500" in k or "under 1 500" in k or "below 1 500" in k):
         return pmax is not None and pmax <= 1500
+    if len(amounts) >= 2 and "per person" in k:
+        low, high = amounts[0], amounts[1]
+        return pmin is not None and pmax is not None and pmin >= low and pmax <= high
     return False
 
 
