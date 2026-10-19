@@ -2,6 +2,13 @@ name: Prepare organic SEO landing page review artifact
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - seo/500-page-organic-lead-program
+    paths:
+      - 'seo/SEO_500_PAGE_INVENTORY.csv'
+      - 'seo/generate_organic_landing_pages.py'
+      - '.github/workflows/prepare-organic-seo-landing-pages.yml'
 
 permissions:
   contents: read
