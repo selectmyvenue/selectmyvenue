@@ -98,6 +98,38 @@ class OrganicLandingPageQualificationTests(unittest.TestCase):
         self.assertEqual(matches, [])
         self.assertEqual(reason, "held_thin_inventory_2_matches_need_3")
 
+    def test_pure_veg_page_only_includes_verified_matching_venues(self):
+        rows = [
+            venue("1", pure_veg=True),
+            venue("2", pure_veg=True),
+            venue("3", pure_veg=True),
+            venue("4", city="Gurgaon", pure_veg=True),
+            venue("5", pure_veg=False),
+        ]
+        matches, reason = seo_pages.matches_candidate(
+            candidate(cluster="budget_capacity_facilities",
+                      target_keyword="pure veg wedding venues in Delhi"),
+            rows,
+        )
+        self.assertEqual({row["id"] for row in matches}, {"1", "2", "3"})
+        self.assertEqual(reason, "qualified_data_backed_page")
+        self.assertTrue(all(row.get("pure_veg") is True for row in matches))
+
+    def test_pure_veg_evidence_from_another_city_cannot_qualify_delhi_page(self):
+        rows = [
+            venue("1", pure_veg=False),
+            venue("2", pure_veg=False),
+            venue("3", pure_veg=False),
+            venue("4", city="Gurgaon", pure_veg=True),
+        ]
+        matches, reason = seo_pages.matches_candidate(
+            candidate(cluster="budget_capacity_facilities",
+                      target_keyword="pure veg wedding venues in Delhi"),
+            rows,
+        )
+        self.assertEqual(matches, [])
+        self.assertEqual(reason, "held_pure_vegetarian_claim_not_supported_by_public_field")
+
 
 if __name__ == "__main__":
     unittest.main()
