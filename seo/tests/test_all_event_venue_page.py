@@ -85,6 +85,7 @@ class AllEventVenuePageTests(unittest.TestCase):
             "wedding-venue-budget-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html",
             "wedding-venue-site-visit-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html",
             "wedding-venue-booking-questions-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-booking-questions-delhi-ncr.html",
+            "how-to-shortlist-wedding-venues-delhi-ncr.html": "https://selectmyvenue.com/how-to-shortlist-wedding-venues-delhi-ncr.html",
         }
         for filename, canonical in guides.items():
             with self.subTest(filename=filename):
@@ -109,13 +110,20 @@ class AllEventVenuePageTests(unittest.TestCase):
         budget_url = "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html"
         visit_url = "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html"
         booking_url = "https://selectmyvenue.com/wedding-venue-booking-questions-delhi-ncr.html"
+        shortlist_url = "https://selectmyvenue.com/how-to-shortlist-wedding-venues-delhi-ncr.html"
         self.assertIn(budget_url, urls)
         self.assertIn(visit_url, urls)
         self.assertIn(booking_url, urls)
+        self.assertIn(shortlist_url, urls)
         self.assertEqual(len(urls), len(set(urls)), "Sitemap URLs must be unique")
         budget_page = (ROOT / "wedding-venue-budget-delhi-ncr.html").read_text(encoding="utf-8")
         visit_page = (ROOT / "wedding-venue-site-visit-delhi-ncr.html").read_text(encoding="utf-8")
         booking_page = (ROOT / "wedding-venue-booking-questions-delhi-ncr.html").read_text(encoding="utf-8")
+        shortlist_page = (ROOT / "how-to-shortlist-wedding-venues-delhi-ncr.html").read_text(encoding="utf-8")
+        self.assertIn("how-to-shortlist-wedding-venues-delhi-ncr.html", self.hub)
+        self.assertIn("wedding-venue-budget-delhi-ncr.html", shortlist_page)
+        self.assertIn("wedding-venue-site-visit-delhi-ncr.html", shortlist_page)
+        self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", shortlist_page)
         self.assertIn("wedding-venue-site-visit-delhi-ncr.html", budget_page)
         self.assertIn("wedding-venue-budget-delhi-ncr.html", visit_page)
         self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", budget_page)
