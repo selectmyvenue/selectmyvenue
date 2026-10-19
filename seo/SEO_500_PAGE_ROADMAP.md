@@ -63,7 +63,7 @@ The current homepage already has a small set of descriptive links to key discove
 - [x] Add sitemap duplicate-removal helper and unit test.
 - [ ] Run full automated test suite and resolve all failures.
 - [x] Create a 500-row candidate keyword-to-URL inventory; validation against live venue coverage and search demand remains pending.
-- [x] Add three editorial guide drafts with distinct intent: wedding budget comparison, site-visit inspection, and booking/payment/cancellation questions. They are branch-only until approval and deployment.
+- [x] Add four editorial guide drafts with distinct intent: wedding budget comparison, site-visit inspection, booking/payment/cancellation questions, and venue shortlisting. They are branch-only until approval and deployment; the shortlisting guide is linked from the SEO search hub.
 - [ ] Expand genuinely useful landing-page coverage from the initial editorial guides; the 500-row inventory remains a candidate list, not completed pages.
 - [ ] Verify end-to-end attribution through a non-production test environment.
 - [ ] Review and approve PR before merge/publish.
