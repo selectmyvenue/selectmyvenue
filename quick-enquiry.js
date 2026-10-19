@@ -87,9 +87,18 @@
       if (value) saved[key] = value.slice(0, 500);
     });
 
-    if (!saved.landing_page) saved.landing_page = location.href.slice(0, 1000);
+    const currentUrl = location.href.slice(0, 1000);
+    const currentTitle = clean(document.title || "Select My Venue").slice(0, 180);
+    const organicReferrer = /(?:^|\.)((google|bing|yahoo|duckduckgo|ecosia|brave)\.)/i.test(clean(document.referrer));
+    const paidCampaign = !!(saved.gclid || saved.gbraid || saved.wbraid) ||
+      (!!clean(saved.utm_medium).toLowerCase().match(/cpc|ppc|paid/) && clean(saved.utm_source).toLowerCase().includes("google"));
+
+    if (!saved.landing_page || organicReferrer) saved.landing_page = currentUrl;
+    if (!saved.landing_title || organicReferrer) saved.landing_title = currentTitle;
     if (!saved.first_referrer && document.referrer) saved.first_referrer = document.referrer.slice(0, 1000);
-    saved.last_page = location.href.slice(0, 1000);
+    if (organicReferrer && !paidCampaign) saved.source = "SEO - Organic";
+    saved.last_page = currentUrl;
+    saved.last_title = currentTitle;
 
     try {
       sessionStorage.setItem(ATTRIBUTION_STORAGE_KEY, JSON.stringify(saved));
@@ -118,7 +127,8 @@
   function attributionLines(attribution, locationValue) {
     const lines = [];
     if (isGoogleAdsTraffic(attribution)) lines.push("Traffic channel: Google Ads");
-    else if (/google\./i.test(clean(attribution.first_referrer))) lines.push("Traffic channel: Google Organic");
+    else if (attribution.source === "SEO - Organic") lines.push("Traffic channel: SEO - Organic");
+    else if (/(google|bing|yahoo|duckduckgo|ecosia|brave)\./i.test(clean(attribution.first_referrer))) lines.push("Traffic channel: SEO - Organic");
     else if (attribution.first_referrer) lines.push("Traffic channel: Referral");
     else lines.push("Traffic channel: Direct / Unknown");
 
@@ -129,6 +139,7 @@
     if (attribution.utm_medium) lines.push("UTM Medium: " + attribution.utm_medium);
     if (attribution.utm_campaign) lines.push("UTM Campaign: " + attribution.utm_campaign);
     if (attribution.utm_term) lines.push("UTM Term: " + attribution.utm_term);
+    if (attribution.landing_title) lines.push("SEO / landing page name: " + attribution.landing_title);
     if (attribution.landing_page) lines.push("Landing page: " + attribution.landing_page);
     lines.push("Submitted URL: " + location.href.slice(0, 1000));
     if (isGoogleAdsTraffic(attribution) && clearlyOutsideDelhiGurgaon(locationValue)) {
@@ -226,7 +237,12 @@
       ""
     ).slice(0, 80);
     const venueId = clean(form.dataset.venueId || params.get("venue") || params.get("id") || params.get("venue_id") || "").slice(0, 80);
-    const source = venueName ? `Website - Venue: ${venueName}` : (clean(form.dataset.source) || pageSource());
+    const attribution = getAttribution();
+    const organicSource = attribution.source === "SEO - Organic";
+    const seoPageName = clean(attribution.landing_title || pageLabel()).replace(/\s+/g, " ").slice(0, 90);
+    const source = organicSource
+      ? ("SEO - Organic - " + seoPageName).slice(0, 120)
+      : (venueName ? `Website - Venue: ${venueName}` : (clean(form.dataset.source) || pageSource()));
     return { source, venueName, venueId, page: pageLabel() };
   }
 
