@@ -383,7 +383,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inventory", type=Path, default=INVENTORY)
     parser.add_argument("--site-root", type=Path, default=ROOT)
-    parser.add_argument("--output", type=Path, default=ROOT / "seo" / "generated-organic-pages")
+    parser.add_argument("--output", type=Path, default=Path("/tmp/smv-seo-generated-organic-pages"))
     parser.add_argument("--minimum-matches", type=int, default=MIN_MATCHING_VENUES)
     args = parser.parse_args()
     if args.minimum_matches < 3:
@@ -401,8 +401,8 @@ def main() -> int:
         # it is review output, not publishable site content.
         raise RuntimeError("Review output must be outside the website root; refusing to write into the site.")
     if output.exists():
-        shutil.rmtree(output)
-    output.mkdir(parents=True, exist_ok=True)
+        raise RuntimeError(f"Review output already exists; inspect or remove it explicitly before regenerating: {output}")
+    output.mkdir(parents=True, exist_ok=False)
     report_rows: list[dict[str, str]] = []
     sitemap_rows: list[dict[str, str]] = []
     for row in inventory:
