@@ -69,7 +69,6 @@ FEATURES = {
     "rooms": ("rooms_available", "Guest rooms"),
     "room": ("rooms_available", "Guest rooms"),
     "vegetarian": ("food_veg", "Vegetarian food"),
-    "pure veg": ("food_veg", "Vegetarian food"),
     "non-veg": ("food_non_veg", "Non-vegetarian food"),
     "catering": ("catering_available", "Catering"),
     "decoration": ("decoration_available", "Decoration"),
@@ -226,11 +225,15 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
     terms = category_terms(keyword)
     if cluster == "core_city_intent" and ("large-capacity" in keyword.lower() or "large capacity" in keyword.lower() or "intimate" in keyword.lower() or "small and intimate" in keyword.lower()):
         candidates = [v for v in candidates if capacity_matches(v, keyword)]
+    if "pure veg" in normalized_keyword and not any(v.get("pure_veg") is True or v.get("pure_vegetarian") is True for v in venues):
+        return [], "held_pure_vegetarian_claim_not_supported_by_public_field"
     if cluster == "event_intent":
         events = event_terms(keyword)
         if not events:
             return [], "held_event_intent_not_supported_by_matcher"
         candidates = [v for v in candidates if has_event(v, events)]
+        if "outdoor" in normalized_keyword:
+            candidates = [v for v in candidates if any(term in norm(v.get("venue_type") or "") for term in ("lawn", "outdoor", "garden"))]
         if terms:
             candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
     elif cluster == "budget_capacity_facilities":
