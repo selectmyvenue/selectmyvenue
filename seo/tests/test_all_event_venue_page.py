@@ -80,5 +80,36 @@ class AllEventVenuePageTests(unittest.TestCase):
         self.assertEqual(len(urls), len(set(urls)), "Sitemap URLs must be unique")
 
 
+    def test_editorial_guides_have_unique_canonical_indexability_and_article_schema(self):
+        guides = {
+            "wedding-venue-budget-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html",
+            "wedding-venue-site-visit-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html",
+        }
+        for filename, canonical in guides.items():
+            with self.subTest(filename=filename):
+                page = (ROOT / filename).read_text(encoding="utf-8")
+                self.assertIn(f'<link rel="canonical" href="{canonical}">', page)
+                self.assertRegex(page, r'<meta name="robots" content="index,follow')
+                self.assertIn('"@type":"Article"', page)
+                self.assertIn('"@type":"BreadcrumbList"', page)
+                self.assertIn('data-smv-quick-enquiry', page)
+                self.assertIn('src="quick-enquiry.js?', page)
+                for field in ("customer_name", "mobile", "occasion", "location", "event_date", "guests", "budget_per_person"):
+                    self.assertRegex(page, rf'name="{field}"')
+
+    def test_editorial_guides_are_in_sitemap_and_cross_linked(self):
+        ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        urls = [node.text for node in self.sitemap.findall("sm:url/sm:loc", ns)]
+        budget_url = "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html"
+        visit_url = "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html"
+        self.assertIn(budget_url, urls)
+        self.assertIn(visit_url, urls)
+        self.assertEqual(len(urls), len(set(urls)), "Sitemap URLs must be unique")
+        budget_page = (ROOT / "wedding-venue-budget-delhi-ncr.html").read_text(encoding="utf-8")
+        visit_page = (ROOT / "wedding-venue-site-visit-delhi-ncr.html").read_text(encoding="utf-8")
+        self.assertIn("wedding-venue-site-visit-delhi-ncr.html", budget_page)
+        self.assertIn("wedding-venue-budget-delhi-ncr.html", visit_page)
+
+
 if __name__ == "__main__":
     unittest.main()
