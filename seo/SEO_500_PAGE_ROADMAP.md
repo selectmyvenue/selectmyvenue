@@ -1,0 +1,56 @@
+# SMV 500-Page Organic Lead Generation Programme
+
+Status: implementation branch only; not merged or deployed.
+
+## Objective
+Build a sustainable, lead-generating organic search programme for Select My Venue, focused first on Delhi and Gurgaon/Gurugram. Every indexable landing page must serve a real customer intent, help compare or discover venues, and route enquiries through the existing website form to `customer_enquiries` and the Master CRM.
+
+## Critical implementation finding
+The current `seo/generate_venue_seo.py` output under `/venue-pages/` is intentionally `noindex,follow`, canonicalises to `/venue.html?id=...`, and redirects to the live venue profile. Those generated helper pages are **not 500 indexable SEO landing pages** and must not be counted as such. The generator also had duplicate sitemap URL entries; a tested deduplication fix is included in this branch.
+
+## Planned portfolio: 500 page targets, subject to uniqueness and inventory checks
+
+| Cluster | Target count | Purpose |
+|---|---:|---|
+| Core venue-type + city intent | 100 | Wedding venues, banquet halls, lawns, farmhouses, party halls, engagement/reception venues and corporate event spaces for Delhi and Gurgaon |
+| Locality + venue-type intent | 150 | Locality pages only where SMV has relevant venue coverage and enough distinct information to help users |
+| Event-specific intent | 75 | Birthday, anniversary, engagement, wedding reception, mehndi, sangeet, baby shower, kitty party and corporate events |
+| Budget, capacity and facilities | 60 | Budget bands, guest-count ranges, vegetarian options, parking, rooms, indoor/outdoor and similar real filters only where inventory supports them |
+| Venue discovery and comparison guides | 50 | Practical guides, checklists, price-planning explainers, venue-type comparisons and FAQs |
+| Real venue profile destinations | 50 | Actual public venue profiles with stable IDs and genuine listing facts; not redirect stubs |
+| High-intent supporting pages / FAQs | 15 | Conversion support for shortlisting, site visits, availability and enquiry preparation |
+| **Total target** | **500** | A target portfolio, not a promise that every candidate qualifies for indexation |
+
+## Page acceptance rules
+1. One page targets one clearly defined search intent. Do not publish pages that differ only by swapped city/locality words.
+2. Publish a locality page only when the public venue inventory and page content genuinely support that location and the page adds useful local detail.
+3. No invented venues, prices, capacities, venue availability, locality facts, reviews or rankings.
+4. Noindex/canonical redirect helper pages remain out of the XML sitemap. Sitemap contains only intended indexable canonical URLs.
+5. Every indexable page needs a unique title, meta description, H1, meaningful page body, internal links, mobile layout and a working enquiry CTA.
+6. Pages that fail the uniqueness or inventory gate remain drafts; do not force a quota by publishing thin or doorway pages.
+7. Delhi and Gurgaon/Gurugram are the first focus markets. Do not automatically reclassify Noida, Faridabad, Ghaziabad, Sonipat or Kundli as Delhi/Gurgaon.
+
+## Lead attribution contract
+- Existing destination: `customer_enquiries` -> Master CRM.
+- No schema/table/RLS change.
+- Source field format for organic leads: `SEO - Organic - <page title>` (bounded to the existing source field), with a stable `SEO - Organic` fallback.
+- Append source page title, landing URL, first referrer and available UTM/click IDs to existing `requirements` and `contact_remark` fields, preserving customer-entered requirements.
+- Attribution is best-effort: storage failures must never prevent enquiry submission.
+- Test with a controlled staging/local form fixture. Never create dummy leads in production.
+
+## Publishing and safety gates
+1. Work only on `seo/500-page-organic-lead-program` until tests and review are complete.
+2. Run existing event-page tests, SEO unit tests, static audit, sitemap duplicate check and browser/form attribution checks.
+3. Confirm the enquiry still reaches the existing CRM with the correct source and page name using a safe non-production test.
+4. Check indexability, canonical, robots, sitemap inclusion, internal links and mobile rendering.
+5. Submit a PR for review. No merge or production deployment without explicit approval.
+
+## Delivery status
+- [x] Create a dedicated implementation branch.
+- [x] Add organic landing-page attribution to the existing website enquiry flow without changing the database schema.
+- [x] Add sitemap duplicate-removal helper and unit test.
+- [ ] Run full automated test suite and resolve all failures.
+- [ ] Build and validate the 500-target keyword-to-URL inventory against live venue coverage and search demand.
+- [ ] Implement genuinely indexable landing-page templates/content with distinct intent and internal links.
+- [ ] Verify end-to-end attribution through a non-production test environment.
+- [ ] Review and approve PR before merge/publish.
