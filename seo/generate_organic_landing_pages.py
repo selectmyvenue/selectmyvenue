@@ -225,8 +225,15 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
     terms = category_terms(keyword)
     if cluster == "core_city_intent" and ("large-capacity" in keyword.lower() or "large capacity" in keyword.lower() or "intimate" in keyword.lower() or "small and intimate" in keyword.lower()):
         candidates = [v for v in candidates if capacity_matches(v, keyword)]
-    if "pure veg" in normalized_keyword and not any(v.get("pure_veg") is True or v.get("pure_vegetarian") is True for v in venues):
-        return [], "held_pure_vegetarian_claim_not_supported_by_public_field"
+    if "pure veg" in normalized_keyword:
+        # The claim must be true for each listed venue, and the evidence must
+        # belong to this city/locality scope (not an unrelated venue elsewhere).
+        candidates = [
+            v for v in candidates
+            if v.get("pure_veg") is True or v.get("pure_vegetarian") is True
+        ]
+        if not candidates:
+            return [], "held_pure_vegetarian_claim_not_supported_by_public_field"
     if cluster == "event_intent":
         events = event_terms(keyword)
         if not events:
