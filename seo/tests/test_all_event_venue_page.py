@@ -1,3 +1,4 @@
+import csv
 import pathlib
 import re
 import unittest
@@ -52,6 +53,15 @@ class AllEventVenuePageTests(unittest.TestCase):
             self.assertRegex(form, rf'name="{field}"')
         self.assertIn('src="quick-enquiry.js?', self.hub)
         self.assertIn('client.from("customer_enquiries").insert(payload)', self.handler)
+
+    def test_500_page_candidate_inventory_has_unique_slugs_and_explicit_gates(self):
+        inventory = ROOT / "seo" / "SEO_500_PAGE_INVENTORY.csv"
+        with inventory.open(encoding="utf-8", newline="") as stream:
+            rows = list(csv.DictReader(stream))
+        self.assertEqual(len(rows), 500)
+        self.assertEqual(len({row["proposed_slug"] for row in rows}), 500)
+        self.assertTrue(all(row["status"] == "candidate_not_published" for row in rows))
+        self.assertTrue(all(row["publication_gate"].strip() for row in rows))
 
     def test_organic_seo_source_and_page_name_are_saved_through_existing_crm_flow(self):
         self.assertIn('ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1"', self.handler)
