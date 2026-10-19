@@ -217,6 +217,12 @@ function setupTrafficAttribution() {
     attribution.gclid || attribution.gbraid || attribution.wbraid
   );
   const organicSearch = searchEnginePattern.test(searchReferrer);
+  if (organicSearch) {
+    // When a visitor arrives from a search engine, this is the SEO entry page
+    // for this visit, even if sessionStorage contains an older direct entry.
+    attribution.landing_page = currentUrl;
+    attribution.landing_title = currentTitle;
+  }
   const seoLanding = /(^|\/)venue-pages\//i.test(attribution.landing_page || "") ||
     organicSearch ||
     /(^|[?&])source_page=seo([&#]|$)/i.test(window.location.search);
