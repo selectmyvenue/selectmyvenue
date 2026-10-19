@@ -5,6 +5,7 @@ on:
     branches:
       - seo/all-intent-enquiry-coverage
       - seo/delhi-gurgaon-venue-engine-review
+      - seo/500-page-organic-lead-program
     paths:
       - 'seo/**'
       - '*.html'
