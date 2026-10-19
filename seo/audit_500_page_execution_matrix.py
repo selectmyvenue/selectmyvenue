@@ -64,6 +64,11 @@ def audit(inventory_path: Path, matrix_path: Path, sitemap_path: Path) -> tuple[
             if not row.get(field):
                 errors.append(f"Candidate {candidate_id} is missing matrix field {field}.")
         keyword = row.get("target_keyword", "").lower()
+        if row.get("page_type") == "faq" and row.get("recommended_action") not in {
+            "HUMAN_WRITE_OR_MERGE_FAQ", "REUSE_EXISTING_PAGE",
+            "REUSE_EXISTING_GUIDE", "REUSE_OR_MERGE_EXISTING_GUIDE",
+        }:
+            errors.append(f"Candidate {candidate_id} is an FAQ but has no FAQ-specific writing/reuse action.")
         if any(term in keyword for term in SUBJECTIVE) and row.get("recommended_action") not in {
             "HOLD_UNTIL_EVIDENCE", "REUSE_EXISTING_PAGE", "REUSE_OR_MERGE_EXISTING_GUIDE",
             "MERGE_UNLESS_CITY_SPECIFIC_VALUE", "MERGE_UNLESS_DISTINCT_MONSOON_VALUE",
