@@ -216,18 +216,20 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
         candidates = [v for v in candidates if has_event(v, events)]
         if terms:
             candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
-    elif terms:
-        candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
     elif cluster == "budget_capacity_facilities":
         feature = feature_matches(venues[0] if venues else {}, keyword)
         if feature is not None:
             candidates = [v for v in candidates if feature_matches(v, keyword)]
-        elif "per person" in keyword.lower() or "under " in keyword.lower():
+        elif "per person" in keyword.lower() or "under " in keyword.lower() or "below " in keyword.lower():
             candidates = [v for v in candidates if price_matches(v, keyword)]
         elif any(x in keyword.lower() for x in ("capacity", "guests", "intimate", "small")):
             candidates = [v for v in candidates if capacity_matches(v, keyword)]
         else:
             return [], "held_filter_not_supported_by_verified_public_fields"
+        if terms:
+            candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
+    elif terms:
+        candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
     else:
         return [], "held_no_safe_page_template_for_intent"
     # Keep a locality page honest: it must be matched on actual area/city above.
