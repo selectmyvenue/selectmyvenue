@@ -191,6 +191,18 @@ def feature_matches(venue: dict, keyword: str) -> bool | None:
     return None
 
 
+def intent_key(row: dict[str, str]) -> str:
+    """Normalize location wording so overlapping city variants can be compared."""
+    text = norm(row.get("target_keyword", ""))
+    locality = norm(row.get("locality", ""))
+    if locality:
+        text = re.sub(rf"\\b{re.escape(locality)}\\b", " ", text)
+    for term in ("delhi ncr", "new delhi", "delhi", "gurgaon", "gurugram", "ncr"):
+        text = re.sub(rf"\\b{re.escape(term)}\\b", " ", text)
+    words = [word for word in norm(text).split() if word not in {"in", "for", "the", "a", "an", "of", "to"}]
+    return " ".join(words)
+
+
 def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dict], str]:
     keyword = row["target_keyword"]
     slug = row["proposed_slug"]
@@ -481,6 +493,7 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=False)
     report_rows: list[dict[str, str]] = []
     sitemap_rows: list[dict[str, str]] = []
+    generated_signatures: list[dict] = []
     for row in inventory:
         slug = row["proposed_slug"]
         if slug in existing:
@@ -498,8 +511,23 @@ def main() -> int:
             actual_count = count_match.group(1) if count_match else "0"
             report_rows.append({**row, "build_status": "not_generated", "matching_venues": actual_count, "reason": reason})
             continue
+        current_ids = {str(v["id"]) for v in matches if v.get("id")}
+        key = intent_key(row)
+        duplicate_of = None
+        for prior in generated_signatures:
+            if prior["cluster"] != row["cluster"] or not key or prior["intent_key"] != key:
+                continue
+            smaller = min(len(current_ids), len(prior["venue_ids"]))
+            overlap = len(current_ids & prior["venue_ids"]) / smaller if smaller else 0
+            if overlap >= 0.9:
+                duplicate_of = prior["slug"]
+                break
+        if duplicate_of:
+            report_rows.append({**row, "build_status": "held_near_duplicate", "matching_venues": str(len(matches)), "reason": f"overlaps_{duplicate_of}_with_same_normalized_intent"})
+            continue
         destination = output / f"{slug}.html"
         destination.write_text(page_html(row, matches), encoding="utf-8")
+        generated_signatures.append({"cluster": row["cluster"], "intent_key": key, "venue_ids": current_ids, "slug": slug})
         report_rows.append({**row, "build_status": "generated_for_review", "matching_venues": str(len(matches)), "reason": reason})
         sitemap_rows.append(row)
     report_path = output / "SEO_500_PAGE_BUILD_REPORT.csv"
