@@ -343,6 +343,20 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
     event = next((name.title() for name in EVENT_TERMS if norm(name) in norm(keyword)), "your event")
     cards = "\n".join(venue_card(v) for v in venues[:24])
     unique_sections = content_sections(row, venues)
+    scope = norm(row.get("city_or_scope") or "")
+    related_links = [
+        ("Wedding venue budget checklist", "wedding-venue-budget-delhi-ncr.html"),
+        ("Wedding venue site-visit checklist", "wedding-venue-site-visit-delhi-ncr.html"),
+        ("Questions to ask before booking", "wedding-venue-booking-questions-delhi-ncr.html"),
+        ("How to shortlist wedding venues", "how-to-shortlist-wedding-venues-delhi-ncr.html"),
+    ]
+    if scope in ("delhi", "new delhi"):
+        related_links.extend([("Wedding venues in Delhi", "wedding-venues-in-delhi.html"), ("Venues in Delhi", "venues-in-delhi.html")])
+    elif scope in ("gurgaon", "gurugram"):
+        related_links.extend([("Wedding venues in Gurgaon", "wedding-venues-in-gurgaon.html"), ("Venues in Gurgaon", "venues-in-gurgaon.html")])
+    elif scope in ("delhi ncr", "ncr"):
+        related_links.append(("Wedding venues in Delhi NCR", "wedding-venues-delhi-ncr.html"))
+    related_html = "\\n".join(f'<li><a href="{esc(path)}">{esc(label)}</a></li>' for label, path in related_links)
     schema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
@@ -377,10 +391,7 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
 <li>Visit the strongest matches and get important promises in writing.</li>
 </ol></section>
 <section class="related"><h2>Plan your venue shortlist</h2><ul>
-<li><a href="wedding-venue-budget-delhi-ncr.html">Wedding venue budget checklist</a></li>
-<li><a href="wedding-venue-site-visit-delhi-ncr.html">Wedding venue site-visit checklist</a></li>
-<li><a href="wedding-venue-booking-questions-delhi-ncr.html">Questions to ask before booking</a></li>
-<li><a href="how-to-shortlist-wedding-venues-delhi-ncr.html">How to shortlist wedding venues</a></li>
+{related_html}
 <li><a href="venues.html">Browse all public venues</a></li>
 </ul></section>
 <section class="enquiry" id="enquiry"><h2>Need help finding a suitable venue?</h2><p>Share your event requirements. A submitted enquiry is not a booking or a confirmation of venue availability.</p>
@@ -476,7 +487,9 @@ def main() -> int:
         if matches and len(matches) < args.minimum_matches:
             matches, reason = [], f"held_thin_inventory_{len(matches)}_matches_need_{args.minimum_matches}"
         if not matches:
-            report_rows.append({**row, "build_status": "not_generated", "matching_venues": "0", "reason": reason})
+            count_match = re.search(r"held_thin_inventory_(\d+)_matches", reason)
+            actual_count = count_match.group(1) if count_match else "0"
+            report_rows.append({**row, "build_status": "not_generated", "matching_venues": actual_count, "reason": reason})
             continue
         destination = output / f"{slug}.html"
         destination.write_text(page_html(row, matches), encoding="utf-8")
