@@ -196,9 +196,9 @@ def intent_key(row: dict[str, str]) -> str:
     text = norm(row.get("target_keyword", ""))
     locality = norm(row.get("locality", ""))
     if locality:
-        text = re.sub(rf"\\b{re.escape(locality)}\\b", " ", text)
+        text = re.sub(rf"\b{re.escape(locality)}\b", " ", text)
     for term in ("delhi ncr", "new delhi", "delhi", "gurgaon", "gurugram", "ncr"):
-        text = re.sub(rf"\\b{re.escape(term)}\\b", " ", text)
+        text = re.sub(rf"\b{re.escape(term)}\b", " ", text)
     words = [word for word in norm(text).split() if word not in {"in", "for", "the", "a", "an", "of", "to"}]
     return " ".join(words)
 
