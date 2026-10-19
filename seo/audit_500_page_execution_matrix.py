@@ -70,6 +70,19 @@ def audit(inventory_path: Path, matrix_path: Path, sitemap_path: Path) -> tuple[
             "REUSE_EXISTING_GUIDE",
         }:
             errors.append(f"Candidate {candidate_id} makes a subjective claim without an evidence hold.")
+        normalized_keyword = re.sub(r"[^a-z0-9]+", " ", keyword).strip()
+        vague_capacity = any(term in normalized_keyword for term in ("large capacity", "intimate", "small")) and not re.search(r"\\d", keyword)
+        if vague_capacity and row.get("recommended_action") not in {
+            "HOLD_UNTIL_EVIDENCE", "REUSE_EXISTING_PAGE", "REUSE_OR_MERGE_EXISTING_GUIDE",
+            "MERGE_UNLESS_CITY_SPECIFIC_VALUE", "MERGE_UNLESS_DISTINCT_MONSOON_VALUE",
+            "REUSE_EXISTING_GUIDE",
+        }:
+            errors.append(f"Candidate {candidate_id} uses an undefined capacity band without an evidence hold.")
+        if "pure veg" in normalized_keyword and row.get("recommended_action") not in {
+            "HOLD_UNTIL_EVIDENCE", "REUSE_EXISTING_PAGE", "REUSE_OR_MERGE_EXISTING_GUIDE",
+            "MERGE_UNLESS_CITY_SPECIFIC_VALUE", "REUSE_EXISTING_GUIDE",
+        }:
+            errors.append(f"Candidate {candidate_id} makes a pure-vegetarian claim without explicit evidence.")
 
     sitemap_urls: set[str] = set()
     if sitemap_path.exists():
