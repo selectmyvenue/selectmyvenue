@@ -63,7 +63,7 @@ The current homepage already has a small set of descriptive links to key discove
 - [x] Add sitemap duplicate-removal helper and unit test.
 - [ ] Run full automated test suite at the end of implementation and resolve all failures.
 - [x] Create a 500-row candidate keyword-to-URL inventory; validation against live venue coverage and search demand remains pending.
-- [x] Add four editorial guide drafts with distinct intent: wedding budget comparison, site-visit inspection, booking/payment/cancellation questions, and venue shortlisting. They are branch-only until approval and deployment; the shortlisting guide is linked from the SEO search hub.
+- [x] Add nine editorial guide drafts with distinct intent: budget comparison, site-visit inspection, booking/payment/cancellation questions, venue shortlisting, hidden costs, capacity planning, booking timeline, food tasting, and outdoor weather backup. They are branch-only until approval and deployment; the planning guides are linked from the SEO search hub.
 - [x] Add a 500-row execution matrix that assigns every candidate a build strategy, content angle, evidence gate, unique-content requirement and internal-link targets.
 - [x] Add a review-only organic landing-page generator that reads the 500-row inventory and the existing public venue RPC, matches candidates to real public Delhi/Gurgaon listings, requires at least three matching listings, and writes a separate review artifact plus candidate-only sitemap. It never writes to the site root or live sitemap.
 - [x] Add a manual GitHub Actions workflow to prepare the review artifact; it does not deploy or change production.
