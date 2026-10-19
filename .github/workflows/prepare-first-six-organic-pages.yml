@@ -1,0 +1,124 @@
+name: Prepare first six organic event pages
+
+on:
+  push:
+    branches:
+      - seo/publish-first-six-event-pages
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  prepare-six-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out release branch
+        uses: actions/checkout@v4
+        with:
+          ref: seo/publish-first-six-event-pages
+          fetch-depth: 0
+
+      - name: Download reviewed organic SEO artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: smv-organic-seo-review-17
+          run-id: 39317575734
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: selectmyvenue/selectmyvenue
+          path: /tmp/smv-review
+
+      - name: Add only the six approved event pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          pages=(
+            venues-for-wedding-delhi-ncr.html
+            venues-for-engagement-delhi-ncr.html
+            venues-for-reception-delhi-ncr.html
+            venues-for-birthday-delhi-ncr.html
+            venues-for-anniversary-delhi-ncr.html
+            venues-for-corporate-delhi-ncr.html
+          )
+          for page in "${pages[@]}"; do
+            test -s "/tmp/smv-review/$page"
+            cp "/tmp/smv-review/$page" "$page"
+          done
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          from datetime import date
+          sitemap = Path("sitemap.xml")
+          xml = sitemap.read_text(encoding="utf-8")
+          urls = [
+              "venues-for-wedding-delhi-ncr.html",
+              "venues-for-engagement-delhi-ncr.html",
+              "venues-for-reception-delhi-ncr.html",
+              "venues-for-birthday-delhi-ncr.html",
+              "venues-for-anniversary-delhi-ncr.html",
+              "venues-for-corporate-delhi-ncr.html",
+          ]
+          for slug in urls:
+              url = f"https://selectmyvenue.com/{slug}"
+              if f"<loc>{url}</loc>" not in xml:
+                  entry = f"<url><loc>{url}</loc><lastmod>{date.today().isoformat()}</lastmod></url>"
+                  xml = xml.replace("</urlset>", entry + "</urlset>")
+          locs = re.findall(r"<loc>(.*?)</loc>", xml)
+          if len(locs) != len(set(locs)):
+              raise SystemExit("Duplicate URL detected in sitemap")
+          sitemap.write_text(xml, encoding="utf-8")
+
+          hub = Path("seo-searches.html")
+          html = hub.read_text(encoding="utf-8")
+          marker = '<section class="search-content-section"><header><p class="eyebrow">BY FORMAT & REQUIREMENT'
+          if "Explore detailed event-specific venue guides" not in html:
+              cards = [
+                  ("Wedding venues", urls[0]),
+                  ("Engagement venues", urls[1]),
+                  ("Reception venues", urls[2]),
+                  ("Birthday venues", urls[3]),
+                  ("Anniversary venues", urls[4]),
+                  ("Corporate event venues", urls[5]),
+              ]
+              cards_html = "".join(
+                  f'<article class="intent-link-card"><h3>{title}</h3><p>Explore matching venue listings and shortlist options for your event.</p><a href="{slug}">Explore {title.lower()} →</a></article>'
+                  for title, slug in cards
+              )
+              section = (
+                  '<section class="search-content-section"><header><p class="eyebrow">BY EVENT</p>'
+                  '<h2>Explore detailed event-specific venue guides</h2>'
+                  '<p>Compare relevant venue options for your celebration or business event.</p></header>'
+                  f'<div class="intent-link-grid">{cards_html}</div></section>'
+              )
+              if marker not in html:
+                  raise SystemExit("Could not find expected hub insertion point; refusing to rewrite hub")
+              html = html.replace(marker, section + marker, 1)
+              hub.write_text(html, encoding="utf-8")
+
+          # Release gate: every page must be indexable, canonical, and link to real venue profiles.
+          for slug in urls:
+              page = Path(slug).read_text(encoding="utf-8")
+              if f'<link rel="canonical" href="https://selectmyvenue.com/{slug}">' not in page:
+                  raise SystemExit(f"Missing self-canonical: {slug}")
+              if not re.search(r'<meta name="robots" content="index,follow', page):
+                  raise SystemExit(f"Missing indexable robots directive: {slug}")
+              if len(set(re.findall(r'href="venue\.html\?id=[^"]+"', page))) < 3:
+                  raise SystemExit(f"Fewer than 3 unique venue profile links: {slug}")
+              if f"<loc>https://selectmyvenue.com/{slug}</loc>" not in xml:
+                  raise SystemExit(f"Missing sitemap URL: {slug}")
+          print("PASS: six pages, self-canonicals, indexability, venue links, sitemap uniqueness, hub links")
+          PY
+
+      - name: Commit prepared release to branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add venues-for-wedding-delhi-ncr.html venues-for-engagement-delhi-ncr.html venues-for-reception-delhi-ncr.html venues-for-birthday-delhi-ncr.html venues-for-anniversary-delhi-ncr.html venues-for-corporate-delhi-ncr.html sitemap.xml seo-searches.html
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Prepare first six organic event landing pages"
+            git push origin seo/publish-first-six-event-pages
+          fi
