@@ -89,13 +89,11 @@ def load_inventory(path: Path) -> list[dict[str, str]]:
 
 
 def venue_text(venue: dict) -> str:
-    values = [venue.get("venue_name"), venue.get("venue_type"), venue.get("description"),
-              venue.get("area"), venue.get("city")]
+    """Only fields appropriate for category matching; do not infer type from prose."""
     events = venue.get("event_types") or []
     if not isinstance(events, list):
         events = re.split(r"[,|]", str(events))
-    values.extend(events)
-    return norm(" ".join(str(v or "") for v in values))
+    return norm(" ".join([str(venue.get("venue_type") or "")] + [str(v) for v in events]))
 
 
 def market_matches(venue: dict, scope: str) -> bool:
