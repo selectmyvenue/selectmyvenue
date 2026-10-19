@@ -74,7 +74,7 @@ FEATURES = {
     "catering": ("catering_available", "Catering"),
     "decoration": ("decoration_available", "Decoration"),
 }
-SUBJECTIVE_TERMS = ("best ", "top ", "luxury", "premium", "most popular", "highest rated")
+SUBJECTIVE_TERMS = ("best ", "top ", "luxury", "premium", "most popular", "highest rated", "affordable")
 SITEMAP_NS_TAG = f"{{{SITEMAP_NS}}}urlset"
 
 
@@ -207,6 +207,8 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
         if not candidates:
             return [], "held_no_public_venue_coverage_for_locality"
     terms = category_terms(keyword)
+    if cluster == "core_city_intent" and ("large-capacity" in keyword.lower() or "large capacity" in keyword.lower() or "intimate" in keyword.lower() or "small and intimate" in keyword.lower()):
+        candidates = [v for v in candidates if capacity_matches(v, keyword)]
     if cluster == "event_intent":
         events = event_terms(keyword)
         if not events:
@@ -276,6 +278,61 @@ def venue_card(venue: dict) -> str:
             + f'<a href="{esc(venue_profile_url(venue["id"]))}">View venue details →</a></article>')
 
 
+def content_sections(row: dict[str, str], venues: list[dict]) -> str:
+    keyword = row["target_keyword"]
+    cluster = row["cluster"]
+    locality = row.get("locality") or row.get("city_or_scope") or "your preferred area"
+    city = row.get("city_or_scope") or "Delhi NCR"
+    price_known = sum(1 for v in venues if v.get("price_min_per_person") is not None or v.get("price_max_per_person") is not None)
+    capacity_known = sum(1 for v in venues if v.get("capacity_min") is not None or v.get("capacity_max") is not None)
+    parking_known = sum(1 for v in venues if v.get("parking_available") is True)
+    rooms_known = sum(1 for v in venues if v.get("rooms_available") is True)
+    if cluster == "locality_intent":
+        lead = f"""<section class="specific"><h2>Shortlisting venues around {esc(locality)}</h2>
+<p>Start with the public listings below that identify this locality in their address fields. Before travelling, ask each venue to confirm the exact entrance address, event-date availability, parking arrangements and guest access. Do not assume a venue is nearby just because it is described as Delhi NCR.</p>
+<h3>Local details to verify</h3><ul><li>Actual travel time from your guests’ likely starting points at the event time.</li><li>Entry and exit access for cars, cabs, elderly guests and vendors.</li><li>Parking capacity, setup access and any sound or event-timing restrictions.</li></ul></section>"""
+    elif cluster == "event_intent":
+        event = next((name.title() for name in EVENT_TERMS if norm(name) in norm(keyword)), "your event")
+        event_detail = {
+          "Wedding": "Check the ceremony and reception layout, guest flow, stage, food service, setup windows and weather backup.",
+          "Engagement": "Confirm a suitable stage or ceremony area, guest seating, food service, photography access and event timing.",
+          "Reception": "Check guest arrival flow, stage visibility, dining layout, sound restrictions and the planned event end time.",
+          "Birthday": "Ask about age-appropriate space, food arrangements, music limits, decoration rules and setup or cleanup time.",
+          "Anniversary": "Compare the space against your guest count, dining format, décor plans, accessibility and event schedule.",
+          "Mehndi": "Confirm daytime timing, seating, shade or indoor backup, music rules and space for the planned activities.",
+          "Sangeet": "Check stage and dance-floor suitability, sound rules, power backup, guest flow and the venue's permitted end time.",
+          "Baby Shower": "Prioritise comfortable seating, accessible washrooms, food arrangements, guest access and a practical indoor option.",
+          "Kitty Party": "Confirm the minimum guest commitment, meal or snack package, privacy, parking and duration limits.",
+          "Corporate": "Check seating layout, AV or presentation requirements, power, connectivity, catering timings and invoice requirements."
+        }.get(event, "Confirm that the layout, facilities and timings suit the exact event format you have planned.")
+        lead = f"""<section class="specific"><h2>What to check for {esc(event.lower())}</h2><p>{esc(event_detail)}</p>
+<h3>Compare like with like</h3><p>Use the same expected guest count, event duration and service requirements when comparing quotes. The venue profile is a starting point; ask the venue to confirm current facilities and event suitability in writing.</p></section>"""
+    elif cluster == "budget_capacity_facilities":
+        k = norm(keyword)
+        if "per person" in k or "under" in k or "budget" in k:
+            detail = f"{price_known} of the {len(venues)} matching public listings show at least one per-person price field. Confirm whether the displayed figure includes venue rental, taxes, décor and other extras; do not treat it as a final event quote."
+        elif "capacity" in k or "guests" in k or "intimate" in k or "small" in k:
+            detail = f"{capacity_known} of the {len(venues)} matching public listings show at least one capacity field. Ask whether the stated capacity fits your intended seating, dining, stage and circulation layout."
+        elif "parking" in k:
+            detail = f"{parking_known} matching listings explicitly mark parking as available. Confirm the number of spaces and whether parking is reserved for your event."
+        elif "room" in k:
+            detail = f"{rooms_known} matching listings explicitly mark guest rooms as available. Confirm room count, occupancy, pricing and booking conditions directly."
+        else:
+            detail = "Check the exact attribute on each profile and confirm any missing or ambiguous detail directly with the venue."
+        lead = f"""<section class="specific"><h2>How to interpret this shortlist</h2><p>{esc(detail)}</p>
+<h3>Before you decide</h3><ul><li>Confirm the attribute with the venue for your date and event format.</li><li>Ask for any additional charges and exclusions in writing.</li><li>Keep listings with missing information as unverified rather than assuming they meet the filter.</li></ul></section>"""
+    else:
+        format_name = "venue format"
+        terms = category_terms(keyword)
+        if terms:
+            format_name = terms[0]
+        lead = f"""<section class="specific"><h2>Compare {esc(format_name)} options in {esc(city)}</h2>
+<p>Venue labels and packages can differ. Compare each option against your actual guest count, event schedule, location preference and must-have facilities instead of relying on a headline label alone.</p>
+<h3>Questions worth asking every venue</h3><ul><li>What exact space and event timing are included in the quote?</li><li>Which capacity, price and facility details are confirmed, and which need a direct enquiry?</li><li>What are the payment, cancellation, vendor-access and overtime terms?</li></ul></section>"""
+    coverage = f"""<section class="coverage"><h2>Listing information coverage</h2><p>Among these {len(venues)} matching public listings, {capacity_known} include a capacity field and {price_known} include at least one per-person price field. Missing information is not an indication that a venue lacks a facility; confirm it directly.</p></section>"""
+    return lead + coverage
+
+
 def page_html(row: dict[str, str], venues: list[dict]) -> str:
     slug = row["proposed_slug"]
     url = f"{SITE}/{slug}.html"
@@ -285,7 +342,7 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
     locality = row.get("locality") or row.get("city_or_scope") or "your preferred area"
     event = next((name.title() for name in EVENT_TERMS if norm(name) in norm(keyword)), "your event")
     cards = "\n".join(venue_card(v) for v in venues[:24])
-    names = [str(v.get("venue_name") or "").strip() for v in venues[:24]]
+    unique_sections = content_sections(row, venues)
     schema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
@@ -308,7 +365,8 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
 <header class="intro"><p class="eyebrow">SELECT MY VENUE · VENUE DISCOVERY</p>
 <h1>{esc(keyword.title())}</h1>
 <p>Explore {len(venues)} public venue listings relevant to this search. Compare the information currently shown on each profile, then confirm the event date, exact package, capacity, facilities and terms with the venue before making a decision.</p>
-<div class="facts"><span>{len(venues)} matching public listings</span><span>Delhi NCR venue discovery</span><span>Direct profile details</span></div></header>
+<div class="facts"><span>{len(venues)} matching public listings</span><span>Showing up to {min(len(venues), 24)} listings below</span><span>Direct profile details</span></div></header>
+{unique_sections}
 <section><h2>Venue options to review</h2><p>Use these listings as a starting shortlist, not as a guarantee of date availability or final price. Details may change; ask each venue for written confirmation of anything important to your event.</p>
 <div class="venue-grid">{cards}</div></section>
 <section class="checklist"><h2>How to compare these options</h2><ol>
