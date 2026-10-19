@@ -60,13 +60,17 @@
       <p class="eyebrow">START YOUR SHORTLIST</p>
       <h2>Find venues for your requirements</h2>
       <p>Share a few event details to help narrow your search.</p>
-      <form class="quick-search-form" action="index.html#enquiry" method="get">
-        <input type="hidden" name="source_page" value="Wedding Venue Budget Checklist for Delhi NCR">
-        <input type="hidden" name="event_type" value="Wedding">
-        <div class="form-field full"><label for="location">PREFERRED AREA</label><input id="location" name="location" placeholder="Delhi, Gurgaon or nearby area" required></div>
-        <div class="form-field"><label for="guests">GUESTS</label><input id="guests" name="guests" type="number" min="1" placeholder="e.g. 250"></div>
-        <div class="form-field"><label for="budget">BUDGET / PERSON</label><input id="budget" name="budget" type="number" min="0" placeholder="Your budget"></div>
-        <div class="form-field full"><button class="button button-primary" type="submit">Find Suitable Venues →</button></div>
+      <form class="quick-enquiry-form" data-smv-quick-enquiry data-event-type="Wedding" data-source="SEO - Wedding Venue Budget Guide">
+        <div class="form-field"><label>YOUR NAME *</label><input name="customer_name" autocomplete="name" placeholder="Your name" required></div>
+        <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
+        <div class="form-field full"><label>EVENT TYPE *</label><select name="occasion" required><option value="">Select event type</option><option selected>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Anniversary</option><option>Kitty Party</option><option>Private Party</option><option>Corporate Event</option><option>Other Event</option></select></div>
+        <div class="form-field full"><label>PREFERRED LOCATION *</label><input name="location" autocomplete="address-level2" placeholder="Delhi or Gurgaon" required></div>
+        <div class="form-field full"><label>EVENT DATE *</label><input name="event_date" type="date" required></div>
+        <div class="form-field"><label>GUESTS</label><input name="guests" type="number" min="1" placeholder="e.g. 150"></div>
+        <div class="form-field"><label>BUDGET / PERSON (₹)</label><input name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></div>
+        <div class="form-field full"><label>ANY PREFERENCE? (OPTIONAL)</label><input name="requirements" maxlength="500" placeholder="Lawn, rooms, parking, veg food, etc."></div>
+        <div class="form-field full"><button class="button button-primary" type="submit">Submit Venue Enquiry →</button></div>
+        <p class="quick-enquiry-message" data-quick-message aria-live="polite"></p>
       </form>
     </aside>
   </section>
