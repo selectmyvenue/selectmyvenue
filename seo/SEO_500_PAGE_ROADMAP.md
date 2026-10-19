@@ -15,11 +15,13 @@ The current `seo/generate_venue_seo.py` output under `/venue-pages/` is intentio
 | Core venue-type + city intent | 100 | Wedding venues, banquet halls, lawns, farmhouses, party halls, engagement/reception venues and corporate event spaces for Delhi and Gurgaon |
 | Locality + venue-type intent | 150 | Locality pages only where SMV has relevant venue coverage and enough distinct information to help users |
 | Event-specific intent | 75 | Birthday, anniversary, engagement, wedding reception, mehndi, sangeet, baby shower, kitty party and corporate events |
-| Budget, capacity and facilities | 60 | Budget bands, guest-count ranges, vegetarian options, parking, rooms, indoor/outdoor and similar real filters only where inventory supports them |
-| Venue discovery and comparison guides | 50 | Practical guides, checklists, price-planning explainers, venue-type comparisons and FAQs |
-| Real venue profile destinations | 50 | Actual public venue profiles with stable IDs and genuine listing facts; not redirect stubs |
-| High-intent supporting pages / FAQs | 15 | Conversion support for shortlisting, site visits, availability and enquiry preparation |
+| Budget, capacity and facilities | 30 | Budget bands, guest-count ranges, vegetarian options, parking, rooms, indoor/outdoor and similar real filters only where inventory supports them |
+| Venue discovery and comparison guides | 75 | Practical guides, checklists, price-planning explainers, venue-type comparisons and FAQs |
+| Venue discovery comparisons | 40 |
+| High-intent supporting pages / FAQs | 30 | Conversion support for shortlisting, site visits, availability and enquiry preparation |
 | **Total target** | **500** | A target portfolio, not a promise that every candidate qualifies for indexation |
+
+The detailed 500-row candidate inventory is maintained in `seo/SEO_500_PAGE_INVENTORY.csv`. Its rows are targets, **not created or published pages**; each stays `candidate_not_published` until the inventory/content gate passes. Public venue profile pages are generated only from real public venue records and are not fabricated as placeholder rows.
 
 ## Page acceptance rules
 1. One page targets one clearly defined search intent. Do not publish pages that differ only by swapped city/locality words.
@@ -50,7 +52,7 @@ The current `seo/generate_venue_seo.py` output under `/venue-pages/` is intentio
 - [x] Add organic landing-page attribution to the existing website enquiry flow without changing the database schema.
 - [x] Add sitemap duplicate-removal helper and unit test.
 - [ ] Run full automated test suite and resolve all failures.
-- [ ] Build and validate the 500-target keyword-to-URL inventory against live venue coverage and search demand.
+- [x] Create a 500-row candidate keyword-to-URL inventory; validation against live venue coverage and search demand remains pending.
 - [ ] Implement genuinely indexable landing-page templates/content with distinct intent and internal links.
 - [ ] Verify end-to-end attribution through a non-production test environment.
 - [ ] Review and approve PR before merge/publish.
