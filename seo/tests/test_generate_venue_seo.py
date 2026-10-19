@@ -87,6 +87,8 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertIn('name="robots" content="noindex,follow"', page)
         self.assertIn('rel="canonical" href="https://selectmyvenue.com/venue.html?id=11111111-1111-4111-8111-111111111111"', page)
         self.assertIn("smv-traffic-attribution-v1", page)
+        self.assertIn("saved.landing_title", page)
+        self.assertIn('saved.source="SEO - Organic"', page)
         self.assertIn('name="description"', page)
         self.assertIn('rel="canonical"', page)
         self.assertIn("Sample Banquet", page)
