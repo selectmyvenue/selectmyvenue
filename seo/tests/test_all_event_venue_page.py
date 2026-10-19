@@ -124,6 +124,8 @@ class AllEventVenuePageTests(unittest.TestCase):
         self.assertIn("wedding-venue-budget-delhi-ncr.html", shortlist_page)
         self.assertIn("wedding-venue-site-visit-delhi-ncr.html", shortlist_page)
         self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", shortlist_page)
+        self.assertIn('<aside class="quick-search-card" id="enquiry">', shortlist_page)
+        self.assertIn('href="#enquiry"', shortlist_page)
         self.assertIn("wedding-venue-site-visit-delhi-ncr.html", budget_page)
         self.assertIn("wedding-venue-budget-delhi-ncr.html", visit_page)
         self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", budget_page)
