@@ -105,7 +105,7 @@ jobs:
                   raise SystemExit(f"Missing self-canonical: {slug}")
               if not re.search(r'<meta name="robots" content="index,follow', page):
                   raise SystemExit(f"Missing indexable robots directive: {slug}")
-              if len(set(re.findall(r'href="venue\.html\?id=[^"]+"', page))) < 3:
+              if len(set(re.findall(r'href="(?:https://selectmyvenue\.com/)?venue\.html\?id=[^"]+"', page))) < 3:
                   raise SystemExit(f"Fewer than 3 unique venue profile links: {slug}")
               if f"<loc>https://selectmyvenue.com/{slug}</loc>" not in xml:
                   raise SystemExit(f"Missing sitemap URL: {slug}")
