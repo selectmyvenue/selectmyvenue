@@ -51,7 +51,6 @@ class InventoryAuditTests(unittest.TestCase):
             errors, warnings, counts = audit.audit_inventory(root, inventory, sitemap)
             self.assertEqual(errors, [])
             self.assertEqual(counts["guide_faq"], 1)
-            self.assertTrue(any("not approval to publish" in warning for warning in [] ) is False)
 
     def test_duplicate_slugs_and_duplicate_sitemap_urls_are_errors(self):
         with tempfile.TemporaryDirectory() as tmp:
