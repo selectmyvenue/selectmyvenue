@@ -209,6 +209,11 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
     cluster = row["cluster"]
     if any(term in keyword.lower() for term in SUBJECTIVE_TERMS):
         return [], "held_subjective_claim_requires_independent_evidence"
+    normalized_keyword = norm(keyword)
+    if cluster in ("core_city_intent", "budget_capacity_facilities") and any(
+        term in normalized_keyword for term in ("large capacity", "intimate", "small")
+    ) and not re.search(r"\d", keyword):
+        return [], "held_capacity_band_not_defined_by_keyword"
     if cluster in ("guide_faq", "comparison_intent", "faq_intent"):
         return [], "editorial_content_requires_human_written_distinct_article"
     scope = row.get("city_or_scope", "")
