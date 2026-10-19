@@ -50,6 +50,7 @@ let plannerGenerated = false;
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
+  setupTrafficAttribution();
   setupMobileMenu();
   applySelectedVenueContext();
   setupHeroSearch();
@@ -170,6 +171,92 @@ function showToast(message, type) {
   showToast.timer = setTimeout(function () {
     toast.classList.remove("show");
   }, 3200);
+}
+
+
+/* =========================================================
+   SEO / ORGANIC LEAD ATTRIBUTION
+   Keeps the existing customer_enquiries schema and CRM flow.
+   ========================================================= */
+
+function setupTrafficAttribution() {
+  const storageKey = "smv-traffic-attribution-v1";
+  const params = new URLSearchParams(window.location.search);
+  const searchReferrer = document.referrer || "";
+  const searchEnginePattern = /(^|\\.)((google|bing|yahoo|duckduckgo|ecosia|brave)\\.)/i;
+  const utmNames = [
+    "gclid", "gbraid", "wbraid", "utm_source", "utm_medium",
+    "utm_campaign", "utm_term", "utm_content"
+  ];
+  let attribution = {};
+
+  try {
+    attribution = JSON.parse(sessionStorage.getItem(storageKey) || "{}") || {};
+  } catch (_) {
+    attribution = {};
+  }
+
+  utmNames.forEach(function (name) {
+    const value = (params.get(name) || "").trim();
+    if (value) attribution[name] = value.slice(0, 500);
+  });
+
+  const currentUrl = window.location.href.slice(0, 1000);
+  const currentPath = window.location.pathname || "/";
+  const currentTitle = (document.title || "Select My Venue").trim().slice(0, 180);
+
+  if (!attribution.landing_page) attribution.landing_page = currentUrl;
+  if (!attribution.landing_title) attribution.landing_title = currentTitle;
+  if (!attribution.first_referrer && searchReferrer) {
+    attribution.first_referrer = searchReferrer.slice(0, 1000);
+  }
+  attribution.last_page = currentUrl;
+  attribution.last_title = currentTitle;
+
+  const hasCampaign = Boolean(
+    attribution.utm_source || attribution.utm_medium ||
+    attribution.gclid || attribution.gbraid || attribution.wbraid
+  );
+  const organicSearch = searchEnginePattern.test(searchReferrer);
+  const seoLanding = /(^|\\/)venue-pages\\//i.test(attribution.landing_page || "") ||
+    organicSearch ||
+    /(^|[?&])source_page=seo([&#]|$)/i.test(window.location.search);
+
+  if (!hasCampaign && seoLanding) {
+    attribution.source = "SEO - Organic";
+  }
+
+  try {
+    sessionStorage.setItem(storageKey, JSON.stringify(attribution));
+  } catch (_) {
+    // Attribution storage is best-effort and must never block enquiry submission.
+  }
+
+  const sourceInput = byId("leadSource");
+  if (sourceInput && attribution.source === "SEO - Organic") {
+    const pageName = (attribution.landing_title || currentTitle)
+      .replace(/\\s+/g, " ")
+      .trim()
+      .slice(0, 90);
+    sourceInput.value = ("SEO - Organic - " + pageName).slice(0, 120);
+  }
+
+  window.smvGetTrafficAttribution = function () {
+    return {
+      source: attribution.source || "",
+      landing_page: attribution.landing_page || "",
+      landing_title: attribution.landing_title || "",
+      first_referrer: attribution.first_referrer || "",
+      utm_source: attribution.utm_source || "",
+      utm_medium: attribution.utm_medium || "",
+      utm_campaign: attribution.utm_campaign || "",
+      utm_term: attribution.utm_term || "",
+      utm_content: attribution.utm_content || "",
+      gclid: attribution.gclid || "",
+      gbraid: attribution.gbraid || "",
+      wbraid: attribution.wbraid || ""
+    };
+  };
 }
 
 function applySelectedVenueContext() {
@@ -2370,6 +2457,23 @@ function setupCustomerEnquiry() {
 
       const customerRequirements =
         [getValue("customerRequirements"), byId("customerDateFlexible")?.checked ? "Event date: not decided" : ""].filter(Boolean).join("\n");
+
+      const traffic = typeof window.smvGetTrafficAttribution === "function"
+        ? window.smvGetTrafficAttribution()
+        : {};
+      const attributionLines = [];
+      if (traffic.landing_title) attributionLines.push("SEO / landing page: " + traffic.landing_title);
+      if (traffic.landing_page) attributionLines.push("Landing URL: " + traffic.landing_page);
+      if (traffic.first_referrer) attributionLines.push("First referrer: " + traffic.first_referrer);
+      if (traffic.utm_source) attributionLines.push("UTM source: " + traffic.utm_source);
+      if (traffic.utm_medium) attributionLines.push("UTM medium: " + traffic.utm_medium);
+      if (traffic.utm_campaign) attributionLines.push("UTM campaign: " + traffic.utm_campaign);
+      if (traffic.utm_term) attributionLines.push("UTM term: " + traffic.utm_term);
+      if (traffic.utm_content) attributionLines.push("UTM content: " + traffic.utm_content);
+      if (traffic.gclid) attributionLines.push("Google click ID: " + traffic.gclid);
+      if (traffic.gbraid) attributionLines.push("Google braid ID: " + traffic.gbraid);
+      if (traffic.wbraid) attributionLines.push("Google web braid ID: " + traffic.wbraid);
+      const requirementsWithAttribution = [customerRequirements, attributionLines.join("\n")].filter(Boolean).join("\n\n");
 
       const leadSource =
         getValue("leadSource") ||
