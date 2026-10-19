@@ -84,6 +84,7 @@ class AllEventVenuePageTests(unittest.TestCase):
         guides = {
             "wedding-venue-budget-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html",
             "wedding-venue-site-visit-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html",
+            "wedding-venue-booking-questions-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-booking-questions-delhi-ncr.html",
         }
         for filename, canonical in guides.items():
             with self.subTest(filename=filename):
@@ -107,13 +108,20 @@ class AllEventVenuePageTests(unittest.TestCase):
         urls = [node.text for node in self.sitemap.findall("sm:url/sm:loc", ns)]
         budget_url = "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html"
         visit_url = "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html"
+        booking_url = "https://selectmyvenue.com/wedding-venue-booking-questions-delhi-ncr.html"
         self.assertIn(budget_url, urls)
         self.assertIn(visit_url, urls)
+        self.assertIn(booking_url, urls)
         self.assertEqual(len(urls), len(set(urls)), "Sitemap URLs must be unique")
         budget_page = (ROOT / "wedding-venue-budget-delhi-ncr.html").read_text(encoding="utf-8")
         visit_page = (ROOT / "wedding-venue-site-visit-delhi-ncr.html").read_text(encoding="utf-8")
+        booking_page = (ROOT / "wedding-venue-booking-questions-delhi-ncr.html").read_text(encoding="utf-8")
         self.assertIn("wedding-venue-site-visit-delhi-ncr.html", budget_page)
         self.assertIn("wedding-venue-budget-delhi-ncr.html", visit_page)
+        self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", budget_page)
+        self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", visit_page)
+        self.assertIn("wedding-venue-budget-delhi-ncr.html", booking_page)
+        self.assertIn("wedding-venue-site-visit-delhi-ncr.html", booking_page)
 
 
 if __name__ == "__main__":
