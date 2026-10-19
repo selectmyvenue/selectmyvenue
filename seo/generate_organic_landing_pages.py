@@ -251,6 +251,9 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
             candidates = [v for v in candidates if price_matches(v, keyword)]
         elif any(x in keyword.lower() for x in ("capacity", "guests", "intimate", "small")):
             candidates = [v for v in candidates if capacity_matches(v, keyword)]
+        elif "pure veg" in normalized_keyword:
+            # The verified pure-veg filter was applied above within this scope.
+            pass
         else:
             return [], "held_filter_not_supported_by_verified_public_fields"
         if terms:
