@@ -356,7 +356,7 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
         related_links.extend([("Wedding venues in Gurgaon", "wedding-venues-in-gurgaon.html"), ("Venues in Gurgaon", "venues-in-gurgaon.html")])
     elif scope in ("delhi ncr", "ncr"):
         related_links.append(("Wedding venues in Delhi NCR", "wedding-venues-delhi-ncr.html"))
-    related_html = "\\n".join(f'<li><a href="{esc(path)}">{esc(label)}</a></li>' for label, path in related_links)
+    related_html = "\n".join(f'<li><a href="{esc(path)}">{esc(label)}</a></li>' for label, path in related_links)
     schema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
