@@ -460,6 +460,11 @@ def main() -> int:
     if args.minimum_matches < 3:
         parser.error("--minimum-matches cannot be less than 3; avoid thin pages.")
     inventory = load_inventory(args.inventory)
+    if len(inventory) != 500:
+        raise RuntimeError(f"Expected 500 inventory candidates, found {len(inventory)}; refusing to build an incomplete review artifact.")
+    candidate_slugs = [row.get("proposed_slug", "") for row in inventory]
+    if len(candidate_slugs) != len(set(candidate_slugs)) or any(not slug for slug in candidate_slugs):
+        raise RuntimeError("Candidate inventory has missing or duplicate slugs; refusing to generate ambiguous URLs.")
     venues = [v for v in public_venue_rows() if focus_market(v)]
     if not venues:
         raise RuntimeError("No public Delhi/Gurgaon venues returned; refusing to create candidate pages.")
