@@ -94,7 +94,12 @@ class AllEventVenuePageTests(unittest.TestCase):
                 self.assertIn('"@type":"BreadcrumbList"', page)
                 self.assertIn('data-smv-quick-enquiry', page)
                 self.assertIn('src="quick-enquiry.js?', page)
-                for field in ("customer_name", "mobile", "occasion", "location", "event_date", "guests", "budget_per_person"):
+                self.assertRegex(page, r'<form[^>]*data-smv-quick-enquiry')
+                self.assertIn('data-source="SEO - ', page)
+                self.assertIn('data-quick-message', page)
+                self.assertNotRegex(page, r'<form[^>]*method="get"')
+                self.assertNotRegex(page, r'<form[^>]*action="index.html#enquiry"')
+                for field in ("customer_name", "mobile", "occasion", "location", "event_date", "guests", "budget_per_person", "requirements"):
                     self.assertRegex(page, rf'name="{field}"')
 
     def test_editorial_guides_are_in_sitemap_and_cross_linked(self):
