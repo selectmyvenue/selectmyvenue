@@ -16,8 +16,8 @@ The current `seo/generate_venue_seo.py` output under `/venue-pages/` is intentio
 | Locality + venue-type intent | 150 | Locality pages only where SMV has relevant venue coverage and enough distinct information to help users |
 | Event-specific intent | 75 | Birthday, anniversary, engagement, wedding reception, mehndi, sangeet, baby shower, kitty party and corporate events |
 | Budget, capacity and facilities | 30 | Budget bands, guest-count ranges, vegetarian options, parking, rooms, indoor/outdoor and similar real filters only where inventory supports them |
-| Venue discovery and comparison guides | 75 | Practical guides, checklists, price-planning explainers, venue-type comparisons and FAQs |
-| Venue discovery comparisons | 40 |
+| Venue discovery and comparison guides | 75 | Practical guides, checklists, price-planning explainers and FAQs |
+| Venue discovery comparisons | 40 | Decision-useful venue-format, pricing-model and logistics comparisons for Delhi and Gurgaon |
 | High-intent supporting pages / FAQs | 30 | Conversion support for shortlisting, site visits, availability and enquiry preparation |
 | **Total target** | **500** | A target portfolio, not a promise that every candidate qualifies for indexation |
 
