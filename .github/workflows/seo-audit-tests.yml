@@ -5,6 +5,7 @@ on:
     branches:
       - seo/all-intent-enquiry-coverage
       - seo/delhi-gurgaon-venue-engine-review
+      - seo/500-page-organic-lead-program
     paths:
       - 'seo/**'
       - '*.html'
@@ -39,6 +40,10 @@ jobs:
           node-version: '22'
       - name: Check customer mobile app JavaScript syntax
         run: node --check website-mobile-app-20261002.js
+      - name: Check website enquiry and SEO attribution JavaScript syntax
+        run: node --check script.js
+      - name: Check quick SEO enquiry JavaScript syntax
+        run: node --check quick-enquiry.js
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -47,5 +52,11 @@ jobs:
         run: python seo/tests/test_all_event_venue_page.py -v
       - name: Run SEO generator and audit unit tests
         run: python -m unittest discover -s seo/tests -p 'test_*seo.py' -v
+      - name: Run 500-page inventory audit unit tests
+        run: python -m unittest discover -s seo/tests -p 'test_audit_500_page_inventory.py' -v
+      - name: Audit 500-page execution matrix and evidence gates
+        run: python seo/audit_500_page_execution_matrix.py
+      - name: Audit 500-page candidate inventory against existing pages and sitemap
+        run: python seo/audit_500_page_inventory.py
       - name: Run read-only static SEO audit
         run: python seo/audit_static_seo.py

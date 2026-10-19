@@ -11,6 +11,31 @@ generator = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(generator)
 
 
+class SitemapDeduplicationTests(unittest.TestCase):
+    def test_duplicate_urls_are_removed_without_losing_first_entry_metadata(self):
+        ns = generator.SITEMAP_NS
+        root = generator.ET.Element(f"{{{ns}}}urlset")
+        for url, lastmod in (
+            ("https://selectmyvenue.com/venue.html?id=one", "2026-10-01"),
+            ("https://selectmyvenue.com/venues.html", "2026-10-02"),
+            ("https://selectmyvenue.com/venue.html?id=one", "2026-10-03"),
+        ):
+            item = generator.ET.SubElement(root, f"{{{ns}}}url")
+            generator.ET.SubElement(item, f"{{{ns}}}loc").text = url
+            generator.ET.SubElement(item, f"{{{ns}}}lastmod").text = lastmod
+
+        removed = generator.deduplicate_sitemap_entries(root)
+        urls = [
+            (item.find(f"{{{ns}}}loc").text, item.find(f"{{{ns}}}lastmod").text)
+            for item in root
+        ]
+
+        self.assertEqual(removed, 1)
+        self.assertEqual(len(urls), 2)
+        self.assertEqual(urls[0], ("https://selectmyvenue.com/venue.html?id=one", "2026-10-01"))
+        self.assertEqual(urls[1][0], "https://selectmyvenue.com/venues.html")
+
+
 class PublicVenueEligibilityTests(unittest.TestCase):
     def test_public_rpc_projection_uses_name_and_real_location(self):
         # The live smv_public_venues RPC exposes only its public projection;
@@ -62,6 +87,8 @@ class PublicVenueEligibilityTests(unittest.TestCase):
         self.assertIn('name="robots" content="noindex,follow"', page)
         self.assertIn('rel="canonical" href="https://selectmyvenue.com/venue.html?id=11111111-1111-4111-8111-111111111111"', page)
         self.assertIn("smv-traffic-attribution-v1", page)
+        self.assertIn("saved.landing_title", page)
+        self.assertIn('saved.source="SEO - Organic"', page)
         self.assertIn('name="description"', page)
         self.assertIn('rel="canonical"', page)
         self.assertIn("Sample Banquet", page)

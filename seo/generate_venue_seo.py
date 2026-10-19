@@ -168,6 +168,26 @@ def public_venue_rows() -> list[dict]:
     return eligible
 
 
+def deduplicate_sitemap_entries(root_xml: ET.Element) -> int:
+    """Remove duplicate <url> entries while preserving the first complete entry."""
+    loc_tag = f"{{{SITEMAP_NS}}}loc"
+    seen: set[str] = set()
+    removed = 0
+    for item in list(root_xml):
+        loc = item.find(loc_tag)
+        if loc is None:
+            continue
+        url = (loc.text or "").strip()
+        if not url:
+            continue
+        if url in seen:
+            root_xml.remove(item)
+            removed += 1
+        else:
+            seen.add(url)
+    return removed
+
+
 def venue_profile_url(venue_id: object) -> str:
     """Return the canonical, real Select My Venue profile URL for a public venue."""
     return SITE + "/venue.html?id=" + quote(str(venue_id), safe="")
@@ -273,6 +293,8 @@ def venue_page(venue: dict, url: str) -> str:
     var value=(params.get(name)||"").trim();if(value)saved[name]=value.slice(0,500);
   }});
   if(!saved.landing_page)saved.landing_page=location.href.slice(0,1000);
+  if(!saved.landing_title)saved.landing_title=(document.title||"Select My Venue").slice(0,180);
+  if(location.pathname.indexOf("/venue-pages/")!==-1&&!saved.source)saved.source="SEO - Organic";
   if(!saved.first_referrer&&document.referrer)saved.first_referrer=document.referrer.slice(0,1000);
   saved.last_page=location.href.slice(0,1000);
   sessionStorage.setItem(key,JSON.stringify(saved));
@@ -317,7 +339,7 @@ def main() -> int:
     if root_xml.tag != f"{{{SITEMAP_NS}}}urlset":
         raise RuntimeError("sitemap.xml is not a standard sitemap urlset; refusing to publish.")
     output.mkdir(parents=True, exist_ok=True)
-    new_urls = set()
+    candidate_profile_urls = set()
     active_slugs = set()
     for venue in rows:
         name = str(venue.get("venue_name") or "venue")
@@ -330,13 +352,20 @@ def main() -> int:
         profile_url = venue_profile_url(venue["id"])
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(venue_page(venue, url), encoding="utf-8")
-        new_urls.add(profile_url)
+        candidate_profile_urls.add(profile_url)
     loc_tag = f"{{{SITEMAP_NS}}}loc"
-    lastmod_tag = f"{{{SITEMAP_NS}}}lastmod"
     for item in list(root_xml):
         loc = item.find(loc_tag)
         if loc is not None and "/venue-pages/" in (loc.text or ""):
+            # Generated venue-pages are noindex redirect helpers, not sitemap destinations.
             root_xml.remove(item)
+    removed_duplicates = deduplicate_sitemap_entries(root_xml)
+    existing_urls = {
+        (item.find(loc_tag).text or "").strip()
+        for item in list(root_xml)
+        if item.find(loc_tag) is not None
+    }
+    new_urls = candidate_profile_urls - existing_urls
     for url in sorted(new_urls):
         node = ET.SubElement(root_xml, f"{{{SITEMAP_NS}}}url")
         ET.SubElement(node, loc_tag).text = url
@@ -352,7 +381,7 @@ def main() -> int:
             temp_sitemap.unlink()
     removed = prune_stale_generated_pages(output, active_slugs)
     print(f"Generated {len(rows)} public Delhi/Gurgaon venue pages.")
-    print(f"Updated {sitemap_path} with {len(new_urls)} venue URLs.")
+    print(f"Updated {sitemap_path}; added {len(new_urls)} missing profile URL(s) and removed {removed_duplicates} duplicate URL entr(y/ies).")
     print(f"Removed {removed} stale generator-owned venue page(s).")
     print("No Supabase records or existing customer enquiry/CRM code were changed.")
     return 0

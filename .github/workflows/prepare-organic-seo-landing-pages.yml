@@ -1,0 +1,67 @@
+name: Prepare organic SEO landing page review artifact
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - seo/500-page-organic-lead-program
+    paths:
+      - 'seo/SEO_500_PAGE_INVENTORY.csv'
+      - 'seo/generate_organic_landing_pages.py'
+      - '.github/workflows/prepare-organic-seo-landing-pages.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-review-artifact:
+    if: github.ref == 'refs/heads/seo/500-page-organic-lead-program'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out SEO implementation branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build review-only pages from public venue data
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          python seo/generate_organic_landing_pages.py \
+            --site-root "$GITHUB_WORKSPACE" \
+            --output /tmp/smv-seo-generated-organic-pages
+
+      - name: Summarize candidate disposition
+        shell: bash
+        run: |
+          set -euo pipefail
+          report=/tmp/smv-seo-generated-organic-pages/SEO_500_PAGE_BUILD_REPORT.csv
+          html_count="$(find /tmp/smv-seo-generated-organic-pages -maxdepth 1 -name '*.html' -type f | wc -l | tr -d ' ')"
+          qualified="$(awk -F',' 'NR > 1 && $0 ~ /generated_for_review/ {n++} END {print n+0}' "$report")"
+          held="$(awk -F',' 'NR > 1 && ($0 ~ /not_generated/ || $0 ~ /held_for_evidence/ || $0 ~ /held_near_duplicate/) {n++} END {print n+0}' "$report")"
+          reused="$(awk -F',' 'NR > 1 && $0 ~ /reuse_existing_page/ {n++} END {print n+0}' "$report")"
+          {
+            echo "## Organic SEO candidate artifact prepared"
+            echo "- HTML pages created for review: $html_count"
+            echo "- Qualified candidates: $qualified"
+            echo "- Held / not generated: $held"
+            echo "- Existing page slugs to audit/reuse: $reused"
+            echo "- Artifact includes a candidate-only sitemap; it does not replace the site sitemap."
+            echo "- Website, live sitemap, CRM and database: **not changed**"
+            echo "- Deployment: **not performed**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload review artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: smv-organic-seo-review-${{ github.run_number }}
+          path: /tmp/smv-seo-generated-organic-pages/**
+          if-no-files-found: error
+          retention-days: 14

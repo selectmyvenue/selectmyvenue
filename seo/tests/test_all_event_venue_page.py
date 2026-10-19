@@ -1,3 +1,4 @@
+import csv
 import pathlib
 import re
 import unittest
@@ -53,12 +54,84 @@ class AllEventVenuePageTests(unittest.TestCase):
         self.assertIn('src="quick-enquiry.js?', self.hub)
         self.assertIn('client.from("customer_enquiries").insert(payload)', self.handler)
 
+    def test_500_page_candidate_inventory_has_unique_slugs_and_explicit_gates(self):
+        inventory = ROOT / "seo" / "SEO_500_PAGE_INVENTORY.csv"
+        with inventory.open(encoding="utf-8", newline="") as stream:
+            rows = list(csv.DictReader(stream))
+        self.assertEqual(len(rows), 500)
+        self.assertEqual(len({row["proposed_slug"] for row in rows}), 500)
+        self.assertTrue(all(row["status"] == "candidate_not_published" for row in rows))
+        self.assertTrue(all(row["publication_gate"].strip() for row in rows))
+
+    def test_organic_seo_source_and_page_name_are_saved_through_existing_crm_flow(self):
+        self.assertIn('ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1"', self.handler)
+        self.assertIn('saved.source = "SEO - Organic"', self.handler)
+        self.assertIn('("SEO - Organic - " + seoPageName).slice(0, 120)', self.handler)
+        self.assertIn('SEO / landing page name:', self.handler)
+        self.assertIn('source: context.source', self.handler)
+        self.assertIn('client.from("customer_enquiries").insert(payload)', self.handler)
+        self.assertIn('Landing page: ', self.handler)
+
     def test_page_is_linked_from_hub_and_sitemap(self):
         self.assertIn("venues-for-every-event-delhi-ncr.html", self.hub)
         ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
         urls = [node.text for node in self.sitemap.findall("sm:url/sm:loc", ns)]
         self.assertIn("https://selectmyvenue.com/venues-for-every-event-delhi-ncr.html", urls)
         self.assertEqual(len(urls), len(set(urls)), "Sitemap URLs must be unique")
+
+
+    def test_editorial_guides_have_unique_canonical_indexability_and_article_schema(self):
+        guides = {
+            "wedding-venue-budget-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html",
+            "wedding-venue-site-visit-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html",
+            "wedding-venue-booking-questions-delhi-ncr.html": "https://selectmyvenue.com/wedding-venue-booking-questions-delhi-ncr.html",
+            "how-to-shortlist-wedding-venues-delhi-ncr.html": "https://selectmyvenue.com/how-to-shortlist-wedding-venues-delhi-ncr.html",
+        }
+        for filename, canonical in guides.items():
+            with self.subTest(filename=filename):
+                page = (ROOT / filename).read_text(encoding="utf-8")
+                self.assertIn(f'<link rel="canonical" href="{canonical}">', page)
+                self.assertRegex(page, r'<meta name="robots" content="index,follow')
+                self.assertIn('"@type":"Article"', page)
+                self.assertIn('"@type":"BreadcrumbList"', page)
+                self.assertIn('data-smv-quick-enquiry', page)
+                self.assertIn('src="quick-enquiry.js?', page)
+                self.assertRegex(page, r'<form[^>]*data-smv-quick-enquiry')
+                self.assertIn('data-source="SEO - ', page)
+                self.assertIn('data-quick-message', page)
+                self.assertNotRegex(page, r'<form[^>]*method="get"')
+                self.assertNotRegex(page, r'<form[^>]*action="index.html#enquiry"')
+                for field in ("customer_name", "mobile", "occasion", "location", "event_date", "guests", "budget_per_person", "requirements"):
+                    self.assertRegex(page, rf'name="{field}"')
+
+    def test_editorial_guides_are_in_sitemap_and_cross_linked(self):
+        ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+        urls = [node.text for node in self.sitemap.findall("sm:url/sm:loc", ns)]
+        budget_url = "https://selectmyvenue.com/wedding-venue-budget-delhi-ncr.html"
+        visit_url = "https://selectmyvenue.com/wedding-venue-site-visit-delhi-ncr.html"
+        booking_url = "https://selectmyvenue.com/wedding-venue-booking-questions-delhi-ncr.html"
+        shortlist_url = "https://selectmyvenue.com/how-to-shortlist-wedding-venues-delhi-ncr.html"
+        self.assertIn(budget_url, urls)
+        self.assertIn(visit_url, urls)
+        self.assertIn(booking_url, urls)
+        self.assertIn(shortlist_url, urls)
+        self.assertEqual(len(urls), len(set(urls)), "Sitemap URLs must be unique")
+        budget_page = (ROOT / "wedding-venue-budget-delhi-ncr.html").read_text(encoding="utf-8")
+        visit_page = (ROOT / "wedding-venue-site-visit-delhi-ncr.html").read_text(encoding="utf-8")
+        booking_page = (ROOT / "wedding-venue-booking-questions-delhi-ncr.html").read_text(encoding="utf-8")
+        shortlist_page = (ROOT / "how-to-shortlist-wedding-venues-delhi-ncr.html").read_text(encoding="utf-8")
+        self.assertIn("how-to-shortlist-wedding-venues-delhi-ncr.html", self.hub)
+        self.assertIn("wedding-venue-budget-delhi-ncr.html", shortlist_page)
+        self.assertIn("wedding-venue-site-visit-delhi-ncr.html", shortlist_page)
+        self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", shortlist_page)
+        self.assertIn('<aside class="quick-search-card" id="enquiry">', shortlist_page)
+        self.assertIn('href="#enquiry"', shortlist_page)
+        self.assertIn("wedding-venue-site-visit-delhi-ncr.html", budget_page)
+        self.assertIn("wedding-venue-budget-delhi-ncr.html", visit_page)
+        self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", budget_page)
+        self.assertIn("wedding-venue-booking-questions-delhi-ncr.html", visit_page)
+        self.assertIn("wedding-venue-budget-delhi-ncr.html", booking_page)
+        self.assertIn("wedding-venue-site-visit-delhi-ncr.html", booking_page)
 
 
 if __name__ == "__main__":
