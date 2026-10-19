@@ -75,7 +75,7 @@ def audit(inventory_path: Path, matrix_path: Path, sitemap_path: Path) -> tuple[
         if vague_capacity and row.get("recommended_action") not in {
             "HOLD_UNTIL_EVIDENCE", "REUSE_EXISTING_PAGE", "REUSE_OR_MERGE_EXISTING_GUIDE",
             "MERGE_UNLESS_CITY_SPECIFIC_VALUE", "MERGE_UNLESS_DISTINCT_MONSOON_VALUE",
-            "REUSE_EXISTING_GUIDE",
+            "REUSE_EXISTING_GUIDE", "HUMAN_WRITE_COMPARISON",
         }:
             errors.append(f"Candidate {candidate_id} uses an undefined capacity band without an evidence hold.")
         if "pure veg" in normalized_keyword and row.get("recommended_action") not in {
