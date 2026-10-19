@@ -207,13 +207,15 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
         if not candidates:
             return [], "held_no_public_venue_coverage_for_locality"
     terms = category_terms(keyword)
-    if terms:
-        candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
-    elif cluster == "event_intent":
+    if cluster == "event_intent":
         events = event_terms(keyword)
         if not events:
             return [], "held_event_intent_not_supported_by_matcher"
         candidates = [v for v in candidates if has_event(v, events)]
+        if terms:
+            candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
+    elif terms:
+        candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
     elif cluster == "budget_capacity_facilities":
         feature = feature_matches(venues[0] if venues else {}, keyword)
         if feature is not None:
@@ -301,7 +303,7 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
         },
     }
     # The body is specific to this candidate and the actual matching inventory.
-    body = f"""<main>
+    body = f"""<main class="organic-page">
 <nav class="crumb"><a href="/">Home</a> › <a href="seo-searches.html">Venue search</a> › {esc(keyword)}</nav>
 <header class="intro"><p class="eyebrow">SELECT MY VENUE · VENUE DISCOVERY</p>
 <h1>{esc(keyword.title())}</h1>
