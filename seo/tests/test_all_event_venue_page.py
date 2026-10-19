@@ -53,6 +53,15 @@ class AllEventVenuePageTests(unittest.TestCase):
         self.assertIn('src="quick-enquiry.js?', self.hub)
         self.assertIn('client.from("customer_enquiries").insert(payload)', self.handler)
 
+    def test_organic_seo_source_and_page_name_are_saved_through_existing_crm_flow(self):
+        self.assertIn('ATTRIBUTION_STORAGE_KEY = "smv-traffic-attribution-v1"', self.handler)
+        self.assertIn('saved.source = "SEO - Organic"', self.handler)
+        self.assertIn('("SEO - Organic - " + seoPageName).slice(0, 120)', self.handler)
+        self.assertIn('SEO / landing page name:', self.handler)
+        self.assertIn('source: context.source', self.handler)
+        self.assertIn('client.from("customer_enquiries").insert(payload)', self.handler)
+        self.assertIn('Landing page: ', self.handler)
+
     def test_page_is_linked_from_hub_and_sitemap(self):
         self.assertIn("venues-for-every-event-delhi-ncr.html", self.hub)
         ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
