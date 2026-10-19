@@ -293,6 +293,8 @@ def venue_page(venue: dict, url: str) -> str:
     var value=(params.get(name)||"").trim();if(value)saved[name]=value.slice(0,500);
   }});
   if(!saved.landing_page)saved.landing_page=location.href.slice(0,1000);
+  if(!saved.landing_title)saved.landing_title=(document.title||"Select My Venue").slice(0,180);
+  if(location.pathname.indexOf("/venue-pages/")!==-1&&!saved.source)saved.source="SEO - Organic";
   if(!saved.first_referrer&&document.referrer)saved.first_referrer=document.referrer.slice(0,1000);
   saved.last_page=location.href.slice(0,1000);
   sessionStorage.setItem(key,JSON.stringify(saved));
