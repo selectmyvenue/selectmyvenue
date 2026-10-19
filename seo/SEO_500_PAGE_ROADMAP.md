@@ -61,9 +61,12 @@ The current homepage already has a small set of descriptive links to key discove
 - [x] Create a dedicated implementation branch.
 - [x] Add organic landing-page attribution to the existing website enquiry flow without changing the database schema.
 - [x] Add sitemap duplicate-removal helper and unit test.
-- [ ] Run full automated test suite and resolve all failures.
+- [ ] Run full automated test suite at the end of implementation and resolve all failures.
 - [x] Create a 500-row candidate keyword-to-URL inventory; validation against live venue coverage and search demand remains pending.
 - [x] Add four editorial guide drafts with distinct intent: wedding budget comparison, site-visit inspection, booking/payment/cancellation questions, and venue shortlisting. They are branch-only until approval and deployment; the shortlisting guide is linked from the SEO search hub.
-- [ ] Expand genuinely useful landing-page coverage from the initial editorial guides; the 500-row inventory remains a candidate list, not completed pages.
+- [x] Add a review-only organic landing-page generator that reads the 500-row inventory and the existing public venue RPC, matches candidates to real public Delhi/Gurgaon listings, requires at least three matching listings, and writes a separate review artifact plus candidate-only sitemap. It never writes to the site root or live sitemap.
+- [x] Add a manual GitHub Actions workflow to prepare the review artifact; it does not deploy or change production.
+- [ ] Generate and manually review the data-backed candidate artifact; identify existing pages to reuse, locality/filter pages with insufficient venue coverage, and editorial/comparison/subjective claims that need human-written content or evidence.
+- [ ] Expand genuinely useful landing-page coverage from the initial editorial guides; the 500-row inventory remains a candidate list, not 500 completed pages.
 - [ ] Verify end-to-end attribution through a non-production test environment.
 - [ ] Review and approve PR before merge/publish.
