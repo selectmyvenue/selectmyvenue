@@ -58,11 +58,31 @@ jobs:
             html="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/" 2>/dev/null || true)"
             script="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/quick-enquiry.js?v=20261018-desktop-drawer-fix-4" 2>/dev/null || true)"
             directory_html="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/venues.html" 2>/dev/null || true)"
-            directory_script="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$SMV_SITE_BASE_URL/venues.js?v=20261018-search-header-fallback-1" 2>/dev/null || true)"
+            # Resolve the cache-busted venue script from the HTML actually served.
+            # Do not pin this deployment guard to an old query-string version.
+            export SMV_DIRECTORY_HTML="$directory_html"
+            directory_script_path="$(python3 - <<'PY'
+import os, re
+html = os.environ.get("SMV_DIRECTORY_HTML", "")
+match = re.search(r'<script\\b[^>]*\\bsrc=["\\x27]([^"\\x27]*venues\\.js(?:\\?[^"\\x27]*)?)["\\x27]', html, re.I)
+print(match.group(1) if match else "")
+PY
+)"
+            directory_script_url=""
+            case "$directory_script_path" in
+              http://*|https://*) directory_script_url="$directory_script_path" ;;
+              /*) directory_script_url="$SMV_SITE_BASE_URL$directory_script_path" ;;
+              "") directory_script_url="" ;;
+              *) directory_script_url="$SMV_SITE_BASE_URL/$directory_script_path" ;;
+            esac
+            directory_script=""
+            if [ -n "$directory_script_url" ]; then
+              directory_script="$(curl --fail --silent --show-error --max-time 15 -H 'Cache-Control: no-cache' "$directory_script_url" 2>/dev/null || true)"
+            fi
             if printf '%s' "$html" | grep -Fq 'quick-enquiry.js?v=20261018-desktop-drawer-fix-4' &&
                printf '%s' "$script" | grep -Fq 'Capture only after movement crosses the drag threshold' &&
                printf '%s' "$script" | grep -Fq 'Every close path, including Escape' &&
-               printf '%s' "$directory_html" | grep -Fq 'venues.js?v=20261018-search-header-fallback-1' &&
+               [ -n "$directory_script_path" ] &&
                printf '%s' "$directory_script" | grep -Fq 'The public directory uses .site-header rather than .page-header'; then
               echo 'PASS production serves the fixed Get Matched asset and cache-busted venue directory search fallback'
               exit 0
