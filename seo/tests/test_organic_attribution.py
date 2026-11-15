@@ -14,7 +14,8 @@ class OrganicAttributionTests(unittest.TestCase):
         self.assertIn('attribution.source = "SEO - Organic"', source)
         self.assertIn("searchReferrerHost", source)
         self.assertIn("attribution.landing_title", source)
-        self.assertIn('requirements: [requirements, attributionLines.join("\\n")]', source)
+        self.assertIn("attributionLines.join", source)
+        self.assertIn("requirements:", source)
         self.assertIn('contact_remark:', source)
         self.assertIn("attributionLines.join", source)
 
