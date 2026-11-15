@@ -51,7 +51,7 @@ The current homepage already has a small set of descriptive links to key discove
 - Test with a controlled staging/local form fixture. Never create dummy leads in production.
 
 ## Publishing and safety gates
-1. Work only on `seo/500-page-organic-lead-program` until tests and review are complete.
+1. Work only on `seo/phase3-organic-lead-growth` until tests and review are complete.
 2. Run existing event-page tests, SEO unit tests, static audit, sitemap duplicate check and browser/form attribution checks.
 3. Confirm the enquiry still reaches the existing CRM with the correct source and page name using a safe non-production test.
 4. Check indexability, canonical, robots, sitemap inclusion, internal links and mobile rendering.
@@ -62,7 +62,7 @@ The current homepage already has a small set of descriptive links to key discove
 - [x] Add organic landing-page attribution to the existing website enquiry flow without changing the database schema.
 - [x] Add sitemap duplicate-removal helper and unit test.
 - [ ] Run full automated test suite at the end of implementation and resolve all failures.
-- [x] Create a 500-row candidate keyword-to-URL inventory; validation against live venue coverage and search demand remains pending.
+- [x] Create a 500-row candidate keyword-to-URL inventory; validation against live venue coverage remains in progress; Search Console performance reads are currently paused by the connected Windsor plan, so no search-volume or ranking claims are assumed.
 - [x] Add fifteen editorial/comparison guides with distinct intent: budget comparison, site-visit inspection, booking/payment/cancellation questions, venue shortlisting, hidden costs, capacity planning, booking timeline, food tasting, outdoor weather backup, banquet hall vs wedding lawn, farmhouse vs banquet hall, corporate events, birthday parties, engagements, and wedding receptions. They are branch-only until approval and deployment; the planning guides and comparisons are linked from the SEO search hub.
 - [x] Add a 500-row execution matrix that assigns every candidate a build strategy, content angle, evidence gate, unique-content requirement and internal-link targets.
 - The current execution matrix disposition is: 236 data-backed candidates awaiting real inventory matching; 124 subjective or undefined-capacity claims held for evidence; 33 city-variant/monsoon candidates marked for consolidation; 15 candidate intents mapped to existing pages/guides; and 92 guide/comparison/FAQ candidates requiring distinct editorial writing or intent merging. These are candidate dispositions, not published-page counts.
