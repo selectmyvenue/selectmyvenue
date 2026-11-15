@@ -92,6 +92,47 @@ class OrganicLandingPageQualificationTests(unittest.TestCase):
         self.assertEqual(matches, [])
         self.assertEqual(reason, "held_thin_inventory_0_matches_need_3")
 
+    def test_numeric_guest_band_requires_capacity_overlap(self):
+        self.assertTrue(seo_pages.capacity_matches(
+            venue("1", capacity_min=100, capacity_max=250),
+            "venues for 100-300 guests"
+        ))
+        self.assertFalse(seo_pages.capacity_matches(
+            venue("2", capacity_min=50, capacity_max=80),
+            "venues for 100-300 guests"
+        ))
+        self.assertFalse(seo_pages.capacity_matches(
+            venue("3", capacity_min=350, capacity_max=500),
+            "venues for 100-300 guests"
+        ))
+
+    def test_event_capacity_page_filters_by_both_event_and_guest_band(self):
+        rows = [
+            venue("1", capacity_min=100, capacity_max=250, event_types=["Wedding"]),
+            venue("2", capacity_min=150, capacity_max=300, event_types=["Wedding"]),
+            venue("3", capacity_min=0, capacity_max=200, event_types=["Wedding"]),
+            venue("4", capacity_min=100, capacity_max=250, event_types=["Birthday"]),
+            venue("5", capacity_min=50, capacity_max=80, event_types=["Wedding"]),
+            venue("6", capacity_min=350, capacity_max=500, event_types=["Wedding"]),
+        ]
+        matches, reason = seo_pages.matches_candidate(
+            candidate(
+                cluster="event_intent",
+                target_keyword="venues for 100-300 guests for wedding in Delhi NCR",
+                city_or_scope="Delhi NCR",
+                proposed_slug="venues-for-100-300-guests-for-wedding-delhi-ncr",
+            ),
+            rows,
+        )
+        self.assertEqual({row["id"] for row in matches}, {"1", "2", "3"})
+        self.assertEqual(reason, "qualified_data_backed_page")
+
+    def test_specific_event_phrase_wins_when_keyword_contains_wedding_reception(self):
+        self.assertEqual(
+            seo_pages.event_name_for("banquet halls for wedding reception in Delhi NCR"),
+            "Reception"
+        )
+
     def test_duplicate_public_ids_do_not_inflate_page_coverage(self):
         rows = [venue("same"), venue("same"), venue("other")]
         matches, reason = seo_pages.matches_candidate(candidate(), rows)
