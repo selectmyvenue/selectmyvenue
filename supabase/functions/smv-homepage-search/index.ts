@@ -90,13 +90,14 @@ Deno.serve(async req => {
   const venues = rows.map((row: any) => row?.venue || row).map((venue: any) => score(venue, request)).filter(Boolean)
     .sort((a: any, b: any) => b.relevanceScore - a.relevanceScore).slice(0, 12);
 
-  const {data: existing, error: duplicateError} = await db.from("customer_enquiries")
+  let duplicateQuery = db.from("customer_enquiries")
     .select("id")
     .eq("mobile", mobile)
     .eq("occasion", eventType)
     .eq("location", city)
-    .eq("event_date", eventDate || null)
-    .gte("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString())
+    .gte("created_at", new Date(Date.now() - 10 * 60 * 1000).toISOString());
+  duplicateQuery = eventDate ? duplicateQuery.eq("event_date", eventDate) : duplicateQuery.is("event_date", null);
+  const {data: existing, error: duplicateError} = await duplicateQuery
     .order("created_at", {ascending:false}).limit(1).maybeSingle();
   if (duplicateError) return response({error:"Could not verify your enquiry. Please try again."}, 503, origin);
 
