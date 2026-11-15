@@ -243,7 +243,7 @@
             <label class="consent"><input id="consent" type="checkbox" required><span>I confirm I’m authorised to share these venue details and agree to be contacted by Select My Venue.</span></label>
             <button id="applyButton" class="button" type="submit">Apply to List My Venue →</button>
             <div id="formMessage" class="form-message" role="alert" aria-live="polite"></div>
-            <div class="apply-trust"><span>Verified</span><span>Professional profile</span><span>WhatsApp support</span></div>
+            <div class="apply-trust"><span>Secure submission</span><span>Team support</span></div>
           </form>
         </section>
       </section>
@@ -335,8 +335,10 @@
       ].join("\n");
       const whatsapp="https://wa.me/918368322256?text="+encodeURIComponent(whatsappText);
       message.className="form-message success";
-      message.innerHTML='<strong>✓ '+(result.duplicate?"We already have your application.":"Your venue application has been received and saved.")+'</strong><p>It is now in the SMV Master CRM under Venue Management with Pending status. Our team will contact you for verification and profile completion.</p><div class="application-next-actions"><a class="button" href="tel:+918368322256">Call SMV</a><a class="button button-secondary" href="'+whatsapp+'" target="_blank" rel="noopener">WhatsApp SMV</a></div>';
+      message.innerHTML='<strong>✓ '+(result.duplicate?"We already have your application.":"Your Venue Application Has Been Submitted!")+'</strong><p>Thank you for choosing Select My Venue. We\'ve received your details and our team will contact you shortly for verification and next steps.</p><div class="application-next-actions"><a class="button" href="tel:+918368322256">Call SMV</a><a class="button button-secondary" href="'+whatsapp+'" target="_blank" rel="noopener">WhatsApp SMV</a></div>';
       form.reset();
+      const trustItems=form.querySelectorAll(".apply-trust span");
+      if(trustItems[0])trustItems[0].textContent="Application received";
       button.textContent="Application Received ✓";
     }catch(error){
       console.error("Venue listing application error:",error);
