@@ -5,7 +5,7 @@ const res=(b:unknown,s=200,o:string|null=null)=>new Response(JSON.stringify(b),{
 const clean=(v:unknown,n=120)=>String(v??"").trim().slice(0,n),norm=(v:unknown)=>clean(v).toLowerCase().replace(/gurugram/g,"gurgaon").replace(/\s+/g," ");
 async function hash(v:string,k:string){const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v+":"+k));return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("");}
 function score(v:any,r:any){
- const c=norm(v.city),w=norm(r.city);if(c&&w&&!c.includes(w))return null;
+ const c=norm(v.city),w=norm(r.city);if(!c||!w||!c.includes(w))return null;
  const max=Number(v.capacity_max||0),min=Number(v.capacity_min||0),g=Number(r.guests||0),p=Number(v.price_min_per_person||0),b=Number(r.budgetPerPerson||0);
  if((g&&max&&max<g)||(b&&p&&p>b))return null;
  let n=c&&w?30:0;const why:string[]=[];if(n)why.push("City matches");
