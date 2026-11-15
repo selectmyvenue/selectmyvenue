@@ -181,8 +181,14 @@ def capacity_matches(venue: dict, keyword: str) -> bool:
         return cmax >= 300
     if "small" in k or "intimate" in k:
         return cmax > 0 and cmax <= 150
-    if "under 100" in k:
+    if "under 100" in k or "below 100" in k:
         return cmax > 0 and cmax <= 100
+    if "guest" in k:
+        numbers = [int(value.replace(",", "")) for value in re.findall(r"\d[\d,]*", keyword)]
+        if len(numbers) >= 2:
+            low, high = sorted(numbers[:2])
+            # Require a known maximum and an overlapping published capacity band.
+            return cmax >= low and (cmin <= high if cmin > 0 else True)
     if "100 200" in k:
         return cmin >= 100 and cmax <= 200
     if "200 500" in k:
@@ -247,6 +253,8 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
         if not events:
             return [], "held_event_intent_not_supported_by_matcher"
         candidates = [v for v in candidates if has_event(v, events)]
+        if "guest" in normalized_keyword:
+            candidates = [v for v in candidates if capacity_matches(v, keyword)]
         if "outdoor" in normalized_keyword:
             candidates = [v for v in candidates if any(term in norm(v.get("venue_type") or "") for term in ("lawn", "outdoor", "garden"))]
         if terms:
