@@ -6,6 +6,7 @@ on:
       - "venues.js"
       - "homepage-venues.js"
       - "venues.html"
+      - "tests/get-matched-browser-smoke.mjs"
       - "script.js"
       - "public-header.js"
       - "smv-ai-assistant.js"
