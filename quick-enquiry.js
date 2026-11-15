@@ -684,6 +684,7 @@
     try {
       await ensureSupabaseLibrary();
       const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const attributionEntries = attributionLines(attribution, locationValue);
       const requirements = [
         "Quick enquiry source: " + context.source,
         context.venueName ? "Interested venue: " + context.venueName : "",
@@ -692,7 +693,7 @@
         guests ? "Guests: " + guests : "",
         budget ? "Budget/person: ₹" + budget : "",
         comment ? "Customer comment: " + comment : "",
-        ...attributionLines(attribution, locationValue)
+        ...attributionEntries
       ].filter(Boolean).join("\n");
 
       const payload = {
@@ -706,6 +707,7 @@
         budget_per_person: budget,
         food_preference: null,
         requirements,
+        contact_remark: attributionEntries.join("\n") || null,
         source: context.source,
         status: "new",
         assigned_to: null,
