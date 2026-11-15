@@ -110,7 +110,7 @@ The profile should distinguish venue-supplied information from details confirmed
 
 ## 7. AI assistant behaviour
 
-Use one consistent Select My Venue AI assistant, not multiple competing chat widgets or duplicate local response engines.
+Use one consistent Select My Venue AI assistant, not multiple competing chat widgets or duplicate local response engines. The shared assistant should be available on the homepage, venue directory, Delhi / Gurgaon discovery pages and individual venue profiles.
 
 The assistant should:
 - Understand natural-language requirements and ask concise clarifying questions.
@@ -171,7 +171,7 @@ The live Supabase project currently reports 40 venue records, 37 approved / veri
 
 The deployed `smv-ai-assistant` Edge Function is active (version 23). The website calls it with a customer message and event context, and it sends that information to the OpenAI Responses API. The current function is a conversational event assistant: it does **not** query the live venue inventory or return grounded venue candidates. Therefore, it must not yet be described as a live AI venue recommendation engine.
 
-The next AI-engine phase must connect the assistant to the same verified public inventory used by the directory, normalize the requirement, retrieve eligible candidates, rank them with the explainable rules in section 5, and return venue IDs plus evidence-backed reasons. Availability must remain a separate venue-confirmation step. Review rate limiting, request validation, CORS and data minimization before expanding the public AI endpoint.
+The shared assistant now receives a small, public-only context snapshot from the current page: up to eight visible venue cards, active discovery filters, or the current venue profile. It can discuss those visible candidates and the current profile, but it cannot search the full inventory independently. The next AI-engine phase must connect the assistant to the same verified public inventory used by the directory, normalize the requirement, retrieve eligible candidates, rank them with the explainable rules in section 5, and return venue IDs plus evidence-backed reasons. Availability must remain a separate venue-confirmation step. Review rate limiting, request validation, CORS and data minimization before expanding the public AI endpoint.
 
 ## 12. Current implementation notes
 
