@@ -99,7 +99,7 @@ jobs:
             echo "## SEO venue pages committed for GitHub Pages"
             echo "- Generated venue pages: $page_count"
             echo "- Sitemap URL entries: $sitemap_count"
-            echo "- Changed paths are limited to `venue-pages/` and `sitemap.xml`."
+            echo "- Changed paths are limited to venue-pages/ and sitemap.xml."
             echo "- A Pages build will be explicitly requested after this commit."
             echo "- No Supabase data/schema or CRM/enquiry code is written by this workflow."
           } >> "$GITHUB_STEP_SUMMARY"
