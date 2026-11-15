@@ -4844,6 +4844,57 @@ console.log(
     };
 
 
+    // Pass only public discovery context to the assistant. Never include
+    // customer name, phone number, email address or private CRM information.
+    function textFrom(selector) {
+      const node = document.querySelector(selector);
+      return node ? String(node.textContent || "").trim().slice(0, 800) : "";
+    }
+
+    function textFromWithin(root, selector) {
+      const node = root.querySelector(selector);
+      return node ? String(node.textContent || "").trim().slice(0, 180) : "";
+    }
+
+    context.discoveryPage = String(location.pathname.split("/").pop() || "index.html").slice(0, 120);
+    context.discoveryFilters = {
+      search: value("smvBrowseSearch") || value("smvTopSearch") || value("smvHomeSearch"),
+      city: value("smvBrowseCity") || value("smvTopCity") || value("smvHomeLocation"),
+      activeFilters: Array.from(document.querySelectorAll(".smv-filter-choice.active"))
+        .map(function (node) { return String(node.textContent || "").trim().slice(0, 80); })
+        .filter(Boolean).slice(0, 12)
+    };
+
+    context.visibleVenueCandidates = Array.from(document.querySelectorAll(
+      "#venueGrid .venue-card:not([hidden]), #homeVenueGrid .home-venue-card:not([hidden])"
+    )).slice(0, 8).map(function (card) {
+      const heading = card.querySelector(".venue-card-body h2, .home-venue-content h3");
+      const facts = Array.from(card.querySelectorAll(".venue-facts .venue-fact, .home-venue-facts span"));
+      const featureNode = card.querySelector(".venue-feature-list, .home-venue-features");
+      return {
+        name: String(heading?.textContent || "").trim().slice(0, 140),
+        type: String(card.querySelector(".venue-type")?.textContent || "").trim().slice(0, 80),
+        location: textFromWithin(card, ".venue-location, .home-venue-location"),
+        capacity: String(facts[0]?.textContent || "").trim().slice(0, 100),
+        price: String(facts[1]?.textContent || "").trim().slice(0, 100),
+        facilities: String(featureNode?.textContent || "").trim().slice(0, 240)
+      };
+    }).filter(function (venue) { return !!venue.name; });
+
+    const profile = document.getElementById("venueProfile");
+    if (profile && !profile.hidden) {
+      context.currentVenue = {
+        name: textFrom("#venueProfileName"),
+        location: textFrom("#venueProfileLocation"),
+        type: textFrom("#venueProfileFactType"),
+        capacity: textFrom("#venueProfileCapacity"),
+        price: textFrom("#venueProfilePrice"),
+        facilities: textFrom("#venueProfileFeatures"),
+        description: textFrom("#venueProfileDescription")
+      };
+    }
+
+
     try {
 
       if (
