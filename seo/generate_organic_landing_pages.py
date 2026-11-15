@@ -244,6 +244,11 @@ def matches_candidate(row: dict[str, str], venues: list[dict]) -> tuple[list[dic
         if terms:
             candidates = [v for v in candidates if any(norm(t) in venue_text(v) for t in terms)]
     elif cluster == "budget_capacity_facilities":
+        # If a capacity/filter keyword also names an event, only list venues
+        # whose public event_types explicitly support that event.
+        events = event_terms(keyword)
+        if events:
+            candidates = [v for v in candidates if has_event(v, events)]
         feature = feature_matches(venues[0] if venues else {}, keyword)
         if feature is not None:
             candidates = [v for v in candidates if feature_matches(v, keyword)]
@@ -351,6 +356,18 @@ def content_sections(row: dict[str, str], venues: list[dict]) -> str:
             detail = f"{rooms_known} matching listings explicitly mark guest rooms as available. Confirm room count, occupancy, pricing and booking conditions directly."
         else:
             detail = "Check the exact attribute on each profile and confirm any missing or ambiguous detail directly with the venue."
+        events = event_terms(keyword)
+        if events:
+            event_name = next((name.title() for name in EVENT_TERMS if norm(name) in norm(keyword)), "your event")
+            event_guidance = {
+                "Wedding": "Confirm ceremony and reception layout, guest flow, stage, food service, setup windows and weather backup.",
+                "Engagement": "Confirm stage or ceremony space, guest seating, food service, photography access and event timing.",
+                "Reception": "Check guest arrival flow, stage visibility, dining layout, sound restrictions and event end time.",
+                "Birthday": "Ask about food arrangements, music limits, decoration rules and setup or cleanup time.",
+                "Anniversary": "Compare guest count, dining format, décor plans, accessibility and event schedule.",
+                "Corporate": "Check seating layout, AV, power, connectivity, catering timings and invoice requirements.",
+            }.get(event_name, "Confirm the layout, facilities and timings suit your event.")
+            detail += f" For {event_name.lower()} events, {event_guidance[0].lower() + event_guidance[1:]}"
         lead = f"""<section class="specific"><h2>How to interpret this shortlist</h2><p>{esc(detail)}</p>
 <h3>Before you decide</h3><ul><li>Confirm the attribute with the venue for your date and event format.</li><li>Ask for any additional charges and exclusions in writing.</li><li>Keep listings with missing information as unverified rather than assuming they meet the filter.</li></ul></section>"""
     else:
