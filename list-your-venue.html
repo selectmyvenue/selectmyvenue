@@ -78,7 +78,10 @@
     .button{width:100%;min-height:47px;border:0;border-radius:11px;cursor:pointer;background:linear-gradient(135deg,#16cdb3,#087f71);color:#fff;font-size:12px;font-weight:950;box-shadow:0 10px 24px rgba(8,127,113,.2)}
     .button:hover{filter:brightness(1.04);transform:translateY(-1px)}
     .form-message{min-height:16px;margin-top:8px;font-size:10px;font-weight:850;text-align:center}
-    .application-next-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}\n    .application-next-actions .button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:9px;background:#0a5a4d;color:#fff;font-weight:800;text-decoration:none}\n    .application-next-actions .button-secondary{border:1px solid #c8aa5a;background:#fff;color:#70551c}\n    .form-message.success{color:#08704f}.form-message.error{color:#a4161a}
+    .application-next-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .application-next-actions .button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:9px;background:#0a5a4d;color:#fff;font-weight:800;text-decoration:none}
+    .application-next-actions .button-secondary{border:1px solid #c8aa5a;background:#fff;color:#70551c}
+    .form-message.success{color:#08704f}.form-message.error{color:#a4161a}
     .apply-trust{display:flex;justify-content:center;gap:16px;margin-top:13px;color:#82918d;font-size:8px}
     .apply-trust span:before{content:"✓";color:#0a9d87;font-weight:900;margin-right:4px}
 
@@ -235,7 +238,8 @@
               </div>
             </div>
 
-            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;opacity:0" aria-label="Leave this field empty">\n            <div class="apply-note"><span>✦</span><span><b>No catalogue or long form.</b> Just the essentials. We’ll collect photos and remaining details after verification.</span></div>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;opacity:0" aria-label="Leave this field empty">
+            <div class="apply-note"><span>✦</span><span><b>No catalogue or long form.</b> Just the essentials. We’ll collect photos and remaining details after verification.</span></div>
             <label class="consent"><input id="consent" type="checkbox" required><span>I confirm I’m authorised to share these venue details and agree to be contacted by Select My Venue.</span></label>
             <button id="applyButton" class="button" type="submit">Apply to List My Venue →</button>
             <div id="formMessage" class="form-message" role="alert" aria-live="polite"></div>
@@ -328,7 +332,8 @@
         "Type: "+payload.venueType,"Capacity: "+payload.capacity,
         "City/Area: "+payload.city+" / "+payload.area,
         "Application ID: "+(result.applicationId||"Already received")
-      ].join("\n");
+      ].join("
+");
       const whatsapp="https://wa.me/918368322256?text="+encodeURIComponent(whatsappText);
       message.className="form-message success";
       message.innerHTML='<strong>✓ '+(result.duplicate?"We already have your application.":"Your venue application has been received and saved.")+'</strong><p>It is now in the SMV Master CRM under Venue Management with Pending status. Our team will contact you for verification and profile completion.</p><div class="application-next-actions"><a class="button" href="tel:+918368322256">Call SMV</a><a class="button button-secondary" href="'+whatsapp+'" target="_blank" rel="noopener">WhatsApp SMV</a></div>';
