@@ -332,8 +332,7 @@
         "Type: "+payload.venueType,"Capacity: "+payload.capacity,
         "City/Area: "+payload.city+" / "+payload.area,
         "Application ID: "+(result.applicationId||"Already received")
-      ].join("
-");
+      ].join("\n");
       const whatsapp="https://wa.me/918368322256?text="+encodeURIComponent(whatsappText);
       message.className="form-message success";
       message.innerHTML='<strong>✓ '+(result.duplicate?"We already have your application.":"Your venue application has been received and saved.")+'</strong><p>It is now in the SMV Master CRM under Venue Management with Pending status. Our team will contact you for verification and profile completion.</p><div class="application-next-actions"><a class="button" href="tel:+918368322256">Call SMV</a><a class="button button-secondary" href="'+whatsapp+'" target="_blank" rel="noopener">WhatsApp SMV</a></div>';
