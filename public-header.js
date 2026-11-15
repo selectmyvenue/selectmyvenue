@@ -63,6 +63,18 @@ function initMenu(){
   document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});
 }
 
-function init(){ensureStyle();rebuildHeader();markActive();initMenu();}
+function loadAIAssistant(){
+  var path=(location.pathname.split("/").pop()||"index.html").toLowerCase();
+  var isDiscoveryPage=path==="index.html"||path==="venues.html"||path==="venue.html"||path==="delhi-ncr-venues.html"||/(^|-)venues?-/i.test(path);
+  if(!isDiscoveryPage||window.__SMV_FINAL_REAL_AI_INITIALIZED||document.querySelector("script[data-smv-ai-assistant]"))return;
+  var css=document.getElementById("smvAIAssistantCss");
+  if(!css){css=document.createElement("link");css.id="smvAIAssistantCss";css.rel="stylesheet";css.href="smv-ai-assistant.css?v=20261115-context-discovery-1";document.head.appendChild(css);}
+  var script=document.createElement("script");
+  script.src="smv-ai-assistant.js?v=20261115-context-discovery-1";
+  script.async=false;
+  script.setAttribute("data-smv-ai-assistant","1");
+  document.body.appendChild(script);
+}
+function init(){ensureStyle();rebuildHeader();markActive();initMenu();loadAIAssistant();}
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
