@@ -87,9 +87,21 @@
       if (value) saved[key] = value.slice(0, 500);
     });
 
-    if (!saved.landing_page) saved.landing_page = location.href.slice(0, 1000);
+    const currentUrl = location.href.slice(0, 1000);
+    const currentTitle = clean(document.title || "Select My Venue").slice(0, 180);
+    let referrerHost = "";
+    try { referrerHost = new URL(document.referrer).hostname.toLowerCase(); } catch (_) {}
+    const organicReferrer = /(^|\.)(google|bing|yahoo|duckduckgo|ecosia|brave)\./i.test(referrerHost);
+    const paidCampaign = !!(saved.gclid || saved.gbraid || saved.wbraid) ||
+      /cpc|ppc|paid|display|retargeting|shopping/i.test(clean(saved.utm_medium).toLowerCase());
+
+    if (!saved.landing_page || organicReferrer) saved.landing_page = currentUrl;
+    if (!saved.landing_title || organicReferrer) saved.landing_title = currentTitle;
     if (!saved.first_referrer && document.referrer) saved.first_referrer = document.referrer.slice(0, 1000);
-    saved.last_page = location.href.slice(0, 1000);
+    if (organicReferrer && !paidCampaign) saved.source = "SEO - Organic";
+    else if (paidCampaign && saved.source === "SEO - Organic") delete saved.source;
+    saved.last_page = currentUrl;
+    saved.last_title = currentTitle;
 
     try {
       sessionStorage.setItem(ATTRIBUTION_STORAGE_KEY, JSON.stringify(saved));
@@ -118,7 +130,8 @@
   function attributionLines(attribution, locationValue) {
     const lines = [];
     if (isGoogleAdsTraffic(attribution)) lines.push("Traffic channel: Google Ads");
-    else if (/google\./i.test(clean(attribution.first_referrer))) lines.push("Traffic channel: Google Organic");
+    else if (attribution.source === "SEO - Organic") lines.push("Traffic channel: SEO - Organic");
+    else if (/(google|bing|yahoo|duckduckgo|ecosia|brave)\./i.test(clean(attribution.first_referrer))) lines.push("Traffic channel: SEO - Organic");
     else if (attribution.first_referrer) lines.push("Traffic channel: Referral");
     else lines.push("Traffic channel: Direct / Unknown");
 
@@ -129,6 +142,8 @@
     if (attribution.utm_medium) lines.push("UTM Medium: " + attribution.utm_medium);
     if (attribution.utm_campaign) lines.push("UTM Campaign: " + attribution.utm_campaign);
     if (attribution.utm_term) lines.push("UTM Term: " + attribution.utm_term);
+    if (attribution.utm_content) lines.push("UTM Content: " + attribution.utm_content);
+    if (attribution.landing_title) lines.push("SEO / landing page name: " + attribution.landing_title);
     if (attribution.landing_page) lines.push("Landing page: " + attribution.landing_page);
     lines.push("Submitted URL: " + location.href.slice(0, 1000));
     if (isGoogleAdsTraffic(attribution) && clearlyOutsideDelhiGurgaon(locationValue)) {
@@ -669,6 +684,7 @@
     try {
       await ensureSupabaseLibrary();
       const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const attributionEntries = attributionLines(attribution, locationValue);
       const requirements = [
         "Quick enquiry source: " + context.source,
         context.venueName ? "Interested venue: " + context.venueName : "",
@@ -677,7 +693,7 @@
         guests ? "Guests: " + guests : "",
         budget ? "Budget/person: ₹" + budget : "",
         comment ? "Customer comment: " + comment : "",
-        ...attributionLines(attribution, locationValue)
+        ...attributionEntries
       ].filter(Boolean).join("\n");
 
       const payload = {
@@ -691,6 +707,7 @@
         budget_per_person: budget,
         food_preference: null,
         requirements,
+        contact_remark: attributionEntries.join("\n") || null,
         source: context.source,
         status: "new",
         assigned_to: null,
