@@ -78,6 +78,9 @@
     .button{width:100%;min-height:47px;border:0;border-radius:11px;cursor:pointer;background:linear-gradient(135deg,#16cdb3,#087f71);color:#fff;font-size:12px;font-weight:950;box-shadow:0 10px 24px rgba(8,127,113,.2)}
     .button:hover{filter:brightness(1.04);transform:translateY(-1px)}
     .form-message{min-height:16px;margin-top:8px;font-size:10px;font-weight:850;text-align:center}
+    .application-next-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .application-next-actions .button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 16px;border-radius:9px;background:#0a5a4d;color:#fff;font-weight:800;text-decoration:none}
+    .application-next-actions .button-secondary{border:1px solid #c8aa5a;background:#fff;color:#70551c}
     .form-message.success{color:#08704f}.form-message.error{color:#a4161a}
     .apply-trust{display:flex;justify-content:center;gap:16px;margin-top:13px;color:#82918d;font-size:8px}
     .apply-trust span:before{content:"✓";color:#0a9d87;font-weight:900;margin-right:4px}
@@ -188,7 +191,7 @@
             <span class="hero-point"><b>₹0</b> Joining Fee</span>
             <span class="hero-point"><b>FREE</b> Listing</span>
             <span class="hero-point"><b>CRM</b> Partner Access</span>
-            <span class="hero-point"><b>10-Day</b> Launch Trial</span>
+            <span class="hero-point"><b>7-Day</b> Trial</span>
           </div>
           <div class="hero-bottom"><span>✓ <strong>Delhi NCR focused</strong></span><span>✓ Quick WhatsApp verification</span><span>✓ No long application</span></div>
         </div>
@@ -235,6 +238,7 @@
               </div>
             </div>
 
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-10000px;width:1px;height:1px;opacity:0" aria-label="Leave this field empty">
             <div class="apply-note"><span>✦</span><span><b>No catalogue or long form.</b> Just the essentials. We’ll collect photos and remaining details after verification.</span></div>
             <label class="consent"><input id="consent" type="checkbox" required><span>I confirm I’m authorised to share these venue details and agree to be contacted by Select My Venue.</span></label>
             <button id="applyButton" class="button" type="submit">Apply to List My Venue →</button>
@@ -299,28 +303,47 @@
   const form=document.getElementById("venueApplication"),message=document.getElementById("formMessage"),button=document.getElementById("applyButton");
   const value=id=>(document.getElementById(id)?.value||"").trim();
   if(!form)return;
-  form.addEventListener("submit",event=>{
+  form.addEventListener("submit",async event=>{
     event.preventDefault();
     message.className="form-message";message.textContent="";
-    const mobile=value("mobile").replace(/\D/g,"");
     if(!form.checkValidity()){form.reportValidity();message.textContent="Please complete the required fields.";message.classList.add("error");return}
-    if(mobile.length<10||mobile.length>15){message.textContent="Please enter a valid mobile number.";message.classList.add("error");document.getElementById("mobile").focus();return}
-    const lines=[
-      "Hi Select My Venue, I want to apply to list my venue.",
-      "Venue name: "+value("venueName"),
-      "Owner/contact: "+value("ownerName"),
-      "Mobile/WhatsApp: "+mobile,
-      "Venue type: "+value("venueType"),
-      "Maximum capacity: "+value("capacity"),
-      "City: "+value("city"),
-      "Area: "+value("area"),
-      "Source: selectmyvenue.com/list-your-venue.html"
-    ];
-    const url="https://wa.me/918368322256?text="+encodeURIComponent(lines.join("\n"));
-    button.disabled=true;button.textContent="Opening WhatsApp…";
-    message.textContent="Opening WhatsApp. Please tap Send there to submit your application.";message.classList.add("success");
-    window.open(url,"_blank","noopener,noreferrer");
-    setTimeout(()=>{button.disabled=false;button.textContent="Apply to List My Venue →"},1200);
+    const mobile=value("mobile").replace(/\D/g,"");
+    if(!/^[6-9]\d{9}$/.test(mobile)){message.textContent="Please enter a valid 10-digit Indian mobile number.";message.classList.add("error");document.getElementById("mobile").focus();return}
+    if(document.getElementById("website")?.value.trim())return;
+    const payload={
+      venueName:value("venueName"),ownerName:value("ownerName"),mobile,
+      venueType:value("venueType"),capacity:Number(value("capacity")),
+      city:value("city"),area:value("area"),consent:document.getElementById("consent").checked,
+      website:value("website")
+    };
+    button.disabled=true;button.textContent="Submitting application…";
+    message.textContent="Saving your venue application securely to Select My Venue…";
+    try{
+      const response=await fetch("https://uajqwyoqbbswkfiwosyw.supabase.co/functions/v1/smv-venue-listing-application",{
+        method:"POST",
+        headers:{"Content-Type":"application/json","apikey":"sb_publishable_hfiuO4ZRn4VZmEkrN2RV-A_lZX_R3z7"},
+        body:JSON.stringify(payload)
+      });
+      const result=await response.json();
+      if(!response.ok||!result.success)throw new Error(result.error||"Application could not be submitted.");
+      const whatsappText=[
+        "Hi Select My Venue, I have submitted my venue listing application.",
+        "Venue: "+payload.venueName,"Contact: "+payload.ownerName,"Mobile: "+mobile,
+        "Type: "+payload.venueType,"Capacity: "+payload.capacity,
+        "City/Area: "+payload.city+" / "+payload.area,
+        "Application ID: "+(result.applicationId||"Already received")
+      ].join("\n");
+      const whatsapp="https://wa.me/918368322256?text="+encodeURIComponent(whatsappText);
+      message.className="form-message success";
+      message.innerHTML='<strong>✓ '+(result.duplicate?"We already have your application.":"Your venue application has been received and saved.")+'</strong><p>It is now in the SMV Master CRM under Venue Management with Pending status. Our team will contact you for verification and profile completion.</p><div class="application-next-actions"><a class="button" href="tel:+918368322256">Call SMV</a><a class="button button-secondary" href="'+whatsapp+'" target="_blank" rel="noopener">WhatsApp SMV</a></div>';
+      form.reset();
+      button.textContent="Application Received ✓";
+    }catch(error){
+      console.error("Venue listing application error:",error);
+      message.className="form-message error";
+      message.textContent=error.message||"We could not submit your application. Please try again or call +91 83683 22256.";
+      button.disabled=false;button.textContent="Try Again →";
+    }
   });
 })();
 </script>
