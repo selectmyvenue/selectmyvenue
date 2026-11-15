@@ -67,7 +67,7 @@ jobs:
           match = re.search(r"""<script\b[^>]*\bsrc=["']([^"']*venues\.js(?:\?[^"']*)?)["']""", html, re.I)
           print(match.group(1) if match else "")
           PY
-)"
+            )"
             directory_script_url=""
             case "$directory_script_path" in
               http://*|https://*) directory_script_url="$directory_script_path" ;;
