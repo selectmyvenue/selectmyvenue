@@ -186,3 +186,50 @@ The immediate improvement programme should strengthen the existing directory and
 - Make the default directory ordering favour better-documented profiles without pretending it is an AI probability score.
 
 This SOP is the product and operating standard for subsequent AI integration and release reviews.
+
+
+## 13. Full-inventory retrieval implementation (review branch)
+
+A separate Edge Function source implementation is being prepared at
+`supabase/functions/smv-venue-discovery/index.ts`. It is deliberately
+separate from the deployed `smv-ai-assistant` function so the current
+conversational assistant remains unchanged while the retrieval layer is
+reviewed and tested.
+
+The proposed retrieval contract:
+- Accept a structured requirement object (event type, Delhi/Gurgaon city,
+  optional locality, guest count, per-person budget, venue type, food and
+  facilities).
+- Retrieve the full public inventory only through the existing
+  `smv_public_venues()` RPC. Never query the `venues` table directly from
+  this public endpoint and never weaken the RPC's approved / verified /
+  public predicates.
+- Normalize Delhi and Gurgaon / Gurugram aliases.
+- Apply hard exclusions only for known city, maximum-capacity and published
+  minimum-price conflicts. Missing facts remain unknown and are returned as
+  confirmation notes.
+- Rank deterministically using the section 5 weights and return a relevance
+  score with evidence-backed reasons. This score is not a probability,
+  guarantee or availability signal.
+- Return a bounded shortlist (1–12 results) and explicitly state that
+  availability has not been checked.
+
+This is a deterministic retrieval and ranking layer, not an AI model. The
+existing AI assistant may be connected to its grounded results in a later
+reviewed integration step; until then, do not claim the deployed chatbot
+independently searches the full inventory.
+
+### Deployment and security gate
+
+- Source-only review implementation; it is not deployed to Supabase.
+- Before any deployment, verify the function's CORS allowlist against the
+  production canonical website origin, confirm required Supabase environment
+  variables, choose the public JWT gateway setting intentionally, and add
+  abuse protection / rate limiting appropriate for a public endpoint.
+- Test with real anonymous requests against a staging Supabase environment
+  and confirm the returned rows are exactly those available from
+  `smv_public_venues()`.
+- Do not change `customer_enquiries`, RLS, CRM routes, the existing
+  `smv-ai-assistant` function or production data as part of this phase.
+- Run unit tests for city normalization, positive ranking, hard conflicts,
+  missing data and preference handling before opening the PR.
