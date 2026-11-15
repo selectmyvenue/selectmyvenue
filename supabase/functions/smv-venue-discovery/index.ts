@@ -263,7 +263,7 @@ function validateRequirement(input: unknown): Requirement | null {
   };
 }
 
-Deno.serve(async (req: Request) => {
+if (import.meta.main) Deno.serve(async (req: Request) => {
   const origin = req.headers.get("Origin");
   if (origin && origin !== "https://selectmyvenue.com" && origin !== "https://www.selectmyvenue.com") {
     return json({ error: "Origin not allowed." }, 403);
