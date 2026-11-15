@@ -104,6 +104,8 @@ Deno.serve(async (req: Request) => {
     return reply({ error: "We have received several applications from this number today. Please contact our team for help." }, 429, origin);
   }
 
+  const trialStartedAt = new Date();
+  const trialExpiresAt = new Date(trialStartedAt.getTime() + 7 * 24 * 60 * 60 * 1000);
   const { data, error } = await db.from("venues").insert({
     venue_name: venueName,
     contact_person: contactPerson,
@@ -119,6 +121,8 @@ Deno.serve(async (req: Request) => {
     featured: false,
     partner_plan: "launch_trial",
     plan_status: "trialing",
+    plan_started_at: trialStartedAt.toISOString(),
+    plan_expires_at: trialExpiresAt.toISOString(),
     partner_notes: "Website venue listing application. Submitted via list-your-venue.html; awaiting SMV team contact and verification.",
   }).select("id").single();
 
