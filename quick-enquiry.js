@@ -270,6 +270,8 @@
       .smv-home-enquiry-backdrop[hidden]{display:none!important}
       .smv-home-enquiry-drawer{position:fixed!important;left:0!important;top:72px!important;width:min(430px,92vw)!important;height:calc(100vh - 72px)!important;z-index:10039!important;background:#fbf7f0!important;color:#19342f!important;border-radius:0 16px 16px 0!important;box-shadow:14px 0 42px rgba(0,0,0,.30)!important;overflow:hidden!important;transform:translateX(-105%)!important;transition:transform .3s ease!important}
       .smv-home-enquiry-drawer.is-open{transform:translateX(0)!important}
+      #smvHomeEnquiryDrawer[aria-hidden="true"]{transform:translateX(-115%)!important;pointer-events:none!important}
+      #smvHomeEnquiryDrawer[aria-hidden="false"]{transform:translateX(0)!important;pointer-events:auto!important}
       .smv-home-enquiry-head{display:flex!important;justify-content:space-between!important;gap:16px!important;padding:22px 20px 18px!important;background:linear-gradient(145deg,#062d28,#0b5147)!important;color:#fff!important}
       .smv-home-enquiry-head p{margin:0 0 5px!important;color:#b9d8d1!important;font-size:9px!important;font-weight:900!important;letter-spacing:.08em!important}
       .smv-home-enquiry-head h2{margin:0 0 6px!important;color:#fff!important;font-size:24px!important;line-height:1.15!important}
