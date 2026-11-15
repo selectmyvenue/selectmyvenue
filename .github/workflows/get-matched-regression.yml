@@ -62,11 +62,11 @@ jobs:
             # Do not pin this deployment guard to an old query-string version.
             export SMV_DIRECTORY_HTML="$directory_html"
             directory_script_path="$(python3 - <<'PY'
-import os, re
-html = os.environ.get("SMV_DIRECTORY_HTML", "")
-match = re.search(r"""<script\b[^>]*\bsrc=["']([^"']*venues\.js(?:\?[^"']*)?)["']""", html, re.I)
-print(match.group(1) if match else "")
-PY
+          import os, re
+          html = os.environ.get("SMV_DIRECTORY_HTML", "")
+          match = re.search(r"""<script\b[^>]*\bsrc=["']([^"']*venues\.js(?:\?[^"']*)?)["']""", html, re.I)
+          print(match.group(1) if match else "")
+          PY
 )"
             directory_script_url=""
             case "$directory_script_path" in
