@@ -6,6 +6,10 @@ const allowedOrigins = new Set([
 ]);
 const clean = (value: unknown, max = 140) => String(value ?? "").trim().replace(/\s+/g, " ").slice(0, max);
 const digits = (value: unknown) => String(value ?? "").replace(/\D/g, "");
+async function hash(value: string, key: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value + ":" + key));
+  return [...new Uint8Array(digest)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
 const headers = (origin: string | null) => ({
   "Content-Type": "application/json",
   "Vary": "Origin",
@@ -57,6 +61,26 @@ Deno.serve(async (req: Request) => {
   if (!consent) return reply({ error: "Please confirm that you are authorised to share these details." }, 400, origin);
 
   const db = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+
+  // Reuse the existing public-intake rate-limit table with a separate venue-listing bucket.
+  const ip = clean(req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown", 120);
+  const ipHash = await hash("venue-listing:" + ip, serviceKey);
+  const rateSince = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const { count, error: rateError } = await db
+    .from("smv_public_search_rate_limits")
+    .select("id", { count: "exact", head: true })
+    .eq("ip_hash", ipHash)
+    .gte("created_at", rateSince);
+  if (rateError) {
+    console.error("Venue application rate-limit check failed:", rateError);
+    return reply({ error: "We could not verify the application right now. Please try again." }, 503, origin);
+  }
+  if ((count || 0) >= 8) return reply({ error: "Too many applications. Please try again in a few minutes or call SMV." }, 429, origin);
+  const { error: rateInsertError } = await db.from("smv_public_search_rate_limits").insert({ ip_hash: ipHash });
+  if (rateInsertError) {
+    console.error("Venue application rate-limit record failed:", rateInsertError);
+    return reply({ error: "We could not verify the application right now. Please try again." }, 503, origin);
+  }
 
   // Prevent accidental repeat submissions and basic number-based form abuse.
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
