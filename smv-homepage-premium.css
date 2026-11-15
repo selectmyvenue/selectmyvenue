@@ -108,3 +108,74 @@ body{background:#f7f7f2;color:#173d34}
  .contact-section{padding:38px 16px!important}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* Mobile-first finishing layer: compact navigation, comfortable tap targets,
+   readable cards and safe-area spacing for the actual mobile shell. */
+@media(max-width:767px){
+  html{scroll-padding-top:72px}
+  body.smv-customer-mobile{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))!important}
+  .smv-home-launch-strip{padding:8px 12px}
+  .smv-home-launch-inner{gap:8px;flex-wrap:wrap}
+  .smv-launch-offer{font-size:10px;gap:5px;flex-wrap:wrap}
+  .smv-launch-contact{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:10px}
+  .hero{padding:24px 15px 22px!important}
+  .hero-copy{max-width:none}
+  .hero h1{font-size:clamp(33px,8.8vw,42px)!important;line-height:1.06!important}
+  .hero-text{font-size:14px!important;line-height:1.55!important}
+  .hero-actions{display:grid;grid-template-columns:1fr!important;gap:9px}
+  .hero-actions a,.primary-btn,.secondary-btn{min-height:48px;justify-content:center}
+  .smv-celebration-links{display:flex;flex-wrap:wrap;gap:7px}
+  .smv-celebration-links a{min-height:38px;display:inline-flex;align-items:center}
+  #featuredVenues .home-venues-heading h2{font-size:27px!important;line-height:1.15}
+  #featuredVenues .home-venue-card{display:grid;grid-template-columns: minmax(0,1fr);border-radius:16px!important}
+  #featuredVenues .home-venue-content{padding:13px!important}
+  #featuredVenues .home-venue-content h3{font-size:20px!important;line-height:1.25}
+  #featuredVenues .smv-home-filter-toggle{min-height:46px;border-radius:12px;font-size:13px}
+  #featuredVenues .smv-home-filter-panel input,
+  #featuredVenues .smv-home-filter-panel select{min-height:44px!important;font-size:14px!important}
+  #featuredVenues .smv-home-quick button{min-height:40px;font-size:11px}
+  .smv-mobile-bottom-nav{
+    position:fixed!important;left:8px!important;right:8px!important;
+    bottom:calc(7px + env(safe-area-inset-bottom,0px))!important;
+    z-index:20000!important;height:66px!important;
+    display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    align-items:center!important;gap:2px!important;padding:5px!important;
+    border:1px solid rgba(197,160,74,.35)!important;border-radius:19px!important;
+    background:rgba(4,35,30,.97)!important;
+    box-shadow:0 12px 34px rgba(0,0,0,.28)!important;
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  }
+  .smv-mobile-bottom-nav .smv-mobile-nav-item,
+  .smv-mobile-bottom-nav .smv-mobile-nav-find{
+    min-width:0!important;min-height:52px!important;padding:4px 2px!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;
+    justify-content:center!important;gap:3px!important;border:0!important;
+    background:transparent!important;color:#e3eee9!important;
+    font:inherit!important;font-size:9px!important;font-weight:800!important;
+    text-decoration:none!important;white-space:nowrap;
+  }
+  .smv-mobile-bottom-nav .smv-mobile-nav-icon{font-size:19px!important;line-height:1.1}
+  .smv-mobile-bottom-nav .smv-mobile-nav-find{
+    min-height:56px!important;margin-top:-13px!important;border:1px solid rgba(255,255,255,.45)!important;
+    border-radius:16px!important;background:linear-gradient(145deg,#d7b96d,#b58a35)!important;
+    color:#123b32!important;box-shadow:0 5px 15px rgba(197,160,74,.25)!important;
+  }
+  .smv-mobile-bottom-nav .smv-mobile-find-icon{font-size:19px!important}
+  .smv-mobile-bottom-nav .active{color:#e7c878!important}
+  .smv-mobile-bottom-nav a:focus-visible,.smv-mobile-bottom-nav button:focus-visible{outline:2px solid #e7c878!important;outline-offset:2px}
+  .smv-market-heading h2,.smv-difference h2,.smv-owner-showcase h2,.smv-home-faq h2{font-size:26px!important;line-height:1.18}
+  .smv-celebration-card,.smv-location-card{min-width:0}
+  .smv-enquiry-section,.enquiry-section{padding:34px 14px!important}
+  #customerEnquiryForm input,#customerEnquiryForm select,#customerEnquiryForm textarea,
+  .quick-enquiry-form input,.quick-enquiry-form select,.quick-enquiry-form textarea{
+    min-height:46px;font-size:16px!important
+  }
+  .site-footer{padding-bottom:22px}
+}
+@media(max-width:380px){
+  .smv-mobile-bottom-nav{left:5px!important;right:5px!important}
+  .smv-mobile-bottom-nav .smv-mobile-nav-item,
+  .smv-mobile-bottom-nav .smv-mobile-nav-find{font-size:8px!important}
+  #featuredVenues .home-venue-content h3{font-size:18px!important}
+}
