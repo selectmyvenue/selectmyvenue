@@ -235,7 +235,9 @@
       ["₹", "Veg Price", vegPrice],
       ["📍", "Location", location],
       ["🏠", "Address", fullAddress(venue)],
-      ["📷", "Photos", photoCount ? `${photoCount} photo${photoCount === 1 ? "" : "s"}` : "Photos on request"]
+      ["📷", "Photos", photoCount ? `${photoCount} photo${photoCount === 1 ? "" : "s"}` : "Photos on request"],
+      ["✦", "Event types", window.SMVPublicDetails.events(venue).length ? window.SMVPublicDetails.events(venue).slice(0,3).join(" · ") : "Confirm with venue"],
+      ["◇", "Facilities", venueFeatures(venue).length ? venueFeatures(venue).slice(0,3).map(item=>item[1]).join(" · ") : "Details on request"]
     ];
     const section = document.createElement("section");
     section.id = "venueProfileDetailsStrip";

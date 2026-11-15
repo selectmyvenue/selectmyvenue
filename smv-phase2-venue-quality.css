@@ -1,0 +1,32 @@
+/* SMV Phase 2 — evidence-led venue cards and profile detail hierarchy */
+.venue-grid .venue-card{display:flex;flex-direction:column;min-width:0;overflow:hidden;border:1px solid rgba(215,190,126,.25);border-radius:18px;background:linear-gradient(180deg,#0a302b,#06231f);box-shadow:0 16px 38px rgba(0,0,0,.18);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.venue-grid .venue-card:hover{transform:translateY(-3px);border-color:rgba(225,196,116,.55);box-shadow:0 22px 46px rgba(0,0,0,.25)}
+.venue-grid .venue-card:focus-within{outline:2px solid #e6cb7c;outline-offset:3px}
+.venue-grid .venue-card .venue-card-media{position:relative;min-height:205px;overflow:hidden;background:#123e36}
+.venue-grid .venue-card .venue-card-media img{display:block;width:100%;height:100%;min-height:205px;object-fit:cover;transition:transform .35s ease}
+.venue-grid .venue-card:hover .venue-card-media img{transform:scale(1.035)}
+.venue-grid .venue-card .venue-card-body{display:flex;flex:1;flex-direction:column;padding:17px}
+.venue-grid .venue-card .venue-card-body h2{margin:0 0 6px;color:#fff8e8;font-family:Georgia,"Times New Roman",serif;font-size:21px;line-height:1.2}
+.venue-grid .venue-card .venue-location{min-height:34px;color:#b9d3cc;font-size:12px;line-height:1.45}
+.venue-grid .venue-card .venue-facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 9px}
+.venue-grid .venue-card .venue-fact{display:flex;flex-direction:column;gap:5px;min-width:0;padding:10px;border:1px solid rgba(220,197,133,.2);border-radius:10px;background:rgba(255,255,255,.035);color:#fff3d1;font-size:12px;font-weight:850;overflow-wrap:anywhere}
+.venue-grid .venue-card .venue-fact small{color:#d7bd76;font-size:8px;font-weight:950;letter-spacing:.1em}
+.smv-card-data-coverage{display:flex;flex-wrap:wrap;gap:5px;margin:1px 0 10px;padding:9px;border:1px solid rgba(91,213,190,.15);border-radius:10px;background:rgba(32,157,133,.07)}
+.smv-card-data-coverage>span:not(.smv-card-data-label){padding:4px 7px;border-radius:99px;background:rgba(255,255,255,.055);color:#cce4dc;font-size:9px;font-weight:800}
+.smv-card-data-coverage .smv-card-data-label{width:100%;color:#e8cf8a;font-size:8px;font-weight:950;letter-spacing:.1em}
+.venue-grid .venue-card .venue-feature-list{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 7px}
+.venue-grid .venue-card .venue-feature-list span{padding:5px 7px;border:1px solid rgba(255,255,255,.09);border-radius:7px;color:#c6ddd6;font-size:9px}
+.venue-grid .venue-card .venue-description{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;color:#b5cec7;font-size:11px;line-height:1.55}
+.venue-grid .venue-card .venue-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:auto;padding-top:13px}
+.venue-grid .venue-card .venue-actions .button{display:flex;align-items:center;justify-content:center;min-height:42px;padding:0 8px;border-radius:9px;font-size:10px;font-weight:900;text-align:center;text-decoration:none}
+.venue-grid .venue-card .venue-actions .button-primary{background:linear-gradient(135deg,#f1d98e,#d5b75e);color:#173b32}
+.venue-grid .venue-card .venue-actions .button-secondary{border:1px solid rgba(227,205,144,.42);background:rgba(255,255,255,.045);color:#f1dda2}
+.venue-profile-details-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;margin:16px 0 20px;overflow:hidden;border:1px solid #e1d5bd;border-radius:17px;background:#fffdf8;box-shadow:0 12px 32px rgba(34,57,48,.07)}
+.venue-profile-detail-item{display:grid;grid-template-columns:25px minmax(0,1fr);column-gap:8px;align-content:start;min-width:0;padding:16px;border-right:1px solid #eee5d6;border-bottom:1px solid #eee5d6}
+.venue-profile-detail-item:nth-child(4n){border-right:0}
+.venue-profile-detail-item>b{grid-row:span 2;color:#a18132;font-size:17px}
+.venue-profile-detail-item>span{color:#8a784b;font-size:9px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.venue-profile-detail-item>strong{margin-top:5px;color:#23483e;font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+@media(max-width:760px){.venue-grid .venue-card .venue-card-media,.venue-grid .venue-card .venue-card-media img{min-height:190px}.venue-profile-details-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.venue-profile-detail-item:nth-child(2n){border-right:0}.venue-profile-detail-item:nth-child(4n){border-right:0}}
+@media(max-width:390px){.venue-grid .venue-card .venue-actions{grid-template-columns:1fr}.venue-profile-detail-item{padding:12px}}
+@media(prefers-reduced-motion:reduce){.venue-grid .venue-card,.venue-grid .venue-card .venue-card-media img{transition:none}}
