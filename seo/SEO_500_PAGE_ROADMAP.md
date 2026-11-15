@@ -1,6 +1,6 @@
 # SMV 500-Page Organic Lead Generation Programme
 
-Status: implementation branch only; not merged or deployed.
+Status: Phase 3 release candidate. Production publication is limited to the 15 editorial guides; generated candidate pages remain review-only.
 
 ## Objective
 Build a sustainable, lead-generating organic search programme for Select My Venue, focused first on Delhi and Gurgaon/Gurugram. Every indexable landing page must serve a real customer intent, help compare or discover venues, and route enquiries through the existing website form to `customer_enquiries` and the Master CRM.
@@ -63,7 +63,7 @@ The current homepage already has a small set of descriptive links to key discove
 - [x] Add sitemap duplicate-removal helper and unit test.
 - [ ] Run full automated test suite at the end of implementation and resolve all failures.
 - [x] Create a 500-row candidate keyword-to-URL inventory; validation against live venue coverage remains in progress; Search Console performance reads are currently paused by the connected Windsor plan, so no search-volume or ranking claims are assumed.
-- [x] Add fifteen editorial/comparison guides with distinct intent: budget comparison, site-visit inspection, booking/payment/cancellation questions, venue shortlisting, hidden costs, capacity planning, booking timeline, food tasting, outdoor weather backup, banquet hall vs wedding lawn, farmhouse vs banquet hall, corporate events, birthday parties, engagements, and wedding receptions. They are branch-only until approval and deployment; the planning guides and comparisons are linked from the SEO search hub.
+- [x] Add fifteen editorial/comparison guides with distinct intent: budget comparison, site-visit inspection, booking/payment/cancellation questions, venue shortlisting, hidden costs, capacity planning, booking timeline, food tasting, outdoor weather backup, banquet hall vs wedding lawn, farmhouse vs banquet hall, corporate events, birthday parties, engagements, and wedding receptions. They are the only new pages intended for production publication in this phase; the planning guides and comparisons are linked from the SEO search hub.
 - [x] Add a 500-row execution matrix that assigns every candidate a build strategy, content angle, evidence gate, unique-content requirement and internal-link targets.
 - The current execution matrix disposition is: 236 data-backed candidates awaiting real inventory matching; 124 subjective or undefined-capacity claims held for evidence; 33 city-variant/monsoon candidates marked for consolidation; 15 candidate intents mapped to existing pages/guides; and 92 guide/comparison/FAQ candidates requiring distinct editorial writing or intent merging. These are candidate dispositions, not published-page counts.
 - [x] Add a review-only organic landing-page generator that reads the 500-row inventory and the existing public venue RPC, matches candidates to real public Delhi/Gurgaon listings, requires at least three matching listings, and writes a separate review artifact plus candidate-only sitemap. It never writes to the site root or live sitemap.
