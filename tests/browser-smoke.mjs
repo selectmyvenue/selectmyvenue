@@ -81,8 +81,10 @@ async function testQuickEnquiryMock() {
     assert.equal(payload.last_contacted_at, null);
     assert(payload.requirements.includes('Mock-only QA. Do not create a real enquiry.'));
     assert(payload.requirements.includes('Submitted page:'));
+    assert.equal(typeof payload.contact_remark, 'string');
+    assert(payload.contact_remark.includes('Landing page:'));
     assert.deepEqual(Object.keys(payload).sort(), [
-      'assigned_to','budget_per_person','email','event_date','food_preference','follow_up_at',
+      'assigned_to','budget_per_person','contact_remark','email','event_date','food_preference','follow_up_at',
       'guests','last_contacted_at','location','mobile','occasion','requirements','source',
       'status','customer_name'
     ].sort(), 'payload must use the existing customer_enquiries fields only');
