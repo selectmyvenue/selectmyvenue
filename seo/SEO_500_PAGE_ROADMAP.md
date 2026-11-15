@@ -68,7 +68,9 @@ The current homepage already has a small set of descriptive links to key discove
 - The current execution matrix disposition is: 236 data-backed candidates awaiting real inventory matching; 124 subjective or undefined-capacity claims held for evidence; 33 city-variant/monsoon candidates marked for consolidation; 15 candidate intents mapped to existing pages/guides; and 92 guide/comparison/FAQ candidates requiring distinct editorial writing or intent merging. These are candidate dispositions, not published-page counts.
 - [x] Add a review-only organic landing-page generator that reads the 500-row inventory and the existing public venue RPC, matches candidates to real public Delhi/Gurgaon listings, requires at least three matching listings, and writes a separate review artifact plus candidate-only sitemap. It never writes to the site root or live sitemap.
 - [x] Add a manual GitHub Actions workflow to prepare the review artifact; it does not deploy or change production.
-- [ ] Generate and manually review the data-backed candidate artifact; identify existing pages to reuse, locality/filter pages with insufficient venue coverage, and editorial/comparison/subjective claims that need human-written content or evidence.
-- [ ] Expand genuinely useful landing-page coverage from the initial editorial guides; the 500-row inventory remains a candidate list, not 500 completed pages.
-- [ ] Verify end-to-end attribution through a non-production test environment.
+- [x] Generate and manually review the data-backed candidate artifact. Latest review: 34 eligible public venue records; 22 candidate pages generated for review, 81 held for evidence, 388 not generated and 9 mapped to existing pages. See `seo/SEO_500_PAGE_ARTIFACT_REVIEW.md`.
+- [x] Add 15 human-written editorial guides to the branch sitemap and SEO search hub. Candidate-generated pages remain outside the live sitemap until their unique value is proven.
+- [x] Implement best-effort organic source, landing-page title/URL, referrer and UTM/click-ID attribution in existing CRM enquiry fields; no schema/RLS changes.
+- [ ] Run the full automated test suite and resolve all failures.
+- [ ] Verify the attribution payload with the CI form fixture and confirm the existing CRM fields receive it without creating a production dummy lead.
 - [ ] Review and approve PR before merge/publish.
