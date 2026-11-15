@@ -165,7 +165,15 @@ Use measured data to decide inventory acquisition and SEO expansion. Do not publ
 - Keep old SEO pages and sitemap entries until traffic and lead data have been reviewed.
 - Describe a feature as “AI-powered” only when it actually calls the approved AI service; deterministic filters and ranking should be labelled “Smart Match” or “Recommended”.
 
-## 11. Current implementation notes
+## 11. Current implementation baseline (15 November 2026)
+
+The live Supabase project currently reports 40 venue records, 37 approved / verified / publicly listed records overall, and 35 records whose city or area fields place them in the Delhi / Gurgaon focus market. The currently represented public venue categories include banquet halls, farmhouses, hotels, restaurants and resorts. This is a live database snapshot, not a promise that every category is available in every locality.
+
+The deployed `smv-ai-assistant` Edge Function is active (version 23). The website calls it with a customer message and event context, and it sends that information to the OpenAI Responses API. The current function is a conversational event assistant: it does **not** query the live venue inventory or return grounded venue candidates. Therefore, it must not yet be described as a live AI venue recommendation engine.
+
+The next AI-engine phase must connect the assistant to the same verified public inventory used by the directory, normalize the requirement, retrieve eligible candidates, rank them with the explainable rules in section 5, and return venue IDs plus evidence-backed reasons. Availability must remain a separate venue-confirmation step. Review rate limiting, request validation, CORS and data minimization before expanding the public AI endpoint.
+
+## 12. Current implementation notes
 
 The public directory already has a verified public inventory source, venue-type / location / occasion / food / capacity / budget / facility filters, shortlist storage and comparison up to three venues. The homepage also has a live venue showcase and filters.
 
