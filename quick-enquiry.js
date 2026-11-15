@@ -89,9 +89,11 @@
 
     const currentUrl = location.href.slice(0, 1000);
     const currentTitle = clean(document.title || "Select My Venue").slice(0, 180);
-    const organicReferrer = /(?:^|\.)(google|bing|yahoo|duckduckgo|ecosia|brave)\./i.test(clean(document.referrer));
+    let referrerHost = "";
+    try { referrerHost = new URL(document.referrer).hostname.toLowerCase(); } catch (_) {}
+    const organicReferrer = /(^|\.)(google|bing|yahoo|duckduckgo|ecosia|brave)\./i.test(referrerHost);
     const paidCampaign = !!(saved.gclid || saved.gbraid || saved.wbraid) ||
-      /cpc|ppc|paid/i.test(clean(saved.utm_medium).toLowerCase());
+      /cpc|ppc|paid|display|retargeting|shopping/i.test(clean(saved.utm_medium).toLowerCase());
 
     if (!saved.landing_page || organicReferrer) saved.landing_page = currentUrl;
     if (!saved.landing_title || organicReferrer) saved.landing_title = currentTitle;
