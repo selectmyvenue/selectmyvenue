@@ -35,17 +35,25 @@ type Requirement = {
   limit?: number;
 };
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://selectmyvenue.com",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-  "Vary": "Origin",
-};
+const allowedOrigins = new Set([
+  "https://selectmyvenue.com",
+  "https://www.selectmyvenue.com",
+]);
 
-function json(body: unknown, status = 200) {
+function corsHeaders(origin: string | null) {
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Vary": "Origin",
+  };
+  if (origin && allowedOrigins.has(origin)) headers["Access-Control-Allow-Origin"] = origin;
+  return headers;
+}
+
+function json(body: unknown, status = 200, origin: string | null = null) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+    headers: { ...corsHeaders(origin), "Content-Type": "application/json", "Cache-Control": "no-store" },
   });
 }
 
@@ -265,14 +273,14 @@ function validateRequirement(input: unknown): Requirement | null {
 
 if (import.meta.main) Deno.serve(async (req: Request) => {
   const origin = req.headers.get("Origin");
-  if (origin && origin !== "https://selectmyvenue.com" && origin !== "https://www.selectmyvenue.com") {
-    return json({ error: "Origin not allowed." }, 403);
+  if (origin && !allowedOrigins.has(origin)) {
+    return json({ error: "Origin not allowed." }, 403, origin);
   }
-  if (req.method === "OPTIONS") return new Response("ok", { status: 200, headers: corsHeaders });
-  if (req.method !== "POST") return json({ error: "Method not allowed." }, 405);
+  if (req.method === "OPTIONS") return new Response("ok", { status: 200, headers: corsHeaders(origin) });
+  if (req.method !== "POST") return json({ error: "Method not allowed." }, 405, origin);
 
   const contentLength = Number(req.headers.get("Content-Length") || 0);
-  if (contentLength > 12000) return json({ error: "Request is too large." }, 413);
+  if (contentLength > 12000) return json({ error: "Request is too large." }, 413, origin);
 
   let body: Record<string, unknown>;
   try {
@@ -280,16 +288,16 @@ if (import.meta.main) Deno.serve(async (req: Request) => {
     if (raw.length > 12000) return json({ error: "Request is too large." }, 413);
     body = JSON.parse(raw);
   } catch {
-    return json({ error: "Invalid JSON request." }, 400);
+    return json({ error: "Invalid JSON request." }, 400, origin);
   }
 
   const requirement = validateRequirement(body.requirement);
-  if (!requirement) return json({ error: "Please provide a valid requirement object." }, 400);
-  if (!normalizeCity(requirement.city)) return json({ error: "Please choose Delhi or Gurgaon / Gurugram." }, 400);
+  if (!requirement) return json({ error: "Please provide a valid requirement object." }, 400, origin);
+  if (!normalizeCity(requirement.city)) return json({ error: "Please choose Delhi or Gurgaon / Gurugram." }, 400, origin);
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const publishableKey = Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY");
-  if (!supabaseUrl || !publishableKey) return json({ error: "Venue discovery is temporarily unavailable." }, 503);
+  if (!supabaseUrl || !publishableKey) return json({ error: "Venue discovery is temporarily unavailable." }, 503, origin);
 
   try {
     const supabase = createClient(supabaseUrl, publishableKey, {
@@ -300,7 +308,7 @@ if (import.meta.main) Deno.serve(async (req: Request) => {
     const { data, error } = await supabase.rpc("smv_public_venues");
     if (error) {
       console.error("Public venue inventory lookup failed:", error.message);
-      return json({ error: "We could not load verified venues right now." }, 503);
+      return json({ error: "We could not load verified venues right now." }, 503, origin);
     }
 
     const venues = (Array.isArray(data) ? data : [])
@@ -320,6 +328,6 @@ if (import.meta.main) Deno.serve(async (req: Request) => {
     });
   } catch (error) {
     console.error("Venue discovery failed:", error);
-    return json({ error: "Venue discovery is temporarily unavailable." }, 503);
+    return json({ error: "Venue discovery is temporarily unavailable." }, 503, origin);
   }
 });
