@@ -131,6 +131,14 @@ def event_terms(keyword: str) -> tuple[str, ...]:
     return ()
 
 
+def event_name_for(keyword: str) -> str:
+    """Prefer the most specific event phrase (e.g. reception over wedding)."""
+    for name in sorted(EVENT_TERMS, key=len, reverse=True):
+        if norm(name) in norm(keyword):
+            return name.title()
+    return "your event"
+
+
 def has_event(venue: dict, wanted: tuple[str, ...]) -> bool:
     if not wanted:
         return False
@@ -329,7 +337,7 @@ def content_sections(row: dict[str, str], venues: list[dict]) -> str:
 <p>Start with the public listings below that identify this locality in their address fields. Before travelling, ask each venue to confirm the exact entrance address, event-date availability, parking arrangements and guest access. Do not assume a venue is nearby just because it is described as Delhi NCR.</p>
 <h3>Local details to verify</h3><ul><li>Actual travel time from your guests’ likely starting points at the event time.</li><li>Entry and exit access for cars, cabs, elderly guests and vendors.</li><li>Parking capacity, setup access and any sound or event-timing restrictions.</li></ul></section>"""
     elif cluster == "event_intent":
-        event = next((name.title() for name in EVENT_TERMS if norm(name) in norm(keyword)), "your event")
+        event = event_name_for(keyword)
         event_detail = {
           "Wedding": "Check the ceremony and reception layout, guest flow, stage, food service, setup windows and weather backup.",
           "Engagement": "Confirm a suitable stage or ceremony area, guest seating, food service, photography access and event timing.",
@@ -358,7 +366,7 @@ def content_sections(row: dict[str, str], venues: list[dict]) -> str:
             detail = "Check the exact attribute on each profile and confirm any missing or ambiguous detail directly with the venue."
         events = event_terms(keyword)
         if events:
-            event_name = next((name.title() for name in EVENT_TERMS if norm(name) in norm(keyword)), "your event")
+            event_name = event_name_for(keyword)
             event_guidance = {
                 "Wedding": "Confirm ceremony and reception layout, guest flow, stage, food service, setup windows and weather backup.",
                 "Engagement": "Confirm stage or ceremony space, guest seating, food service, photography access and event timing.",
@@ -379,7 +387,21 @@ def content_sections(row: dict[str, str], venues: list[dict]) -> str:
 <p>Venue labels and packages can differ. Compare each option against your actual guest count, event schedule, location preference and must-have facilities instead of relying on a headline label alone.</p>
 <h3>Questions worth asking every venue</h3><ul><li>What exact space and event timing are included in the quote?</li><li>Which capacity, price and facility details are confirmed, and which need a direct enquiry?</li><li>What are the payment, cancellation, vendor-access and overtime terms?</li></ul></section>"""
     coverage = f"""<section class="coverage"><h2>Listing information coverage</h2><p>Among these {len(venues)} matching public listings, {capacity_known} include a capacity field and {price_known} include at least one per-person price field. Missing information is not an indication that a venue lacks a facility; confirm it directly.</p></section>"""
-    return lead + coverage
+    area_counts = Counter(
+        str(v.get("area") or v.get("city") or "").strip()
+        for v in venues
+        if str(v.get("area") or v.get("city") or "").strip()
+    )
+    area_items = "".join(
+        f"<li>{esc(area)}: {count} listing(s)</li>"
+        for area, count in area_counts.most_common(6)
+    )
+    locality_coverage = (
+        f'<section class="coverage"><h2>Areas represented in this shortlist</h2><ul>{area_items}</ul>'
+        '<p>Area names come from the public venue listing. Confirm the exact address and travel time before visiting.</p></section>'
+        if area_items else ""
+    )
+    return lead + coverage + locality_coverage
 
 
 def page_html(row: dict[str, str], venues: list[dict]) -> str:
@@ -389,7 +411,7 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
     title = title_for(row)
     desc = description_for(row, len(venues))
     locality = row.get("locality") or row.get("city_or_scope") or "your preferred area"
-    event = next((name.title() for name in EVENT_TERMS if norm(name) in norm(keyword)), "your event")
+    event = event_name_for(keyword)
     cards = "\n".join(venue_card(v) for v in venues[:24])
     unique_sections = content_sections(row, venues)
     scope = norm(row.get("city_or_scope") or "")
