@@ -7,7 +7,7 @@ on:
       - "homepage-venues.js"
       - "venues.html"
       - "tests/get-matched-browser-smoke.mjs"
-      - "script.js"
+      - "script.js"\n      - "index.html"\n      - "homepage-search-first.js"\n      - "supabase/functions/smv-homepage-search/**"\n      - "supabase/migrations/*smv_public_search_rate_limits.sql"
       - "public-header.js"
       - "smv-ai-assistant.js"
       - "smv-ai-assistant.css"
@@ -32,14 +32,14 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Run venue discovery unit tests
+      - name: Type-check homepage search Edge Function\n        run: deno check supabase/functions/smv-homepage-search/index.ts\n\n      - name: Run venue discovery unit tests
         run: deno test --allow-env supabase/functions/smv-venue-discovery/index_test.ts
 
       - name: Check JavaScript syntax
         run: |
           node --check venues.js
           node --check homepage-venues.js
-          node --check script.js
+          node --check script.js\n          node --check homepage-search-first.js
           node --check public-header.js
           node --check smv-ai-assistant.js
 
