@@ -64,7 +64,7 @@ jobs:
             directory_script_path="$(python3 - <<'PY'
 import os, re
 html = os.environ.get("SMV_DIRECTORY_HTML", "")
-match = re.search(r'<script\\b[^>]*\\bsrc=["\\x27]([^"\\x27]*venues\\.js(?:\\?[^"\\x27]*)?)["\\x27]', html, re.I)
+match = re.search(r"""<script\b[^>]*\bsrc=["']([^"']*venues\.js(?:\?[^"']*)?)["']""", html, re.I)
 print(match.group(1) if match else "")
 PY
 )"
