@@ -182,7 +182,9 @@ function setupTrafficAttribution() {
   const storageKey = "smv-traffic-attribution-v1";
   const params = new URLSearchParams(window.location.search);
   const searchReferrer = document.referrer || "";
-  const searchEnginePattern = /(?:^|\.)(google|bing|yahoo|duckduckgo|ecosia|brave)\./i;
+  let searchReferrerHost = "";
+  try { searchReferrerHost = new URL(searchReferrer).hostname.toLowerCase(); } catch (_) {}
+  const searchEnginePattern = /(^|\.)(google|bing|yahoo|duckduckgo|ecosia|brave)\./i;
   const utmNames = [
     "gclid", "gbraid", "wbraid", "utm_source", "utm_medium",
     "utm_campaign", "utm_term", "utm_content"
@@ -207,7 +209,7 @@ function setupTrafficAttribution() {
     attribution.gclid || attribution.gbraid || attribution.wbraid ||
     /cpc|ppc|paid|display|retargeting|shopping/.test(medium)
   );
-  const organicSearch = searchEnginePattern.test(searchReferrer);
+  const organicSearch = searchEnginePattern.test(searchReferrerHost);
 
   if (!attribution.landing_page || organicSearch) attribution.landing_page = currentUrl;
   if (!attribution.landing_title || organicSearch) attribution.landing_title = currentTitle;
