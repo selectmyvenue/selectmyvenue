@@ -1,0 +1,50 @@
+name: Venue discovery regression
+
+on:
+  pull_request:
+    paths:
+      - "venues.js"
+      - "homepage-venues.js"
+      - "venues.html"
+      - "AI_VENUE_DISCOVERY_SOP.md"
+      - ".github/workflows/venue-discovery-regression.yml"
+
+jobs:
+  static-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check venues.js
+          node --check homepage-venues.js
+
+      - name: Verify Delhi and Gurgaon discovery scope
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from "node:fs";
+          const directory = readFileSync("venues.js", "utf8");
+          const homepage = readFileSync("homepage-venues.js", "utf8");
+          const page = readFileSync("venues.html", "utf8");
+          const sop = readFileSync("AI_VENUE_DISCOVERY_SOP.md", "utf8");
+
+          const checks = [
+            ["Directory normalizes Delhi/Gurgaon aliases", directory.includes("focusCityOf") && directory.includes("normalizeFocusCity")],
+            ["Directory keeps unknown capacity and price details discoverable", directory.includes("knownCapacity&&capBucket") && directory.includes("if(p&&budgetLabel")],
+            ["Homepage limits public showcase to focus markets", homepage.includes("isFocusMarket") && homepage.includes(".filter(isFocusMarket)")],
+            ["Directory quick enquiry offers Delhi and Gurgaon", page.includes("<option>Delhi</option><option>Gurgaon</option>")],
+            ["Discovery SOP exists", sop.includes("AI Venue Discovery SOP") && sop.includes("100-point relevance model")]
+          ];
+
+          for (const [label, passed] of checks) {
+            console.log((passed ? "PASS " : "FAIL ") + label);
+          }
+          if (checks.some(([, passed]) => !passed)) process.exit(1);
+          NODE
