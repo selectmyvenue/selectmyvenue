@@ -1,6 +1,6 @@
 # SMV 500-Page Organic Lead Generation Programme
 
-Status: Phase 3 release candidate. Production publication is limited to the 15 editorial guides; generated candidate pages remain review-only.
+Status: Phase 3 merged and deployed to GitHub Pages on 16 November 2026. Production publication is limited to the 15 editorial guides; generated candidate pages remain review-only.
 
 ## Objective
 Build a sustainable, lead-generating organic search programme for Select My Venue, focused first on Delhi and Gurgaon/Gurugram. Every indexable landing page must serve a real customer intent, help compare or discover venues, and route enquiries through the existing website form to `customer_enquiries` and the Master CRM.
@@ -71,6 +71,7 @@ The current homepage already has a small set of descriptive links to key discove
 - [x] Generate and manually review the data-backed candidate artifact. Latest review: 34 eligible public venue records; 22 candidate pages generated for review, 81 held for evidence, 388 not generated and 9 mapped to existing pages. See `seo/SEO_500_PAGE_ARTIFACT_REVIEW.md`.
 - [x] Add 15 human-written editorial guides to the branch sitemap and SEO search hub. Candidate-generated pages remain outside the live sitemap until their unique value is proven.
 - [x] Implement best-effort organic source, landing-page title/URL, referrer and UTM/click-ID attribution in existing CRM enquiry fields; no schema/RLS changes.
-- [ ] Run the full automated test suite and resolve all failures.
-- [ ] Verify the attribution payload with the CI form fixture and confirm the existing CRM fields receive it without creating a production dummy lead.
+- [x] Run the full automated test suite and resolve all failures; SEO unit tests and static SEO audit passed.
+- [x] Verify the attribution payload with the CI form fixture; existing CRM fields receive it without a production dummy lead.
+- [x] Merge P3 and verify GitHub Pages deployment, sitemap publication and live Get Matched browser regression.
 - [ ] Review and approve PR before merge/publish.
