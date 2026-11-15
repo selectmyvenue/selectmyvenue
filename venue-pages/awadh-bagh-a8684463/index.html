@@ -27,6 +27,8 @@
     var value=(params.get(name)||"").trim();if(value)saved[name]=value.slice(0,500);
   });
   if(!saved.landing_page)saved.landing_page=location.href.slice(0,1000);
+  if(!saved.landing_title)saved.landing_title=(document.title||"Select My Venue").slice(0,180);
+  if(location.pathname.indexOf("/venue-pages/")!==-1&&!saved.source)saved.source="SEO - Organic";
   if(!saved.first_referrer&&document.referrer)saved.first_referrer=document.referrer.slice(0,1000);
   saved.last_page=location.href.slice(0,1000);
   sessionStorage.setItem(key,JSON.stringify(saved));
@@ -46,7 +48,7 @@ h1{font-size:clamp(28px,5vw,46px);line-height:1.13;letter-spacing:-.03em;margin:
 <main><div class="crumb"><a href="https://selectmyvenue.com/">Home</a> › <a href="https://selectmyvenue.com/venues.html">Verified venues</a> › Awadh Bagh</div>
 <article class="card"><div class="hero"><img src="https://uajqwyoqbbswkfiwosyw.supabase.co/storage/v1/object/public/venue-media/a8684463-d451-429c-bcf8-7df02ae85e17/cover-1791986116789.webp" alt="Awadh Bagh venue" loading="eager" width="1200" height="800"></div><div class="body">
 <p class="eyebrow">Venue profile</p><h1>Awadh Bagh</h1><p class="location">⌖ Pataudi Rd, Sector 89A, Gurgaon · Farmhouse</p>
-<p>Awadh Bagh is a romantic spot in nature in Gurugram, offering a peaceful retreat with modern comforts amidst lush green surroundings. Set across 1.5 acres of landscaped lawns, this farm villa is ideal for families, groups, and celebrations, with spacious indoor and outdoor areas</p><div class="facts"><div class="fact"><span>CAPACITY</span><strong>200–250 guests</strong></div><div class="fact"><span>PRICE GUIDE</span><strong>From ₹1500 per person</strong></div><div class="fact"><span>EVENTS</span><strong>Wedding, Engagement, Corporate Event</strong></div></div>
+<p>Awadh Bagh is a romantic spot in nature in Gurugram, offering a peaceful retreat with modern comforts amidst lush green surroundings. Set across 1.5 acres of landscaped lawns, this farm villa is ideal for families, groups, and celebrations, with spacious indoor and outdoor areas</p><div class="facts"><div class="fact"><span>CAPACITY</span><strong>10–350 guests</strong></div><div class="fact"><span>PRICE GUIDE</span><strong>From ₹1500 per person</strong></div><div class="fact"><span>EVENTS</span><strong>Wedding, Engagement, Corporate Event</strong></div></div>
 <h2>Facilities &amp; services</h2><ul class="features"><li>Vegetarian food</li><li>Non-vegetarian food</li><li>Parking</li><li>Guest rooms</li><li>Catering</li></ul>
 <p>Venue details and availability can change. Contact Select My Venue to confirm current packages, date availability and final pricing directly with the venue.</p>
 <a class="cta" href="https://selectmyvenue.com/venue.html?id=a8684463-d451-429c-bcf8-7df02ae85e17">Check price &amp; availability</a> <a class="secondary" href="https://selectmyvenue.com/venues.html">Compare other venues</a>
