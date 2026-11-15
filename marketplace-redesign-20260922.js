@@ -85,7 +85,7 @@ function addSections(){
     '</div></div>');
 
   var owner=make("section","smv-owner-cta",
-    '<div class="smv-owner-inner"><div class="smv-owner-copy"><span class="section-kicker">FOR VENUE OWNERS · LAUNCH OFFER</span><h2>Own a venue? Get discovered by the right customers.</h2><p>Build your Select My Venue presence and receive relevant enquiry opportunities through our growing Delhi NCR venue network.</p><div class="smv-owner-points"><span>✓ Professional venue profile</span><span>✓ Relevant enquiry opportunities</span><span>✓ Partner CRM access</span><span>✓ 10-day complimentary launch trial</span></div><a class="primary-btn" href="list-your-venue.html">List Your Venue FREE →</a></div><div class="smv-owner-visual"><img loading="lazy" src="assets/hero/hero-bright-celebration-v2.webp" alt="Wedding venue ready for a celebration"></div></div>');
+    '<div class="smv-owner-inner"><div class="smv-owner-copy"><span class="section-kicker">FOR VENUE OWNERS · LAUNCH OFFER</span><h2>Own a venue? Get discovered by the right customers.</h2><p>Build your Select My Venue presence and receive relevant enquiry opportunities through our growing Delhi NCR venue network.</p><div class="smv-owner-points"><span>✓ Professional venue profile</span><span>✓ Relevant enquiry opportunities</span><span>✓ Partner CRM access</span><span>✓ 7-day complimentary launch trial</span></div><a class="primary-btn" href="list-your-venue.html">List Your Venue FREE →</a></div><div class="smv-owner-visual"><img loading="lazy" src="assets/hero/hero-bright-celebration-v2.webp" alt="Wedding venue ready for a celebration"></div></div>');
 
   main.append(celebrations,locations,discovery,inspiration,owner);
 }
