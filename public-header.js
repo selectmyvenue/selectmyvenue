@@ -3,7 +3,9 @@
 var HEADER_HTML='<header class="site-header"><div class="header-inner"><a href="index.html#home" class="brand" aria-label="Select My Venue Home"><img src="logo.png" alt="Select My Venue" class="main-logo"></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button><nav id="mainNav"><a href="index.html#home">Home</a><a href="index.html#how">How It Works</a><a href="index.html#smart">Smart Discovery</a><a href="index.html#aiPlanner">AI Planner</a><a href="venues.html">Browse Venues</a><a href="delhi-ncr-venues.html">Delhi NCR</a><a href="index.html#enquiry" class="nav-cta">Find My Venue</a><a href="list-your-venue.html">List Your Venue</a></nav><a href="tel:+918368322256" class="header-contact" aria-label="Call Select My Venue at +91 83683 22256">☎ +91 83683 22256 <span aria-hidden="true">•</span> Contact</a></div></header>';
 
 function ensureStyle(){
-  var luxury=document.getElementById("smvGlobalLuxuryCss");\n  if(!luxury){luxury=document.createElement("link");luxury.id="smvGlobalLuxuryCss";luxury.rel="stylesheet";luxury.href="smv-website-luxury-system.css?v=20261116-marketplace-premium-2";document.head.appendChild(luxury);}\n  var old=document.getElementById("smvCanonicalHeaderCss");
+  var luxury=document.getElementById("smvGlobalLuxuryCss");
+  if(!luxury){luxury=document.createElement("link");luxury.id="smvGlobalLuxuryCss";luxury.rel="stylesheet";luxury.href="smv-website-luxury-system.css?v=20261116-marketplace-premium-2";document.head.appendChild(luxury);}
+  var old=document.getElementById("smvCanonicalHeaderCss");
   if(old)old.remove();
   var link=document.createElement("link");
   link.id="smvCanonicalHeaderCss";
