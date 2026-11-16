@@ -49,7 +49,7 @@
   });
  }
  function init(){
-  var link=make("link");link.id="smvImmersiveLuxuryCss";link.rel="stylesheet";link.href="smv-immersive-luxury.css?v=20261116-1";document.head.appendChild(link);
+  var link=make("link");link.id="smvImmersiveLuxuryCss";link.rel="stylesheet";link.href="smv-immersive-luxury.css?v=20261116-2";document.head.appendChild(link);
   enhanceNavigation();enhanceHero();fixTrialCopy();
   if(document.body&&!window.__smvLuxuryNavObserver){
    window.__smvLuxuryNavObserver=new MutationObserver(function(){
