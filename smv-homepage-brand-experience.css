@@ -141,3 +141,174 @@ html body #mainNav.smv-lux-nav .smv-lux-nav-panel .smv-nav-feature span {
     overflow-wrap: anywhere !important;
   }
 }
+
+
+/* FINAL HOMEPAGE FINISH — shared mega-menu sizing + editorial page rhythm.
+   The global header stylesheet sets nav links to nowrap; explicitly reset it
+   inside every dropdown so feature copy can wrap within the panel. */
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 7px !important;
+  width: min(500px, calc(100vw - 28px)) !important;
+  min-width: 0 !important;
+  max-width: calc(100vw - 28px) !important;
+  padding: 14px !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 42px !important;
+  height: auto !important;
+  padding: 9px 11px !important;
+  box-sizing: border-box !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  text-align: center !important;
+  line-height: 1.35 !important;
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a.smv-nav-feature {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 3px 0 0 !important;
+  padding: 12px 14px !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-align: left !important;
+  overflow-wrap: anywhere !important;
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a.smv-nav-feature strong,
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a.smv-nav-feature span {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+  text-align: left !important;
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a.smv-nav-feature strong {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a.smv-nav-feature span {
+  font-size: 10.5px !important;
+  line-height: 1.5 !important;
+}
+@media (min-width: 821px) {
+  html body #mainNav.smv-lux-nav .smv-lux-nav-group:nth-of-type(2) > .smv-lux-nav-panel {
+    width: min(520px, calc(100vw - 28px)) !important;
+  }
+  html body #mainNav.smv-lux-nav .smv-lux-nav-group:last-of-type > .smv-lux-nav-panel {
+    left: auto !important;
+    right: 0 !important;
+  }
+}
+@media (max-width: 820px) {
+  html body #mainNav.smv-lux-nav .smv-lux-nav-panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 8px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    overflow: visible !important;
+  }
+  html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a {
+    min-height: 42px !important;
+    padding: 9px 8px !important;
+    white-space: normal !important;
+  }
+  html body #mainNav.smv-lux-nav .smv-lux-nav-panel > a.smv-nav-feature {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Homepage section system: consistent content width, spacing and responsive
+   card grids without changing section order, links, forms or data behaviour. */
+html body main > section:not(.hero) {
+  scroll-margin-top: 104px;
+}
+html body main > section:not(.hero) > .section-heading,
+html body main > section:not(.hero) > .smv-market-inner,
+html body main > section:not(.hero) > .home-venues-heading {
+  width: min(1280px, calc(100% - 40px));
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+html body #featuredVenues .home-venue-grid,
+html body .event-grid,
+html body .smv-celebration-grid,
+html body .smv-location-grid,
+html body .smv-inspiration-grid {
+  min-width: 0;
+}
+html body #featuredVenues .home-venue-card,
+html body .event-card,
+html body .smv-celebration-card,
+html body .smv-location-card,
+html body .smv-inspiration-card {
+  min-width: 0;
+  box-sizing: border-box;
+}
+html body .smv-market-heading h2,
+html body .home-venues-heading h2,
+html body .popular-heading h2,
+html body .about-section h2,
+html body .contact-section h2 {
+  text-wrap: balance;
+}
+html body .smv-market-heading p,
+html body .home-venues-heading p,
+html body .popular-heading p,
+html body .about-section p,
+html body .contact-section p {
+  line-height: 1.7;
+}
+html body .smv-home-launch-strip,
+html body .smv-popular-searches,
+html body .trust-strip {
+  box-sizing: border-box;
+}
+html body .smv-home-launch-inner {
+  width: min(1280px, calc(100% - 36px));
+  margin-inline: auto;
+}
+@media (max-width: 820px) {
+  html body main > section:not(.hero) > .section-heading,
+  html body main > section:not(.hero) > .smv-market-inner,
+  html body main > section:not(.hero) > .home-venues-heading {
+    width: min(100% - 28px, 1280px);
+  }
+}
+@media (max-width: 520px) {
+  html body main > section:not(.hero) > .section-heading,
+  html body main > section:not(.hero) > .smv-market-inner,
+  html body main > section:not(.hero) > .home-venues-heading {
+    width: calc(100% - 24px);
+  }
+  html body .smv-home-launch-inner {
+    width: calc(100% - 24px);
+  }
+  html body .smv-lux-nav-panel > a {
+    overflow-wrap: anywhere !important;
+  }
+}
