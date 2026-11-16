@@ -495,22 +495,22 @@ def page_html(row: dict[str, str], venues: list[dict]) -> str:
 <meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{esc(url)}">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="/favicon.png" type="image/png"><link rel="stylesheet" href="public-pages.css">
-<link rel="stylesheet" href="public-readability.css?v=20260922-1"><link rel="stylesheet" href="website-mobile-app-20261002.css?v=20261002-app-v1">
+<link rel="stylesheet" href="public-readability.css?v=20261116-organic-contrast-1"><link rel="stylesheet" href="website-mobile-app-20261002.css?v=20261002-app-v1">
 <script type="application/ld+json">{json.dumps(schema, ensure_ascii=False).replace("</", "<\\/")}</script>
 <style>
-.organic-page{{max-width:1120px;margin:auto;padding:18px 18px 44px;color:#203d36}}
+.organic-page{{max-width:1120px;margin:auto;padding:18px 18px 44px;color:#f3faf7}}
 .crumb{{font-size:13px;color:#64756e;margin:8px 0 18px}}.intro{{background:#f0f5f0;border-radius:18px;padding:clamp(20px,4vw,42px);margin-bottom:28px}}
 .eyebrow{{font-size:12px;letter-spacing:.12em;font-weight:800;color:#0d7567}}h1{{font-size:clamp(28px,5vw,46px);line-height:1.15;margin:8px 0 14px}}h2{{font-size:clamp(21px,3vw,28px);margin:0 0 12px}}
 .facts{{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}}.facts span{{background:#fff;border:1px solid #dce8df;border-radius:99px;padding:7px 12px;font-size:13px}}
 section{{margin:30px 0}}.venue-grid{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}}
-.venue-card{{background:white;border:1px solid #e0e8e2;border-radius:14px;padding:18px;min-width:0;overflow-wrap:anywhere}}
-.venue-card h3{{font-size:18px;margin:0 0 5px}}.venue-card p{{margin:6px 0}}.muted{{color:#5d716a;font-size:14px}}.venue-card a,.related a{{color:#075047;font-weight:750}}
-.checklist,.related,.enquiry{{padding:clamp(18px,3vw,30px);border-radius:16px;background:#f6f8f5}}.checklist li{{margin:8px 0}}.related li{{margin:8px 0}}
+.venue-card{{background:#fffefa!important;color:#24483e!important;border:1px solid #e0e8e2!important;border-radius:16px!important;padding:19px!important;min-width:0;min-height:0!important;height:auto!important;overflow-wrap:anywhere;box-shadow:0 12px 28px rgba(0,0,0,.13)!important}}
+.venue-card h3{{font-size:19px!important;line-height:1.3;color:#173f36!important;margin:0 0 8px}}.venue-card p{{margin:5px 0;color:#566e65!important;font-size:14px;line-height:1.55}}.muted{{color:#64786f!important;font-size:14px}}.venue-card a,.related a{{color:#087968!important;font-weight:850}}
+.checklist,.related,.enquiry{{padding:clamp(18px,3vw,30px);border:1px solid #e0e9e3;border-radius:18px;background:linear-gradient(145deg,#fffefa,#f2f7f3)!important;color:#294a40!important;box-shadow:0 12px 28px rgba(0,0,0,.12)}}.checklist h2,.related h2,.enquiry h2{{color:#173f36!important}}.checklist li,.related li,.enquiry>p{{color:#536b62!important}}.checklist li{{margin:8px 0}}.related li{{margin:8px 0}}
 .quick-enquiry-form{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}.field{{display:flex;flex-direction:column;gap:5px;min-width:0}}.field.full{{grid-column:1/-1}}
 .field label{{font-size:13px;font-weight:750}}.field input,.field select{{width:100%;min-height:46px;border:1px solid #cbd8d0;border-radius:9px;padding:10px;font:inherit;background:#fff}}
 .field button{{min-height:48px;border:0;border-radius:10px;background:#075047;color:white;font:inherit;font-weight:800;padding:12px 18px;cursor:pointer}}
-@media(max-width:700px){{.venue-grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
-@media(max-width:480px){{.venue-grid,.quick-enquiry-form{{grid-template-columns:1fr}}.field.full{{grid-column:auto}}.venue-card{{padding:14px}}}}
+@media(max-width:900px){{.venue-grid{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
+@media(max-width:600px){{.venue-grid,.quick-enquiry-form{{grid-template-columns:1fr}}.field.full{{grid-column:auto}}.venue-card{{padding:16px!important}}}}
 </style></head><body>
 <header class="site-header"><div class="header-inner"><a href="/#home" class="brand" aria-label="Select My Venue Home"><img src="logo.png" alt="Select My Venue" class="main-logo"></a><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button><nav id="mainNav"><a href="/#home">Home</a><a href="venues.html">Browse Venues</a><a href="wedding-venues-delhi-ncr.html">Wedding Venues</a><a href="list-your-venue.html">List Your Venue</a></nav></div></header>
 {body}
