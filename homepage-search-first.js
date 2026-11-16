@@ -44,7 +44,7 @@
   const box = document.createElement("section");
   box.className = "smv-home-search";
   box.innerHTML = '<h2>Find a Venue Worth Celebrating In</h2><p>Discover verified venues across Delhi &amp; Gurugram for weddings, parties and every special occasion.</p>' +
-    '<div class="smv-search-trust"><span>Free for customers &amp; families</span><span>No customer booking fees</span><span>No commission on bookings</span></div>' +
+    '<div class="smv-search-trust"><span>Free for customers &amp; families</span><span>No customer booking fees</span><span>No commission charged to venues</span></div>' +
     '<form id="smvHomepageSearchForm"><div class="smv-search-grid">' +
     '<div class="smv-search-field"><label>Occasion *</label><select name="eventType" required><option value="">Select occasion</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Anniversary</option><option>Corporate Event</option><option>Party</option><option>Other</option></select></div>' +
     '<div class="smv-search-field"><label>City *</label><select name="city" required><option value="">Select city</option><option>Delhi</option><option>Gurgaon</option></select></div>' +
@@ -60,7 +60,7 @@
     '<div class="smv-search-field"><label>Mobile number *</label><input name="mobile" type="tel" inputmode="numeric" maxlength="14" autocomplete="tel" placeholder="10-digit mobile number"></div></div>' +
     '<label class="smv-search-consent"><input type="checkbox" name="contactConsent" value="yes"><span>I agree that Select My Venue may contact me about this venue enquiry.</span></label></div>' +
     '<button class="smv-search-submit" type="submit">Find My Perfect Venue →</button><p id="smvHomepageSearchStatus" class="smv-search-status" role="status" aria-live="polite"></p></form>' +
-    '<div class="smv-search-owner"><div><strong>Own a venue? Get discovered by customers.</strong><p>Build your venue presence, receive relevant enquiries and manage opportunities with Partner CRM. No commission on bookings; partner listing plans are separate.</p></div><a href="list-your-venue.html">List Your Venue →</a></div>';
+    '<div class="smv-search-owner"><div><strong>Own a venue? Get discovered by customers.</strong><p>Build your venue presence, receive relevant enquiries and manage opportunities with Partner CRM. You keep your booking value—SMV charges no booking commission. Partner listing plans are separate.</p></div><a href="list-your-venue.html">List Your Venue →</a></div>';
   hero.after(box);
 
   const results = document.createElement("section");
