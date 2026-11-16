@@ -62,7 +62,7 @@
 @media(max-width:820px){
  .site-header .header-inner{min-height:66px}
  .smv-lux-nav{display:none;position:absolute;top:100%;left:0;right:0;max-height:calc(100dvh - 66px);overflow:auto;padding:14px 17px 22px;background:rgba(4,35,30,.99);border-top:1px solid rgba(213,180,108,.2);box-shadow:0 24px 38px rgba(0,0,0,.25)}
- #mainNav.open.smv-lux-nav{display:flex;align-items:stretch;flex-direction:column;gap:4px}#mainNav.open.smv-lux-nav .smv-lux-nav-panel{display:grid}
+ #mainNav.open.smv-lux-nav{display:flex;align-items:stretch;flex-direction:column;gap:4px}
  .smv-lux-nav-group{width:100%}
  .smv-lux-nav-trigger{width:100%;justify-content:space-between;padding:14px 7px;font-size:14px}
  .smv-lux-nav-panel{position:static;display:none;min-width:0;grid-template-columns:1fr 1fr;gap:3px;padding:7px;border-radius:12px;opacity:1;visibility:visible;transform:none;box-shadow:none}
