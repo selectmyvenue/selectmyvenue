@@ -110,3 +110,5 @@ html body.venue-profile-page .venue-profile-enquiry .venue-assist-points{
   html body.venue-profile-page .venue-profile-hero-actions #venueProfileWhatsapp,
   html body.venue-profile-page .venue-profile-hero-actions #venueShareBtn{flex:1 1 calc(50% - 5px)!important}
 }
+
+@import url("./smv-website-luxury-system.css?v=20261116-global-luxury-1");
