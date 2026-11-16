@@ -1,0 +1,66 @@
+/* SMV WEBSITE-WIDE LUXURY DESIGN SYSTEM
+   Shared visual language for public, discovery, SEO and venue-profile pages.
+   Presentation only: no form, navigation, tracking or CRM behavior is changed. */
+:root{
+  --smv-lux-forest:#062e28;
+  --smv-lux-forest-deep:#031b18;
+  --smv-lux-teal:#0d7668;
+  --smv-lux-mint:#20cdb5;
+  --smv-lux-gold:#d8b66b;
+  --smv-lux-gold-soft:#f2dfb3;
+  --smv-lux-ivory:#fbf8f1;
+  --smv-lux-paper:#fffdf8;
+  --smv-lux-ink:#173c34;
+  --smv-lux-muted:#667a73;
+  --smv-lux-line:rgba(17,78,65,.14);
+  --smv-lux-shadow:0 18px 48px rgba(5,35,29,.10);
+}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+body{color:var(--smv-lux-ink)}
+img{max-width:100%}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(216,182,107,.72)!important;outline-offset:3px!important
+}
+/* Consistent public-page surfaces without overriding page-specific hero layouts. */
+.public-page,.seo-city-page,.city-landing,.venue-directory-main,.partner-page,
+.venue-profile-page{--smv-brand-forest:var(--smv-lux-forest);--smv-brand-gold:var(--smv-lux-gold)}
+.seo-city-page,.city-landing,.venue-directory-main{color:var(--smv-lux-ink)}
+.seo-city-page h1,.seo-city-page h2,.city-landing h1,.city-landing h2,
+.venue-directory-main h1,.venue-directory-main h2{
+  color:var(--smv-lux-ink);letter-spacing:-.025em;text-wrap:balance
+}
+.seo-city-page p,.city-landing p,.venue-directory-main p{line-height:1.65}
+.seo-city-page .breadcrumbs,.city-landing .breadcrumbs{color:var(--smv-lux-muted)}
+/* Venue and discovery cards: refined edges, image consistency and restrained lift. */
+.venue-card,.home-venue-card,.venue-listing-card,.location-card,.intent-link-card,
+.seo-event-card,.seo-area-card,.partner-benefit-card{
+  border-color:rgba(216,182,107,.28);
+  box-shadow:var(--smv-lux-shadow)
+}
+.venue-card img,.home-venue-card img,.venue-listing-card img{
+  display:block;object-fit:cover
+}
+.venue-card,.home-venue-card,.venue-listing-card{overflow:hidden}
+.venue-card:hover,.home-venue-card:hover,.venue-listing-card:hover,
+.location-card:hover,.intent-link-card:hover{
+  border-color:rgba(216,182,107,.62);
+  box-shadow:0 22px 54px rgba(5,35,29,.16)
+}
+/* Public enquiry and partner forms retain their existing DOM and submit handlers. */
+.quick-enquiry-card,.quick-search-card,.contact-card,.partner-form-card,
+.form-card,.venue-profile-enquiry{
+  border-radius:18px
+}
+input,select,textarea{accent-color:var(--smv-lux-teal)}
+/* Shared footer and section rhythm. */
+.page-footer{border-top-color:rgba(216,182,107,.34)}
+.section-kicker,.section-eyebrow{letter-spacing:.12em}
+@media(max-width:760px){
+  html{scroll-padding-top:76px}
+  .venue-card,.home-venue-card,.venue-listing-card{border-radius:16px}
+  .seo-city-page h1,.city-landing h1,.venue-directory-main h1{line-height:1.12}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
