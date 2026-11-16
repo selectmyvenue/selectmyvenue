@@ -61,3 +61,4 @@
  }
  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
+/* Mobile nav regression: keep Browse Venues directly reachable and expand mega-panels on demand. */
