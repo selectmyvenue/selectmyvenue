@@ -375,3 +375,130 @@ html body .site-header .menu-toggle{
   html body .site-header .brand img,
   html body .site-header .main-logo{width:100%!important;max-width:220px!important}
 }
+
+
+/* SMV public discovery readability recovery — 2026-11-16 */
+html body.wedding-landing .page-main .guide-section,
+html body.wedding-landing .page-main .search-content-section,
+html body.wedding-landing .page-main .venue-results-column{color:#eef8f5!important}
+html body.wedding-landing .page-main .guide-section :is(h1,h2,h3,h4,strong,b,summary),
+html body.wedding-landing .page-main .search-content-section :is(h1,h2,h3,h4,strong,b,summary){
+ color:#f4fbf8!important;-webkit-text-fill-color:#f4fbf8!important;opacity:1!important;text-shadow:none!important
+}
+html body.wedding-landing .page-main .guide-section :is(p,li,dd,small),
+html body.wedding-landing .page-main .search-content-section :is(p,li,dd,small){
+ color:#bfd5cf!important;-webkit-text-fill-color:#bfd5cf!important;opacity:1!important
+}
+html body.wedding-landing .page-main a:not(.button):not(.seo-area-chip){color:#82e6d5!important;-webkit-text-fill-color:#82e6d5!important}
+html body.wedding-landing .page-main .venue-grid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;align-items:stretch!important;gap:22px!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card{
+ min-width:0!important;min-height:0!important;overflow:hidden!important;display:flex!important;flex-direction:column!important;
+ border:1px solid rgba(111,224,203,.30)!important;border-radius:19px!important;
+ background:linear-gradient(155deg,#103d35 0%,#082b26 58%,#06221f 100%)!important;
+ box-shadow:0 16px 38px rgba(0,0,0,.22)!important;opacity:1!important;filter:none!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-media{
+ position:relative!important;min-height:210px!important;height:210px!important;background:linear-gradient(135deg,#174d42,#0a302a)!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-media img{
+ display:block!important;width:100%!important;height:100%!important;min-height:210px!important;object-fit:cover!important;opacity:1!important;filter:none!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-body{
+ flex:1 1 auto!important;display:flex!important;flex-direction:column!important;gap:7px!important;padding:19px!important;
+ background:linear-gradient(180deg,#103b34,#082a25)!important;color:#eef8f5!important;opacity:1!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-body :is(h2,h3,h4){
+ margin:0 0 4px!important;color:#fff8e8!important;-webkit-text-fill-color:#fff8e8!important;font-size:20px!important;line-height:1.25!important;font-weight:850!important;opacity:1!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-body :is(p,span,small,li){
+ color:#c6ddd6!important;-webkit-text-fill-color:#c6ddd6!important;opacity:1!important;font-size:13px!important;line-height:1.55!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-body .venue-fact{
+ background:rgba(255,255,255,.07)!important;border:1px solid rgba(255,255,255,.12)!important;color:#fff4d7!important
+}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-body .venue-fact small{color:#e6ca82!important;font-size:10px!important;font-weight:900!important}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-body .venue-actions a.button-primary{color:#183d33!important;-webkit-text-fill-color:#183d33!important}
+html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-body .venue-actions a.button-secondary{color:#f7e8bd!important;-webkit-text-fill-color:#f7e8bd!important}
+html body.wedding-landing .page-main .search-content-section,html body.wedding-landing .page-main .guide-section{
+ background:linear-gradient(145deg,rgba(8,43,37,.94),rgba(4,27,24,.96))!important;border-color:rgba(111,224,203,.22)!important;border-radius:20px!important;box-shadow:0 16px 38px rgba(0,0,0,.16)!important
+}
+html body.wedding-landing .page-main .venue-card-media.has-image-error::after{
+ content:"Venue photo currently unavailable";position:absolute;inset:0;display:grid;place-items:center;color:#e3d3a5;font-size:12px;font-weight:800;letter-spacing:.03em;
+ background:radial-gradient(circle at 50% 40%,rgba(32,104,88,.55),transparent 48%),linear-gradient(135deg,#17483e,#0a2b26)
+}
+@media(max-width:1100px){html body.wedding-landing .page-main .venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:680px){
+ html body.wedding-landing .page-main .venue-grid{grid-template-columns:1fr!important;gap:16px!important}
+ html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-media{height:200px!important;min-height:200px!important}
+ html body.wedding-landing .page-main .venue-grid .venue-card .venue-card-media img{min-height:200px!important}
+}
+
+
+/* Generated organic venue-search pages: restore intentional light-card contrast. */
+html body .organic-page{color:#f3faf7!important}
+html body .organic-page .crumb{color:#b2c8c1!important}
+html body .organic-page .crumb a{color:#d9e9e3!important}
+html body .organic-page .intro{
+ background:linear-gradient(145deg,#fffdf7,#f2f6f0)!important;
+ border:1px solid #e3d6b8!important;
+ box-shadow:0 18px 42px rgba(0,0,0,.16)!important;
+ color:#1d4037!important;
+}
+html body .organic-page .intro :is(h1,h2,h3,strong,b){color:#173f36!important;-webkit-text-fill-color:#173f36!important}
+html body .organic-page .intro p:not(.eyebrow){color:#526a62!important;-webkit-text-fill-color:#526a62!important}
+html body .organic-page .intro .eyebrow{color:#087e6e!important}
+html body .organic-page .facts span{background:#fff!important;border:1px solid #dce8df!important;color:#31574c!important}
+html body .organic-page .intro-actions a{color:#075d50!important;-webkit-text-fill-color:#075d50!important}
+html body .organic-page>section:not(.venue-options){
+ color:#f3faf7!important;background:transparent!important
+}
+html body .organic-page>section:not(.venue-options)>h2,
+html body .organic-page>section:not(.venue-options)>h3{color:#fff8e8!important;-webkit-text-fill-color:#fff8e8!important}
+html body .organic-page>section:not(.venue-options)>p,
+html body .organic-page>section:not(.venue-options) li{color:#c4d8d1!important;-webkit-text-fill-color:#c4d8d1!important}
+html body .organic-page .venue-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:16px!important;align-items:stretch!important}
+html body .organic-page .venue-grid .venue-card{
+ display:flex!important;flex-direction:column!important;justify-content:flex-start!important;
+ min-height:0!important;height:auto!important;padding:19px!important;margin:0!important;
+ border:1px solid #e2e9e2!important;border-radius:16px!important;
+ background:linear-gradient(145deg,#fffefa,#f3f7f3)!important;
+ color:#24483e!important;box-shadow:0 12px 28px rgba(0,0,0,.13)!important;
+ opacity:1!important;filter:none!important;transform:none!important;
+}
+html body .organic-page .venue-grid .venue-card h3{
+ margin:0 0 8px!important;color:#173f36!important;-webkit-text-fill-color:#173f36!important;
+ font-size:19px!important;line-height:1.3!important;font-weight:850!important
+}
+html body .organic-page .venue-grid .venue-card p{
+ margin:5px 0!important;color:#566e65!important;-webkit-text-fill-color:#566e65!important;
+ font-size:14px!important;line-height:1.55!important;opacity:1!important
+}
+html body .organic-page .venue-grid .venue-card p.muted{color:#64786f!important;-webkit-text-fill-color:#64786f!important}
+html body .organic-page .venue-grid .venue-card a{
+ display:inline-flex!important;align-items:center!important;margin-top:10px!important;
+ color:#087968!important;-webkit-text-fill-color:#087968!important;font-weight:850!important;
+ text-decoration:underline!important;text-underline-offset:3px!important
+}
+html body .organic-page .checklist,
+html body .organic-page .related,
+html body .organic-page .enquiry{
+ padding:clamp(18px,3vw,30px)!important;border:1px solid #e0e9e3!important;border-radius:18px!important;
+ background:linear-gradient(145deg,#fffefa,#f2f7f3)!important;color:#294a40!important;
+ box-shadow:0 12px 28px rgba(0,0,0,.12)!important
+}
+html body .organic-page .checklist :is(h2,h3),
+html body .organic-page .related :is(h2,h3),
+html body .organic-page .enquiry :is(h2,h3){color:#173f36!important;-webkit-text-fill-color:#173f36!important}
+html body .organic-page .checklist :is(p,li),
+html body .organic-page .related :is(p,li),
+html body .organic-page .enquiry>p{color:#536b62!important;-webkit-text-fill-color:#536b62!important}
+html body .organic-page .related a{color:#087968!important;-webkit-text-fill-color:#087968!important}
+html body .organic-page .field label{color:#36564c!important}
+html body .organic-page .field input,
+html body .organic-page .field select{background:#fff!important;color:#193d34!important;border:1px solid #cbd8d0!important}
+html body .organic-page .field button{background:linear-gradient(135deg,#087c6f,#056358)!important;color:#fff!important}
+html body .organic-page footer{color:#c0d4ce!important}
+@media(max-width:900px){html body .organic-page .venue-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:600px){html body .organic-page .venue-grid{grid-template-columns:1fr!important;gap:13px!important}html body .organic-page .venue-grid .venue-card{padding:16px!important}}

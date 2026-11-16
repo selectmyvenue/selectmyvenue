@@ -19,12 +19,32 @@
     '<a class="smv-nav-feature" href="list-your-venue.html"><strong>Grow your venue enquiries</strong><span>Start with the 7-day complimentary listing trial.</span></a></div></div>'+
    '<a class="smv-nav-cta" href="index.html#enquiry">Find My Venue <span aria-hidden="true">→</span></a>';
   nav.dataset.luxuryNav="1";
+  function closeMenus(except){
+   nav.querySelectorAll(".smv-lux-nav-group").forEach(function(group){
+    if(group!==except){group.classList.remove("is-open");var button=group.querySelector(".smv-lux-nav-trigger");if(button)button.setAttribute("aria-expanded","false");}
+   });
+  }
   nav.addEventListener("click",function(e){
-   var trigger=e.target.closest(".smv-lux-nav-trigger");if(!trigger)return;
-   e.preventDefault();e.stopPropagation();
-   var group=trigger.closest(".smv-lux-nav-group"),open=group.classList.toggle("is-open");
-   trigger.setAttribute("aria-expanded",open?"true":"false");
-   nav.querySelectorAll(".smv-lux-nav-group").forEach(function(other){if(other!==group){other.classList.remove("is-open");var b=other.querySelector(".smv-lux-nav-trigger");if(b)b.setAttribute("aria-expanded","false");}});
+   var trigger=e.target.closest(".smv-lux-nav-trigger");
+   if(trigger){
+    e.preventDefault();e.stopPropagation();
+    var group=trigger.closest(".smv-lux-nav-group"),open=!group.classList.contains("is-open");
+    closeMenus(group);
+    group.classList.toggle("is-open",open);
+    trigger.setAttribute("aria-expanded",open?"true":"false");
+    return;
+   }
+   if(e.target.closest(".smv-lux-nav-panel a"))closeMenus(null);
+  });
+  document.addEventListener("click",function(e){
+   if(!nav.contains(e.target))closeMenus(null);
+  });
+  document.addEventListener("keydown",function(e){
+   if(e.key==="Escape"){
+    var active=nav.querySelector(".smv-lux-nav-group.is-open");
+    closeMenus(null);
+    if(active){var button=active.querySelector(".smv-lux-nav-trigger");if(button)button.focus();}
+   }
   });
  }
  function enhanceHero(){
@@ -49,7 +69,7 @@
   });
  }
  function init(){
-  var link=make("link");link.id="smvImmersiveLuxuryCss";link.rel="stylesheet";link.href="smv-immersive-luxury.css?v=20261116-2";document.head.appendChild(link);
+  var link=make("link");link.id="smvImmersiveLuxuryCss";link.rel="stylesheet";link.href="smv-immersive-luxury.css?v=20261116-3";document.head.appendChild(link);
   enhanceNavigation();enhanceHero();fixTrialCopy();
   if(document.body&&!window.__smvLuxuryNavObserver){
    window.__smvLuxuryNavObserver=new MutationObserver(function(){
