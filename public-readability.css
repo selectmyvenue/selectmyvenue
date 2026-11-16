@@ -378,16 +378,13 @@ html body .site-header .menu-toggle{
 
 
 /* SMV public discovery readability recovery — 2026-11-16 */
-html body.wedding-landing .page-main > section:not(.search-landing-hero):not(.quick-enquiry-card),
 html body.wedding-landing .page-main .guide-section,
 html body.wedding-landing .page-main .search-content-section,
 html body.wedding-landing .page-main .venue-results-column{color:#eef8f5!important}
-html body.wedding-landing .page-main > section:not(.search-landing-hero):not(.quick-enquiry-card) :is(h1,h2,h3,h4,strong,b,summary),
 html body.wedding-landing .page-main .guide-section :is(h1,h2,h3,h4,strong,b,summary),
 html body.wedding-landing .page-main .search-content-section :is(h1,h2,h3,h4,strong,b,summary){
  color:#f4fbf8!important;-webkit-text-fill-color:#f4fbf8!important;opacity:1!important;text-shadow:none!important
 }
-html body.wedding-landing .page-main > section:not(.search-landing-hero):not(.quick-enquiry-card) :is(p,li,dd,small),
 html body.wedding-landing .page-main .guide-section :is(p,li,dd,small),
 html body.wedding-landing .page-main .search-content-section :is(p,li,dd,small){
  color:#bfd5cf!important;-webkit-text-fill-color:#bfd5cf!important;opacity:1!important
