@@ -102,3 +102,42 @@ html{scroll-behavior:smooth}
  .enquiry-section .form-card{padding:18px 14px!important}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+
+/* 2026-11-16 NAV FIX: dropdowns open on deliberate click, not pointer hover.
+   Keep keyboard focus support and the existing JS .is-open click state. */
+@media (min-width: 821px) and (hover: hover) and (pointer: fine) {
+  html body #mainNav.smv-lux-nav .smv-lux-nav-group:hover:not(.is-open) > .smv-lux-nav-panel {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(7px) !important;
+    pointer-events: none !important;
+  }
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel {
+  box-sizing: border-box !important;
+  background: #fffdf7 !important;
+  background-image: none !important;
+  isolation: isolate !important;
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel .smv-nav-feature {
+  box-sizing: border-box !important;
+  background: #f4ead2 !important;
+  background-image: none !important;
+  color: #173f34 !important;
+  opacity: 1 !important;
+}
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel .smv-nav-feature strong,
+html body #mainNav.smv-lux-nav .smv-lux-nav-panel .smv-nav-feature span {
+  color: #173f34 !important;
+}
+@media (min-width: 821px) {
+  html body #mainNav.smv-lux-nav .smv-lux-nav-panel {
+    max-width: min(470px, calc(100vw - 24px)) !important;
+    overflow: hidden !important;
+  }
+  html body #mainNav.smv-lux-nav .smv-lux-nav-panel a {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+}
