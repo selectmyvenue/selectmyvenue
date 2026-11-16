@@ -1,7 +1,7 @@
 /* Select My Venue — canonical public header
    Loaded last on every public page so page-specific CSS cannot alter it. */
 
-:root{--smv-header-bg:#011411;--smv-header-line:rgba(48,211,190,.14);--smv-header-text:#c6d9d6;--smv-header-accent:#19d8bd}
+:root{--smv-header-bg:#062e28;--smv-header-line:rgba(216,182,107,.30);--smv-header-text:#e3eee9;--smv-header-accent:#d8b66b}
 
 html body .site-header{
   position:sticky!important;
@@ -14,7 +14,7 @@ html body .site-header{
   padding:0!important;
   display:block!important;
   overflow:visible!important;
-  background:var(--smv-header-bg)!important;
+  background:linear-gradient(105deg,#073a32 0%,#062e28 54%,#031b18 100%)!important;
   border:0!important;
   border-bottom:1px solid var(--smv-header-line)!important;
   box-shadow:0 8px 24px rgba(0,0,0,.14)!important;
