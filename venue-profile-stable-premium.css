@@ -666,3 +666,17 @@ body.venue-profile-page .smv-profile-phone-pill:hover{
 @media(max-width:700px){
   body.venue-profile-page .smv-profile-phone-pill{font-size:12px!important;padding:9px 13px!important}
 }
+
+/* 2026-11-18 hotfix: keep the SMV profile phone pill visible.
+   A legacy carousel stylesheet hides all tel: anchors; this specific override
+   restores only the dedicated contact pill beneath the venue location. */
+html body.venue-profile-page a.smv-profile-phone-pill[href^="tel:"]{
+  display:inline-flex!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:2!important;
+  align-items:center!important;
+  width:max-content!important;
+  max-width:100%!important;
+}
