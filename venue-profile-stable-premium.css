@@ -639,3 +639,30 @@ body.venue-profile-page #smvBookingDetails dl>div{
     color:#284d46!important;
   }
 }
+
+/* SMV contact pill beneath every venue name, matching the reference call treatment */
+body.venue-profile-page .smv-profile-phone-pill{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  width:max-content!important;
+  max-width:100%!important;
+  margin:8px 0 0!important;
+  padding:10px 15px!important;
+  border:0!important;
+  border-radius:12px!important;
+  background:#079b70!important;
+  color:#fff!important;
+  font-size:13px!important;
+  line-height:1.2!important;
+  font-weight:800!important;
+  text-decoration:none!important;
+  box-shadow:0 5px 14px rgba(0,125,88,.16)!important;
+}
+body.venue-profile-page .smv-profile-phone-pill:hover{
+  background:#07865f!important;
+  color:#fff!important;
+}
+@media(max-width:700px){
+  body.venue-profile-page .smv-profile-phone-pill{font-size:12px!important;padding:9px 13px!important}
+}
