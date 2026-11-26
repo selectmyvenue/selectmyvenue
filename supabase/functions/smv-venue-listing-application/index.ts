@@ -105,7 +105,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const trialStartedAt = new Date();
-  const trialExpiresAt = new Date(trialStartedAt.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const trialExpiresAt = new Date(trialStartedAt.getTime() + 3 * 24 * 60 * 60 * 1000);
   const { data, error } = await db.from("venues").insert({
     venue_name: venueName,
     contact_person: contactPerson,
