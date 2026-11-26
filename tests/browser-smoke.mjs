@@ -32,7 +32,7 @@ async function testQuickEnquiryMock() {
         <input name="mobile" value="+91 98765 43210">
         <select name="occasion"><option value="Wedding" selected>Wedding</option></select>
         <select name="location"><option value="Delhi" selected>Delhi</option></select>
-        <input name="event_date" type="date">
+        <input name="event_date" type="date" required>
         <input name="guests" type="number" value="250">
         <input name="budget_per_person" type="number" value="1500">
         <textarea name="requirements">Mock-only QA. Do not create a real enquiry.</textarea>
@@ -57,6 +57,7 @@ async function testQuickEnquiryMock() {
     });
     await page.addScriptTag({ path: 'quick-enquiry.js' });
     await page.evaluate(() => document.dispatchEvent(new Event('DOMContentLoaded')));
+    assert.equal(await page.locator('form[data-source="Website - Mock E2E"] [name="event_date"]').getAttribute('required'), null, 'event date must not be required');
     await page.locator('form[data-source="Website - Mock E2E"] [name="event_date_not_decided"]').check();
     await page.locator('form[data-source="Website - Mock E2E"] button[type="submit"]').click();
     await page.waitForFunction(() => document.querySelector('[data-quick-message]')?.classList.contains('success'));
