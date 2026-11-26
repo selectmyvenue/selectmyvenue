@@ -2574,3 +2574,7 @@ footer .footer-final-logo img {
 .smv-enquiry-more-content .field{min-width:0}
 .smv-enquiry-more-content .planner-summary-box{grid-column:1/-1}
 @media(max-width:700px){.smv-enquiry-more-content{grid-template-columns:1fr}}
+
+#customerEnquiryForm .form-grid.four,#customerEnquiryForm .form-grid.five{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:900px){#customerEnquiryForm .form-grid.four,#customerEnquiryForm .form-grid.five{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){#customerEnquiryForm .form-grid.four,#customerEnquiryForm .form-grid.five{grid-template-columns:1fr}}
