@@ -180,23 +180,32 @@ try {
           await menuButton.click();
           await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU CLOSE: ' + error.message); });
           if (path === '/') {
-            // Regression: the active marketplace filter panel must open from its own
-            // mobile toggle, despite the redesign stylesheet's display:none!important.
-            // This test never submits an enquiry or writes to Supabase.
-            await page.waitForSelector('#featuredVenues .smv-home-market-filter-toggle', { state: 'visible', timeout: 15000 });
-            const filterToggle = page.locator('#featuredVenues .smv-home-market-filter-toggle');
-            const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
-            await filterToggle.click();
+            // The live venue network may legitimately return zero eligible public listings.
+            // In that case the loader shows its empty state and does not render marketplace filters.
+            // When cards exist, exercise the mobile filter toggle and panel end-to-end.
             await page.waitForFunction(() => {
-              const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
-              return !!panel && panel.classList.contains('open') && getComputedStyle(panel).display !== 'none' && panel.getBoundingClientRect().height > 0;
-            }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER OPEN: ' + error.message); });
-            assert(await page.locator('#featuredVenues .smv-filter-choice').first().isVisible(), 'current marketplace filter choices must be visible after tapping Filter Venues');
-            await filterToggle.click();
-            await page.waitForFunction(() => {
-              const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
-              return !!panel && !panel.classList.contains('open') && getComputedStyle(panel).display === 'none';
-            }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER CLOSE: ' + error.message); });
+              const grid = document.getElementById('homeVenueGrid');
+              return !!grid && (grid.querySelector('.home-venue-card') || grid.querySelector('.smv-venue-load-note'));
+            }, undefined, { timeout: 20000 });
+            const hasVenueCards = await page.locator('#homeVenueGrid .home-venue-card').count() > 0;
+            if (hasVenueCards) {
+              await page.waitForSelector('#featuredVenues .smv-home-market-filter-toggle', { state: 'visible', timeout: 15000 });
+              const filterToggle = page.locator('#featuredVenues .smv-home-market-filter-toggle');
+              const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
+              await filterToggle.click();
+              await page.waitForFunction(() => {
+                const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
+                return !!panel && panel.classList.contains('open') && getComputedStyle(panel).display !== 'none' && panel.getBoundingClientRect().height > 0;
+              }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER OPEN: ' + error.message); });
+              assert(await page.locator('#featuredVenues .smv-filter-choice').first().isVisible(), 'current marketplace filter choices must be visible after tapping Filter Venues');
+              await filterToggle.click();
+              await page.waitForFunction(() => {
+                const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
+                return !!panel && !panel.classList.contains('open') && getComputedStyle(panel).display === 'none';
+              }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER CLOSE: ' + error.message); });
+            } else {
+              assert(await page.locator('#homeVenueGrid .smv-venue-load-note').isVisible(), 'homepage should show a clear venue loading/empty state when no public listings are eligible');
+            }
 
             await page.waitForSelector('.smv-home-enquiry-edge', { state: 'visible', timeout: 10000 });
             const edge = page.locator('.smv-home-enquiry-edge');
