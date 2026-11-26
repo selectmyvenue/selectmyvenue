@@ -744,7 +744,24 @@
     }
   }
 
+  function makeEventDatesOptional(){
+    document.querySelectorAll('input[name="event_date"],#customerEventDate,#smvPopupDate').forEach(function(input){
+      input.required=false;
+      input.removeAttribute("required");
+      const parent=input.parentElement;
+      const label=(input.id&&document.querySelector('label[for="'+input.id+'"]'))||(parent&&parent.querySelector("label"));
+      if(label)label.textContent=label.textContent.replace(/\\s*\\*/g,"").replace(/EVENT DATE/i,"EVENT DATE (OPTIONAL)");
+      if(parent&&!parent.querySelector(".smv-date-not-decided")){
+        const option=document.createElement("label");
+        option.className="smv-date-not-decided";
+        option.innerHTML='<input type="checkbox" name="event_date_not_decided"> Date not decided';
+        input.insertAdjacentElement("afterend",option);
+      }
+    });
+  }
+
   function initQuickEnquiry() {
+    makeEventDatesOptional();
     // Bind enquiry submission before unrelated drawer/edge UI setup. If that UI
     // throws during initialization, the SEO forms must still remain usable.
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {
