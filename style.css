@@ -2567,3 +2567,10 @@ footer .footer-final-logo img {
 .smv-venue-load-note{padding:22px;border:1px solid rgba(243,210,123,.25);border-radius:14px;background:rgba(5,43,37,.8);color:#f5eee0}
 .smv-venue-load-note button{min-height:42px;margin:8px 10px 0 0;padding:0 16px;border:1px solid #d8b45f;border-radius:10px;background:#d8b45f;color:#173a32;font:inherit;font-weight:800;cursor:pointer}
 .smv-venue-load-note a{color:#f3d27b}
+
+.smv-enquiry-more{margin:16px 0;padding:12px 14px;border:1px solid rgba(216,180,95,.28);border-radius:12px;background:rgba(4,36,31,.34)}
+.smv-enquiry-more summary{cursor:pointer;color:#e8cb83;font-weight:800;font-size:12px;list-style-position:inside}
+.smv-enquiry-more-content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.smv-enquiry-more-content .field{min-width:0}
+.smv-enquiry-more-content .planner-summary-box{grid-column:1/-1}
+@media(max-width:700px){.smv-enquiry-more-content{grid-template-columns:1fr}}
