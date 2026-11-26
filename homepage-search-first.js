@@ -44,7 +44,7 @@
   const box = document.createElement("section");
   box.className = "smv-home-search";
   box.innerHTML = '<h2>Find a Venue Worth Celebrating In</h2><p>Discover verified venues across Delhi &amp; Gurugram for weddings, parties and every special occasion.</p>' +
-    '<div class="smv-search-trust"><span>Free for customers &amp; families</span><span>No customer booking fees</span><span>No commission charged to venues</span></div>' +
+    '<div class="smv-search-trust"><span>Free for customers &amp; families</span><span>No customer booking fees</span><span>No booking commission for venue partners</span></div>' +
     '<form id="smvHomepageSearchForm"><div class="smv-search-grid">' +
     '<div class="smv-search-field"><label>Occasion *</label><select name="eventType" required><option value="">Select occasion</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Anniversary</option><option>Corporate Event</option><option>Party</option><option>Other</option></select></div>' +
     '<div class="smv-search-field"><label>City *</label><select name="city" required><option value="">Select city</option><option>Delhi</option><option>Gurgaon</option></select></div>' +
