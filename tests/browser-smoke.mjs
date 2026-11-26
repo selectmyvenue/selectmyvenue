@@ -166,7 +166,7 @@ try {
           assert.equal(await page.locator('#smvHomepageSearchForm').count(), 1, 'homepage should show the restored short venue search form');
           assert.equal(await page.locator('#smvHeroFinder').count(), 0, 'homepage should not render a competing legacy hero search form');
           assert(await page.locator('#smvHomepageSearchForm').isVisible(), 'hero venue search form should be visible');
-          assert.equal(await page.locator('#smvHomepageSearchForm .smv-search-grid > .smv-search-field:not([aria-hidden="true"])').count(), 6, 'homepage search should keep six core fields');
+          assert.equal(await page.locator('#smvHomepageSearchForm > .smv-search-grid > .smv-search-field:not([aria-hidden="true"])').count(), 6, 'homepage search should keep six core fields');
           assert.equal(await page.locator('#smvHomepageSearchForm .smv-search-advanced .smv-search-field').count(), 2, 'venue type and food should remain optional advanced filters');
           assert.equal(await page.locator('#smvHomepageSearchForm .smv-search-advanced').evaluate(el => el.open), false, 'advanced filters should start collapsed');
           assert.equal(await page.locator('#customerEventDate').getAttribute('required'), null, 'homepage event date must be optional');
