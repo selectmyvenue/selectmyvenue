@@ -73,6 +73,7 @@
       #featuredVenues .smv-home-market-search,#featuredVenues .smv-home-filter-toggle,#featuredVenues .smv-home-market-filter-toggle{display:none!important}#featuredVenues .home-venue-card[hidden]{display:none!important}
       @media(max-width:980px){#featuredVenues .smv-home-filter-layout{grid-template-columns:1fr!important}#featuredVenues .smv-home-filter-panel{position:static!important}#featuredVenues .smv-filter-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
       @media(max-width:620px){#featuredVenues .smv-filter-list{grid-template-columns:1fr}#featuredVenues .smv-filter-choice{font-size:12px}}
+      @media(max-width:620px){#featuredVenues .smv-home-market-filter-toggle{display:flex!important;align-items:center;justify-content:center;width:100%;min-height:44px;margin:0 0 12px;padding:10px 14px;border:1px solid rgba(243,210,123,.38);border-radius:12px;background:linear-gradient(135deg,#0d5148,#07352f);color:#f4d986;font:inherit;font-weight:900;cursor:pointer}#featuredVenues .smv-home-filter-panel{display:none!important}#featuredVenues .smv-home-filter-panel.open{display:block!important;margin:0 0 14px}}
     `;document.head.appendChild(s)
   }
 
