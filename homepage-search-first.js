@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   const hero = document.querySelector("main .hero");
-  if (!hero || document.getElementById("smvHomepageSearchForm") || document.getElementById("customerEnquiryForm")) return;
+  if (!hero || document.getElementById("smvHomepageSearchForm")) return;
 
   const style = document.createElement("style");
   style.textContent = `
@@ -18,7 +18,7 @@
     .smv-search-field label{display:block;margin-bottom:7px;color:#36534a;font-size:10px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
     .smv-search-field input,.smv-search-field select{width:100%;min-height:49px;box-sizing:border-box;padding:0 13px;border:1px solid #d8dfd8;border-radius:11px;background:#fff;color:#193d34;font:inherit;font-size:13px;outline:none;transition:border-color .18s,box-shadow .18s}
     .smv-search-field input:focus,.smv-search-field select:focus{border-color:#b89549;box-shadow:0 0 0 3px rgba(184,149,73,.15)}
-    .smv-search-field input::placeholder{color:#8b9992}
+    .smv-search-field input::placeholder{color:#8b9992}\n    .smv-search-advanced{grid-column:1/-1;margin-top:2px;padding:11px 13px;border:1px solid #e4e8df;border-radius:12px;background:#fffdf8}.smv-search-advanced summary{color:#52685f;font-size:11px;font-weight:900;cursor:pointer}.smv-search-advanced .smv-search-grid{margin-top:12px}.smv-search-advanced .smv-search-field{max-width:360px}
     .smv-search-submit{display:block;width:100%;min-height:54px;margin-top:19px;border:1px solid rgba(145,107,28,.35);border-radius:12px;background:linear-gradient(110deg,#e9c76f,#c99a32);color:#17382f;font-size:17px;font-weight:950;letter-spacing:.005em;box-shadow:0 9px 22px rgba(153,112,30,.2);cursor:pointer;transition:transform .18s,filter .18s,box-shadow .18s}
     .smv-search-submit:hover{transform:translateY(-2px);filter:brightness(1.035);box-shadow:0 13px 26px rgba(153,112,30,.25)}
     .smv-search-contact{margin-top:16px;padding:16px;border:1px solid #e4d7b7;border-radius:14px;background:#fffdf7}.smv-search-contact[hidden]{display:none}
@@ -52,8 +52,7 @@
     '<div class="smv-search-field"><label>Event date (optional)</label><input type="date" name="eventDate"><label class="smv-date-flexible"><input type="checkbox" name="eventDateNotDecided" value="yes"> Date not decided</label></div>' +
     '<div class="smv-search-field"><label>Guests</label><input type="number" min="1" max="100000" name="guests" placeholder="e.g. 250"></div>' +
     '<div class="smv-search-field"><label>Max budget / person (₹)</label><input type="number" min="0" max="10000000" name="budgetPerPerson" placeholder="e.g. 1500"></div>' +
-    '<div class="smv-search-field"><label>Venue type</label><select name="venueType"><option value="">Any type</option><option>Banquet Hall</option><option>Hotel</option><option>Restaurant</option><option>Farmhouse</option><option>Resort</option></select></div>' +
-    '<div class="smv-search-field"><label>Food preference</label><select name="food"><option value="">Any</option><option>Veg</option><option>Non-Veg</option><option>Both</option><option>Jain</option></select></div>' +
+    '<details class="smv-search-advanced"><summary>More filters (optional) · Venue type &amp; food preference</summary><div class="smv-search-grid"><div class="smv-search-field"><label>Venue type</label><select name="venueType"><option value="">Any type</option><option>Banquet Hall</option><option>Hotel</option><option>Restaurant</option><option>Farmhouse</option><option>Resort</option></select></div><div class="smv-search-field"><label>Food preference</label><select name="food"><option value="">Any</option><option>Veg</option><option>Non-Veg</option><option>Both</option><option>Jain</option></select></div></div></details>' +
     '<div class="smv-search-field" style="position:absolute;left:-10000px" aria-hidden="true"><label>Website</label><input name="website" tabindex="-1" autocomplete="off"></div></div>' +
     '<div id="smvSearchContact" class="smv-search-contact" hidden><h3>Where should we send your venue matches?</h3><p>Please share your contact details so our team can help with your requirements.</p><div class="smv-search-contact-grid">' +
     '<div class="smv-search-field"><label>Your name *</label><input name="customerName" maxlength="100" autocomplete="name" placeholder="Enter your full name"></div>' +
