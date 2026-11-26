@@ -16,7 +16,7 @@
    '<a href="index.html#featuredVenues">Featured Venues</a>'+
    '<div class="smv-lux-nav-group"><button class="smv-lux-nav-trigger smv-nav-more" type="button" aria-expanded="false">For Venue Owners</button><div class="smv-lux-nav-panel">'+
     '<a href="list-your-venue.html">List Your Venue</a><a href="https://partner.selectmyvenue.com/">Partner Login</a><a href="index.html#contact">Talk to SMV</a>'+
-    '<a class="smv-nav-feature" href="list-your-venue.html"><strong>Grow your venue enquiries</strong><span>Start with the 7-day complimentary listing trial.</span></a></div></div>'+
+    '<a class="smv-nav-feature" href="list-your-venue.html"><strong>Grow your venue enquiries</strong><span>Start with the 3-Day Free Trial.</span></a></div></div>'+
    '<a class="smv-nav-cta" href="index.html#enquiry">Find My Venue <span aria-hidden="true">→</span></a>';
   nav.dataset.luxuryNav="1";
   function closeMenus(except){
@@ -61,11 +61,12 @@
   orbit.replaceWith(visual);
  }
  function fixTrialCopy(){
-  document.querySelectorAll(".smv-home-launch-strip b,.smv-launch-offer b").forEach(function(el){
-   if(/10[\s-]*day/i.test(el.textContent))el.textContent="7-Day Complimentary Trial";
-  });
-  document.querySelectorAll(".smv-home-launch-strip,.smv-launch-offer").forEach(function(el){
-   el.querySelectorAll("*").forEach(function(node){if(node.children.length===0&&/10[\s-]*day/i.test(node.textContent))node.textContent=node.textContent.replace(/10[\s-]*day/ig,"7-day");});
+  document.querySelectorAll(".smv-home-launch-strip,.smv-launch-offer,.smv-lux-nav-panel").forEach(function(root){
+   root.querySelectorAll("*").forEach(function(node){
+    if(node.children.length===0 && /\b(?:7|10)[\s-]*day\b/i.test(node.textContent||"")){
+     node.textContent=node.textContent.replace(/\b(?:7|10)[\s-]*day(?:s)?\b/ig,"3-Day");
+    }
+   });
   });
  }
  function init(){
