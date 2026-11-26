@@ -47,6 +47,33 @@
    }
   });
  }
+ function compactMainEnquiry(){
+  var form=document.getElementById("customerEnquiryForm");
+  if(!form||form.dataset.smvCompactForm==="1")return;
+  var optional=[];
+  ["customerEmail","customerBudget","customerFood","customerRequirements"].forEach(function(id){
+   var input=document.getElementById(id),field=input&&input.closest(".field");
+   if(field)optional.push(field);
+  });
+  var planner=form.querySelector(".planner-summary-box");
+  if(!optional.length&&!planner)return;
+  var details=document.createElement("details");
+  details.className="smv-enquiry-more";
+  details.innerHTML="<summary>Add optional details (budget, food, email or AI Planner)</summary><div class='smv-enquiry-more-content'></div>";
+  var content=details.querySelector(".smv-enquiry-more-content");
+  optional.forEach(function(field){content.appendChild(field);});
+  if(planner)content.appendChild(planner);
+  var submitRow=form.querySelector(".requirements-row");
+  if(submitRow){
+   var requirementField=submitRow.querySelector("#customerRequirements")?.closest(".field");
+   if(requirementField)content.appendChild(requirementField);
+   submitRow.style.gridTemplateColumns="1fr";
+  }
+  var eventGrid=form.querySelector(".form-grid.five");
+  if(eventGrid&&eventGrid.nextSibling)form.insertBefore(details,eventGrid.nextSibling);
+  else form.appendChild(details);
+  form.dataset.smvCompactForm="1";
+ }
  function enhanceHero(){
   var hero=document.querySelector(".hero"),inner=hero&&hero.querySelector(".hero-inner"),orbit=hero&&hero.querySelector(".hero-orbit");
   if(!hero||!inner||!orbit||hero.querySelector(".smv-hero-3d"))return;
@@ -71,7 +98,7 @@
  }
  function init(){
   var link=make("link");link.id="smvImmersiveLuxuryCss";link.rel="stylesheet";link.href="smv-immersive-luxury.css?v=20261116-4";if(!document.getElementById("smvImmersiveLuxuryCss"))document.head.appendChild(link);
-  enhanceNavigation();enhanceHero();fixTrialCopy();
+  enhanceNavigation();enhanceHero();compactMainEnquiry();fixTrialCopy();
   if(document.body&&!window.__smvLuxuryNavObserver){
    window.__smvLuxuryNavObserver=new MutationObserver(function(){
     var nav=document.getElementById("mainNav");
