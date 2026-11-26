@@ -2556,3 +2556,14 @@ footer .footer-final-logo img {
     font-size: clamp(10px, .86vw, 12px);
   }
 }
+
+
+/* Consolidated homepage discovery panel and illustrative match labels */
+#how.smv-discovery-overview{grid-template-columns:minmax(0,1fr)!important}
+#how.smv-discovery-overview .smv-discovery-card{grid-column:1/-1;width:min(100%,1050px);margin-inline:auto}
+.smv-example-only{display:inline-block;margin-left:5px;padding:3px 6px;border:1px solid rgba(243,210,123,.35);border-radius:999px;color:#f3d27b!important;font-size:9px!important;letter-spacing:.02em;vertical-align:middle}
+.smv-date-not-decided,.smv-date-flexible{display:flex;align-items:center;gap:7px;margin-top:7px;font-size:12px;font-weight:700}
+.smv-date-not-decided input,.smv-date-flexible input{width:auto;min-height:0}
+.smv-venue-load-note{padding:22px;border:1px solid rgba(243,210,123,.25);border-radius:14px;background:rgba(5,43,37,.8);color:#f5eee0}
+.smv-venue-load-note button{min-height:42px;margin:8px 10px 0 0;padding:0 16px;border:1px solid #d8b45f;border-radius:10px;background:#d8b45f;color:#173a32;font:inherit;font-weight:800;cursor:pointer}
+.smv-venue-load-note a{color:#f3d27b}
