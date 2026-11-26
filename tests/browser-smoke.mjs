@@ -163,7 +163,10 @@ try {
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
         if (path === '/') {
           assert.equal(await page.locator('#customerEnquiryForm').count(), 1, 'homepage should keep one main enquiry form');
-          assert.equal(await page.locator('#smvHomepageSearchForm').count(), 0, 'duplicate homepage search form should not be injected');
+          assert.equal(await page.locator('#smvHomepageSearchForm').count(), 1, 'homepage should show the restored short venue search form');
+          assert(await page.locator('#smvHomepageSearchForm').isVisible(), 'hero venue search form should be visible');
+          assert.equal(await page.locator('#smvHomepageSearchForm .smv-search-field').count(), 8, 'homepage search should keep six core fields plus two optional advanced filters');
+          assert.equal(await page.locator('#smvHomepageSearchForm .smv-search-advanced').evaluate(el => el.open), false, 'advanced filters should start collapsed');
           assert.equal(await page.locator('#customerEventDate').getAttribute('required'), null, 'homepage event date must be optional');
           assert.equal(await page.locator('#customerDateFlexible').count(), 1, 'homepage should offer Date not decided');
           assert.equal(await page.locator('.smv-enquiry-more').count(), 1, 'optional enquiry details should be expandable');
