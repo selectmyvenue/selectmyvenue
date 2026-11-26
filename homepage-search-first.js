@@ -49,7 +49,7 @@
     '<div class="smv-search-field"><label>Occasion *</label><select name="eventType" required><option value="">Select occasion</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Anniversary</option><option>Corporate Event</option><option>Party</option><option>Other</option></select></div>' +
     '<div class="smv-search-field"><label>City *</label><select name="city" required><option value="">Select city</option><option>Delhi</option><option>Gurgaon</option></select></div>' +
     '<div class="smv-search-field"><label>Preferred area</label><input name="area" maxlength="100" placeholder="e.g. Dwarka, Gurgaon"></div>' +
-    '<div class="smv-search-field"><label>Event date</label><input type="date" name="eventDate"></div>' +
+    '<div class="smv-search-field"><label>Event date (optional)</label><input type="date" name="eventDate"><label class="smv-date-flexible"><input type="checkbox" name="eventDateNotDecided" value="yes"> Date not decided</label></div>' +
     '<div class="smv-search-field"><label>Guests</label><input type="number" min="1" max="100000" name="guests" placeholder="e.g. 250"></div>' +
     '<div class="smv-search-field"><label>Max budget / person (₹)</label><input type="number" min="0" max="10000000" name="budgetPerPerson" placeholder="e.g. 1500"></div>' +
     '<div class="smv-search-field"><label>Venue type</label><select name="venueType"><option value="">Any type</option><option>Banquet Hall</option><option>Hotel</option><option>Restaurant</option><option>Farmhouse</option><option>Resort</option></select></div>' +
@@ -106,7 +106,7 @@
     if (!/^\d{10}$/.test(digits) || !/^[6-9]\d{9}$/.test(digits)) { status.textContent = "Please enter a valid 10-digit Indian mobile number."; form.querySelector('[name="mobile"]').focus(); return; }
     if (!p.contactConsent) { status.textContent = "Please confirm that we may contact you about this enquiry."; return; }
 
-    const payload = {...p, customerName:name, mobile:digits};
+    const payload = {...p, eventDate:p.eventDateNotDecided==="yes"?"":p.eventDate, customerName:name, mobile:digits};
     const button = form.querySelector("button");
     submitted = true;
     button.disabled = true;
