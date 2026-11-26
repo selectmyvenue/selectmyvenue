@@ -25,21 +25,31 @@ function score(venue: any, request: any) {
   if ((guests && max && max < guests) || (budget && price && price > budget)) return null;
   let relevanceScore = 30;
   const matchReasons: string[] = ["City matches"];
-  if (request.area && norm(venue.area).includes(norm(request.area))) { relevanceScore += 20; matchReasons.push("Area matches"); }
+  const needsConfirmation: string[] = [];
+  if (request.area) {
+    if (norm(venue.area).includes(norm(request.area))) { relevanceScore += 20; matchReasons.push("Area matches"); }
+    else needsConfirmation.push("Preferred area not matched in listing; confirm location");
+  }
   if (guests && max && max >= guests && (!min || min <= guests)) { relevanceScore += 20; matchReasons.push("Capacity fits"); }
+  else if (guests && !max) needsConfirmation.push("Capacity to confirm");
+  else if (guests && min && min > guests) needsConfirmation.push("Listed minimum capacity is above your guest count");
   if (budget && price && price <= budget) { relevanceScore += 15; matchReasons.push("Published price fits"); }
-  if (request.venueType && norm(venue.venue_type).includes(norm(request.venueType))) { relevanceScore += 10; matchReasons.push("Venue type matches"); }
+  else if (budget && !price) needsConfirmation.push("Price to confirm");
+  if (request.venueType) {
+    if (norm(venue.venue_type).includes(norm(request.venueType))) { relevanceScore += 10; matchReasons.push("Venue type matches"); }
+    else needsConfirmation.push("Preferred venue type needs confirmation");
+  }
   const events = Array.isArray(venue.event_types) ? venue.event_types.map(norm) : [];
   if (events.some((event: string) => event.includes(norm(request.eventType)))) { relevanceScore += 10; matchReasons.push("Event type listed"); }
+  else if (events.length) needsConfirmation.push("Event suitability needs confirmation");
   const food = norm(request.food);
   if (food === "veg" && venue.food_veg === true) { relevanceScore += 5; matchReasons.push("Vegetarian option listed"); }
+  else if (food === "veg" && venue.food_veg !== true) needsConfirmation.push("Vegetarian food availability to confirm");
   if (food === "non-veg" && venue.food_non_veg === true) { relevanceScore += 5; matchReasons.push("Non-vegetarian option listed"); }
+  else if (food === "non-veg" && venue.food_non_veg !== true) needsConfirmation.push("Non-vegetarian food availability to confirm");
   if (food === "both" && venue.food_veg === true && venue.food_non_veg === true) { relevanceScore += 5; matchReasons.push("Veg and non-veg options listed"); }
-  const needsConfirmation = [
-    !max ? "Capacity to confirm" : "",
-    !price ? "Price to confirm" : "",
-    food === "jain" ? "Jain food availability to confirm" : "",
-  ].filter(Boolean);
+  else if (food === "both") needsConfirmation.push("Both food options need confirmation");
+  if (food === "jain") needsConfirmation.push("Jain food availability to confirm");
   return {...venue, relevanceScore, matchReasons, needsConfirmation};
 }
 
