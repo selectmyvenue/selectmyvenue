@@ -11,12 +11,12 @@
     '<a href="delhi-ncr-venues.html">Delhi NCR Venue Guide</a><a href="venues-in-delhi.html">Venues in Delhi</a><a href="venues-in-gurgaon.html">Venues in Gurugram</a><a href="wedding-venues-delhi-ncr.html">Wedding Venues</a><a href="party-halls-delhi-ncr.html">Party Halls</a><a href="banquet-halls-in-delhi.html">Banquet Halls — Delhi</a><a href="banquet-halls-in-gurgaon.html">Banquet Halls — Gurugram</a><a href="wedding-lawns-delhi-ncr.html">Wedding Lawns</a><a href="wedding-farmhouses-delhi-ncr.html">Wedding Farmhouses</a>'+
     '<a class="smv-nav-feature" href="delhi-ncr-venues.html"><strong>Discover your perfect setting</strong><span>Compare real venue profiles, locations, capacity, pricing and facilities.</span></a></div></div>'+
    '<div class="smv-lux-nav-group"><button class="smv-lux-nav-trigger smv-nav-more" type="button" aria-expanded="false">Plan Your Event</button><div class="smv-lux-nav-panel">'+
-    '<a href="index.html#how">How It Works</a><a href="index.html#smart">Smart Discovery</a><a href="index.html#aiPlanner">AI Event Planner</a><a href="index.html#enquiry">Get Matched</a><a href="venues-for-wedding-delhi-ncr.html">Wedding Planning</a><a href="venues-for-birthday-delhi-ncr.html">Birthday Celebrations</a><a href="venues-for-engagement-delhi-ncr.html">Engagement & Roka</a><a href="venues-for-corporate-delhi-ncr.html">Corporate Events</a><a href="venues-for-reception-delhi-ncr.html">Reception</a>'+
+    '<a href="index.html#how">How It Works</a><a href="index.html#aiPlanner">AI Event Planner</a><a href="index.html#enquiry">Get Matched</a><a href="venues-for-wedding-delhi-ncr.html">Wedding Planning</a><a href="venues-for-birthday-delhi-ncr.html">Birthday Celebrations</a><a href="venues-for-engagement-delhi-ncr.html">Engagement & Roka</a><a href="venues-for-corporate-delhi-ncr.html">Corporate Events</a><a href="venues-for-reception-delhi-ncr.html">Reception</a>'+
     '<a class="smv-nav-feature" href="index.html#aiPlanner"><strong>Make planning feel effortless</strong><span>Start with your event, guest count, budget and preferred location.</span></a></div></div>'+
    '<a href="index.html#featuredVenues">Featured Venues</a>'+
    '<div class="smv-lux-nav-group"><button class="smv-lux-nav-trigger smv-nav-more" type="button" aria-expanded="false">For Venue Owners</button><div class="smv-lux-nav-panel">'+
     '<a href="list-your-venue.html">List Your Venue</a><a href="https://partner.selectmyvenue.com/">Partner Login</a><a href="index.html#contact">Talk to SMV</a>'+
-    '<a class="smv-nav-feature" href="list-your-venue.html"><strong>Grow your venue enquiries</strong><span>Start with the 7-day complimentary listing trial.</span></a></div></div>'+
+    '<a class="smv-nav-feature" href="list-your-venue.html"><strong>Grow your venue enquiries</strong><span>Start with the 3-Day Free Trial.</span></a></div></div>'+
    '<a class="smv-nav-cta" href="index.html#enquiry">Find My Venue <span aria-hidden="true">→</span></a>';
   nav.dataset.luxuryNav="1";
   function closeMenus(except){
@@ -47,6 +47,33 @@
    }
   });
  }
+ function compactMainEnquiry(){
+  var form=document.getElementById("customerEnquiryForm");
+  if(!form||form.dataset.smvCompactForm==="1")return;
+  var optional=[];
+  ["customerEmail","customerBudget","customerFood","customerRequirements"].forEach(function(id){
+   var input=document.getElementById(id),field=input&&input.closest(".field");
+   if(field)optional.push(field);
+  });
+  var planner=form.querySelector(".planner-summary-box");
+  if(!optional.length&&!planner)return;
+  var details=document.createElement("details");
+  details.className="smv-enquiry-more";
+  details.innerHTML="<summary>Add optional details (budget, food, email or AI Planner)</summary><div class='smv-enquiry-more-content'></div>";
+  var content=details.querySelector(".smv-enquiry-more-content");
+  optional.forEach(function(field){content.appendChild(field);});
+  if(planner)content.appendChild(planner);
+  var submitRow=form.querySelector(".requirements-row");
+  if(submitRow){
+   var requirementField=submitRow.querySelector("#customerRequirements")?.closest(".field");
+   if(requirementField)content.appendChild(requirementField);
+   submitRow.style.gridTemplateColumns="1fr";
+  }
+  var eventGrid=form.querySelector(".form-grid.five");
+  if(eventGrid&&eventGrid.nextSibling)form.insertBefore(details,eventGrid.nextSibling);
+  else form.appendChild(details);
+  form.dataset.smvCompactForm="1";
+ }
  function enhanceHero(){
   var hero=document.querySelector(".hero"),inner=hero&&hero.querySelector(".hero-inner"),orbit=hero&&hero.querySelector(".hero-orbit");
   if(!hero||!inner||!orbit||hero.querySelector(".smv-hero-3d"))return;
@@ -61,16 +88,17 @@
   orbit.replaceWith(visual);
  }
  function fixTrialCopy(){
-  document.querySelectorAll(".smv-home-launch-strip b,.smv-launch-offer b").forEach(function(el){
-   if(/10[\s-]*day/i.test(el.textContent))el.textContent="7-Day Complimentary Trial";
-  });
-  document.querySelectorAll(".smv-home-launch-strip,.smv-launch-offer").forEach(function(el){
-   el.querySelectorAll("*").forEach(function(node){if(node.children.length===0&&/10[\s-]*day/i.test(node.textContent))node.textContent=node.textContent.replace(/10[\s-]*day/ig,"7-day");});
+  document.querySelectorAll(".smv-home-launch-strip,.smv-launch-offer,.smv-lux-nav-panel").forEach(function(root){
+   root.querySelectorAll("*").forEach(function(node){
+    if(node.children.length===0 && /\b(?:7|10)[\s-]*day\b/i.test(node.textContent||"")){
+     node.textContent=node.textContent.replace(/\b(?:7|10)[\s-]*day(?:s)?\b/ig,"3-Day");
+    }
+   });
   });
  }
  function init(){
   var link=make("link");link.id="smvImmersiveLuxuryCss";link.rel="stylesheet";link.href="smv-immersive-luxury.css?v=20261116-4";if(!document.getElementById("smvImmersiveLuxuryCss"))document.head.appendChild(link);
-  enhanceNavigation();enhanceHero();fixTrialCopy();
+  enhanceNavigation();enhanceHero();compactMainEnquiry();fixTrialCopy();
   if(document.body&&!window.__smvLuxuryNavObserver){
    window.__smvLuxuryNavObserver=new MutationObserver(function(){
     var nav=document.getElementById("mainNav");

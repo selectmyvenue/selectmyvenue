@@ -376,7 +376,7 @@
           <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
           <div class="form-field"><label>EVENT TYPE *</label><select name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Birthday</option><option>Party</option><option>Corporate Event</option><option>Reception</option><option>Other</option></select></div>
           <div class="form-field"><label>LOCATION *</label><select name="location" required><option value="">Select location</option><option>Delhi</option><option>Gurgaon</option><option>Noida</option><option>Faridabad</option><option>Delhi NCR</option></select></div>
-          <div class="form-field"><label>EVENT DATE *</label><input name="event_date" type="date" required></div>
+          <div class="form-field"><label>EVENT DATE (OPTIONAL)</label><input name="event_date" type="date"><label class="smv-date-flexible"><input name="event_date_not_decided" type="checkbox"> Date not decided</label></div>
           <div class="form-field"><label>GUESTS</label><input name="guests" type="number" min="1" placeholder="e.g. 300"></div>
           <div class="form-field full"><label>BUDGET / PERSON</label><input name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></div>
           <div class="form-field full"><button class="button button-primary" type="submit">Get My Venue Options →</button></div>
@@ -398,7 +398,7 @@
             <div class="form-field"><label>MOBILE NUMBER *</label><input name="mobile" inputmode="numeric" autocomplete="tel" maxlength="14" placeholder="10-digit mobile" required></div>
             <div class="form-field"><label>EVENT TYPE *</label><select name="occasion" required><option value="">Select event</option><option>Wedding</option><option>Engagement</option><option>Birthday</option><option>Party</option><option>Corporate Event</option><option>Reception</option><option>Other</option></select></div>
             <div class="form-field"><label>LOCATION *</label><select name="location" required><option value="">Select location</option><option>Delhi</option><option>Gurgaon</option><option>Noida</option><option>Faridabad</option><option>Delhi NCR</option></select></div>
-            <div class="form-field"><label>EVENT DATE *</label><input name="event_date" type="date" required></div>
+            <div class="form-field"><label>EVENT DATE (OPTIONAL)</label><input name="event_date" type="date"><label class="smv-date-flexible"><input name="event_date_not_decided" type="checkbox"> Date not decided</label></div>
             <div class="form-field"><label>GUESTS</label><input name="guests" type="number" min="1" placeholder="e.g. 300"></div>
             <div class="form-field full"><label>BUDGET / PERSON</label><input name="budget_per_person" type="number" min="0" placeholder="e.g. 1500"></div>
             <div class="form-field full"><button class="button button-primary" type="submit">Get My Venue Options →</button></div>
@@ -620,7 +620,8 @@
     const customerName = clean(form.elements.customer_name && form.elements.customer_name.value);
     const mobile = mobileDigits(form.elements.mobile && form.elements.mobile.value);
     const locationValue = clean(form.elements.location && form.elements.location.value);
-    const eventDate = clean(form.elements.event_date && form.elements.event_date.value);
+    const dateNotDecided = !!(form.elements.event_date_not_decided && form.elements.event_date_not_decided.checked);
+    const eventDate = dateNotDecided ? "" : clean(form.elements.event_date && form.elements.event_date.value);
     const guests = numberOrNull(form.elements.guests && form.elements.guests.value);
     const budget = numberOrNull(form.elements.budget_per_person && form.elements.budget_per_person.value);
     const occasion = clean(form.elements.occasion && form.elements.occasion.value) || clean(form.dataset.eventType) || "Event";
@@ -668,12 +669,7 @@
       form.elements.location && form.elements.location.focus();
       return;
     }
-    if (!eventDate) {
-      setMessage(form, "Please select your event date.", "error");
-      form.elements.event_date && form.elements.event_date.focus();
-      return;
-    }
-    if (eventDate < todayIso()) {
+    if (eventDate && eventDate < todayIso()) {
       setMessage(form, "Please select today or a future event date.", "error");
       form.elements.event_date && form.elements.event_date.focus();
       return;
@@ -690,6 +686,7 @@
         context.venueName ? "Interested venue: " + context.venueName : "",
         context.venueId ? "Venue ID: " + context.venueId : "",
         "Submitted page: " + context.page,
+        dateNotDecided ? "Event date: not decided" : "",
         guests ? "Guests: " + guests : "",
         budget ? "Budget/person: ₹" + budget : "",
         comment ? "Customer comment: " + comment : "",
@@ -747,7 +744,24 @@
     }
   }
 
+  function makeEventDatesOptional(){
+    document.querySelectorAll('input[name="event_date"],#customerEventDate,#smvPopupDate').forEach(function(input){
+      input.required=false;
+      input.removeAttribute("required");
+      const parent=input.parentElement;
+      const label=(input.id&&document.querySelector('label[for="'+input.id+'"]'))||(parent&&parent.querySelector("label"));
+      if(label)label.textContent=label.textContent.replace(/\s*\*/g,"").replace(/EVENT DATE/i,"EVENT DATE (OPTIONAL)");
+      if(parent&&!parent.querySelector(".smv-date-not-decided,.smv-date-flexible")){
+        const option=document.createElement("label");
+        option.className="smv-date-not-decided";
+        option.innerHTML='<input type="checkbox" name="event_date_not_decided"> Date not decided';
+        input.insertAdjacentElement("afterend",option);
+      }
+    });
+  }
+
   function initQuickEnquiry() {
+    makeEventDatesOptional();
     // Bind enquiry submission before unrelated drawer/edge UI setup. If that UI
     // throws during initialization, the SEO forms must still remain usable.
     document.querySelectorAll("form[data-smv-quick-enquiry]").forEach(function (form) {

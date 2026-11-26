@@ -109,7 +109,7 @@ Deno.serve(async req => {
       food ? "Food preference: " + food : "",
       guests ? "Guests: " + guests : "",
       budget !== null ? "Maximum budget/person: ₹" + budget : "",
-      eventDate ? "Event date: " + eventDate : "",
+      eventDate ? "Event date: " + eventDate : body.eventDateNotDecided === "yes" ? "Event date: not decided" : "",
       "Lead captured through homepage venue search.",
     ].filter(Boolean).join("\n");
     const {data: lead, error: insertError} = await db.from("customer_enquiries").insert({

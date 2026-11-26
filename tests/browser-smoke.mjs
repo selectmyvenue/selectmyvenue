@@ -32,7 +32,7 @@ async function testQuickEnquiryMock() {
         <input name="mobile" value="+91 98765 43210">
         <select name="occasion"><option value="Wedding" selected>Wedding</option></select>
         <select name="location"><option value="Delhi" selected>Delhi</option></select>
-        <input name="event_date" type="date">
+        <input name="event_date" type="date" required>
         <input name="guests" type="number" value="250">
         <input name="budget_per_person" type="number" value="1500">
         <textarea name="requirements">Mock-only QA. Do not create a real enquiry.</textarea>
@@ -57,11 +57,8 @@ async function testQuickEnquiryMock() {
     });
     await page.addScriptTag({ path: 'quick-enquiry.js' });
     await page.evaluate(() => document.dispatchEvent(new Event('DOMContentLoaded')));
-    await page.locator('form[data-source="Website - Mock E2E"] [name="event_date"]').evaluate(el => {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      el.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    });
+    assert.equal(await page.locator('form[data-source="Website - Mock E2E"] [name="event_date"]').getAttribute('required'), null, 'event date must not be required');
+    await page.locator('form[data-source="Website - Mock E2E"] [name="event_date_not_decided"]').check();
     await page.locator('form[data-source="Website - Mock E2E"] button[type="submit"]').click();
     await page.waitForFunction(() => document.querySelector('[data-quick-message]')?.classList.contains('success'));
     const calls = await page.evaluate(() => window.__smvMockInsertCalls);
@@ -72,6 +69,8 @@ async function testQuickEnquiryMock() {
     assert.equal(payload.mobile, '9876543210');
     assert.equal(payload.location, 'Delhi');
     assert.equal(payload.occasion, 'Wedding');
+    assert.equal(payload.event_date, null, 'event date must remain optional');
+    assert(payload.requirements.includes('Event date: not decided'));
     assert.equal(payload.guests, 250);
     assert.equal(payload.budget_per_person, 1500);
     assert.equal(payload.source, 'Website - Mock E2E');
@@ -88,7 +87,7 @@ async function testQuickEnquiryMock() {
       'guests','last_contacted_at','location','mobile','occasion','requirements','source',
       'status','customer_name'
     ].sort(), 'payload must use the existing customer_enquiries fields only');
-    console.log('PASS mocked quick-enquiry submission: payload mapping, source, requirements and existing CRM fields; no real insert');
+    console.log('PASS mocked quick-enquiry submission: optional date, Date not decided, payload mapping and existing CRM fields; no real insert');
   } finally {
     await context.close();
   }
@@ -162,6 +161,13 @@ try {
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
+        if (path === '/') {
+          assert.equal(await page.locator('#customerEnquiryForm').count(), 1, 'homepage should keep one main enquiry form');
+          assert.equal(await page.locator('#smvHomepageSearchForm').count(), 0, 'duplicate homepage search form should not be injected');
+          assert.equal(await page.locator('#customerEventDate').getAttribute('required'), null, 'homepage event date must be optional');
+          assert.equal(await page.locator('#customerDateFlexible').count(), 1, 'homepage should offer Date not decided');
+          assert.equal(await page.locator('.smv-enquiry-more').count(), 1, 'optional enquiry details should be expandable');
+        }
         if (viewport.name.startsWith('mobile-')) {
           await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
           const menuButton = page.locator('#menuToggle');
@@ -174,23 +180,32 @@ try {
           await menuButton.click();
           await page.waitForFunction(() => document.getElementById('menuToggle')?.getAttribute('aria-expanded') === 'false' && !document.getElementById('mainNav')?.classList.contains('open'), undefined, { timeout: 5000 }).catch(error => { throw new Error('MENU CLOSE: ' + error.message); });
           if (path === '/') {
-            // Regression: the active marketplace filter panel must open from its own
-            // mobile toggle, despite the redesign stylesheet's display:none!important.
-            // This test never submits an enquiry or writes to Supabase.
-            await page.waitForSelector('#featuredVenues .smv-home-market-filter-toggle', { state: 'visible', timeout: 15000 });
-            const filterToggle = page.locator('#featuredVenues .smv-home-market-filter-toggle');
-            const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
-            await filterToggle.click();
+            // The live venue network may legitimately return zero eligible public listings.
+            // In that case the loader shows its empty state and does not render marketplace filters.
+            // When cards exist, exercise the mobile filter toggle and panel end-to-end.
             await page.waitForFunction(() => {
-              const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
-              return !!panel && panel.classList.contains('open') && getComputedStyle(panel).display !== 'none' && panel.getBoundingClientRect().height > 0;
-            }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER OPEN: ' + error.message); });
-            assert(await page.locator('#featuredVenues .smv-filter-choice').first().isVisible(), 'current marketplace filter choices must be visible after tapping Filter Venues');
-            await filterToggle.click();
-            await page.waitForFunction(() => {
-              const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
-              return !!panel && !panel.classList.contains('open') && getComputedStyle(panel).display === 'none';
-            }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER CLOSE: ' + error.message); });
+              const grid = document.getElementById('homeVenueGrid');
+              return !!grid && (grid.querySelector('.home-venue-card') || grid.querySelector('.smv-venue-load-note'));
+            }, undefined, { timeout: 20000 });
+            const hasVenueCards = await page.locator('#homeVenueGrid .home-venue-card').count() > 0;
+            if (hasVenueCards) {
+              await page.waitForSelector('#featuredVenues .smv-home-market-filter-toggle', { state: 'visible', timeout: 15000 });
+              const filterToggle = page.locator('#featuredVenues .smv-home-market-filter-toggle');
+              const filterPanel = page.locator('#featuredVenues .smv-home-filter-panel');
+              await filterToggle.click();
+              await page.waitForFunction(() => {
+                const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
+                return !!panel && panel.classList.contains('open') && getComputedStyle(panel).display !== 'none' && panel.getBoundingClientRect().height > 0;
+              }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER OPEN: ' + error.message); });
+              assert(await page.locator('#featuredVenues .smv-filter-choice').first().isVisible(), 'current marketplace filter choices must be visible after tapping Filter Venues');
+              await filterToggle.click();
+              await page.waitForFunction(() => {
+                const panel = document.querySelector('#featuredVenues .smv-home-filter-panel');
+                return !!panel && !panel.classList.contains('open') && getComputedStyle(panel).display === 'none';
+              }, undefined, { timeout: 3000 }).catch(error => { throw new Error('HOMEPAGE FILTER CLOSE: ' + error.message); });
+            } else {
+              assert(await page.locator('#homeVenueGrid .smv-venue-load-note').isVisible(), 'homepage should show a clear venue loading/empty state when no public listings are eligible');
+            }
 
             await page.waitForSelector('.smv-home-enquiry-edge', { state: 'visible', timeout: 10000 });
             const edge = page.locator('.smv-home-enquiry-edge');

@@ -3452,13 +3452,15 @@ function setupAutoEnquiryPopup() {
     }, 100);
   }
 
-  /* Public trigger for the compact homepage enquiry CTA. */
-  window.smvOpenEnquiryPopup = function (fromSideBanner) {
-    if (fromSideBanner) {
-      try { sessionStorage.removeItem("smv_popup_handled_v2"); } catch (error) {}
-      document.body.classList.add("smv-side-enquiry-open");
+  /* Route legacy popup callers to the single shared Get Matched drawer. */
+  window.smvOpenEnquiryPopup = function () {
+    const tab = byId("smvHomeEnquiryTab");
+    if (tab) {
+      tab.click();
+      return;
     }
-    openPopup();
+    const mainEnquiry = byId("enquiry");
+    if (mainEnquiry) mainEnquiry.scrollIntoView({behavior:"smooth",block:"start"});
   };
 
   function closePopup(markHandled) {
@@ -3472,42 +3474,8 @@ function setupAutoEnquiryPopup() {
     }
   }
 
-  /* ---------------------------------------------------------
-     TRIGGER:
-     NO PAGE-LOAD TIMER.
-     First genuine website click/tap -> wait 60 seconds -> popup.
-
-     The visitor gets time to browse before the enquiry form appears.
-     The popup never opens just because the page was loaded.
-     --------------------------------------------------------- */
-  const POPUP_DELAY_AFTER_INTERACTION = 60000;
-  let interactionTimer = null;
-  let interactionDetected = false;
-
-  function startInteractionTimer(event) {
-    if (interactionDetected) return;
-    if (isPopupHandled()) return;
-    if (overlay.classList.contains("show")) return;
-
-    if (event && event.target && event.target.closest("#enquiryPopup")) {
-      return;
-    }
-
-    interactionDetected = true;
-    clearTimeout(interactionTimer);
-
-    interactionTimer = setTimeout(function () {
-      openPopup();
-    }, POPUP_DELAY_AFTER_INTERACTION);
-
-    document.removeEventListener("click", startInteractionTimer, true);
-
-    console.log(
-      "Select My Venue: enquiry popup scheduled 60 seconds after first website interaction."
-    );
-  }
-
-  document.addEventListener("click", startInteractionTimer, true);
+  /* No timed or interaction-triggered popup. Customers can open the single
+     shared Get Matched drawer themselves; it can be closed at any time. */
 
   /* ---------------------------------------------------------
      CLOSE EVENTS
