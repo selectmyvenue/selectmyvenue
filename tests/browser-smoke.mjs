@@ -57,11 +57,7 @@ async function testQuickEnquiryMock() {
     });
     await page.addScriptTag({ path: 'quick-enquiry.js' });
     await page.evaluate(() => document.dispatchEvent(new Event('DOMContentLoaded')));
-    await page.locator('form[data-source="Website - Mock E2E"] [name="event_date"]').evaluate(el => {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      el.value = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    });
+    await page.locator('form[data-source="Website - Mock E2E"] [name="event_date_not_decided"]').check();
     await page.locator('form[data-source="Website - Mock E2E"] button[type="submit"]').click();
     await page.waitForFunction(() => document.querySelector('[data-quick-message]')?.classList.contains('success'));
     const calls = await page.evaluate(() => window.__smvMockInsertCalls);
@@ -71,7 +67,7 @@ async function testQuickEnquiryMock() {
     assert.equal(payload.customer_name, 'SMV QA Customer');
     assert.equal(payload.mobile, '9876543210');
     assert.equal(payload.location, 'Delhi');
-    assert.equal(payload.occasion, 'Wedding');
+    assert.equal(payload.occasion, 'Wedding');\n    assert.equal(payload.event_date, null, 'event date must remain optional');\n    assert(payload.requirements.includes('Event date: not decided'));
     assert.equal(payload.guests, 250);
     assert.equal(payload.budget_per_person, 1500);
     assert.equal(payload.source, 'Website - Mock E2E');
@@ -88,7 +84,7 @@ async function testQuickEnquiryMock() {
       'guests','last_contacted_at','location','mobile','occasion','requirements','source',
       'status','customer_name'
     ].sort(), 'payload must use the existing customer_enquiries fields only');
-    console.log('PASS mocked quick-enquiry submission: payload mapping, source, requirements and existing CRM fields; no real insert');
+    console.log('PASS mocked quick-enquiry submission: optional date, Date not decided, payload mapping and existing CRM fields; no real insert');
   } finally {
     await context.close();
   }
