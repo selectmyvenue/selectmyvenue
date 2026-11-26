@@ -12,28 +12,8 @@ function enhanceHero(){
   var h1=copy.querySelector("h1");if(h1)h1.innerHTML='Find a venue that feels right.<br><span>And fits your celebration.</span>';
   var heroText=copy.querySelector(".hero-text");if(heroText)heroText.textContent="Explore verified wedding venues, banquet halls, farmhouses and party spaces across Delhi NCR. Compare location, capacity, pricing and facilities — or let us shortlist suitable venues for you.";
 
-  var finder=make("form","smv-hero-finder");
-  finder.id="smvHeroFinder";finder.setAttribute("aria-label","Find venues");
-  finder.innerHTML=
-    '<label><span>Where?</span><input id="smvHeroLocation" type="text" list="smvHeroLocations" placeholder="Delhi, Chattarpur, Gurgaon…" autocomplete="off"><datalist id="smvHeroLocations"><option value="Delhi"></option><option value="Chattarpur"></option><option value="GT Karnal Road"></option><option value="Kapashera"></option><option value="Dwarka"></option><option value="Alipur"></option><option value="Gurgaon"></option><option value="Noida"></option><option value="Faridabad"></option></datalist></label>'+
-    '<label><span>Event</span><select id="smvHeroEvent"><option value="">Any event</option><option>Wedding</option><option>Engagement</option><option>Reception</option><option>Birthday</option><option>Corporate Event</option><option>Party</option></select></label>'+
-    '<label><span>Guests</span><select id="smvHeroGuests"><option value="">Any size</option><option value="Less than 50">Under 50</option><option value="50–99">50–99</option><option value="100–199">100–199</option><option value="200–299">200–299</option><option value="300–499">300–499</option><option value="500–699">500–699</option><option value="700–999">700–999</option><option value="1000+">1000+</option></select></label>'+
-    '<label><span>Budget / person</span><select id="smvHeroBudget"><option value="">Any budget</option><option value="Up to ₹1,000">Up to ₹1,000</option><option value="₹1,001–1,500">₹1,001–1,500</option><option value="₹1,501–2,000">₹1,501–2,000</option><option value="₹2,001–3,000">₹2,001–3,000</option><option value="₹3,000+">₹3,000+</option></select></label>'+
-    '<button type="submit">SHOW VENUES →</button>';
-
-  var popular=make("div","smv-hero-popular",
-    '<span>Popular:</span><a href="venues.html?q=Chattarpur">Chattarpur</a><a href="venues.html?q=GT%20Karnal%20Road">GT Karnal Road</a><a href="venues.html?city=Gurgaon">Gurgaon</a><a href="venues.html?city=Noida">Noida</a><a href="venues.html?q=Kapashera">Kapashera</a>');
-  if(heroText){heroText.insertAdjacentElement("afterend",finder);finder.insertAdjacentElement("afterend",popular);}else{copy.append(finder,popular);}
-
-  finder.addEventListener("submit",function(e){
-    e.preventDefault();
-    var p=new URLSearchParams(),loc=(document.getElementById("smvHeroLocation")&&document.getElementById("smvHeroLocation").value||"").trim();
-    var occasion=document.getElementById("smvHeroEvent")&&document.getElementById("smvHeroEvent").value||"";
-    var capacity=document.getElementById("smvHeroGuests")&&document.getElementById("smvHeroGuests").value||"";
-    var budget=document.getElementById("smvHeroBudget")&&document.getElementById("smvHeroBudget").value||"";
-    if(loc)p.set("q",loc);if(occasion)p.set("occasion",occasion);if(capacity)p.set("capacity",capacity);if(budget)p.set("budget",budget);
-    window.location.href="venues.html"+(p.toString()?"?"+p.toString():"");
-  });
+  // The compact CRM-connected homepage search is injected by homepage-search-first.js.
+  // Keep a single search journey rather than rendering a competing legacy finder.
 
   var visual=make("div","smv-hero-visual",
     '<div class="smv-hero-visual-main"><img src="assets/hero/hero-bright-celebration-v2.webp" alt="Elegant wedding celebration venue"></div>'+
