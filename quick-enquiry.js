@@ -751,7 +751,7 @@
       const parent=input.parentElement;
       const label=(input.id&&document.querySelector('label[for="'+input.id+'"]'))||(parent&&parent.querySelector("label"));
       if(label)label.textContent=label.textContent.replace(/\\s*\\*/g,"").replace(/EVENT DATE/i,"EVENT DATE (OPTIONAL)");
-      if(parent&&!parent.querySelector(".smv-date-not-decided")){
+      if(parent&&!parent.querySelector(".smv-date-not-decided,.smv-date-flexible")){
         const option=document.createElement("label");
         option.className="smv-date-not-decided";
         option.innerHTML='<input type="checkbox" name="event_date_not_decided"> Date not decided';
