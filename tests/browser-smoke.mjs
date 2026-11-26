@@ -67,7 +67,9 @@ async function testQuickEnquiryMock() {
     assert.equal(payload.customer_name, 'SMV QA Customer');
     assert.equal(payload.mobile, '9876543210');
     assert.equal(payload.location, 'Delhi');
-    assert.equal(payload.occasion, 'Wedding');\n    assert.equal(payload.event_date, null, 'event date must remain optional');\n    assert(payload.requirements.includes('Event date: not decided'));
+    assert.equal(payload.occasion, 'Wedding');
+    assert.equal(payload.event_date, null, 'event date must remain optional');
+    assert(payload.requirements.includes('Event date: not decided'));
     assert.equal(payload.guests, 250);
     assert.equal(payload.budget_per_person, 1500);
     assert.equal(payload.source, 'Website - Mock E2E');
