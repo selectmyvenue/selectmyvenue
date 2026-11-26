@@ -137,7 +137,8 @@ async function testHomepageSearchVenueProfileLinks() {
     console.log('PASS homepage search result: venue profile link, availability enquiry link and separate match/confirmation notes');
 
     responseBody = { success: true, crmLeadCreated: true, venues: [] };
-    await page.reload();
+    await page.setContent('<!doctype html><html><head><title>Homepage search empty-state test</title></head><body><main><section class="hero"></section></main></body></html>');
+    await page.addScriptTag({ path: 'homepage-search-first.js' });
     const emptyForm = page.locator('#smvHomepageSearchForm');
     await emptyForm.locator('[name="eventType"]').selectOption({ label: 'Wedding' });
     await emptyForm.locator('[name="city"]').selectOption({ label: 'Delhi' });
