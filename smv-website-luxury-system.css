@@ -333,3 +333,20 @@ html body .faq-item summary{
  html body .button-primary,
  html body .primary-btn{transition:none!important}
 }
+
+
+/* SMV homepage visual consistency and accessible interaction finish */
+html body .site-header{backdrop-filter:saturate(135%) blur(16px)}
+html body :where(.smv-home-launch-strip,.smv-enquiry-offer,.quick-enquiry-card,.venue-card,.home-venue-card){overflow:hidden}
+html body :where(button,a,input,select,textarea):focus-visible{outline:3px solid rgba(216,182,107,.95)!important;outline-offset:3px!important}
+html body :where(button,a){-webkit-tap-highlight-color:transparent}
+html body img{max-width:100%}
+@media(max-width:767px){
+  html body .smv-home-launch-strip{padding-left:12px;padding-right:12px}
+  html body .smv-home-launch-inner{gap:10px}
+  html body :where(.smv-enquiry-offer,.quick-enquiry-card){border-radius:17px}
+  html body :where(.home-venue-grid,.venue-grid){gap:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  html body *,html body *::before,html body *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
