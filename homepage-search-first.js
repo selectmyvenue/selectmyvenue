@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   const hero = document.querySelector("main .hero");
-  if (!hero || document.getElementById("smvHomepageSearchForm")) return;
+  if (!hero || document.getElementById("smvHomepageSearchForm") || document.getElementById("customerEnquiryForm")) return;
 
   const style = document.createElement("style");
   style.textContent = `
