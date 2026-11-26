@@ -161,6 +161,13 @@ try {
         assert(response && response.status() < 400, `HTTP status for ${path}: ${response?.status()}`);
         await page.locator('body').waitFor({ state: 'visible' });
         assert((await page.title()).trim().length > 0, `missing document title at ${path}`);
+        if (path === '/') {
+          assert.equal(await page.locator('#customerEnquiryForm').count(), 1, 'homepage should keep one main enquiry form');
+          assert.equal(await page.locator('#smvHomepageSearchForm').count(), 0, 'duplicate homepage search form should not be injected');
+          assert.equal(await page.locator('#customerEventDate').getAttribute('required'), null, 'homepage event date must be optional');
+          assert.equal(await page.locator('#customerDateFlexible').count(), 1, 'homepage should offer Date not decided');
+          assert.equal(await page.locator('.smv-enquiry-more').count(), 1, 'optional enquiry details should be expandable');
+        }
         if (viewport.name.startsWith('mobile-')) {
           await page.waitForSelector('#menuToggle', { state: 'visible', timeout: 10000 });
           const menuButton = page.locator('#menuToggle');
