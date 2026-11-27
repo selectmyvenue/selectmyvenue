@@ -93,6 +93,69 @@ async function testQuickEnquiryMock() {
   }
 }
 
+async function testHomepageSearchVenueProfileLinks() {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+  const page = await context.newPage();
+  const venueId = '072729f0-3813-4fc0-9dd9-12b93a772235';
+  try {
+    let responseBody = {
+      success: true,
+      crmLeadCreated: true,
+      venues: [{
+        id: venueId,
+        venue_name: 'SMV Mock Banquet',
+        venue_type: 'Banquet Hall',
+        area: 'Dwarka',
+        city: 'Delhi',
+        capacity_max: 400,
+        price_min_per_person: 1400,
+        cover_image_url: 'https://example.com/mock-venue.webp',
+        matchReasons: ['City matches', 'Capacity fits'],
+        needsConfirmation: ['Event date availability to confirm'],
+      }],
+    };
+    await page.route('**/functions/v1/smv-homepage-search', async route => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(responseBody) });
+    });
+    await page.setContent('<!doctype html><html><head><title>Homepage search test</title></head><body><main><section class="hero"></section></main></body></html>');
+    await page.addScriptTag({ path: 'homepage-search-first.js' });
+    const form = page.locator('#smvHomepageSearchForm');
+    await form.locator('[name="eventType"]').selectOption({ label: 'Wedding' });
+    await form.locator('[name="city"]').selectOption({ label: 'Delhi' });
+    await form.locator('button[type="submit"]').click();
+    await page.locator('#smvSearchContact').waitFor({ state: 'visible' });
+    await form.locator('[name="customerName"]').fill('SMV QA Customer');
+    await form.locator('[name="mobile"]').fill('9876543210');
+    await form.locator('[name="contactConsent"]').check();
+    await form.locator('button[type="submit"]').click();
+    await page.locator('#smvHomepageSearchResults').waitFor({ state: 'visible' });
+    const profileLink = page.locator('#smvHomepageSearchGrid a[href^="venue.html?id="]').first();
+    assert.equal(await profileLink.getAttribute('href'), 'venue.html?id=' + venueId, 'homepage result must link to its exact venue profile');
+    assert.equal(await page.locator('#smvHomepageSearchGrid a').filter({ hasText: 'Check Availability' }).getAttribute('href'), 'venue.html?id=' + venueId + '&quote=1');
+    assert(await page.locator('#smvHomepageSearchGrid').getByText('Matching details').isVisible());
+    assert(await page.locator('#smvHomepageSearchGrid').getByText(/Confirm with venue:/).isVisible());
+    console.log('PASS homepage search result: venue profile link, availability enquiry link and separate match/confirmation notes');
+
+    responseBody = { success: true, crmLeadCreated: true, venues: [] };
+    await page.setContent('<!doctype html><html><head><title>Homepage search empty-state test</title></head><body><main><section class="hero"></section></main></body></html>');
+    await page.addScriptTag({ path: 'homepage-search-first.js' });
+    const emptyForm = page.locator('#smvHomepageSearchForm');
+    await emptyForm.locator('[name="eventType"]').selectOption({ label: 'Wedding' });
+    await emptyForm.locator('[name="city"]').selectOption({ label: 'Delhi' });
+    await emptyForm.locator('button[type="submit"]').click();
+    await page.locator('#smvSearchContact').waitFor({ state: 'visible' });
+    await emptyForm.locator('[name="customerName"]').fill('SMV QA Customer');
+    await emptyForm.locator('[name="mobile"]').fill('9876543210');
+    await emptyForm.locator('[name="contactConsent"]').check();
+    await emptyForm.locator('button[type="submit"]').click();
+    await page.locator('#smvHomepageSearchResults').waitFor({ state: 'visible' });
+    assert(await page.locator('#smvHomepageSearchGrid a[href="venues.html"]').isVisible(), 'empty match state must offer browse-all fallback');
+    console.log('PASS homepage search empty state: customer is directed to browse all venues');
+  } finally {
+    await context.close();
+  }
+}
+
 async function testMobileMenuOptionNavigation() {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
@@ -122,6 +185,7 @@ async function testMobileMenuOptionNavigation() {
 
 try {
   await testQuickEnquiryMock();
+  await testHomepageSearchVenueProfileLinks();
   await testMobileMenuOptionNavigation();
   for (const path of paths) {
     for (const viewport of [

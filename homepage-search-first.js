@@ -18,7 +18,8 @@
     .smv-search-field label{display:block;margin-bottom:7px;color:#36534a;font-size:10px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
     .smv-search-field input,.smv-search-field select{width:100%;min-height:49px;box-sizing:border-box;padding:0 13px;border:1px solid #d8dfd8;border-radius:11px;background:#fff;color:#193d34;font:inherit;font-size:13px;outline:none;transition:border-color .18s,box-shadow .18s}
     .smv-search-field input:focus,.smv-search-field select:focus{border-color:#b89549;box-shadow:0 0 0 3px rgba(184,149,73,.15)}
-    .smv-search-field input::placeholder{color:#8b9992}\n    .smv-search-advanced{grid-column:1/-1;margin-top:2px;padding:11px 13px;border:1px solid #e4e8df;border-radius:12px;background:#fffdf8}.smv-search-advanced summary{color:#52685f;font-size:11px;font-weight:900;cursor:pointer}.smv-search-advanced .smv-search-grid{margin-top:12px}.smv-search-advanced .smv-search-field{max-width:360px}
+    .smv-search-field input::placeholder{color:#8b9992}
+    .smv-search-advanced{grid-column:1/-1;margin-top:2px;padding:11px 13px;border:1px solid #e4e8df;border-radius:12px;background:#fffdf8}.smv-search-advanced summary{color:#52685f;font-size:11px;font-weight:900;cursor:pointer}.smv-search-advanced .smv-search-grid{margin-top:12px}.smv-search-advanced .smv-search-field{max-width:360px}
     .smv-search-submit{display:block;width:100%;min-height:54px;margin-top:19px;border:1px solid rgba(145,107,28,.35);border-radius:12px;background:linear-gradient(110deg,#e9c76f,#c99a32);color:#17382f;font-size:17px;font-weight:950;letter-spacing:.005em;box-shadow:0 9px 22px rgba(153,112,30,.2);cursor:pointer;transition:transform .18s,filter .18s,box-shadow .18s}
     .smv-search-submit:hover{transform:translateY(-2px);filter:brightness(1.035);box-shadow:0 13px 26px rgba(153,112,30,.25)}
     .smv-search-contact{margin-top:16px;padding:16px;border:1px solid #e4d7b7;border-radius:14px;background:#fffdf7}.smv-search-contact[hidden]{display:none}
@@ -35,6 +36,13 @@
     .smv-search-result img{width:100%;height:155px;object-fit:cover}.smv-search-result div{padding:12px}
     .smv-search-result h3{font-size:17px;color:#fff}.smv-search-result p{margin-top:5px;color:#c5dbd4;font-size:12px}
     .smv-search-result .price{color:#f3d37d;font-weight:800}
+    .smv-search-result h3 a{color:#fff;text-decoration:underline;text-decoration-color:rgba(243,211,125,.65);text-underline-offset:3px}
+    .smv-search-result-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .smv-search-result-actions a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 12px;border-radius:9px;background:#e9c76f;color:#17382f;font-size:11px;font-weight:900;text-decoration:none}
+    .smv-search-result-actions a.secondary{border:1px solid #d8c58d;background:transparent;color:#fff4d8}
+    .smv-search-result .match-label{margin-top:10px;color:#f3d37d;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+    .smv-search-result .confirm-label{margin-top:8px;color:#f4d6a1;font-size:11px}
+    .smv-search-empty a{color:#f3d37d;font-weight:800}
     @media(max-width:760px){.smv-home-search{padding:38px 14px 28px;background-position:58% center}.smv-home-search h2{font-size:clamp(29px,7vw,40px)}.smv-home-search>p{font-size:12px}.smv-search-grid,.smv-search-contact-grid{grid-template-columns:1fr 1fr;gap:12px}.smv-search-owner{align-items:flex-start;flex-direction:column;gap:12px}.smv-search-owner a{width:100%}.smv-search-results{width:calc(100% - 20px);padding:14px}.smv-search-result-grid{grid-template-columns:1fr}}
     @media(max-width:480px){.smv-search-grid,.smv-search-contact-grid{grid-template-columns:1fr}.smv-home-search{padding:30px 10px 22px}#smvHomepageSearchForm{padding:15px;border-radius:16px}.smv-search-trust{gap:6px;margin:15px auto}.smv-search-trust span{min-height:30px;padding:0 10px;font-size:9px}.smv-search-submit{font-size:15px}}
     @media(prefers-reduced-motion:reduce){.smv-search-submit{transition:none}}
@@ -120,12 +128,33 @@
       const d = await r.json();
       if (!r.ok || !d.success || !d.crmLeadCreated) throw new Error(d.error || "Your enquiry could not be saved. Please try again.");
       grid.innerHTML = "";
-      if (!d.venues.length) grid.innerHTML = "<p>No exact public listing matched. Our team has received your enquiry and can help find suitable options.</p>";
-      d.venues.forEach(v => {
+      if (!Array.isArray(d.venues) || !d.venues.length) {
+        grid.innerHTML = '<div class="smv-search-empty"><p>No exact public listing matched these requirements. Your enquiry is safely received, and our team can help explore more options.</p><p><a href="venues.html">Browse all available venues</a></p></div>';
+      }
+      (Array.isArray(d.venues) ? d.venues : []).forEach(v => {
         const c = document.createElement("article");
         c.className = "smv-search-result";
-        const image = v.cover_image_url ? '<img loading="lazy" src="' + esc(v.cover_image_url) + '" alt="' + esc(v.venue_name) + '">' : "";
-        c.innerHTML = image + '<div><h3>' + esc(v.venue_name) + '</h3><p>' + esc(v.venue_type || "Venue") + ' · ' + esc([v.area,v.city].filter(Boolean).join(", ")) + '</p><p>' + (v.capacity_max ? "Up to " + Number(v.capacity_max).toLocaleString("en-IN") + " guests" : "Capacity to confirm") + '</p><p class="price">' + (v.price_min_per_person == null ? "Price on request" : "₹" + Number(v.price_min_per_person).toLocaleString("en-IN") + "/person") + '</p><p>' + esc([...(v.matchReasons || []), ...(v.needsConfirmation || [])].join(" · ")) + '</p></div>';
+        const id = String(v.id || "");
+        const profileUrl = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)
+          ? "venue.html?id=" + encodeURIComponent(id) : "";
+        let imageUrl = "";
+        try {
+          const candidate = new URL(String(v.cover_image_url || ""), window.location.href);
+          if (candidate.protocol === "https:" || candidate.protocol === "http:") imageUrl = candidate.href;
+        } catch (_) {}
+        const image = imageUrl ? '<img loading="lazy" src="' + esc(imageUrl) + '" alt="' + esc(v.venue_name || "Venue") + '" decoding="async">' : "";
+        const title = profileUrl ? '<a href="' + esc(profileUrl) + '">' + esc(v.venue_name || "Venue") + '</a>' : esc(v.venue_name || "Venue");
+        const reasons = Array.isArray(v.matchReasons) ? v.matchReasons : [];
+        const confirmations = Array.isArray(v.needsConfirmation) ? v.needsConfirmation : [];
+        const capacity = v.capacity_max ? "Up to " + Number(v.capacity_max).toLocaleString("en-IN") + " guests" : "Capacity to confirm";
+        const price = v.price_min_per_person == null ? "Price on request" : "₹" + Number(v.price_min_per_person).toLocaleString("en-IN") + "/person";
+        const actions = profileUrl
+          ? '<div class="smv-search-result-actions"><a href="' + esc(profileUrl) + '">View Venue Details →</a><a class="secondary" href="' + esc(profileUrl + "&quote=1") + '">Check Availability</a></div>'
+          : '<p class="confirm-label">Contact our team to view this venue profile.</p>';
+        c.innerHTML = image + '<div><h3>' + title + '</h3><p>' + esc(v.venue_type || "Venue") + ' · ' + esc([v.area,v.city].filter(Boolean).join(", ")) + '</p><p>' + esc(capacity) + '</p><p class="price">' + esc(price) + '</p>' +
+          (reasons.length ? '<p class="match-label">Matching details</p><p>' + esc(reasons.join(" · ")) + '</p>' : '') +
+          (confirmations.length ? '<p class="confirm-label"><strong>Confirm with venue:</strong> ' + esc(confirmations.join(" · ")) + '</p>' : '<p class="confirm-label">Confirm final pricing and date availability directly with the venue.</p>') +
+          actions + '</div>';
         grid.append(c);
       });
       results.hidden = false;
