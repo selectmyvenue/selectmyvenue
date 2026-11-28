@@ -1,0 +1,218 @@
+/* SMV Royal Wedding & Celebration Experience
+   Shared visual refinement for the public website. Presentation-only:
+   preserves existing links, forms, scripts, enquiry handlers and CRM routing. */
+:root{
+  --smv-celebrate-forest:#062f29;
+  --smv-celebrate-deep:#031d19;
+  --smv-celebrate-teal:#087f73;
+  --smv-celebrate-gold:#d9b86d;
+  --smv-celebrate-champagne:#f6e7c7;
+  --smv-celebrate-rose:#d98a91;
+  --smv-celebrate-ivory:#fffaf2;
+  --smv-celebrate-ink:#193c34;
+  --smv-celebrate-shadow:0 24px 64px rgba(28,18,20,.16);
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{overflow-x:clip}
+img{max-width:100%}
+:where(a,button,input,select,textarea):focus-visible{outline:3px solid rgba(217,184,109,.9)!important;outline-offset:3px!important}
+
+/* A consistent premium header across homepage and public inner pages. */
+.site-header{
+  border-bottom:1px solid rgba(217,184,109,.48)!important;
+  box-shadow:0 12px 34px rgba(1,18,15,.18)!important;
+}
+.site-header:after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--smv-celebrate-rose),var(--smv-celebrate-gold),#f5e3b8,var(--smv-celebrate-teal),transparent);
+  pointer-events:none;opacity:.9
+}
+.site-header .header-contact,.site-header .nav-cta{
+  border:1px solid rgba(217,184,109,.65)!important;
+  box-shadow:0 8px 24px rgba(217,184,109,.12),inset 0 1px rgba(255,255,255,.14)!important
+}
+
+/* Homepage: work with the real .hero/.hero-slides markup, not unused placeholder classes. */
+.hero{
+  position:relative!important;isolation:isolate;
+  background-color:var(--smv-celebrate-forest)!important;
+}
+.hero-slides{z-index:-2!important}
+.hero-slide{filter:saturate(1.18) contrast(1.04)!important}
+.hero:before{
+  content:"";position:absolute;inset:14px;border:1px solid rgba(255,226,177,.38);
+  border-radius:inherit;pointer-events:none;z-index:0;
+  box-shadow:inset 0 0 70px rgba(255,211,151,.10)
+}
+.hero:after{
+  content:"✦  ✧  ❋";position:absolute;right:clamp(20px,5vw,76px);top:clamp(18px,3vw,42px);
+  color:rgba(255,225,177,.82);font-size:clamp(18px,2vw,28px);letter-spacing:13px;
+  text-shadow:0 0 24px rgba(255,194,126,.55);pointer-events:none;z-index:1
+}
+.hero-inner,.hero .search-card,.hero .hero-orbit{position:relative;z-index:2}
+.hero-copy h1{
+  color:#fff9ef!important;text-shadow:0 4px 28px rgba(0,0,0,.42)!important;
+  text-wrap:balance
+}
+.hero-copy .eyebrow,.hero-copy .ai-badge{
+  color:#ffe4b2!important;border-color:rgba(255,224,174,.55)!important;
+  background:linear-gradient(110deg,rgba(9,54,46,.72),rgba(105,43,61,.42))!important;
+  backdrop-filter:blur(8px)
+}
+.hero-copy .hero-text{color:#fff5e9!important;text-shadow:0 2px 16px rgba(0,0,0,.35)}
+.hero .search-card{
+  border:1px solid rgba(211,174,104,.72)!important;border-radius:26px!important;
+  background:linear-gradient(145deg,rgba(255,253,247,.98),rgba(250,242,225,.98))!important;
+  box-shadow:0 30px 82px rgba(0,0,0,.28),inset 0 1px #fff!important;
+}
+.hero .search-card label,.hero .search-card .field label{color:#31584e!important}
+.hero .search-card input,.hero .search-card select,.hero .search-card textarea{
+  border-color:#d8ded4!important;background:#fff!important;border-radius:13px!important;
+  min-height:52px!important;color:#24483f!important
+}
+.hero .search-card .primary-btn,.hero .search-card button{
+  background:linear-gradient(120deg,#f4d58f,#e7b85f 55%,#d99b4f)!important;
+  color:#263d34!important;border:1px solid rgba(255,255,255,.85)!important;
+  box-shadow:0 12px 28px rgba(142,93,37,.22)!important
+}
+.smv-celebration-links a{
+  border:1px solid rgba(255,222,174,.48)!important;
+  background:rgba(5,43,37,.55)!important;color:#fff1d8!important;
+  backdrop-filter:blur(8px)
+}
+.smv-celebration-links a:hover{background:rgba(123,58,69,.7)!important}
+.home-venues-section,.enquiry-section{
+  border-top:1px solid rgba(217,184,109,.25)!important;
+  border-bottom:1px solid rgba(217,184,109,.18)!important
+}
+.home-venue-card,.home-venue-loading,.home-venues-section .venue-card{
+  border:1px solid rgba(217,184,109,.36)!important;
+  border-radius:20px!important;overflow:hidden;
+  box-shadow:var(--smv-celebrate-shadow)!important
+}
+
+/* Inner discovery and SEO landing pages: strong image-led hero and warm surfaces. */
+.page-main,.venue-directory-main,.venue-profile-main,.partner-wrap{position:relative}
+.search-landing-hero,.venue-directory-hero,.page-hero,.landing-hero,.seo-hero{
+  border:1px solid rgba(217,184,109,.52)!important;
+  border-radius:26px!important;overflow:hidden;
+  box-shadow:var(--smv-celebrate-shadow)!important
+}
+.search-landing-copy{
+  background-image:linear-gradient(90deg,rgba(3,30,26,.88),rgba(7,43,36,.62) 55%,rgba(32,23,24,.28)),url("assets/hero/hero-bright-wedding-v2.webp")!important;
+  background-size:cover!important;background-position:center 45%!important;
+  min-height:400px!important;justify-content:center!important
+}
+.search-landing-copy h1,.venue-directory-hero h1,.page-hero h1,.landing-hero h1{
+  color:#fff8ed!important;text-shadow:0 4px 26px rgba(0,0,0,.38)!important;text-wrap:balance
+}
+.search-landing-copy>p:not(.eyebrow),.venue-directory-hero>p{color:#fff1e3!important}
+.search-landing-points span,.venue-directory-trust span{
+  border:1px solid rgba(255,224,174,.46)!important;
+  background:rgba(5,48,41,.62)!important;color:#fff5e7!important;
+  backdrop-filter:blur(8px)
+}
+.celebration-strip{gap:16px!important;margin:28px 0!important}
+.celebration-tile{
+  min-height:220px!important;border:1px solid rgba(217,184,109,.48)!important;
+  border-radius:20px!important;box-shadow:0 18px 44px rgba(27,16,19,.18)!important
+}
+.search-content-section,.smv-wedding-showcase{
+  margin-top:28px!important;padding:clamp(22px,3vw,38px)!important;
+  border:1px solid rgba(217,184,109,.28)!important;border-radius:24px!important;
+  background:linear-gradient(145deg,rgba(255,250,242,.98),rgba(248,239,225,.94))!important;
+  box-shadow:0 16px 44px rgba(25,40,34,.08)!important
+}
+.search-content-section h2,.smv-wedding-showcase h2{color:var(--smv-celebrate-ink)!important}
+.advice-card,.intent-link-card,.seo-event-card,.seo-area-card{
+  border:1px solid rgba(217,184,109,.38)!important;border-radius:18px!important;
+  box-shadow:0 14px 36px rgba(25,40,34,.10)!important
+}
+
+/* Directory: elegant filters, spacious results and photography-first cards. */
+.venue-directory-hero{
+  background-image:linear-gradient(90deg,rgba(3,30,26,.88),rgba(7,43,36,.58) 58%,rgba(32,23,24,.25)),url("assets/hero/hero-bright-garden-v2.webp")!important;
+  background-size:cover!important;background-position:center 48%!important
+}
+.venue-directory-results{gap:22px!important}
+.venue-filter-shell,.venue-results-intro{
+  border:1px solid rgba(217,184,109,.34)!important;border-radius:18px!important;
+  box-shadow:0 12px 34px rgba(10,37,31,.09)!important
+}
+.venue-directory-main .venue-grid{gap:20px!important}
+.venue-directory-main .venue-card{
+  border:1px solid rgba(217,184,109,.4)!important;border-radius:20px!important;
+  overflow:hidden;box-shadow:0 18px 44px rgba(10,37,31,.12)!important
+}
+.venue-directory-main .venue-card-media{overflow:hidden}
+.venue-directory-main .venue-card-media img{transition:transform .45s ease}
+.venue-directory-main .venue-card:hover .venue-card-media img{transform:scale(1.045)}
+.venue-directory-main .venue-card .button-primary{
+  background:linear-gradient(120deg,#f1d18c,#e3b35d)!important;color:#273d34!important
+}
+
+/* Venue profiles: keep real venue imagery prominent and enquiry action clear. */
+.venue-profile-hero{border:1px solid rgba(217,184,109,.55)!important;border-radius:24px!important;overflow:hidden;box-shadow:var(--smv-celebrate-shadow)!important}
+.venue-profile-media{min-height:320px}
+.venue-profile-titlebar,.venue-profile-facts,.venue-profile-panel,.venue-profile-enquiry{
+  border-color:rgba(217,184,109,.32)!important;border-radius:18px!important;
+  box-shadow:0 14px 38px rgba(15,42,34,.09)!important
+}
+.venue-profile-enquiry{background:linear-gradient(150deg,#fffdf8,#f7eddd)!important}
+.venue-profile-enquiry .button-primary,.venue-profile-hero .button-primary{
+  background:linear-gradient(120deg,#f2d28d,#e4b55f)!important;color:#2b4036!important;
+  border:1px solid rgba(255,255,255,.85)!important
+}
+
+/* Venue partner page: premium hospitality feel, clear and trustworthy form. */
+.partner-page{background:linear-gradient(180deg,#062e28 0,#082f29 560px,#fbf8f1 560px)!important}
+.partner-wrap{max-width:1240px!important}
+.partner-hero{
+  background-image:linear-gradient(90deg,rgba(3,29,25,.88),rgba(6,45,38,.68) 56%,rgba(36,22,27,.3)),url("assets/hero/hero-bright-celebration-v2.webp")!important;
+  background-size:cover!important;background-position:center 48%!important;
+  border:1px solid rgba(217,184,109,.56)!important;box-shadow:0 30px 82px rgba(0,0,0,.24)!important
+}
+.partner-hero .hero-copy h1{color:#fff7e9!important;text-shadow:0 3px 24px rgba(0,0,0,.35)}
+.partner-hero .hero-copy>p{color:#f4e8dc!important}
+.partner-page .apply-card{
+  border:1px solid rgba(217,184,109,.58)!important;border-radius:22px!important;
+  box-shadow:0 24px 60px rgba(20,18,14,.22)!important
+}
+.partner-page .apply-card button[type=submit]{
+  background:linear-gradient(120deg,#f2d28d,#e3b25d)!important;color:#273e35!important
+}
+.partner-page .step,.partner-page .benefit,.partner-page .faq-item{
+  border-color:rgba(217,184,109,.3)!important;border-radius:17px!important
+}
+.partner-page .final-cta{border-color:rgba(217,184,109,.42)!important;box-shadow:0 14px 38px rgba(20,40,34,.08)!important}
+
+/* Legal and informational pages: quiet luxury, high readability. */
+.legal-card,.legal-content,.page-card,.content-card{
+  border-color:rgba(217,184,109,.28)!important;border-radius:18px!important;
+  box-shadow:0 14px 38px rgba(15,42,34,.07)!important
+}
+.page-footer,.footer,.site-footer{
+  border-top:1px solid rgba(217,184,109,.4)!important
+}
+@media(max-width:900px){
+  .search-landing-copy{min-height:340px!important}
+  .venue-directory-results{grid-template-columns:1fr!important}
+}
+@media(max-width:640px){
+  html{scroll-padding-top:76px}
+  .hero:before{inset:7px}
+  .hero:after{right:18px;top:13px;font-size:17px;letter-spacing:7px}
+  .hero .search-card{border-radius:18px!important;padding:18px!important}
+  .hero .search-card input,.hero .search-card select{min-height:48px!important}
+  .search-landing-copy{min-height:310px!important;padding:25px 20px!important}
+  .search-landing-hero,.venue-directory-hero{border-radius:18px!important}
+  .celebration-strip{grid-template-columns:1fr!important}
+  .celebration-tile{min-height:175px!important}
+  .venue-directory-main .venue-grid{grid-template-columns:1fr!important}
+  .venue-profile-media{min-height:230px}
+  .partner-wrap{padding-left:12px!important;padding-right:12px!important}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
