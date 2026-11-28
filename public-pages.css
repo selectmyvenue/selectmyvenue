@@ -70,3 +70,6 @@ html:has(link[rel="canonical"][href*="venues-in-delhi"]) .breadcrumbs span:last-
   .venue-directory-main .venue-card{transition:none!important}
   .venue-directory-main .venue-card:hover{transform:none!important}
 }
+
+/* Shared Indian wedding and celebration visual identity */
+@import url("./smv-royal-celebration.css?v=20261128-royal-celebration-1");
