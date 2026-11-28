@@ -126,3 +126,90 @@ footer,.site-footer{
   html{scroll-behavior:auto}
   *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+
+/* Site-wide celebration experience refinement — image-led, not decoration-only */
+.search-landing-hero{
+  position:relative!important;isolation:isolate;overflow:hidden;
+  border:1px solid rgba(232,196,119,.48)!important;
+  border-radius:26px!important;
+  box-shadow:0 28px 76px rgba(36,15,25,.24),inset 0 1px rgba(255,255,255,.16)!important;
+}
+.search-landing-copy{
+  position:relative!important;isolation:isolate;overflow:hidden;
+  min-height:390px!important;padding:clamp(30px,4vw,58px)!important;
+  display:flex!important;flex-direction:column;justify-content:center;
+  background-image:linear-gradient(90deg,rgba(26,12,22,.94) 0%,rgba(37,17,29,.78) 54%,rgba(30,17,25,.35) 100%),url("assets/hero/hero-bright-wedding-v2.webp")!important;
+  background-size:cover!important;background-position:center 46%!important;
+}
+.search-landing-copy:after{
+  content:"✦  ❋  ✧";position:absolute;right:28px;top:22px;
+  color:rgba(255,224,170,.82);font-size:24px;letter-spacing:12px;
+  text-shadow:0 0 24px rgba(255,190,120,.6);pointer-events:none
+}
+.search-landing-copy h1{max-width:760px!important;color:#fff8ed!important;text-shadow:0 3px 28px rgba(0,0,0,.38)!important}
+.search-landing-copy>p:not(.eyebrow){max-width:680px;color:#fff0e5!important}
+.search-landing-copy .eyebrow{color:#ffe1a7!important;border-color:rgba(255,220,166,.5)!important}
+.search-landing-points span{
+  border:1px solid rgba(255,222,174,.42)!important;
+  background:rgba(52,25,39,.46)!important;color:#fff4e8!important;
+  backdrop-filter:blur(8px)
+}
+.celebration-strip{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px!important;
+  margin:26px 0!important
+}
+.celebration-tile{
+  position:relative!important;isolation:isolate;overflow:hidden;min-height:210px!important;
+  display:flex!important;flex-direction:column;justify-content:flex-end;
+  padding:22px!important;border:1px solid rgba(232,196,119,.4)!important;
+  border-radius:20px!important;box-shadow:0 18px 44px rgba(38,16,26,.18)!important;
+  background:linear-gradient(180deg,rgba(24,13,22,.02),rgba(24,13,22,.88))!important;
+}
+.celebration-tile:before{
+  content:"";position:absolute;inset:0;z-index:-2;background-size:cover;background-position:center;
+  transform:scale(1.02);transition:transform .45s ease
+}
+.celebration-tile:nth-child(1):before{background-image:url("assets/hero/hero-bright-wedding-v2.webp")}
+.celebration-tile:nth-child(2):before{background-image:url("assets/hero/hero-bright-garden-v2.webp")}
+.celebration-tile:nth-child(3):before{background-image:url("assets/hero/hero-bright-engagement-v2.webp")}
+.celebration-tile:nth-child(4):before{background-image:url("assets/hero/hero-bright-celebration-v2.webp")}
+.celebration-tile:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(22,10,18,.02) 12%,rgba(22,10,18,.84) 100%)}
+.celebration-tile h3{color:#fff5e9!important;font-size:clamp(17px,1.6vw,22px)!important;text-shadow:0 2px 14px #160b12}
+.celebration-tile p{color:#f6e6dc!important;font-size:13px!important}
+.celebration-tile:hover:before{transform:scale(1.09)}
+.smv-wedding-showcase,.home-venues-section{
+  position:relative;border:1px solid rgba(232,196,119,.28)!important;
+  border-radius:24px!important;padding:clamp(22px,3vw,38px)!important;
+  background:linear-gradient(145deg,rgba(255,248,237,.045),rgba(233,107,136,.055),rgba(8,127,115,.045))!important;
+  box-shadow:0 20px 54px rgba(30,12,22,.14)
+}
+.smv-wedding-showcase h2,.home-venues-section h2{color:#fff4e7!important}
+.search-content-section{position:relative}
+.search-content-section>header .eyebrow{color:#eab4ad!important}
+.advice-card,.intent-link-card{
+  border-color:rgba(232,196,119,.3)!important;
+  box-shadow:0 14px 36px rgba(34,15,24,.12)!important
+}
+.venue-directory-hero{
+  background-image:linear-gradient(90deg,rgba(24,12,22,.9),rgba(37,17,29,.48)),url("assets/hero/hero-bright-wedding-v2.webp")!important;
+  background-size:cover!important;background-position:center 44%!important
+}
+.venue-profile-hero{
+  border:1px solid rgba(232,196,119,.46)!important;
+  box-shadow:0 24px 62px rgba(38,16,26,.2)!important
+}
+.partner-page .partner-hero{background-position:center 45%!important}
+@media(max-width:900px){
+  .celebration-strip{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .search-landing-copy{min-height:330px!important}
+}
+@media(max-width:600px){
+  .search-landing-hero{border-radius:18px!important}
+  .search-landing-copy{min-height:300px!important;padding:25px 20px!important}
+  .search-landing-copy:after{right:17px;top:14px;font-size:17px;letter-spacing:7px}
+  .celebration-strip{grid-template-columns:1fr!important;gap:12px!important}
+  .celebration-tile{min-height:175px!important}
+  .smv-wedding-showcase,.home-venues-section{padding:20px!important;border-radius:18px!important}
+}
+@media(prefers-reduced-motion:reduce){.celebration-tile:before{transition:none}}
